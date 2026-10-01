@@ -1,6 +1,6 @@
 # PCBWAY RELEASE CANDIDATE REPORT — OSBAMS Rev.2 Controller RC1.2e (2026-10-01)
 
-**Status: RELEASE CANDIDATE 1.2e — FOR REVIEW. NOT final, NOT released for fabrication, NOT hardware validated.** Gerbers are intentionally not included: export them from the final PCB in your own KiCad 10 (see `PRE_PCBWAY_RELEASE_CHECKLIST.md`).
+**READY FOR JOE'S LOCAL KICAD 10 EXPORT — RELEASE CANDIDATE 1.2e (take this one forward; RC1.3 is only the documented ESD fallback). NOT final, NOT released for fabrication, NOT hardware validated.** Gerbers are intentionally not included: export them from the final PCB in your own KiCad 10 (see `PRE_PCBWAY_RELEASE_CHECKLIST.md`).
 
 ## READY FOR REVIEW
 Checked with KiCad 10.0.6 in the build container (`BUILD_ENVIRONMENT.md`):
@@ -8,7 +8,7 @@ Checked with KiCad 10.0.6 in the build container (`BUILD_ENVIRONMENT.md`):
 - **ERC: 0 violations.** **DRC: 0 violations, 0 unconnected pads, 0 footprint errors** (types: none). **Netlist vs PCB: 0 mismatches.** Diode/LED polarity: PASS.
 - **Isolation:** every HOST-net item keeps ≥ 1.0 mm from every controller-net item on all layers (custom DRC rule; 3.0 mm in the ISO7721 area) — `ISOLATION_CHECK.txt`.
 - **Pack-level clearance:** 0.2 mm class (IPC-2221B B4 0.13 mm × 1.5), INA228 courtyard exempt at 0.15 mm — see `FABRICATION_NOTES.md`; PCBWay capability to be confirmed in their tool.
-- **Pack-sense protection — hot-plug and interruption bounds PASS; protection NOT closed.** Series resistors R41 (47 Ω) and R42/R43 (10 Ω) upstream of the TVS diodes; ≤ 76.5 V at the 18.5 A bound, hot-plug ≤ 60 V, limit 85 V. RC1.2e adds **D15 (SMF12CA) across IN+/IN−** because the INA228 differential limit (±40 V, relayed) is violated by a one-Kelvin-lead-open fault. Classification `MODELED_PASS / DATASHEET_VERIFICATION_OPEN`; `ESD_PROTECTION_OPEN` (ERJP08 overload rating 1000 V vs ≈ 1.3 kV modeled across R41 at 8 kV; a connector-level clamp is a likely RC1.3 change if bare pins are accessible). Open: resistor µs–ms pulse curve — `CONTROLLER_PROTECTION_AND_CONNECTOR_AUDIT.md`.
+- **Pack-sense protection — modeled normal-transient protection PASS; ESD = ESD_FIRST_ARTICLE_CONDITIONAL; no remaining fabrication blocker.** Series resistors R41 (47 Ω) and R42/R43 (10 Ω) upstream of the TVS diodes; ≤ 76.5 V at the 18.5 A bound, hot-plug ≤ 60 V, limit 85 V. RC1.2e adds **D15 (SMF12CA) across IN+/IN−** because the INA228 differential limit (±40 V, relayed) is violated by a one-Kelvin-lead-open fault. `ESD_FIRST_ARTICLE_CONDITIONAL` (ERJP08 overload rating 1000 V vs ≈ 1.3 kV modeled across R41 at 8 kV; accepted as a first-article test because J5/J6 are internal and permanently mated, RC-A = YES; the RC1.3 connector-level clamp is the documented fallback). Open: resistor µs–ms pulse curve — `CONTROLLER_PROTECTION_AND_CONNECTOR_AUDIT.md`.
 - **CP2102N VBUS divider:** R38 19.1 kΩ / R39 47.5 kΩ — +0.12 V margin to VIH at VBUS 4.40 V / VDD 3.6 V / 1 % resistors (the 22.1 k reference is −16 mV there); pin ≤ 3.77 V at 5.25 V (limit 5.6 V) — §8.
 - **Custom rule check:** `ISOLATION_RULE_CHECK.txt` shows the `.kicad_dru` is applied when the project is opened from a fresh folder (clean 0 violations; tightened rule → 131).
 - **Buck:** XDR 12.0 V ±1 %; maximum continuous controller input 14.4 V; 24.4 V transient treated separately (pulse skipping, millivolt-level rail excursion) — §3.
