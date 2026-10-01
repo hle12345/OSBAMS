@@ -39,7 +39,7 @@ def _r(val, mpn_val, pkg="0603", note=""):
 
 
 for v, m in (("10", "10R0"), ("100", "100R"), ("220", "220R"), ("1k", "1K00"), ("2.2k", "2K20"), ("3.3k", "3K30"), ("4.7k", "4K70"),
-             ("5.1k", "5K10"), ("5.6k", "5K60"), ("6.2k", "6K20"), ("10k", "10K0"), ("33.2k", "33K2"), ("47k", "47K0"), ("100k", "100K"), ("270k", "270K"), ("1M", "1M00")):
+             ("5.1k", "5K10"), ("5.6k", "5K60"), ("6.2k", "6K20"), ("10k", "10K0"), ("22.1k", "22K1"), ("33.2k", "33K2"), ("47k", "47K0"), ("47.5k", "47K5"), ("100k", "100K"), ("270k", "270K"), ("1M", "1M00")):
     _r(v, m)
 _r("4.7k", "4K70", "1206", " (pulse-rated relay-feedback chain)")
 for v, m in (("75k", "75K0"), ("10k", "10K0")):
@@ -61,8 +61,8 @@ _c("C10u50", "10uF", "GRM32ER71H106KA12L", "Capacitor_SMD:C_1210_3225Metric", "1
 _c("C4n7", "4.7nF", "GRM21BR72A472KA01L", "Capacitor_SMD:C_0805_2012Metric", "4.7 nF 100 V X7R 0805 (USB shield)", alt="TDK C2012X7R2A472K125AA")
 part("C100n_owned", lib="Device:C", fp="Capacitor_SMD:C_0805_2012Metric", mfr="Vishay", mpn="VJ0805Y104JXXAT", desc="100 nF 25 V X7R 5 % 0805 (owned)", evid=UR,
      life="UNKNOWN (not checked)", alt="Murata GRM21BR71E104KA01L", src="CONSIGN (owned: 2) or PCBWay equivalent")
-part("L10u", lib="Device:L", fp="Inductor_SMD:L_Bourns_SRN6045TA", mfr="Bourns", mpn="SRN6045TA-100M", desc="10 uH shielded inductor 6x6 mm (value/Isat per LMR14006 design equations; UNVERIFIED)",
-     evid=UV, life="UNKNOWN (not checked)", alt="Wurth 744043100", src="PCBWay source")
+part("L10u", lib="Device:L", fp="Inductor_SMD:L_Bourns_SRN6045TA", mfr="Bourns", mpn="SRN6045TA-100M", desc="10 uH shielded inductor 6x6 mm (10 uH +/-20 %, DCR 52 mohm, Irms 3.2 A, Isat 4.6 A: Bourns datasheet read locally)",
+     evid=VL, life="UNKNOWN (not checked)", alt="Wurth 744043100", src="PCBWay source")
 part("FB600", lib="Device:FerriteBead", fp="Inductor_SMD:L_0603_1608Metric", mfr="Murata", mpn="BLM18PG601SN1D", desc="Ferrite bead 600 ohm @ 100 MHz 0603",
      evid=UV, life="UNKNOWN (not checked)", alt="TDK MMZ1608B601CTAH0", src="PCBWay source")
 part("F1A", lib="Device:Fuse", fp="Fuse:Fuse_1206_3216Metric", mfr="Littelfuse", mpn="0453001.MR", desc="1 A fast fuse 1206 32 V",
@@ -99,9 +99,9 @@ part("U_INA", lib="OSBAMS_Rev2:INA228", fp="Package_SO:MSOP-10_3x3mm_P0.5mm", mf
 part("U_BUCK", lib="OSBAMS_Rev2:LMR14006Y", fp="Package_TO_SOT_SMD:SOT-23-6", mfr="Texas Instruments", mpn="LMR14006YDDCR", desc="LMR14006Y 4-40 V 0.6 A 2.1 MHz buck SOT-23-6 (PIN MAP UNVERIFIED)",
      evid=UR, life="ACTIVE (user-confirmed)", alt="LMR14006XDDCR (700 kHz variant: inductor change)", src="PCBWay source")
 part("U_ISO", lib="OSBAMS_Rev2:ISO7721", fp="Package_SO:SOIC-8_3.9x4.9mm_P1.27mm", mfr="Texas Instruments", mpn="ISO7721DR", desc="ISO7721 dual-channel digital isolator 1 fwd / 1 rev SOIC-8 (no isolated power)",
-     evid=UV, life="UNKNOWN (not checked)", alt="ISO7721DWR (wide body)", src="PCBWay source")
+     evid=VL, life="UNKNOWN (not checked)", alt="ISO7721DWR (wide body)", src="PCBWay source")
 part("U_CP", lib="Interface_USB:CP2102N-Axx-xQFN20", fp="Package_DFN_QFN:SiliconLabs_QFN-20-1EP_3x3mm_P0.5mm_EP1.8x1.8mm", mfr="Silicon Labs", mpn="CP2102N-A02-GQFN20", desc="CP2102N USB-UART bridge QFN-20 3x3",
-     evid=UR, life="UNKNOWN (not checked)", alt="CP2102N-A02-GQFN24 (needs QFN24 footprint)", src="PCBWay source")
+     evid=VL, life="UNKNOWN (not checked)", alt="CP2102N-A02-GQFN24 (needs QFN24 footprint)", src="PCBWay source")
 part("U_ESD", lib="Power_Protection:USBLC6-2SC6", fp="Package_TO_SOT_SMD:SOT-23-6", mfr="STMicroelectronics", mpn="USBLC6-2SC6", desc="2-line ESD protection SOT-23-6",
      evid=UV, life="UNKNOWN (not checked)", alt="Nexperia IP4220CZ6", src="PCBWay source")
 part("OPTO", lib="Isolator:PC817", fp="Package_DIP:DIP-4_W7.62mm", mfr="Vishay", mpn="VO610A-1", desc="Optocoupler transistor output DIP-4, CTR bin -1 (13 % min @ 1 mA, 40 % min @ 10 mA: user-relayed)",
@@ -183,12 +183,16 @@ add("R9", "R0603_5.1k", S4, {1: "USB_CC2", 2: "GND_HOST"}, "5.1k")
 add("R10", "R0603_1M", S4, {1: "USB_SHIELD", 2: "GND_HOST"}, "1M")
 add("C19", "C4n7", S4, {1: "USB_SHIELD", 2: "GND_HOST"}, "4.7nF 100V")
 add("U9", "U_ESD", S4, {1: "USB_DP_J", 6: "USB_DP", 3: "USB_DM_J", 4: "USB_DM", 2: "GND_HOST", 5: "VBUS_USB"}, "USBLC6-2SC6")
-add("U6", "U_CP", S4, {"VBUS": "VBUS_USB", "VREGIN": "VBUS_USB", "VDD": "3V3_HOST", "D+": "USB_DP", "D-": "USB_DM", "GND": "GND_HOST", "RXD": "UART_RX_HOST", "TXD": "UART_TX_HOST"}, "CP2102N")
+add("U6", "U_CP", S4, {"VBUS": "CP_VBUS_SENSE", "VREGIN": "VBUS_USB", "VDD": "3V3_HOST", "9": "CP_RSTB", "D+": "USB_DP", "D-": "USB_DM", "GND": "GND_HOST", "RXD": "UART_RX_HOST", "TXD": "UART_TX_HOST"}, "CP2102N")
+add("R38", "R0603_22.1k", S4, {1: "VBUS_USB", 2: "CP_VBUS_SENSE"}, "22.1k", note="CP2102N VBUS sense divider (Silicon Labs reference, relayed): 22.1 k upper")
+add("R39", "R0603_47.5k", S4, {1: "CP_VBUS_SENSE", 2: "GND_HOST"}, "47.5k", note="CP2102N VBUS sense divider: 47.5 k lower")
+add("R40", "R0603_1k", S4, {1: "CP_RSTB", 2: "3V3_HOST"}, "1k", note="CP2102N RSTb 1 kOhm pull-up to VDD (Silicon Labs datasheet 2.1, read locally)")
 add("C20", "C4u7", S4, {1: "VBUS_USB", 2: "GND_HOST"}, "4.7uF")
 add("C21", "C100n", S4, {1: "VBUS_USB", 2: "GND_HOST"}, "100nF")
-add("C22", "C1u", S4, {1: "3V3_HOST", 2: "GND_HOST"}, "1uF")
+add("C22", "C4u7", S4, {1: "3V3_HOST", 2: "GND_HOST"}, "4.7uF", note="CP2102N VDD: 4.7 uF + 0.1 uF required per power pin (Silicon Labs datasheet, read locally)")
 add("C23", "C100n", S4, {1: "3V3_HOST", 2: "GND_HOST"}, "100nF")
-add("U7", "U_ISO", S4, {"VCC1": "+3V3", "INA": "UART_TX_MCU", "OUTB": "UART_RX_MCU", "GND1": "GND", "GND2": "GND_HOST", "INB": "UART_TX_HOST", "OUTA": "UART_RX_HOST", "VCC2": "3V3_HOST"}, "ISO7721")
+add("U7", "U_ISO", S4, {"VCC1": "+3V3", "OUTA": "UART_RX_MCU", "INB": "UART_TX_MCU", "GND1": "GND", "GND2": "GND_HOST", "OUTB": "UART_RX_HOST", "INA": "UART_TX_HOST", "VCC2": "3V3_HOST"}, "ISO7721",
+    note="Channel A (INA pin 7, host side) -> OUTA pin 2 (MCU RX); channel B (INB pin 3 <- MCU TX) -> OUTB pin 6 (CP2102N RXD)")
 add("C24", "C100n", S4, {1: "+3V3", 2: "GND"}, "100nF", note="ISO7721 VCC1")
 add("C25", "C100n", S4, {1: "3V3_HOST", 2: "GND_HOST"}, "100nF", note="ISO7721 VCC2")
 
@@ -285,9 +289,9 @@ CUSTOM = {
     "LMR14006Y": dict(ref="U", value="LMR14006Y", fp="Package_TO_SOT_SMD:SOT-23-6", desc="LMR14006Y buck, DDC TSOT-6 (pin map compared with the TI table relayed by the user: PASS; pin 4 is /SHDN)",
                       pins=[("1", "CB", "passive", "L", 0), ("2", "GND", "power_in", "L", 1), ("3", "FB", "input", "L", 2), ("4", "EN", "input", "R", 0),
                             ("5", "VIN", "power_in", "R", 1), ("6", "SW", "output", "R", 2)]),
-    "ISO7721": dict(ref="U", value="ISO7721", fp="Package_SO:SOIC-8_3.9x4.9mm_P1.27mm", desc="ISO7721 1 fwd / 1 rev (pin map CONFLICT: relayed table says 2 OUTA/3 INB/6 OUTB/7 INA; this symbol follows 2 INA/3 OUTB/6 INB/7 OUTA - settle from the TI pin diagram before ordering)",
-                    pins=[("1", "VCC1", "power_in", "L", 0), ("2", "INA", "input", "L", 1), ("3", "OUTB", "output", "L", 2), ("4", "GND1", "power_in", "L", 3),
-                          ("5", "GND2", "power_in", "R", 3), ("6", "INB", "input", "R", 2), ("7", "OUTA", "output", "R", 1), ("8", "VCC2", "power_in", "R", 0)]),
+    "ISO7721": dict(ref="U", value="ISO7721", fp="Package_SO:SOIC-8_3.9x4.9mm_P1.27mm", desc="ISO7721 1 fwd / 1 rev (pin map per TI 8-pin pinout confirmed by the user: 1 VCC1, 2 OUTA, 3 INB, 4 GND1, 5 GND2, 6 OUTB, 7 INA, 8 VCC2; channel A side 2 to side 1, channel B side 1 to side 2)",
+                    pins=[("1", "VCC1", "power_in", "L", 0), ("2", "OUTA", "output", "L", 1), ("3", "INB", "input", "L", 2), ("4", "GND1", "power_in", "L", 3),
+                          ("5", "GND2", "power_in", "R", 3), ("6", "OUTB", "output", "R", 2), ("7", "INA", "input", "R", 1), ("8", "VCC2", "power_in", "R", 0)]),
 }
 
 

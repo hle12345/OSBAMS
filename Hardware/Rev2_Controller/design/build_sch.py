@@ -47,7 +47,7 @@ def write_tables():
 
 def write_pro():
     pro = {"meta": {"filename": D.PROJECT + ".kicad_pro", "version": 1}, "board": {"design_settings": {"rules": {"min_clearance": 0.1, "min_track_width": 0.15, "min_via_diameter": 0.5, "min_through_hole_diameter": 0.3, "min_copper_edge_clearance": 0.3, "min_hole_clearance": 0.19, "min_resolved_spacing": 0.0, "min_silk_clearance": 0.0, "min_text_height": 0.8, "min_text_thickness": 0.08, "solder_mask_to_copper_clearance": 0.0}}}, "libraries": {"pinned_footprint_libs": [], "pinned_symbol_libs": []},
-           "sheets": [], "text_variables": {"REV": "RC1"}}
+           "sheets": [], "text_variables": {"REV": "RC1.1"}}
     # netclasses must match design/pcbgen.py (the .kicad_pro is the only place KiCad stores them)
     pro["net_settings"] = {"meta": {"version": 4}, "classes": [dict(name=n, clearance=c, track_width=w, via_diameter=0.6, via_drill=0.3) for n, c, w in
                            (("Default", 0.15, 0.2), ("POWER", 0.2, 0.3), ("RAIL", 0.15, 0.3), ("PACKLEVEL", 0.15, 0.2), ("KELVIN", 0.15, 0.2))],

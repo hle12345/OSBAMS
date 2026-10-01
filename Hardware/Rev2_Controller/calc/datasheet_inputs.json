@@ -356,13 +356,13 @@
   {
    "id": "lmr_l_c",
    "part": "LMR14006Y",
-   "parameter": "recommended inductor and Cin/Cout, current limit",
-   "value": null,
+   "parameter": "Bourns SRN6045TA-100M: 10 uH +/-20 %, DCR 52 mohm, Irms 3.20 A, Isat 4.60 A (LMR14006Y current limit ~1.2 A typ is a separate [UR] entry)",
+   "value": "Isat 4.6 A",
    "unit": "",
-   "evidence": "UNVERIFIED",
-   "critical": true,
-   "source": "assumption / proposal - needs the manufacturer document",
-   "doc": null
+   "evidence": "VERIFIED_LOCAL",
+   "critical": false,
+   "source": "Bourns SRN6045TA datasheet, read locally from the user-supplied PDF: SRN6045TA-100M 10 uH +/-20 %, SRF 25 MHz, DCR 52 mohm, Irms 3.20 A (40 C rise), Isat 4.60 A (inductance drops 30 % at Isat)",
+   "doc": "docs/rev2/pcb/evidence/SRN6045TA_datasheet.pdf"
   },
   {
    "id": "dg57_basic",
@@ -532,24 +532,24 @@
   {
    "id": "iso_pinmap",
    "part": "ISO7721",
-   "parameter": "SOIC-8 pin map - CONFLICT: relayed table (1 VCC1, 2 OUTA, 3 INB, 4 GND1, 5 GND2, 6 OUTB, 7 INA, 8 VCC2) differs from the symbol/reviewer memory (2 INA, 3 OUTB, 6 INB, 7 OUTA); pin direction at pins 2/3/6/7 decides the UART wiring - must be settled from the TI pin-diagram figure before any order",
-   "value": "UNRESOLVED",
+   "parameter": "SOIC-8 (D) pin map, Table 5-1 / Fig. 5-4; symbol corrected in RC1.1 (earlier symbol followed the ISO7720 table)",
+   "value": "1 VCC1, 2 OUTA, 3 INB, 4 GND1, 5 GND2, 6 OUTB, 7 INA, 8 VCC2",
    "unit": "",
-   "evidence": "UNVERIFIED",
+   "evidence": "VERIFIED_LOCAL",
    "critical": true,
-   "source": "relayed table vs. build memory disagree; neither is read from a document",
-   "doc": null
+   "source": "TI ISO7720/ISO7721 datasheet SLLSEP3G (Nov 2016, rev. May 2024), read locally from the user-supplied PDF: Table 5-1 / Figure 5-4 (D, DWV 8-pin): 1 VCC1, 2 OUTA, 3 INB, 4 GND1, 5 GND2, 6 OUTB, 7 INA, 8 VCC2",
+   "doc": "docs/rev2/pcb/evidence/ISO7721_datasheet_SLLSEP3G.pdf"
   },
   {
    "id": "iso_supply",
    "part": "ISO7721",
-   "parameter": "supply 2.25-5.5 V on each side; no integrated isolated power; standard ISO7721 default output HIGH (ISO7721F = default low) -> idle-high UART",
+   "parameter": "supply 2.25-5.5 V each side; default output HIGH (no suffix); ISO7721DR orderable, SOIC-D 8",
    "value": "2.25-5.5 V",
    "unit": "",
-   "evidence": "USER_RELAYED_MANUFACTURER",
+   "evidence": "VERIFIED_LOCAL",
    "critical": true,
-   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
-   "doc": null
+   "source": "TI ISO7720/ISO7721 datasheet SLLSEP3G (Nov 2016, rev. May 2024), read locally from the user-supplied PDF: VCC1/VCC2 2.25-5.5 V; default output HIGH for devices without suffix (F suffix = low); ISO7721DR Active, SOIC (D) 8, 4.90 x 3.91 mm; ICC at 100 kbps-class loads ~1-3 mA per side",
+   "doc": "docs/rev2/pcb/evidence/ISO7721_datasheet_SLLSEP3G.pdf"
   },
   {
    "id": "cp_package",
@@ -568,21 +568,43 @@
    "parameter": "QFN20 pin map: 1 GPIO.1/RS485, 2 GPIO.0/CLK, 3 GND, 4 D+, 5 D-, 6 VDD, 7 VREGIN, 8 VBUS, 9 RSTb, 10 NC, 11 SUSPENDb, 12 GND, 13 WAKEUP, 14 SUSPEND, 15 CTS, 16 RTS, 17 RXD, 18 TXD, 19 GPIO.3, 20 GPIO.2, EP GND (compared with the library symbol: PASS)",
    "value": null,
    "unit": "",
-   "evidence": "USER_RELAYED_MANUFACTURER",
+   "evidence": "VERIFIED_LOCAL",
    "critical": true,
-   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
-   "doc": null
+   "source": "Silicon Labs CP2102N datasheet rev. 1.5, read locally from the user-supplied PDF: section 5.3 CP2102N QFN20 pin definitions (pins 1-20 + center GND pad)",
+   "doc": "docs/rev2/pcb/evidence/CP2102N_datasheet_rev1.5.pdf"
+  },
+  {
+   "id": "cp_vbus_div",
+   "part": "CP2102N",
+   "parameter": "VBUS divider 22.1 k / 47.5 k (R38/R39); VBUS VIH = VIO - 0.6 V, abs max VIO + 2.5 V",
+   "value": "22.1 k / 47.5 k",
+   "unit": "",
+   "evidence": "VERIFIED_LOCAL",
+   "critical": true,
+   "source": "Silicon Labs CP2102N datasheet rev. 1.5, read locally from the user-supplied PDF: section 2.3 and Figures 2.4/2.5: divider 22.1 k / 47.5 k required on VBUS; VIH = VIO-0.6 V; abs max VIN = VIO+2.5 V (5.8 V for VIO>3.3 V)",
+   "doc": "docs/rev2/pcb/evidence/CP2102N_datasheet_rev1.5.pdf"
   },
   {
    "id": "cp_vdd",
    "part": "CP2102N",
-   "parameter": "VBUS pin connection (Silicon Labs documents a VBUS divider in some configurations - the exact resistor values/configuration are NOT in the relayed data; the board currently ties VBUS directly), regulator current capability for CP2102N + ISO7721 VCC2",
-   "value": null,
-   "unit": "",
-   "evidence": "UNVERIFIED",
+   "parameter": "regulator output current 100 mA total (device 9.5-13.7 mA + USB pull-up 0.23 mA + ISO7721 VCC2 ~3 mA)",
+   "value": 0.1,
+   "unit": "A",
+   "evidence": "VERIFIED_LOCAL",
    "critical": true,
-   "source": "assumption / proposal - needs the manufacturer document",
-   "doc": null
+   "source": "Silicon Labs CP2102N datasheet rev. 1.5, read locally from the user-supplied PDF: Table 3.6: VREGIN 3.0-5.25 V, VDD 3.1-3.3-3.6 V, IREGOUT 100 mA total incl. the device; Table 3.4 IDD 9.5-13.7 mA; bypass 4.7 uF + 0.1 uF per power pin; 1 k RSTb pull-up to VDD",
+   "doc": "docs/rev2/pcb/evidence/CP2102N_datasheet_rev1.5.pdf"
+  },
+  {
+   "id": "cp_rstb",
+   "part": "CP2102N",
+   "parameter": "RSTb: 1 k pull-up to VDD recommended in all cases (added in RC1.1 as R40); 4.7 uF + 0.1 uF bypass per power pin (C22 raised from 1 uF to 4.7 uF)",
+   "value": "1 k / 4.7 uF",
+   "unit": "",
+   "evidence": "VERIFIED_LOCAL",
+   "critical": false,
+   "source": "Silicon Labs CP2102N datasheet rev. 1.5, read locally from the user-supplied PDF: section 2.1, Figure 2.1",
+   "doc": "docs/rev2/pcb/evidence/CP2102N_datasheet_rev1.5.pdf"
   },
   {
    "id": "stm32_pins",
@@ -719,12 +741,12 @@
   {
    "id": "q_curves",
    "part": "IRLML0060TRPBF",
-   "parameter": "typical output/transfer curves include VGS 2.8/3.0/3.3/3.5 V; ID >= 0.5 A at VGS 3.0-3.3 V over temperature NOT checked (curves unavailable to the build) -> bench check V-gate",
+   "parameter": "Infineon typical output curves at VGS 3.0 and 3.3 V make the ~0.17 A coil load plausible; RDS(on) is NOT guaranteed at 3.3 V -> first-article VDS / coil-current measurement is the validation item",
    "value": null,
    "unit": "",
-   "evidence": "UNVERIFIED",
-   "critical": true,
-   "source": "curves not read",
+   "evidence": "USER_RELAYED_MANUFACTURER",
+   "critical": false,
+   "source": "user message 2026-10-01 (user checked the TI / Silicon Labs / Bourns / Infineon documents; PDFs not opened in this build environment)",
    "doc": null
   },
   {

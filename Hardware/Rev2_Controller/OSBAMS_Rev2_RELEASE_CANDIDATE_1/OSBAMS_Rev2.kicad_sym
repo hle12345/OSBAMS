@@ -160,7 +160,7 @@
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
-    (property "ki_description" "ISO7721 1 fwd / 1 rev (pin map CONFLICT: relayed table says 2 OUTA/3 INB/6 OUTB/7 INA; this symbol follows 2 INA/3 OUTB/6 INB/7 OUTA - settle from the TI pin diagram before ordering)"
+    (property "ki_description" "ISO7721 1 fwd / 1 rev (pin map per TI 8-pin pinout confirmed by the user: 1 VCC1, 2 OUTA, 3 INB, 4 GND1, 5 GND2, 6 OUTB, 7 INA, 8 VCC2; channel A side 2 to side 1, channel B side 1 to side 2)"
       (at 0 0 0)
       (effects (font (size 1.27 1.27)) hide)
     )
@@ -179,16 +179,16 @@
         (name "VCC1" (effects (font (size 1.27 1.27))))
         (number "1" (effects (font (size 1.27 1.27))))
       )
-      (pin input line
+      (pin output line
         (at -13.97 1.27 0)
         (length 5.08)
-        (name "INA" (effects (font (size 1.27 1.27))))
+        (name "OUTA" (effects (font (size 1.27 1.27))))
         (number "2" (effects (font (size 1.27 1.27))))
       )
-      (pin output line
+      (pin input line
         (at -13.97 -1.27 0)
         (length 5.08)
-        (name "OUTB" (effects (font (size 1.27 1.27))))
+        (name "INB" (effects (font (size 1.27 1.27))))
         (number "3" (effects (font (size 1.27 1.27))))
       )
       (pin power_in line
@@ -203,16 +203,16 @@
         (name "GND2" (effects (font (size 1.27 1.27))))
         (number "5" (effects (font (size 1.27 1.27))))
       )
-      (pin input line
+      (pin output line
         (at 13.97 -1.27 180)
         (length 5.08)
-        (name "INB" (effects (font (size 1.27 1.27))))
+        (name "OUTB" (effects (font (size 1.27 1.27))))
         (number "6" (effects (font (size 1.27 1.27))))
       )
-      (pin output line
+      (pin input line
         (at 13.97 1.27 180)
         (length 5.08)
-        (name "OUTA" (effects (font (size 1.27 1.27))))
+        (name "INA" (effects (font (size 1.27 1.27))))
         (number "7" (effects (font (size 1.27 1.27))))
       )
       (pin power_in line

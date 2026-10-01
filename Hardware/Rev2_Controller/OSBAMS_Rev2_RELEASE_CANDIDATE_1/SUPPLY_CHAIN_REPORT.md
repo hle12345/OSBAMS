@@ -14,18 +14,18 @@
 | U3 | LMR14006YDDCR | Texas Instruments | USER_RELAYED_MANUFACTURER | ACTIVE (user-confirmed) | PCBWay source | LMR14006XDDCR (700 kHz variant: inductor change) (UNVERIFIED alternate) |
 | C3, C8, C10, C11, C12, C1... | GRM188R71H104KA93D | Murata | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Samsung CL10B104KB8NNNC (UNVERIFIED alternate) |
 | C4 | GRM188R71H104KA93D | Murata | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Samsung CL10B104KB8NNNC (UNVERIFIED alternate) |
-| L1 | SRN6045TA-100M | Bourns | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Wurth 744043100 (UNVERIFIED alternate) |
+| L1 | SRN6045TA-100M | Bourns | VERIFIED_LOCAL | UNKNOWN (not checked) | PCBWay source | Wurth 744043100 (UNVERIFIED alternate) |
 | R1 | CRCW060333K2FKEA | Vishay Dale | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Yageo RC0603-FR-07 series (UNVERIFIED alternate) |
 | R2, R6, R16, R22, R37 | CRCW060310K0FKEA | Vishay Dale | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Yageo RC0603-FR-07 series (UNVERIFIED alternate) |
 | R3, R31 | CRCW0603100KFKEA | Vishay Dale | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Yageo RC0603-FR-07 series (UNVERIFIED alternate) |
 | C5, C6 | GRM21BR61A226ME44L | Murata | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Samsung CL21A226MPQNNNE (UNVERIFIED alternate) |
 | FB1 | BLM18PG601SN1D | Murata | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | TDK MMZ1608B601CTAH0 (UNVERIFIED alternate) |
-| C7, C15, C20 | GRM21BR61A475KA73L | Murata | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Samsung CL21A475KPFNNNE (UNVERIFIED alternate) |
+| C7, C15, C20, C22 | GRM21BR61A475KA73L | Murata | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Samsung CL21A475KPFNNNE (UNVERIFIED alternate) |
 | R4 | CRCW06033K30FKEA | Vishay Dale | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Yageo RC0603-FR-07 series (UNVERIFIED alternate) |
-| R5, R7, R20, R32 | CRCW06031K00FKEA | Vishay Dale | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Yageo RC0603-FR-07 series (UNVERIFIED alternate) |
+| R5, R7, R20, R32, R40 | CRCW06031K00FKEA | Vishay Dale | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Yageo RC0603-FR-07 series (UNVERIFIED alternate) |
 | D3 | 150080GS75000 | Wurth Elektronik | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Kingbright APT2012SGC (UNVERIFIED alternate) |
 | U1 | STM32L476RGT6 | STMicroelectronics | USER_RELAYED_MANUFACTURER | UNKNOWN (not checked) | PCBWay source | STM32L476RGT6TR (reel) (UNVERIFIED alternate) |
-| C16, C22 | GRM21BR71C105KA01L | Murata | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Samsung CL21B105KOFNNNE (UNVERIFIED alternate) |
+| C16 | GRM21BR71C105KA01L | Murata | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Samsung CL21B105KOFNNNE (UNVERIFIED alternate) |
 | SW1 | PTS810SJM250SMTRLFS | C&K | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Wurth 434121025816 (UNVERIFIED alternate) |
 | JP1 | TSW-102-07-G-S | Samtec | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Wurth 61300211121 (UNVERIFIED alternate) |
 | D4 | 150080GS75000 | Wurth Elektronik | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Kingbright APT2012SGC (UNVERIFIED alternate) |
@@ -35,8 +35,10 @@
 | R10 | CRCW06031M00FKEA | Vishay Dale | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Yageo RC0603-FR-07 series (UNVERIFIED alternate) |
 | C19 | GRM21BR72A472KA01L | Murata | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | TDK C2012X7R2A472K125AA (UNVERIFIED alternate) |
 | U9, U10 | USBLC6-2SC6 | STMicroelectronics | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Nexperia IP4220CZ6 (UNVERIFIED alternate) |
-| U6 | CP2102N-A02-GQFN20 | Silicon Labs | USER_RELAYED_MANUFACTURER | UNKNOWN (not checked) | PCBWay source | CP2102N-A02-GQFN24 (needs QFN24 footprint) (UNVERIFIED alternate) |
-| U7 | ISO7721DR | Texas Instruments | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | ISO7721DWR (wide body) (UNVERIFIED alternate) |
+| U6 | CP2102N-A02-GQFN20 | Silicon Labs | VERIFIED_LOCAL | UNKNOWN (not checked) | PCBWay source | CP2102N-A02-GQFN24 (needs QFN24 footprint) (UNVERIFIED alternate) |
+| R38 | CRCW060322K1FKEA | Vishay Dale | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Yageo RC0603-FR-07 series (UNVERIFIED alternate) |
+| R39 | CRCW060347K5FKEA | Vishay Dale | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Yageo RC0603-FR-07 series (UNVERIFIED alternate) |
+| U7 | ISO7721DR | Texas Instruments | VERIFIED_LOCAL | UNKNOWN (not checked) | PCBWay source | ISO7721DWR (wide body) (UNVERIFIED alternate) |
 | J5 | 22-27-2031 | Molex | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Molex 22-23-2031 (UNVERIFIED alternate) |
 | D5, D6, D7 | 1.5SMBJ48A | Bourns | USER_RELAYED_MANUFACTURER | UNKNOWN (not checked) | CONSIGN (owned: 2; 3 needed) or PCBWay source | Littelfuse 1.5SMC / SMBJ48A (UNVERIFIED alternate) |
 | R11, R12, R13 | CRCW060310R0FKEA | Vishay Dale | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Yageo RC0603-FR-07 series (UNVERIFIED alternate) |

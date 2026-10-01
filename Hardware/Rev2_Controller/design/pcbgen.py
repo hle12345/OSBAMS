@@ -50,7 +50,7 @@ ANCHOR = {
     "C5": ("L1", "2"), "C6": ("L1", "2"), "FB1": ("U1", "13"), "C7": ("FB1", "2"), "C8": ("FB1", "2"), "R4": ("FB1", "2"), "R5": ("L1", "2"), "D3": ("R5", "2"),
     "C10": ("U1", "19"), "C11": ("U1", "32"), "C12": ("U1", "64"), "C13": ("U1", "48"), "C14": ("U1", "1"), "C15": ("U1", "64"),
     "C16": ("U1", "13"), "C17": ("U1", "13"), "C18": ("U1", "7"), "R6": ("U1", "60"), "R7": ("U1", "21"), "D4": ("R7", "2"),
-    "R8": ("J8", "A5"), "R9": ("J8", "B5"), "R10": ("J8", "SH"), "C19": ("J8", "SH"), "C20": ("U6", "8"), "C21": ("U6", "8"), "C22": ("U6", "6"), "C23": ("U6", "6"),
+    "R38": ("U6", "8"), "R40": ("U6", "9"), "R39": ("R38", "2"), "R8": ("J8", "A5"), "R9": ("J8", "B5"), "R10": ("J8", "SH"), "C19": ("J8", "SH"), "C20": ("U6", "8"), "C21": ("U6", "8"), "C22": ("U6", "6"), "C23": ("U6", "6"),
     "C24": ("U7", "1"), "C25": ("U7", "8"),
     "D5": ("J5", "1"), "D6": ("J5", "2"), "R11": ("U2", "10"), "R12": ("U2", "9"), "C26": ("U2", "10"), "C27": ("U2", "6"), "D7": ("J6", "1"), "R13": ("U2", "8"), "C28": ("U2", "8"),
     "R14": ("U2", "4"), "R15": ("U2", "5"), "R16": ("U2", "3"),
@@ -61,7 +61,7 @@ ANCHOR = {
     "C33": ("J7", "1"), "R33": ("U10", "6"), "R34": ("U10", "4"), "R35": ("U1", "29"), "R36": ("U1", "30"),
 }
 
-HOST_REFS = {"R8", "R9", "R10", "C19", "C20", "C21", "C22", "C23", "C25", "U6", "U9", "J8", "U7_side2"}
+HOST_REFS = {"R40", "R38", "R39", "R8", "R9", "R10", "C19", "C20", "C21", "C22", "C23", "C25", "U6", "U9", "J8", "U7_side2"}
 HOST_NETS = {"GND_HOST", "3V3_HOST", "VBUS_USB"}
 HOST_BOX = (73.5, 0.0, 100.0, 48.0)      # x0, y0, x1, y1 of the isolated-side island (plus the isolation gap)
 
@@ -287,12 +287,12 @@ class PCB:
 
     # -------------------------------------------------- board items
     def preroute(self):
-        """short same-net links between adjacent pads that an autorouter handles poorly (U6 VREGIN/VBUS)."""
-        for ref, a, b, layer in (("U6", "7", "8", pcbnew.F_Cu),):
-            pa, pb = self.pad_pos(ref, a), self.pad_pos(ref, b)
+        """escape stubs the autorouter handles poorly on the QFN-20 (U6)."""
+        for pn in ():                 # U6 bottom-edge pins (VREGIN, VBUS-sense, RSTb): short escape stubs straight out of the package
+            px, py = self.pad_pos("U6", pn)
             t = pcbnew.PCB_TRACK(self.b)
-            t.SetStart(V(*pa)); t.SetEnd(V(*pb)); t.SetWidth(mm(0.2)); t.SetLayer(layer)
-            t.SetNet(self.net([pd.GetNetname() for pd in self.fps[ref].Pads() if pd.GetNumber() == a][0]))
+            t.SetStart(V(px, py)); t.SetEnd(V(px, py + 0.8)); t.SetWidth(mm(0.2)); t.SetLayer(pcbnew.F_Cu)
+            t.SetNet(self.net([pd.GetNetname() for pd in self.fps["U6"].Pads() if pd.GetNumber() == pn][0]))
             self.b.Add(t)
         # corner pad 6 (VDD -> 3V3_HOST) of the QFN-20: short orthogonal escape stub the autorouter can attach to
         px, py = self.pad_pos("U6", "6")
@@ -353,7 +353,7 @@ class PCB:
 
     def silk(self):
         self.text("OSBAMS Rev.2 Controller", 50, 2.2, 1.6, bold=True)
-        self.text("RC1 2026-10-01  44 V / 10 A MAX  NOT FOR FABRICATION", 50, 4.6, 1.0)
+        self.text("RC1.1 2026-10-01  44 V / 10 A MAX  NOT FOR FABRICATION", 50, 4.6, 1.0)
         labels = {"J1": "12V IN  +/-", "J2": "E-STOP", "J3": "ARM", "J4": "K1 COIL", "J5": "SHUNT KELVIN", "J6": "PACK SENSE", "J7": "TEMP PROBE", "J8": "USB HOST", "J9": "SWD", "JP1": "BOOT0"}
         for ref, s in labels.items():
             x, y = self.pad_pos(ref, "1" if ref != "J8" else "A5")

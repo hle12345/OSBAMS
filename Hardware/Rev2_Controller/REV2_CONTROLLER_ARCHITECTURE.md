@@ -69,7 +69,7 @@ Every unused MCU pin has a no-connect flag and is configured analog/pulled low i
 Test points (27 pads, silk-labelled): +12V, 3V3, 3V3_A, GND ×2, SDA1, SCL1, SDA2, SCL2, INA_IN+, INA_IN−, VBUS, ADC_SENSE, GATE, COIL_SW, COIL_V, ESTOP_SENSE, ARM_SENSE, RELAY_FB, UART_TX, UART_RX, NRST, SWDIO, SWCLK, LOAD_EN, GND_HOST, 3V3_HOST.
 
 ## 6. PCB
-100 × 90 mm, 4 layers (L1 comp/signal, **L2 solid GND**, L3 signal routing + GND fill + GND fill, L4 comp/signal + GND fill), separate GND_HOST island with 3 mm gap, analog (INA228/ADC/pack-sense) bottom-left away from the buck (top-left), 4 × M3 NPTH, 3 fiducials, silkscreen labels/polarity/revision/`44 V / 10 A MAX`. Routed with Freerouting and verified by KiCad DRC; results and remaining items are in `DFM_DFA_REPORT.md` and `DRC_REPORT.rpt`.
+100 × 90 mm, 4 layers (L1 comp/signal, **L2 solid GND**, L3 signal routing + GND fill, L4 comp/signal + GND fill), separate GND_HOST island (3.0 mm gap in the ISO7721 area, 0.25 mm zone clearance elsewhere), analog (INA228/ADC/pack-sense) bottom-left away from the buck (top-left), 4 × M3 NPTH, 3 fiducials, silkscreen labels/polarity/revision/`44 V / 10 A MAX`. Routed with Freerouting and verified by KiCad DRC; results and remaining items are in `DFM_DFA_REPORT.md` and `DRC_REPORT.rpt`.
 
 ## 7. What is not done (fabrication gates)
 See `OSBAMS_Rev2_RELEASE_CANDIDATE_1/PCBWAY_RELEASE_CANDIDATE_REPORT.md`: manufacturer-PDF verification of the critical items (INA228/LMR14006Y/ISO7721/TC74/IRLML0060 pin maps, CP2102N reference design, STM32 I/O types, relay coil data), EB21A-02-C drawing, local ERC/DRC and Gerber regeneration, distributor stock/lifecycle/SKU, PCBWay CPL rotations.

@@ -2,7 +2,7 @@
 	(version 20260306)
 	(generator "eeschema")
 	(generator_version "10.0")
-	(uuid "f250d09d-0701-4ae9-adc2-cf84ff78e5d8")
+	(uuid "c8a34c17-fd79-48f1-a611-203e5d5bd0e4")
 	(paper "A3")
 	(title_block
 		(title "OSBAMS Rev.2 Controller")
@@ -12,6 +12,17 @@
 		(comment 1 "RELEASE CANDIDATE 1 - NOT FOR FABRICATION")
 	)
 	(lib_symbols)
+	(text "Battery discharge current never enters this PCB. 44 V / 10 A MAX. Hierarchical sheets use global labels for cross-sheet nets."
+		(exclude_from_sim no)
+		(at 30 23 0)
+		(effects
+			(font
+				(size 2 2)
+			)
+			(justify left)
+		)
+		(uuid "8a16f510-1a65-4eff-99a3-500ae9f42c43")
+	)
 	(text "OSBAMS Rev.2 Controller - RELEASE CANDIDATE 1 (review only; NOT FOR FABRICATION)"
 		(exclude_from_sim no)
 		(at 30 15 0)
@@ -22,18 +33,7 @@
 			)
 			(justify left)
 		)
-		(uuid "9b92e3e4-7b1b-4792-921c-fdea674175f9")
-	)
-	(text "Battery discharge current never enters this PCB. 44 V / 10 A MAX. Hierarchical sheets use global labels for cross-sheet nets."
-		(exclude_from_sim no)
-		(at 30 23 0)
-		(effects
-			(font
-				(size 2 2)
-			)
-			(justify left)
-		)
-		(uuid "d6071fa2-b6c7-4ed5-a116-8fb17f944ff0")
+		(uuid "c02a738d-405b-4326-80dd-4a5d2db68b77")
 	)
 	(sheet
 		(at 30 40)
@@ -50,7 +50,7 @@
 		(fill
 			(color 0 0 0 0)
 		)
-		(uuid "4fc0e92b-d0d9-4f0d-b9a6-9d5d042f96ad")
+		(uuid "3f46d354-a323-4acc-8be7-f9f5f6ada880")
 		(property "Sheetname" "01_Probe"
 			(at 30 39.3 0)
 			(show_name no)
@@ -75,7 +75,7 @@
 		)
 		(instances
 			(project "OSBAMS_Rev2_TC74_Probe_RC1"
-				(path "/f250d09d-0701-4ae9-adc2-cf84ff78e5d8"
+				(path "/c8a34c17-fd79-48f1-a611-203e5d5bd0e4"
 					(page "2")
 				)
 			)

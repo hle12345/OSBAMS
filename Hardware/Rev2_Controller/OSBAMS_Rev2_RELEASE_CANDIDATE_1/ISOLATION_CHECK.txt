@@ -1,0 +1,11 @@
+OSBAMS Rev.2 RC1.1 - GND vs GND_HOST copper separation (KiCad zone fills, mm)
+  B.Cu    U7 area  min distance 3.0 mm at board (74.5, 31.9)
+  B.Cu    corner   min distance 0.25 mm at board (74.5, 47.5)
+  F.Cu    U7 area  min distance 3.0 mm at board (74.5, 30.2)
+  F.Cu    corner   min distance 0.25 mm at board (74.5, 47.5)
+  In1.Cu  U7 area  min distance 3.0 mm at board (74.5, 31.9)
+  In1.Cu  corner   min distance 0.25 mm at board (74.5, 47.5)
+  In2.Cu  U7 area  min distance 3.0 mm at board (74.5, 31.9)
+  In2.Cu  corner   min distance 0.25 mm at board (74.5, 47.5)
+(ISO7721 area is the isolation boundary: >= 3.0 mm required here; the rest of the island edge only has the 0.25 mm zone clearance)
+nets present on tracks/vias: ['GND', 'GND_HOST'] - DRC checks that no GND item touches a GND_HOST item

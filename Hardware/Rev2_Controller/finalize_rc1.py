@@ -15,6 +15,7 @@ def chroot_steps():
     B.kc(f"cd {W} && python3 -m design.silkfix")
     B.kc(f"cd {W} && python3 -m design.route fill")
     B.drc()
+    open(os.path.join(RC, 'ISOLATION_CHECK.txt'), 'w').write(B.kc(f"cd {W} && python3 -m design.isocheck"))
     B.outputs()
     B.kc(f"cd {W}/OSBAMS_Rev2_RELEASE_CANDIDATE_1 && {B.CLI} sch export netlist --format kicadsexpr -o {W}/build/rc1.net {B.SCH}")
 

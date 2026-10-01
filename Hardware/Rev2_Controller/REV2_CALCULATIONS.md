@@ -110,7 +110,7 @@ Minimum on-time: **TON_MIN = 95 ns** [UR]; fsw 1.785 / 2.100 / 2.415 MHz (min/ty
 
 VIN rating: recommended 4-40 V, absolute max 45 V [UR]; SMBJ15A clamp 24.4 V (+ a 12 V XDR) → margin to 45 V ≈ 20.6 V. 
 Inductor/limits (TI): current limit ≈ 1.2 A typ, max duty ≈ 97 %. 
-Inductor: Bourns SRN6045TA-100M (10 µH; Isat/DCR [UV] to be checked ≥ the buck current limit). Output 2 × 22 µF 10 V 0805 (≈ 50 % DC-bias derating → ≈ 26 µF): ripple ≈ ΔIL/(8 f C) = 0.26 mV + ESR term. Input C1+C2 2 × 10 µF 50 V 1210 + 100 nF at the VIN pin: ripple ≈ I·D(1−D)/(f C) = 2.4 mV at 6 µF effective.
+Inductor: Bourns SRN6045TA-100M (10 µH ±20 %, DCR 52 mΩ typ, Irms 3.20 A typ, Isat 4.60 A typ): Isat is ≈ 3.8× the 1.2 A typical current limit and ≈ 20× the ≈ 0.22 A peak load current → closed (typical values). Output 2 × 22 µF 10 V 0805 (≈ 50 % DC-bias derating → ≈ 26 µF): ripple ≈ ΔIL/(8 f C) = 0.26 mV + ESR term. Input C1+C2 2 × 10 µF 50 V 1210 + 100 nF at the VIN pin: ripple ≈ I·D(1−D)/(f C) = 2.4 mV at 6 µF effective.
 Surge: SMBJ15A clamp 24.4 V [UR] vs LMR14006Y 40 V rating (margin ≈ 15.6 V; abs-max UV). EN: 100 kΩ to +12V (method [UV]).
 
 3V3 load ≈ 40 mA typical (STM32 ~20, INA228 ~1, ISO ~3, pull-ups/LEDs ~15) + 1 mA bleeder; design 150 mA → 12 V input ≈ 45 mA (85 %). 3V3_A: ferrite 600 Ω@100 MHz + 4.7 µF + 100 nF. **Ripple on 3V3 and 3V3_A is measured at first-article bring-up, not computed.**
@@ -129,7 +129,7 @@ Relay (reported): SPST-NO, 12 V coil, ≈1.6 W, DC1 80 A@12 V / 60 A@36 V / 50 A
 Coil data [UR] [UR]: 90 Ω ±10 % at 23 °C → 121-148 mA at 12.0 V; must-operate ≤ 7.2 V, must-release ≥ 1.2 V (23 °C); **maximum allowable coil voltage 17.4 V at 23 °C but only 12.5 V at 85 °C** → the XDR is set to 12.0 V and must never be run at 15 V (the 15 V row above is shown only to document the exclusion). Coil node after D2 (SS14 drop ≈ 0.4 V) with a 12.0 V ± 1 % XDR ≈ 11.7 V: operate margin 7.2 V → 4.5 V, max-allowable margin 12.5 V → 0.8 V at 85 °C [UV: XDR tolerance not read].
 
 
-**Q1 = IRLML0060TRPBF (60 V SOT-23 logic-level)** — RDS(on) is not specified at 3.3 V (manufacturer: ≤ 116 mΩ at 4.5 V, ≤ 92 mΩ at 10 V [UR]; typical output/transfer curves include 2.8-3.5 V but were not available to this build); using a pessimistic placeholder 0.5 Ω [UV]: VDS = 85 mV and P = 14.5 mW at 170 mA. Gate overdrive at 3.3 V × 0.97 with VGS(th) max 2.5 V [UR] is 0.7 V — adequate for a 0.17 A load but **the datasheet output curve at VGS = 3 V must confirm ID ≥ 0.5 A (fabrication gate)**. VDSS 60 V [UR] vs the 24.4 V TVS clamp → margin 35.6 V. Alternates: Diodes DMN6140L-7 (60 V), AOS AO3400A (30 V, 2.5 V-specified).
+**Q1 = IRLML0060TRPBF (60 V SOT-23 logic-level)** — RDS(on) is not specified at 3.3 V (manufacturer: ≤ 116 mΩ at 4.5 V, ≤ 92 mΩ at 10 V [UR]; typical output/transfer curves include 2.8-3.5 V but were not available to this build); using a pessimistic placeholder 0.5 Ω [UV]: VDS = 85 mV and P = 14.5 mW at 170 mA. Gate overdrive at 3.3 V × 0.97 with VGS(th) max 2.5 V [UR] is 0.7 V — adequate for a 0.17 A load but **Infineon's typical curves at VGS 3.0/3.3 V make the load plausible, but RDS(on) is not guaranteed at 3.3 V → first-article VDS / coil-current measurement is the validation item**. VDSS 60 V [UR] vs the 24.4 V TVS clamp → margin 35.6 V. Alternates: Diodes DMN6140L-7 (60 V), AOS AO3400A (30 V, 2.5 V-specified).
 Gate network: 220 Ω in series, 10 kΩ pull-down → default OFF in reset/unpowered/Hi-Z. Flyback: S1M-13-F (1 A 1000 V), cathode on COIL_V; **no fast-release TVS in RC1** (a 27 V TVS would put 12+27 V on the MOSFET).
 Flyback energy ½LI² = 1.78 mJ (L = 0.2 H [UV]); diode-only decay τ = L/R = 2.2 ms (release time to be taken from the relay datasheet).
 
@@ -201,9 +201,22 @@ TC74 on its own I²C2 (PB10/PB11) ≤ 100 kHz, cable ≤ 1.5 m; beyond that stop
 ## 8. Power tree and isolated host supplies
 
 `XDR-75-12 (12.0 V) → J1 → F1 1 A → D2 SS14 → +12V (TVS D1, C1) → [E-stop → ARM → K1 coil → Q1] and [LMR14006Y → 3V3 → ferrite → 3V3_A]`; no 5 V rail. Series Schottky drop ≈ 0.4 V → coil ≈ 11.6 V. Rail ≈ 0.19 A total; F1 1 A.
-ISO7721 has **no isolated power**: VCC1 = +3V3 (100 nF, controller GND); VCC2 = 3V3_HOST from the CP2102N regulator (VREGIN ← USB VBUS), 100 nF, GND_HOST. GND and GND_HOST are never joined (separate copper islands with a 3 mm gap under the isolator). Regulator capability, ISO7721 supply range/ICC and the CP2102N VBUS connection are UNVERIFIED critical items.
+ISO7721 has **no isolated power**: VCC1 = +3V3 (100 nF, controller GND); VCC2 = 3V3_HOST from the CP2102N regulator (VREGIN ← USB VBUS), 100 nF, GND_HOST. GND and GND_HOST are never joined (separate copper islands with a 3 mm gap under the isolator). Regulator capability and the ISO7721 ICC are UNVERIFIED critical items.
+
+**ISO7721 pin map (TI SLLSEP3G Table 5-1, read locally):** 1 VCC1, 2 OUTA, 3 INB, 4 GND1, 5 GND2, 6 OUTB, 7 INA, 8 VCC2. Channel A runs side 2 → side 1 (INA pin 7 ← CP2102N TXD, OUTA pin 2 → STM32 PA3 RX); channel B runs side 1 → side 2 (INB pin 3 ← STM32 PA2 TX, OUTB pin 6 → CP2102N RXD). The ISO7721 (no suffix) default output is HIGH, matching UART idle; supply 2.25-5.5 V on each side. (The RC1 symbol had followed the ISO7720 table — corrected in RC1.1.)
+
+**CP2102N (Silicon Labs datasheet rev. 1.5, read locally):** the bus-powered reference divides VBUS with 22.1 kΩ (upper) and 47.5 kΩ (lower) → R38/R39. VBUS-pin input-high threshold VIH = VIO − 0.6 V, absolute maximum VIO + 2.5 V (5.8 V when VIO > 3.3 V); VIO = VDD = 3V3_HOST (3.1-3.6 V):
+
+| VBUS_USB | VBUS pin | divider current | vs VIH (VDD = 3.3 V → 2.7 V; VDD = 3.6 V → 3.0 V) |
+|---|---|---|---|
+| 4.4 V | 3.00 V | 63 µA | OK (margin +0.00 V at the worst VDD) |
+| 4.75 V | 3.24 V | 68 µA | OK (margin +0.24 V at the worst VDD) |
+| 5.0 V | 3.41 V | 72 µA | OK (margin +0.41 V at the worst VDD) |
+| 5.25 V | 3.58 V | 75 µA | OK (margin +0.58 V at the worst VDD) |
+
+VBUS is detected for VBUS_USB ≥ 3.96 V (VDD 3.3 V) / 4.40 V (VDD 3.6 V worst case — equal to the 4.40 V USB minimum, no margin there; the typical case has ≈ 0.4 V margin); the pin never exceeds 3.58 V (abs max ≥ 5.8 V). Regulator: VREGIN 3.0-5.25 V, VDD 3.1-3.6 V, IREGOUT 100 mA **total including the device** (IDD 9.5-13.7 mA + 0.23 mA USB pull-up + ISO7721 VCC2 ≈ 1-3 mA ≈ 17 mA → ≈ 80 mA margin). Datasheet items added in RC1.1: **1 kΩ RSTb pull-up to VDD (R40)** and **4.7 µF + 0.1 µF at VDD (C22 raised from 1 µF)**. USBLC6-2SC6 ESD protection stays (datasheet recommends USB ESD diodes).
 
 ## 9. Evidence summary
 
-VERIFIED_LOCAL 4 · USER_RELAYED_MANUFACTURER 51 · UNVERIFIED 19 (total 74). Critical entries not yet VERIFIED_LOCAL: **35** — these are fabrication gates, not schematic/layout gates.
+VERIFIED_LOCAL 11 · USER_RELAYED_MANUFACTURER 50 · UNVERIFIED 15 (total 76). Critical entries not yet VERIFIED_LOCAL: **29** — these are fabrication gates, not schematic/layout gates.
 
