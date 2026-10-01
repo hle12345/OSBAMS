@@ -9,3 +9,4 @@ python3 build_sch.py $D/kicad/$N.kicad_sch
 /usr/bin/python3 make_outputs.py $D
 /usr/bin/python3 make_figs.py $D
 python3 voltage_budget.py $D
+python3 rc2_gate.py || true

@@ -1,43 +1,52 @@
 # 5 V distribution voltage-drop budget (RC1.1)
 
-Path: `RSDW40F-05 +VOUT -> PCB copper -> F2 -> J_OUT contacts -> harness -> Pi-end contacts -> Pi 5V pins` and the matching return.
-**Every resistance below is an assumption** (Littelfuse, Molex and Mean Well datasheets were not reachable from the build environment). Replace the values in `tools/pi_display_power/voltage_budget.py` with datasheet/measured numbers and re-run.
+Path: `RSDW40F-05 +VOUT -> PCB copper -> F2 -> J_OUT contacts -> harness -> Pi-end contacts -> Pi 5V pins` and return. 2 contacts paralleled per rail, 16 AWG <=150 mm (x1.2 hot), 2 oz copper from the measured layout.
+Target: **>= 4.85 V at the Pi header at 5 A, worst case** (Pi floor 4.75 V, ceiling 5.25 V).
 
-## Assumptions
+## Inputs and their status (`datasheet_inputs.json`)
 
-- Source: 5.00 V nominal; worst-case low 4.90 V (+-2 % setpoint+regulation, not verified).
-- F2 hot resistance typ/max 8/15 mOhm; J_OUT mated contact 5/10 mOhm; Pi-end 2.54 mm crimp+header 8/20 mOhm per contact.
-- Two contacts in parallel per rail (as specified); wire resistance derated x1.2 for ~50 C.
-- PCB copper (2 oz, 0.246 mOhm/sq): 5 V path ~8.5 squares, GND return ~0.4 squares measured from the RC1.1 layout (RC1 assumed 6+6 mOhm-equivalent).
-- Raspberry Pi 5 input: 5 V nominal; spec floor 4.75 V; low-voltage warning ~4.63 V (verify against Raspberry Pi documentation). Raspberry Pi recommends 5 V/5 A and says to allow for cable/connector loss.
+| Input | Value | Status | Source |
+|---|---|---|---|
+| j_out_contact_max_mohm | 10.0 | UNVERIFIED | Molex Micro-Fit 43045 test summary: 10 mOhm max initial low-level contact resistance (cited by project owner, not independently fetched) |
+| j_out_contact_typ_mohm | 5.0 | UNVERIFIED | ASSUMED (Molex quotes a max only; owner notes measured values include wire resistance) |
+| j_out_rating_a | 8.5 | UNVERIFIED | Molex 43045-0400, 8.5 A max per contact (cited by project owner) |
+| pi_end_contact_max_mohm | 20.0 | UNVERIFIED | ASSUMED - Pi-end is a 2.54 mm crimp terminal, NOT Micro-Fit; needs the chosen terminal's datasheet |
+| pi_end_contact_typ_mohm | 8.0 | UNVERIFIED | ASSUMED |
+| f2_resistance_max_mohm | 15.0 | UNVERIFIED | ASSUMED - need Littelfuse 0451008.MRL cold resistance (and hot/voltage-drop at 5 A) |
+| f2_resistance_typ_mohm | 8.0 | UNVERIFIED | ASSUMED |
+| rsdw_tolerance_pct | 2.0 | UNVERIFIED | ASSUMED +-2 % setpoint+line+load; need RSDW40F-05 datasheet |
+| rsdw_trim_allowed | False | UNVERIFIED | Need Mean Well trim range + formula + resistor topology (R2: TRIM-+VOUT, R3: TRIM--VOUT) |
+| rsdw_trim_max_pct | 0.0 | UNVERIFIED | Need datasheet |
+| rsdw_footprint_drawing | False | UNVERIFIED | Need Mean Well mechanical drawing (body, pin XY, pin dia, drill) |
+| erc_clean_kicad10 | False | UNVERIFIED | Run ERC in KiCad 10 locally |
 
-## Results (voltage at the Pi 5V pins)
+**Clarification on the 20 mOhm:** that figure is the *Pi-end* 2.54 mm crimp terminal + header pin, not Micro-Fit. The Molex 10 mOhm max applies to the J_OUT mating contacts, which RC1.1 already budgeted at 10 mOhm max. The Micro-Fit data therefore does not lower the Pi-end term; it only becomes 10 mOhm if the chosen Pi-end terminal is *specified* at <=10 mOhm (case B). Molex quotes a maximum only, and as you note the measured value includes wire resistance, so the max-stack below is conservative.
 
-| Case | R typ (mOhm) | R max (mOhm) | V@Pi 3 A typ / worst | V@Pi 5 A typ / worst |
+## Results at the Pi 5V pins
+
+| Case | R typ / max (mOhm) | V@Pi 3 A typ / worst | V@Pi 5 A typ / worst | max src (no load) |
 |---|---|---|---|---|
-| RC1: 18 AWG 250 mm, 2+2 Pi pins | 30.4 | 54.4 | 4.91 / 4.74 | 4.85 / 4.63 |
-| RC1.1: 16 AWG 150 mm, 2+2 Pi pins, wide copper | 25.6 | 49.6 | 4.92 / 4.75 | 4.87 / 4.65 |
-| RC1.1 + 4 Pi GND pins (6,9,14,20 via splice) | 23.6 | 44.6 | 4.93 / 4.77 | 4.88 / 4.68 |
-| RC1.1, F2 deleted (NOT recommended w/o protection analysis) | 17.6 | 34.6 | 4.95 / 4.80 | 4.91 / 4.73 |
-| RC1.1 + trim to 5.10 V (only if Mean Well confirms) | 25.6 | 49.6 | 5.02 / 4.85 | 4.97 / 4.75 |
+| A  RC1.1 baseline (16 AWG/150 mm, Pi-end 20 mOhm max, F2 15 max) | 25.6 / 49.6 | 4.92 / 4.75 | 4.87 / 4.65 | 5.10 |
+| B  A + Pi-end terminal <= 10 mOhm (selection requirement) | 25.6 / 39.6 | 4.92 / 4.78 | 4.87 / 4.70 | 5.10 |
+| C  B + F2 <= 8 mOhm (lower-resistance fuse) | 25.6 / 32.6 | 4.92 / 4.80 | 4.87 / 4.74 | 5.10 |
+| D  C + 4 Pi GND pins | 25.6 / 30.1 | 4.92 / 4.81 | 4.87 / 4.75 | 5.10 |
 
-Typ = nominal source and typical resistances. Worst = low source and maximum resistances stacked (deliberately pessimistic corner).
+## Is 4.85 V achievable in the stacked worst case? (setpoint window)
 
-## What each lever buys (RC1.1 baseline, 5 A, worst case)
+| Worst-case R (mOhm) | Setpoint needed for 4.85 V @5 A (worst) | No-load max at that setpoint | Fits <= 5.25 V? |
+|---|---|---|---|
+| A: 49.6 | 5.202 V (+4.0 %) | 5.306 V | NO |
+| B: 39.6 | 5.151 V (+3.0 %) | 5.254 V | NO |
+| C: 32.6 | 5.115 V (+2.3 %) | 5.218 V | yes |
+| D: 30.1 | 5.103 V (+2.1 %) | 5.205 V | yes |
 
-| Change | Saves |
-|---|---|
-| F2 max 15 -> 8 mOhm | 35 mV |
-| J_OUT contact max 10 -> 5 mOhm | 25 mV |
-| Pi-end contact max 20 -> 10 mOhm | 50 mV |
-| Harness 18 AWG/250 mm -> 16 AWG/150 mm | 20 mV |
-| PCB copper RC1 -> RC1.1 | 4 mV |
+With +-2 % source tolerance, a setpoint that gives 4.85 V at 5 A *and* stays <= 5.25 V at no load exists only if worst-case R <= **38.8 mOhm** (non-fuse terms: 34.6 mOhm with a 20 mOhm Pi-end terminal -> F2 <= 4.2 mOhm; 24.6 mOhm with a 10 mOhm Pi-end terminal -> F2 <= 14.2 mOhm). So the Pi-end terminal must be a <=~10 mOhm part and F2 must be a low-resistance part for any trim setting to satisfy both limits.
+Preferred 4.9-5.0 V at 5 A needs either a tighter RSDW tolerance than assumed or lower resistance than any configuration above - to be settled from the RSDW datasheet, not assumed.
 
-## Reading the numbers
-- **Typical case clears 4.85 V at 5 A (4.87 V); the stacked worst case does not (4.65 V, below the 4.75 V floor).** No single lever closes that corner: it needs low-resistance Pi-end contacts (-50 mV), a lower-resistance F2 (-35 mV) and trim together. Treat the worst-case corner as unproven until measured.
-- The two largest terms are the *Pi-end* and J_OUT contacts, not copper or wire.
-- Done in RC1.1, in your order: (1) fuse - kept F2 (see below); (2) 2+2 parallel contacts (unchanged); (3) harness changed to 16 AWG, <=150 mm; (4) PCB copper re-laid with wide pours (~5 mm bars, GND return through a full-width plane) - small gain; (5) trim *not* applied, but DNP pads R2/R3 added so a trim network can be fitted without a respin once Mean Well's trim formula and range are confirmed.
-- **F2:** no lower-resistance 8 A Nano2 alternative can be selected without the Littelfuse datasheet. F2 is *not* removed. Its job is to protect the harness/connector if U1 fails short or its overload limit is higher than assumed; an 18 AWG or 16 AWG short run tolerates 8 A, so the fuse is protecting against >8 A fault current that U1's own limiting should already cap. Removal is a protection-analysis decision for you, not a voltage-margin shortcut.
-- **Biggest lever that needs no new board:** choose Pi-end terminals/housing with low contact resistance (measure them), and keep +5 V on both Pi 5V pins (2,4). Adding GND pins (6,9,14,20) via a splice is shown as an option; it helps the return only.
-- **Trim:** if Mean Well confirms the RSDW trim range, +2 % (5.10 V) gives ~4.97 V typical and ~4.75 V stacked-worst-case at 5 A (still marginal); no-load worst-case source is ~5.00 x 1.02 x 1.02 = ~5.20 V (< 5.25 V). Do not fit R2/R3 until the formula is confirmed - a wrong value could over-volt the Pi.
-- **Gate:** a bench measurement *at the Pi header pins* under real Pi 5 + Waveshare load (and a stress test at 5 A) is still required before release.
+## What must be verified before RC2 (blocking)
+
+1. F2 exact cold resistance and 5 A voltage drop - Littelfuse 0451008.MRL datasheet; if it exceeds the F2 limit above, choose a lower-resistance suitable Nano2 (keep over-current protection; the 451/453 family goes to 20 A) and re-check I2t/ratings against U1's overload limit.
+2. RSDW40F-05 setpoint tolerance, trim range, formula and resistor topology (which of R2/R3, value) - Mean Well datasheet. Use trim only if explicitly permitted; R2/R3 stay DNP.
+3. RSDW40F-05 mechanical drawing -> U1 footprint.
+4. Pi-end terminal contact resistance (<=10 mOhm class selection) and a measured harness.
+5. Bench: voltage at the Pi header under real Pi 5 + Waveshare load.

@@ -1,0 +1,15 @@
+{
+  "_readme": "Fill 'value' from the cited datasheet and set verified=true. voltage_budget.py and rc2_gate.py read this file. Nothing here is verified by the build environment (manufacturer sites are blocked).",
+  "j_out_contact_max_mohm":   {"value": 10.0, "verified": false, "source": "Molex Micro-Fit 43045 test summary: 10 mOhm max initial low-level contact resistance (cited by project owner, not independently fetched)"},
+  "j_out_contact_typ_mohm":   {"value": 5.0,  "verified": false, "source": "ASSUMED (Molex quotes a max only; owner notes measured values include wire resistance)"},
+  "j_out_rating_a":           {"value": 8.5,  "verified": false, "source": "Molex 43045-0400, 8.5 A max per contact (cited by project owner)"},
+  "pi_end_contact_max_mohm":  {"value": 20.0, "verified": false, "source": "ASSUMED - Pi-end is a 2.54 mm crimp terminal, NOT Micro-Fit; needs the chosen terminal's datasheet"},
+  "pi_end_contact_typ_mohm":  {"value": 8.0,  "verified": false, "source": "ASSUMED"},
+  "f2_resistance_max_mohm":   {"value": 15.0, "verified": false, "source": "ASSUMED - need Littelfuse 0451008.MRL cold resistance (and hot/voltage-drop at 5 A)"},
+  "f2_resistance_typ_mohm":   {"value": 8.0,  "verified": false, "source": "ASSUMED"},
+  "rsdw_tolerance_pct":       {"value": 2.0,  "verified": false, "source": "ASSUMED +-2 % setpoint+line+load; need RSDW40F-05 datasheet"},
+  "rsdw_trim_allowed":        {"value": false, "verified": false, "source": "Need Mean Well trim range + formula + resistor topology (R2: TRIM-+VOUT, R3: TRIM--VOUT)"},
+  "rsdw_trim_max_pct":        {"value": 0.0,  "verified": false, "source": "Need datasheet"},
+  "rsdw_footprint_drawing":   {"value": false, "verified": false, "source": "Need Mean Well mechanical drawing (body, pin XY, pin dia, drill)"},
+  "erc_clean_kicad10":        {"value": false, "verified": false, "source": "Run ERC in KiCad 10 locally"}
+}

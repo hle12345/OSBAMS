@@ -12,7 +12,7 @@ No STM32, ADC, INA228, relay or safety logic on this board. `PI_GND` is **not** 
 
 | # | Gate | State |
 |---|------|-------|
-| 1 | **5 V voltage-drop budget** meets target at the Pi pins | **OPEN** — typical 4.87 V @ 5 A, stacked worst case 4.65 V (assumed resistances). No single lever closes it; see `docs/Voltage_drop_budget.md`. Needs datasheet values (F2, Micro-Fit, Pi-end terminals) and a decision on trim. |
+| 1 | **5 V voltage-drop budget** ≥ 4.85 V at the Pi header @ 5 A worst case | **OPEN** — typical 4.87 V; stacked worst case 4.65 V (baseline) → 4.74 V with a ≤10 mΩ Pi-end terminal + ≤8 mΩ F2. Reaching 4.85 V needs trim (+2.3 %) *and* those parts, and only fits under 5.25 V if worst-case path R ≤ 38.8 mΩ. Inputs in `tools/pi_display_power/datasheet_inputs.json` are still unverified; `rc2_gate.py` blocks RC2 until they are. |
 | 2 | RSDW40F-05 footprint verified against Mean Well drawing | **OPEN / BLOCKER** — still placeholder geometry (50.8×25.4 mm body, 6 pins at module ends, 5.08 mm pitch). Mean Well and every datasheet mirror tried were blocked. Supply the mechanical drawing (or pin X/Y, drill, body size) and it drops into `build_pcb.py`. |
 | 3 | Other footprints (Molex 43045-0400/-0200, Nano2 0451, SMB, radial caps, passives) | **LIBRARY-SOURCED, not manufacturer-PDF-verified** — official KiCad library, which cites the Molex/Littelfuse datasheets, incl. Micro-Fit pegs/drills. Cross-check against the Molex drawing before release. |
 | 4 | Molex mating parts (43025 housings, 43030 terminals, wire gauge) | **OPEN** — candidates only |
@@ -36,3 +36,6 @@ No STM32, ADC, INA228, relay or safety logic on this board. `PI_GND` is **not** 
 Y capacitor: not fitted (decision: keep isolation clean unless EMC testing gives a reason).
 Board: 100 × 70 mm, 2-layer, 1.6 mm, 2 oz Cu (stackup in PCB file), ENIG, 4× M3, 3 fiducials.
 Regenerate: `tools/pi_display_power/build_all.sh`.
+
+## RC2 gate
+`python3 tools/pi_display_power/rc2_gate.py` lists exactly which datasheet inputs (F2 resistance, RSDW tolerance/trim/formula, RSDW drawing, Pi-end terminal, KiCad 10 ERC) are still unverified. RC2 is generated only when it reports CLEAR. R2/R3 stay DNP until the trim formula is verified.
