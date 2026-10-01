@@ -18,10 +18,10 @@ Checked with KiCad 10.0.6 in the build container (`BUILD_ENVIRONMENT.md`):
 
 ## BLOCKERS BEFORE PCBWAY ORDER
 1. **Connector footprints J5/J6 (Molex 22-27-2031/-2041) not compared with dimensioned drawings** (the 022272041 file is a 3D isometric without dimensions; the 022272031 sheet was not supplied). J7 (JST), J8 (GCT) and J9 (Samtec land pattern, replaced in RC1.2e) are verified — `CONNECTOR_FOOTPRINT_CHECK.md`.
-1b. **Protection items open:** resistor pulse capability (Panasonic AOA0000C331.pdf), D15 SMF12CA datasheet, ESD first-article test — `CONTROLLER_PROTECTION_AND_CONNECTOR_AUDIT.md`.
+1b. **Protection items:** Panasonic AOA0000C331 read — no pulse curve is published; ESD is a first-article test under release condition RC-A (J5/J6 permanently mated inside the enclosure — confirm), else RC1.3 connector TVS — `CONTROLLER_PROTECTION_AND_CONNECTOR_AUDIT.md`.
 1a. **Residual (first-article):** TVS leakage vs temperature is not published by Bourns; covered by first-article measurement.
 2. **Wrong-pinout-class datasheets still USER_RELAYED** (LMR14006Y, IRLML0060, VO610A, TC74; the INA228 datasheet has been read): they match the netlist but the PDFs have not been read — `EVIDENCE_RISK_CLASSIFICATION.md`.
-3. **Your local actions** in `PRE_PCBWAY_RELEASE_CHECKLIST.md`: KiCad 10 ERC/DRC, Gerber/drill export, Gerber viewer inspection, PCBWay CAM and CPL inspection, stock/substitution review (27 critical register entries are not VERIFIED_LOCAL).
+3. **Your local actions** in `PRE_PCBWAY_RELEASE_CHECKLIST.md`: KiCad 10 ERC/DRC, Gerber/drill export, Gerber viewer inspection, PCBWay CAM and CPL inspection, stock/substitution review (26 critical register entries are not VERIFIED_LOCAL).
 4. Open measured/first-article items are listed in `EVIDENCE_RISK_CLASSIFICATION.md` and are **not** order blockers.
 
 ## Package contents

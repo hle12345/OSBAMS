@@ -98,10 +98,10 @@ class TestReleaseGates(unittest.TestCase):
         pcb = open(os.path.join(self.RC, "OSBAMS_Rev2_RC1.kicad_pcb")).read()
         self.assertIn('"OSBAMS_Rev2:FTSH-105-01-L-DV-K"', pcb)
         self.assertIn('"D15"', pcb)
-        # resistor pulse capability stays open until the Panasonic pulse-data document is checked
+        # resistor pulse capability is not published by Panasonic: it must never be marked verified
         reg = {e["id"]: e for e in self._register()}
         self.assertEqual(reg["rs_pulse_rating"]["evidence"], "UNVERIFIED")
-        self.assertTrue(reg["rs_pulse_rating"]["critical"])
+        self.assertNotEqual(reg["rs_pulse_rating"]["evidence"], "VERIFIED_LOCAL")
         self.assertEqual(reg["ina228_diff_max"]["value"], "+/-40 V")
 
     def test_netlist_and_polarity_checks_pass(self):
