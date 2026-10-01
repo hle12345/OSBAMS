@@ -13,7 +13,7 @@ Power path (from `Documentation/HARDWARE_DESIGN.md`):
 | Component | Voltage rating | Current rating | Power / thermal constraint | Verified source | System constraint |
 |---|---|---|---|---|---|
 | 6060B electronic load | 3–60 V input | 60 A | 300 W total; `I_max = min(60, 300/V)` | Project owner, from manufacturer envelope | 60 A only at ≤ 5 V; 7.14 A at 42 V |
-| Shunt RS1 (Rev.1: RSA-20-50, 2.5 mΩ) | n/a (sense element) | **20 A / 50 mV** | 20 A² × 2.5 mΩ = 1.0 W at rating | Repo (`app_config.h`, `HARDWARE_DESIGN.md`) | **Hard cap 20 A** — firmware trip 18.5 A; operating limit 10 A |
+| Shunt RS1 (Rev.1: RSA-20-50, 2.5 mΩ) | n/a (sense element) | **20 A / 50 mV** | 20 A² × 2.5 mΩ = 1.0 W at rating | Repo (`app_config.h`, `HARDWARE_DESIGN.md`) | **Hard cap 20 A** — firmware trip 18.5 A (protection); operating ceiling 10 A |
 | INA228 (U2) | Bus 0–85 V; covers 60 V | n/a (set by shunt) | Shunt input ±163.84 mV (ADCRANGE 0) | Repo + INA228 datasheet (range figures as used in `ina228.c`) | Not the limit: 85 V > 60 V. Current range is set by the shunt |
 | Current-scale register | — | `OSBAMS_INA228_IMAX_MA` = 30 A | digital scale only | Repo (`app_config.h`) | Above shunt rating on purpose; not a capability |
 | Fuse F1 | "58 V DC" noted | **NOT SPECIFIED** | needs DC interrupt rating ≥ 60 V and ≥ prospective pack short-circuit current | Repo notes only; part not chosen | Unspecified → cannot support any claim; sized to operating limit |
@@ -54,21 +54,15 @@ covers 100 % of them.** More than 10 A only becomes reachable for packs at
 redesign therefore buys capability for 12 V/24 V packs and single-cell /
 low-voltage work — not for the scooter batteries.
 
-## 3. Hardware changes needed to exploit more of the 6060B
+## 3. Future optimization — lower-voltage packs only (not planned now)
 
-Needed only if testing > 10 A at low voltage is wanted. **Do not raise
-`SAFETY_MAX_CURRENT_A` before all of these are built and verified.**
-
-1. **Shunt/sensor** — replace the 20 A shunt (see `CURRENT_SENSING_REDESIGN.md`).
-2. **Contactor** — DC-rated for ≥ 60 V at the target current, with published DC breaking rating (also needed for the 60 V claim at any current).
-3. **Fuse** — DC-rated ≥ 60 V, interrupt rating above prospective short-circuit current of the largest allowed pack, sized below the wire limit.
-4. **Wiring and lugs** — gauge for the target current with voltage-drop budget to the sense point; specify crimp/torque.
-5. **Disconnect SW1** — confirm continuous and DC-break ratings.
-6. **Connector** — keep XT30/XT60/XT90 adapters, but derate and label the permitted current from the profile, never from the plug.
-7. **Power path off the PCB** — bus bar/cable with off-board Kelvin-sensed shunt; PCB carries sense and logic only.
-8. **Thermal** — shunt and connector temperature sensing, stop on limit.
-9. **Re-run the E-stop/contactor timing and fault-injection validation** (`PHYSICAL_VALIDATION_PLAN.md`) after any change.
-
-Once changed and validated, record the new component limits in
-`equipment.capability.PowerPathLimits` — the model then caps current
-automatically.
+The existing ~20 A measurement path is **kept**. It already exceeds what any
+36–42 V pack can draw under the 6060B's 300 W limit, and the OSBAMS ceiling
+stays at 10 A provisionally. Raising it is only worthwhile for packs at ≤ 30 V
+and would require, in this order: a higher-range shunt/sensor
+(`CURRENT_SENSING_REDESIGN.md`), a DC-rated contactor, a DC-rated fuse sized
+below the wire limit, wiring/lugs and connector review, an off-PCB power path,
+shunt/connector thermal sensing, and re-running the contactor/E-stop timing
+tests. **Do not raise `SAFETY_MAX_CURRENT_A` before all of that is built and verified.**
+Record any new component limit in `equipment.capability.PowerPathLimits` and the
+model caps current automatically.

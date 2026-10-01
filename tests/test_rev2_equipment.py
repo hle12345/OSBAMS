@@ -8,6 +8,11 @@ from equipment import capability as cap
 from equipment.drivers import (Keysight6060B, Manual6060B, Simulator6060B,
                                InterfaceBlocked, CommandNotVerified, create_load)
 from equipment.drivers.keysight_6060b import ScriptedTransport
+from equipment.drivers.keysight_6060b import commands as kc
+
+# TEST HOOK: pretend every command were VERIFIED so the driver logic can be
+# exercised. Production status lives in commands.py (all UNVERIFIED today).
+ALL_VERIFIED = {k: kc.VERIFIED for k in kc.COMMANDS}
 
 
 class TestCapability(unittest.TestCase):
@@ -64,10 +69,10 @@ class TestCapability(unittest.TestCase):
 
     def test_ui_rows(self):
         labels = [k for k, _ in cap.compute_permitted_current(42.0, 5.0).rows()]
-        self.assertEqual(labels, [
-            "Battery voltage", "Battery profile current limit",
-            "OSBAMS hardware current limit", "6060B current limit",
-            "6060B power-derived limit (300 W / V)", "FINAL PERMITTED CURRENT"])
+        for want in ("Battery", "6060B current rating", "6060B power-derived limit",
+                     "OSBAMS validated limit", "Battery-profile limit",
+                     "FINAL PERMITTED", "Limiting factor"):
+            self.assertIn(want, labels)
 
     def test_remote_control_blocked_constant(self):
         self.assertEqual(cap.REMOTE_CONTROL_STATUS, "BLOCKED_BY_INTERFACE_CONFIRMATION")
@@ -156,6 +161,7 @@ class TestKeysight(unittest.TestCase):
         t = ScriptedTransport({"*IDN?": self.IDN, "MEAS:VOLT?": "42.0",
                                "MEAS:CURR?": "0.0", "MEAS:POW?": "0.0",
                                "SYST:ERR?": "0,No error"})
+        kw.setdefault("evidence", ALL_VERIFIED)
         d = Keysight6060B(transport=t, interface_confirmed=True, **kw)
         return d, t
 
@@ -169,8 +175,9 @@ class TestKeysight(unittest.TestCase):
         self.assertIn("6060B", d.identify())
 
     def test_rejects_wrong_instrument(self):
-        t = ScriptedTransport({"*IDN?": "OWON,OEL1515,0,1"})
-        self.assertFalse(Keysight6060B(transport=t, interface_confirmed=True).connect())
+        t = ScriptedTransport({"*IDN?": "SOME,OTHER,0,1"})
+        self.assertFalse(Keysight6060B(transport=t, interface_confirmed=True,
+                                       evidence=ALL_VERIFIED).connect())
 
     def test_envelope_checked_before_any_write(self):
         d, t = self.make(); d.connect()
@@ -188,18 +195,55 @@ class TestKeysight(unittest.TestCase):
         with self.assertRaises(cap.EnvelopeViolation):
             d.set_cc(8.0)                             # OK at 36 V (8.33 A) but not at OCV
 
-    def test_unverified_commands_blocked_by_default(self):
-        d, t = self.make(); d.connect()
+    def test_every_remote_operation_blocked_today(self):
+        """Nothing is VERIFIED yet (manuals unreadable at build time) => nothing runs."""
+        self.assertFalse(any(c.status == kc.VERIFIED for c in kc.COMMANDS.values()))
+        for op in kc.OPERATIONS:
+            self.assertFalse(kc.operation_enabled(op), op)
+        t = ScriptedTransport({"*IDN?": self.IDN})
+        d = Keysight6060B(transport=t, interface_confirmed=True)
+        with self.assertRaises(CommandNotVerified):
+            d.connect()
+        self.assertEqual(t.log, [])                     # nothing was sent
+
+    def test_operation_needs_every_command_verified(self):
+        ev = {"mode_cc": kc.VERIFIED}                   # "current" still UNVERIFIED
+        d, t = self.make(evidence=ev); d._connected = True
+        d._t = t; d.set_pack_voltage(42.0)
+        with self.assertRaises(CommandNotVerified):
+            d.set_cc(3.0)
+        self.assertEqual(t.writes, [])
+        ev["current"] = kc.VERIFIED
+        d.set_cc(3.0)
+        self.assertEqual(t.writes[-2:], ["MODE CURR", "CURR 3.0000"])
+
+    def test_operations_cover_driver_api(self):
+        for op in ("connect", "identify", "set_cc", "set_cv", "set_cr", "set_current",
+                   "set_voltage", "set_resistance", "input_on", "input_off",
+                   "measure_voltage", "measure_current", "measure_power",
+                   "configure_transient", "trigger_transient", "read_status",
+                   "read_errors", "local", "remote"):
+            self.assertIn(op, kc.OPERATIONS)
+            self.assertTrue(all(k in kc.COMMANDS for k in kc.OPERATIONS[op]))
+
+    def test_evidence_table_columns_and_rule(self):
+        rows = kc.evidence_rows()
+        self.assertEqual(len(rows), len(kc.OPERATIONS))
+        for op, cmd, doc, section, status in rows:
+            self.assertIn(status, (kc.VERIFIED, kc.UNVERIFIED))
+            if status == kc.VERIFIED:                   # cannot claim without a page reference
+                self.assertNotIn(kc.NOT_LOCATED, section)
+        for c in kc.COMMANDS.values():
+            if c.status == kc.VERIFIED:
+                self.assertRegex(c.section, r"p\.?\s*\d+")
+            self.assertIn(c.document, (kc.PRG, kc.OPM))
+
+    def test_unverified_set_cr_blocked_without_writes(self):
+        d, t = self.make(evidence={}); d._connected = True; d._t = t
+        d.set_pack_voltage(42.0)
         with self.assertRaises(CommandNotVerified):
             d.set_cr(10.0)
-        with self.assertRaises(CommandNotVerified):
-            d.set_cv(40.0, 1.0)
-        self.assertFalse(any(w.startswith(("RES", "VOLT", "MODE RES", "MODE VOLT")) for w in t.writes))
-
-    def test_unverified_allowed_when_opted_in(self):
-        d, t = self.make(allow_unverified=True); d.connect()
-        d.set_cr(10.0)
-        self.assertIn("MODE RES", t.writes)
+        self.assertEqual(t.writes, [])
 
     def test_input_on_off_and_measure(self):
         d, t = self.make(); d.connect()
@@ -208,7 +252,7 @@ class TestKeysight(unittest.TestCase):
         self.assertEqual(d.measure_voltage(), 42.0)
 
     def test_transient_checks_both_levels(self):
-        d, t = self.make(allow_unverified=True); d.connect()
+        d, t = self.make(); d.connect()
         with self.assertRaises(cap.EnvelopeViolation):
             d.configure_transient(1.0, 9.0, 100.0)
         d.configure_transient(1.0, 5.0, 100.0)
@@ -221,11 +265,6 @@ class TestKeysight(unittest.TestCase):
     def test_disconnect_turns_input_off_and_local(self):
         d, t = self.make(); d.connect(); d.disconnect()
         self.assertIn("INP OFF", t.writes); self.assertTrue(t.local_called)
-
-    def test_every_command_has_status(self):
-        from equipment.drivers.keysight_6060b.commands import COMMANDS, TRUSTED, UNVERIFIED
-        for k, c in COMMANDS.items():
-            self.assertTrue(c.status in TRUSTED or c.status == UNVERIFIED, k)
 
     def test_factory_has_only_rev2_loads(self):
         self.assertIsInstance(create_load("manual"), Manual6060B)
@@ -286,7 +325,8 @@ class TestProfilesAndRecords(unittest.TestCase):
         from services.learning_mode import power_limit_lesson, LESSONS
         txt = power_limit_lesson(42.0)
         self.assertIn("300 / 42 = 7.14 A", txt)
-        self.assertIn("FINAL PERMITTED CURRENT", txt)
+        self.assertIn("FINAL PERMITTED", txt)
+        self.assertIn("Limiting factor", txt)
         self.assertTrue(any("60 A" in t for t, _ in LESSONS))
 
 
@@ -315,6 +355,55 @@ class TestNoLegacyDependencies(unittest.TestCase):
         drv = os.path.join(ROOT, "desktop", "equipment", "drivers")
         found = [f for f in os.listdir(drv) if any(n in f.lower() for n in names)]
         self.assertEqual(found, [])
+
+
+class TestValidationWorkflowAndDocs(unittest.TestCase):
+    def test_all_steps_not_run_and_ordered(self):
+        from equipment import validation as v
+        ids = [s.id for s in v.STEPS]
+        self.assertEqual(len(ids), len(set(ids)))
+        log = v.ValidationLog()
+        self.assertTrue(all(r.status == v.NOT_RUN for r in log.records.values()))
+        self.assertEqual(log.next_step().id, "A1")
+        for s in v.STEPS:                        # prerequisites always come earlier
+            for dep in [d.strip() for d in s.blocked_by.split(",") if d.strip()]:
+                self.assertLess(ids.index(dep), ids.index(s.id), s.id)
+
+    def test_cannot_claim_validated(self):
+        from equipment import validation as v
+        self.assertNotIn("BENCH_TESTED", v.STATUSES)
+        self.assertNotIn("HARDWARE_VALIDATED", v.STATUSES)
+        log = v.ValidationLog()
+        with self.assertRaises(ValueError):
+            log.record("B2", v.PASS, "jl", data_location="x")      # A1 not PASS yet
+        log.record("A1", v.PASS, "jl", data_location="notebook p1")
+        log.record("B2", v.PASS, "jl", data_location="records/b2.csv")
+        with self.assertRaises(ValueError):
+            log.record("B3", v.PASS, "", data_location="x")        # needs operator
+        with self.assertRaises(ValueError):
+            log.record("B4", "BENCH_TESTED", "jl")
+
+    def test_equipment_roles_in_workflow(self):
+        from equipment import validation as v
+        text = " ".join(s.equipment + s.procedure for s in v.STEPS)
+        for name in ("EDU36311A", "EDU34450A", "EDUX1052G", "AD2", "6060B"):
+            self.assertIn(name, text)
+
+    def test_generated_docs_in_sync(self):
+        sys.path.insert(0, os.path.join(ROOT, "tools"))
+        import gen_rev2_docs as g
+        for name, text in (("6060B_COMMAND_EVIDENCE.md", g.evidence_md()),
+                           ("BENCH_CHECKLIST.md", g.checklist_md())):
+            on_disk = open(os.path.join(ROOT, "docs", "rev2", name)).read()
+            self.assertEqual(on_disk.strip(), text.strip(), f"{name} stale: run tools/gen_rev2_docs.py")
+
+    def test_inventory_models_populated_ids_unknown(self):
+        from equipment.inventory import SFSU_EQUIPMENT, UNKNOWN
+        for k in ("6060B", "EDU34450A", "EDU36311A", "EDUX1052G", "EDU33212A", "AD2", "HANDHELD_DMM"):
+            i = SFSU_EQUIPMENT[k]
+            self.assertNotEqual(i.model, UNKNOWN)
+            self.assertEqual((i.asset_id, i.calibration_status, i.serial_number),
+                             (UNKNOWN, UNKNOWN, UNKNOWN), k)
 
 
 if __name__ == "__main__":

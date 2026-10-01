@@ -21,6 +21,12 @@ not a 90 A test. Every load command is checked by `desktop/equipment/capability.
 Dat Bike / 72 V, 100 V, 150 V, 500 V, EV modules/packs, regenerative cyclers.
 Removed: OWON load (archived under `legacy/rev1/`), ITECH, Bitrode, Arbin, Chroma, Digatron.
 
+## Test orchestrator and dashboard
+`services/test_orchestrator.py`: Capacity (`PROFILE → OCV → READY → CC discharge → cutoff → load OFF verified → recovery → results`) and a separate DCIR current-step test. The dashboard shows the live permitted-current breakdown and drives a *manual* 6060B (operator sets/enables the load; OSBAMS verifies from measurements). Hard invariant: commanded current × conservative pack voltage ≤ 300 W; sag never raises current.
+
+## Bench work
+`docs/rev2/BENCH_CHECKLIST.md` — the exact physical tests, in order. `docs/rev2/6060B_COMMAND_EVIDENCE.md` — remote-control command evidence (nothing VERIFIED yet).
+
 ## Layout
 - `desktop/` — Python application (`equipment/`, `services/`, `db/`, `gui/`)
 - `Firmware/` — STM32 firmware + host C tests
@@ -31,7 +37,7 @@ Removed: OWON load (archived under `legacy/rev1/`), ITECH, Bitrode, Arbin, Chrom
 ## Run the tests
 ```
 pip install pytest numpy scikit-learn
-python3 -m pytest tests
+python3 -m pytest tests          # also: pyserial PySide6 pyqtgraph; QT_QPA_PLATFORM=offscreen
 make -C Firmware/Tests run
 ```
 Learning Mode demo: `cd desktop && python3 -m services.learning_mode`.

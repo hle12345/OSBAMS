@@ -33,11 +33,31 @@ desktop/gui/limit_panel.py   the permitted-current panel (PySide6)
 legacy/rev1/         archived Rev.1 load code (nothing may import it)
 ```
 
+## Test orchestrator (`services/test_orchestrator.py`)
+```
+Capacity: PROFILE -> OCV -> READY -> CC DISCHARGE (V/I/P/T, Ah/Wh) -> profile CUTOFF
+          -> LOAD OFF (verified from measured current) -> RECOVERY -> COMPLETE
+DCIR:     PROFILE -> OCV -> READY -> STEP I1 -> STEP I2 ... -> LOAD OFF -> RECOVERY -> COMPLETE
+```
+Push-based (`on_sample`), fed by the STM32/INA228 stream, the simulator or a bench;
+timing comes from sample timestamps. FAULT paths always turn the load off and
+verify it. Dashboard: permitted-current panel + phase/confirm controls
+(`gui/tabs/dashboard_tab.py`), results saved with `services/run_persistence.py`.
+
+## Layered limit model
+Firmware hard trip 18.5 A (absolute protection) > OSBAMS operating ceiling 10 A
+(provisional) > 6060B `min(60 A, 300 W/V)` > battery profile. Commanded maximum =
+min of the *operating* layers; the firmware trip is deliberately not an input.
+Hard invariant: `commanded current x conservative pack voltage <= 300 W`, where the
+conservative voltage is `max(OCV, highest seen)` and never decreases — sag cannot
+raise current mid-test. `tests/test_protocol.py` checks the firmware trip mirrors
+`config.FIRMWARE_HARD_TRIP_*` exactly and that the operating limits sit below it.
+
 ## Rules enforced in code (tests: `tests/test_rev2_equipment.py`)
 - Every load command passes `check_load_command` (V ≤ 60, ≥ 3; I ≤ 60; V·I ≤ 300 W; profile/OSBAMS/component limits) **before** any write.
 - Power check uses the highest known pack voltage (OCV vs live) — a sagged reading cannot relax the limit.
 - CV mode requires a stated maximum expected current; CR is checked at I = V/R.
-- `Keysight6060B.connect()` raises `InterfaceBlocked` unless `interface_confirmed=True`; unverified SCPI is blocked by default.
+- `Keysight6060B.connect()` raises `InterfaceBlocked` unless `interface_confirmed=True`; an operation runs only if every command it needs is VERIFIED against the official manuals (`6060B_COMMAND_EVIDENCE.md`) — none are today, so remote control is blocked twice over.
 - No global minimum battery voltage: cutoff is per profile.
 - Active loads: Keysight6060B, Manual6060B, Simulator6060B only. OWON/ITECH/Bitrode/Arbin/Chroma/Digatron are absent and tested absent.
 
@@ -48,11 +68,9 @@ BMS abstraction (`SMART_PACK_UNSUPPORTED` for unknown packs; never bypass BMS
 protection).
 
 ## Known gaps (honest status)
-- 6060B remote control blocked: no confirmed GPIB path; official programming
-  manual not retrievable at build time ⇒ only a subset of commands enabled.
-- Test modes OCV/CC capacity/DCIR/sag/recovery/thermal/transient have
-  simulator and data-model support; **no physical validation has been run.**
-- A DCIR-step / SOH test orchestrator using the new drivers is not yet wired into the dashboard.
-- `limit_panel.py` is not yet embedded in the dashboard and was not run
-  (no display libraries in the build container).
+- 6060B remote control: no confirmed GPIB path, and no command is VERIFIED
+  (www.keysight.com is blocked from the build environment; the two official manuals were not readable).
+- Orchestrator and dashboard are host/simulator-tested only (offscreen Qt); **no physical validation has been run** — see `BENCH_CHECKLIST.md`.
+- The dashboard drives a *manual* 6060B: the operator sets/enables/disables the load; the orchestrator verifies from measurements.
 - Firmware limits (18.5 A trip, 60 °C, 30/44 V defaults) are Rev.1 defaults, unchanged.
+- Current-sensing redesign deliberately deferred (`CURRENT_SENSING_REDESIGN.md`).

@@ -75,3 +75,38 @@ PROFILES = {
 
 def get_profile(key: str) -> BatteryProfile:
     return PROFILES[key]
+
+
+def profile_from_battery(batt: dict) -> BatteryProfile:
+    """
+    Resolve the profile for a registry row. A known SFSU profile is used when
+    the model matches; otherwise a conservative profile is derived from the
+    nameplate: recommended 0.2 C, ceiling 0.5 C (both still capped by the
+    6060B / OSBAMS limits at run time). Missing fields raise ValueError.
+    """
+    model = (batt.get("model") or "").strip().lower()
+    for p in PROFILES.values():
+        if model and model == p.model.lower():
+            return p
+    try:
+        ah = float(batt["capacity_rated_ah"])
+        vmax = float(batt["max_charge_voltage"])
+        vnom = float(batt["nominal_voltage"])
+    except (KeyError, TypeError, ValueError):
+        raise ValueError("battery needs nominal voltage, max charge voltage and "
+                         "rated Ah to build a test profile")
+    cutoff = batt.get("cutoff_voltage")
+    if not cutoff:
+        raise ValueError("battery has no cutoff voltage — set one in the registry "
+                         "(cutoff is profile-specific; there is no global default)")
+    wh = batt.get("energy_rated_wh") or ah * vnom
+    return BatteryProfile(
+        key=f"registry_{batt.get('osbams_id', 'unknown')}",
+        manufacturer=batt.get("brand") or batt.get("manufacturer") or "unknown",
+        model=batt.get("model") or "unknown", chemistry=batt.get("chemistry") or "unknown",
+        nominal_voltage_v=vnom, maximum_voltage_v=vmax, cutoff_voltage_v=float(cutoff),
+        rated_ah=ah, rated_wh=float(wh),
+        recommended_test_current_a=max(0.1, round(0.2 * ah, 2)),
+        maximum_osbams_test_current_a=max(0.2, round(0.5 * ah, 2)),
+        connector="unspecified", temp_min_c=0.0, temp_max_c=50.0,
+        bms_behavior=batt.get("bms_led_status") or "unknown")

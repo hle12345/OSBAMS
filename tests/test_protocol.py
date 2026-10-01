@@ -197,17 +197,20 @@ class TestConfigSync(unittest.TestCase):
     def test_safety_limits_match(self):
         import config
         c = self._c_defines()
-        # Desktop operating limits sit AT OR BELOW the firmware hard trips:
-        # the desktop stops a test first, the firmware is the backstop.
-        self.assertGreaterEqual(c["OSBAMS_DEFAULT_MAX_TEMP_C10"],
-                                int(config.SAFETY_MAX_TEMP_C * 10))
+        # Layered model: firmware hard trip (absolute protection boundary)
+        # mirrors exactly; the desktop operating ceiling is a DIFFERENT,
+        # lower number and must stay strictly below the trip.
+        self.assertEqual(c["OSBAMS_DEFAULT_MAX_CURRENT_MA"],
+                         int(config.FIRMWARE_HARD_TRIP_A * 1000))
+        self.assertEqual(c["OSBAMS_DEFAULT_MAX_TEMP_C10"],
+                         int(config.FIRMWARE_HARD_TRIP_TEMP_C * 10))
+        self.assertLess(config.SAFETY_MAX_CURRENT_A, config.FIRMWARE_HARD_TRIP_A)
+        self.assertLess(config.SAFETY_MAX_TEMP_C, config.FIRMWARE_HARD_TRIP_TEMP_C)
         # Rev.2: there is NO global minimum battery voltage. Cutoff is
         # profile-specific (services/battery_profiles.py). The firmware
         # constants are only the power-on defaults before a profile is loaded.
         self.assertFalse(hasattr(config, "SAFETY_MIN_VOLTAGE_MV"))
         self.assertFalse(hasattr(config, "SAFETY_MAX_VOLTAGE_MV"))
-        self.assertGreaterEqual(c["OSBAMS_DEFAULT_MAX_CURRENT_MA"],
-                                int(config.SAFETY_MAX_CURRENT_A * 1000))
 
     def test_sample_period_matches(self):
         import config

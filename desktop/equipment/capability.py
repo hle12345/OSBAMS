@@ -44,6 +44,26 @@ class EnvelopeViolation(ValueError):
     """A load command would leave the permitted operating envelope."""
 
 
+class InvariantViolation(EnvelopeViolation):
+    """requested_current x conservative_pack_voltage > 300 W."""
+
+
+# ── Layered limit model ─────────────────────────────────────────────────────
+#   firmware hard trip   absolute protection boundary (config.FIRMWARE_HARD_TRIP_A)
+#   OSBAMS ceiling       operating/test boundary       (config.SAFETY_MAX_CURRENT_A)
+#   6060B @ V            min(60 A, 300 W / V)
+#   battery profile      per-pack ceiling
+# The commanded maximum is the minimum of the OPERATING limits. The firmware
+# trip is deliberately NOT an input to that minimum: it must sit above every
+# operating limit and only fires when something has already gone wrong.
+def firmware_hard_trip_a() -> float:
+    try:
+        import config
+        return float(config.FIRMWARE_HARD_TRIP_A)
+    except Exception:
+        return 18.5
+
+
 def _default_system_current_max_a() -> float:
     """OSBAMS validated hardware current limit — single authority: config.py."""
     try:
@@ -64,6 +84,43 @@ def conservative_pack_voltage(*voltages_v: Optional[float]) -> Optional[float]:
     """Highest known pack voltage (OCV, measured, profile max). None if none."""
     known = [v for v in voltages_v if v is not None]
     return max(known) if known else None
+
+
+class ConservativeVoltage:
+    """
+    Monotonic non-decreasing pack-voltage estimate for the 300 W check.
+    A sagging loaded reading can never lower it, so sag can never be used to
+    justify more current during a test. Only a NEW test (new instance) resets it.
+    """
+
+    def __init__(self, initial_v: Optional[float] = None):
+        self._v = initial_v
+
+    @property
+    def volts(self) -> Optional[float]:
+        return self._v
+
+    def update(self, measured_v: Optional[float]) -> Optional[float]:
+        if measured_v is not None and (self._v is None or measured_v > self._v):
+            self._v = measured_v
+        return self._v
+
+
+def assert_power_invariant(requested_current_a: float,
+                           conservative_voltage_v: Optional[float]) -> float:
+    """
+    HARD INVARIANT: requested_current x conservative_pack_voltage <= 300 W.
+    Returns the power; raises InvariantViolation otherwise (including unknown
+    voltage, which is treated as unsafe).
+    """
+    if conservative_voltage_v is None:
+        raise InvariantViolation("conservative pack voltage unknown")
+    p = float(requested_current_a) * float(conservative_voltage_v)
+    if p > INSTRUMENT_POWER_MAX_W + _EPS:
+        raise InvariantViolation(
+            f"{requested_current_a:.3f} A x {conservative_voltage_v:.2f} V = "
+            f"{p:.1f} W > {INSTRUMENT_POWER_MAX_W:g} W")
+    return p
 
 
 @dataclass(frozen=True)
@@ -111,17 +168,27 @@ class CurrentLimit:
         return bool(self.blocked_reason)
 
     def rows(self) -> list:
-        """(label, value-string) rows for the UI limit panel."""
-        def a(x): return "n/a" if x is None else f"{x:.2f} A"
-        v = "unknown" if self.battery_voltage_v is None else f"{self.battery_voltage_v:.2f} V"
+        """(label, value) rows for the UI limit panel (live limiting factor included)."""
+        def a(x, nd=2): return "n/a" if x is None else f"{x:.{nd}f} A"
+        v = "unknown" if self.battery_voltage_v is None else f"{self.battery_voltage_v:.1f} V"
+        parts = [f"{a(self.instrument_limit_a, 0)} (6060B)"]
+        if self.power_limit_a is not None:
+            parts.append(f"{self.power_limit_a:.2f} A (300 W/V)")
+        parts.append(f"{a(self.osbams_limit_a, 0)} (OSBAMS)")
+        if self.profile_limit_a is not None:
+            parts.append(f"{self.profile_limit_a:.2f} A (profile)")
+        final = a(self.final_a) if not self.blocked else f"BLOCKED — {self.blocked_reason}"
         return [
-            ("Battery voltage",                 v),
-            ("Battery profile current limit",   a(self.profile_limit_a)),
-            ("OSBAMS hardware current limit",   a(self.osbams_limit_a)),
-            ("6060B current limit",             a(self.instrument_limit_a)),
-            ("6060B power-derived limit (300 W / V)", a(self.power_limit_a)),
-            ("FINAL PERMITTED CURRENT",
-             a(self.final_a) + (f"   [{self.limiting_factor}]" if self.limiting_factor else "")),
+            ("Battery",                         v),
+            ("6060B current rating",            a(self.instrument_limit_a, 0)),
+            ("6060B power-derived limit",       a(self.power_limit_a)),
+            ("OSBAMS validated limit",          a(self.osbams_limit_a, 0)),
+            ("Battery-profile limit",           a(self.profile_limit_a)),
+            ("FINAL PERMITTED",                 final),
+            ("Limiting factor",                 self.limiting_factor or "—"),
+            ("min(...)",                        "min(" + ", ".join(parts) + ")"),
+            ("Firmware hard trip (protection only, not an operating limit)",
+             a(firmware_hard_trip_a(), 1)),
         ]
 
 

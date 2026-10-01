@@ -120,7 +120,15 @@ SAFETY_MAX_TEMP_C      = 50.0     # °C  — auto-stop above this
 # (REV2 power path). It is NOT the 6060B's 60 A rating and must not be raised
 # until the power path has been redesigned and bench-validated
 # (docs/rev2/LV_POWER_PATH_CAPABILITY.md). Firmware hard trips sit above it.
-SAFETY_MAX_CURRENT_A   = 10.0     # A   — OSBAMS validated hardware limit
+SAFETY_MAX_CURRENT_A   = 10.0     # A   — OSBAMS operating ceiling (provisional)
+
+# Layered limit model. Two DIFFERENT concepts — never force them equal:
+#   FIRMWARE_HARD_TRIP_*  absolute protection boundary (mirrors app_config.h;
+#                         tests/test_protocol.py checks the mirror is exact)
+#   SAFETY_MAX_*          desktop operating/test boundary, always BELOW the trip
+# Commanded current = min(profile, OSBAMS ceiling, 6060B 60 A, 300 W / V, ...).
+FIRMWARE_HARD_TRIP_A      = 18.5   # A   — OSBAMS_DEFAULT_MAX_CURRENT_MA
+FIRMWARE_HARD_TRIP_TEMP_C = 60.0   # C   — OSBAMS_DEFAULT_MAX_TEMP_C10
 SAFETY_RECOVERY_REST_S = 30       # s   — rest after discharge before OCV read
 
 

@@ -7,7 +7,9 @@ Safety properties:
   * every setpoint passes capability.check_load_command BEFORE any write.
   * the pack voltage used for the 300 W check is max(caller-supplied OCV,
     live reading) so a loaded (sagged) reading can never relax the limit.
-  * commands not verified against the official manual are blocked.
+  * an operation runs only if EVERY command it needs is VERIFIED against the
+    official manuals (commands.py). Today none are, so every remote
+    operation is blocked (CommandNotVerified).
 """
 
 from typing import Optional
@@ -15,7 +17,7 @@ from typing import Optional
 from equipment import capability as cap
 from equipment.drivers.base import (ElectronicLoad, LoadStatus,
                                     InterfaceBlocked, CommandNotVerified)
-from .commands import COMMANDS, TRUSTED, Cmd
+from .commands import COMMANDS, OPERATIONS, Cmd, unverified_for
 from .transport import Transport, PyVisaTransport
 
 
@@ -24,12 +26,13 @@ class Keysight6060B(ElectronicLoad):
     def __init__(self, resource: Optional[str] = None,
                  transport: Optional[Transport] = None,
                  interface_confirmed: bool = False,
-                 allow_unverified: bool = False, **limits):
+                 evidence: Optional[dict] = None, **limits):
+        """`evidence` overrides command status — a TEST HOOK, never for production."""
         super().__init__(**limits)
         self._resource = resource
         self._t: Optional[Transport] = transport
         self._interface_confirmed = interface_confirmed
-        self._allow_unverified = allow_unverified
+        self._evidence = evidence
         self._connected = False
         self._input_on = False
         self._mode = "CC"
@@ -38,13 +41,15 @@ class Keysight6060B(ElectronicLoad):
         self._last_error = ""
 
     # ── low level ───────────────────────────────────────────────────────
-    def _cmd(self, key: str) -> Cmd:
-        c = COMMANDS[key]
-        if c.status not in TRUSTED and not self._allow_unverified:
+    def _require(self, operation: str) -> None:
+        bad = unverified_for(operation, self._evidence)
+        if bad:
             raise CommandNotVerified(
-                f"'{c.template}' is {c.status}: verify against the 6060B "
-                f"programming guide (06060-90005) before use ({c.source})")
-        return c
+                f"operation '{operation}' blocked: command(s) {bad} not VERIFIED "
+                f"against the official 6060B manuals (see 6060B_COMMAND_EVIDENCE.md)")
+
+    def _cmd(self, key: str) -> Cmd:
+        return COMMANDS[key]
 
     def _send(self, key: str, *args) -> None:
         if not self._connected:
@@ -71,6 +76,7 @@ class Keysight6060B(ElectronicLoad):
                 f"6060B remote control = {cap.REMOTE_CONTROL_STATUS}. Confirm a "
                 f"USB-GPIB adapter, LAN-GPIB gateway or GPIB PC, then pass "
                 f"interface_confirmed=True. Use Manual6060B meanwhile.")
+        self._require("connect")
         try:
             if self._t is None:
                 if not self._resource:
@@ -95,12 +101,15 @@ class Keysight6060B(ElectronicLoad):
             try:
                 self.input_off()
                 self.local()
+            except CommandNotVerified as e:
+                self._last_error = str(e)
             finally:
                 self._connected = False
                 if self._t:
                     self._t.close()
 
     def identify(self) -> str:
+        self._require("identify")
         return self._ask("idn")
 
     def _pack_voltage_for_limit(self) -> Optional[float]:
@@ -119,39 +128,46 @@ class Keysight6060B(ElectronicLoad):
         self._mode = mode
 
     def set_cc(self, amps: float) -> bool:
+        self._require("set_cc")
         self._guard_current(amps)
         self._enter_mode("mode_cc", "CC")
         return self.set_current(amps)
 
     def set_cv(self, volts: float, max_expected_current_a: Optional[float] = None) -> bool:
+        self._require("set_cv")
         self._guard_cv(volts, max_expected_current_a)
         self._enter_mode("mode_cv", "CV")
         return self.set_voltage(volts, max_expected_current_a)
 
     def set_cr(self, ohms: float) -> bool:
+        self._require("set_cr")
         self._guard_resistance(ohms)
         self._enter_mode("mode_cr", "CR")
         return self.set_resistance(ohms)
 
     def set_current(self, amps: float) -> bool:
+        self._require("set_current")
         self._guard_current(amps)
         self._send("current", amps)
         self._setpoint = amps
         return True
 
     def set_voltage(self, volts: float, max_expected_current_a: Optional[float] = None) -> bool:
+        self._require("set_voltage")
         self._guard_cv(volts, max_expected_current_a)
         self._send("voltage", volts)
         self._setpoint = volts
         return True
 
     def set_resistance(self, ohms: float) -> bool:
+        self._require("set_resistance")
         self._guard_resistance(ohms)
         self._send("resistance", ohms)
         self._setpoint = ohms
         return True
 
     def input_on(self) -> bool:
+        self._require("input_on")
         if self._mode == "CC":
             self._guard_current(self._setpoint)         # re-check at enable time
         elif self._mode == "CR":
@@ -161,6 +177,7 @@ class Keysight6060B(ElectronicLoad):
         return True
 
     def input_off(self) -> bool:
+        self._require("input_off")
         self._send("input_off")             # always allowed — it is the safe state
         self._input_on = False
         return True
@@ -168,9 +185,14 @@ class Keysight6060B(ElectronicLoad):
     def _meas(self, key: str) -> float:
         return float(self._ask(key))
 
-    def measure_voltage(self) -> float: return self._meas("meas_v")
-    def measure_current(self) -> float: return self._meas("meas_i")
-    def measure_power(self) -> float:   return self._meas("meas_p")
+    def measure_voltage(self) -> float:
+        self._require("measure_voltage"); return self._meas("meas_v")
+
+    def measure_current(self) -> float:
+        self._require("measure_current"); return self._meas("meas_i")
+
+    def measure_power(self) -> float:
+        self._require("measure_power"); return self._meas("meas_p")
 
     def configure_transient(self, low_a: float, high_a: float, freq_hz: float,
                             duty_pct: float = 50.0, mode: str = "CONT") -> bool:
@@ -178,6 +200,7 @@ class Keysight6060B(ElectronicLoad):
         Both levels are checked; the HIGHER one is what must fit the envelope.
         `low_a` is the normal CURR level, `high_a` the transient level.
         """
+        self._require("configure_transient")
         mode = mode.upper()
         if mode not in ("CONT", "PULS", "TOGG"):
             raise ValueError("transient mode must be CONT, PULS or TOGG")
@@ -195,11 +218,13 @@ class Keysight6060B(ElectronicLoad):
         return True
 
     def trigger_transient(self) -> bool:
+        self._require("trigger_transient")
         self._send("tran_trigger")
         return True
 
     def read_status(self) -> LoadStatus:
         """Raw registers only — bit meanings are not decoded until verified."""
+        self._require("read_status")
         try:
             v, i = self.measure_voltage(), self.measure_current()
             st = LoadStatus(connected=True, input_on=self._input_on, mode=self._mode,
@@ -214,6 +239,7 @@ class Keysight6060B(ElectronicLoad):
 
     def read_errors(self) -> list:
         """Drain SYST:ERR? until '0,...' (max 20 reads)."""
+        self._require("read_errors")
         errs = []
         for _ in range(20):
             r = self._ask("error").strip()
@@ -223,10 +249,12 @@ class Keysight6060B(ElectronicLoad):
         return errs
 
     def local(self) -> bool:
+        self._require("local")
         go = getattr(self._t, "go_to_local", None)
         return bool(go()) if go else False
 
     def remote(self) -> bool:
+        self._require("remote")
         # GPIB remote state is entered by addressing the instrument (REN);
         # any query/write does so. No SCPI string is assumed.
         return self._connected

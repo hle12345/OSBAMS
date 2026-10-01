@@ -20,14 +20,16 @@ class Instrument:
     envelope: str
     uses: tuple
     limits: tuple              # explicit "do not" statements
-    asset_id: str = UNKNOWN
-    calibration_status: str = UNKNOWN
+    manufacturer: str = UNKNOWN
+    serial_number: str = UNKNOWN      # read off the instrument; never guessed
+    asset_id: str = UNKNOWN           # read off the instrument; never guessed
+    calibration_status: str = UNKNOWN # read off the instrument; never guessed
     interface: str = UNKNOWN
 
 
 SFSU_EQUIPMENT = {
     "6060B": Instrument(
-        key="6060B", model="Agilent/Keysight 6060B",
+        key="6060B", manufacturer="Agilent Technologies / Keysight", model="Agilent/Keysight 6060B",
         role="PRIMARY electronic load",
         envelope="3-60 V DC input, 60 A max, 300 W max; CC/CV/CR; transient; GPIB",
         uses=("constant-current discharge", "DCIR current step",
@@ -36,7 +38,7 @@ SFSU_EQUIPMENT = {
                 "never commanded outside V<=60, I<=60, V*I<=300"),
         interface="GPIB — path to PC NOT confirmed (BLOCKED_BY_INTERFACE_CONFIRMATION)"),
     "EDU34450A": Instrument(
-        key="EDU34450A", model="Keysight EDU34450A 5.5-digit DMM",
+        key="EDU34450A", manufacturer="Keysight Technologies", model="Keysight EDU34450A 5.5-digit DMM",
         role="PRIMARY independent reference measurement instrument",
         envelope="bench DMM (DCV/DCI/resistance/continuity/temperature)",
         uses=("OSBAMS voltage calibration", "current verification",
@@ -45,7 +47,7 @@ SFSU_EQUIPMENT = {
         limits=("verify its range/fuse limits before any current measurement",),
         interface="USB/LAN (to confirm)"),
     "EDU36311A": Instrument(
-        key="EDU36311A", model="Keysight EDU36311A triple-output supply",
+        key="EDU36311A", manufacturer="Keysight Technologies", model="Keysight EDU36311A triple-output supply",
         role="low-energy commissioning source",
         envelope="CH1 0-6 V / 5 A; CH2 0-30 V / 1 A; CH3 0-30 V / 1 A; "
                  "series operation of independent outputs per manufacturer docs",
@@ -55,7 +57,7 @@ SFSU_EQUIPMENT = {
         limits=("NOT a substitute for a 42 V high-current battery",),
         interface="USB/LAN (to confirm)"),
     "EDUX1052G": Instrument(
-        key="EDUX1052G", model="Keysight EDUX1052G oscilloscope",
+        key="EDUX1052G", manufacturer="Keysight Technologies", model="Keysight EDUX1052G oscilloscope",
         role="dynamic validation",
         envelope="2-channel scope",
         uses=("contactor timing", "load switching", "precharge transient",
@@ -64,21 +66,21 @@ SFSU_EQUIPMENT = {
         limits=("analog input rating is NOT permission to probe arbitrary "
                 "high-energy nodes; use proper probes and grounding",)),
     "EDU33212A": Instrument(
-        key="EDU33212A", model="Keysight EDU33212A waveform generator",
+        key="EDU33212A", manufacturer="Keysight Technologies", model="Keysight EDU33212A waveform generator",
         role="signal simulation / injection",
         envelope="2-channel function generator",
         uses=("sensor signal simulation", "ADC input tests", "frequency response",
               "fault injection", "filter characterization"),
         limits=("never a battery power source",)),
     "AD2": Instrument(
-        key="AD2", model="Digilent Analog Discovery 2",
+        key="AD2", manufacturer="Digilent", model="Digilent Analog Discovery 2",
         role="low-energy instrumentation / protocol development",
         envelope="low-voltage analog + digital",
         uses=("UART", "SPI", "I2C", "digital logic", "PWM",
               "BMS communication research", "impedance experiments"),
         limits=("never a high-energy battery measurement instrument",)),
     "HANDHELD_DMM": Instrument(
-        key="HANDHELD_DMM", model="Handheld multimeter",
+        key="HANDHELD_DMM", manufacturer="UNKNOWN", model="Handheld multimeter",
         role="secondary / manual verification",
         envelope="basic DMM",
         uses=("continuity", "polarity", "supply rails", "basic voltage", "wiring checks"),

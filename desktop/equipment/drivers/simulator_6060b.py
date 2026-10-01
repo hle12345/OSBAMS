@@ -101,6 +101,7 @@ class Simulator6060B(ElectronicLoad):
         self._mode = "CC"
         self._setpoint = 0.0
         self._soc = 1.0
+        self._pol = 0.0            # slow (polarization) part of the voltage drop
         self._t_s = 0.0
         self._flags: list = []
         self._errors: list = []
@@ -140,10 +141,17 @@ class Simulator6060B(ElectronicLoad):
             return v_ocv / (self._setpoint + self.r_pack_ohm)
         return max(0.0, (v_ocv - self._setpoint) / self.r_pack_ohm)      # CV
 
+    # Pack resistance = instantaneous half + polarization half (tau 30 s):
+    # a current step shows R_inst at once and approaches R_total slowly, and the
+    # voltage recovers gradually after the load is removed.
+    POL_FRACTION = 0.5
+    POL_TAU_S = 30.0
+
     def _state(self):
         v_ocv = self.ocv()
         i = self._load_current(v_ocv)
-        v = v_ocv - i * self.r_pack_ohm if self._soc > 0 else self._p["cutoff_v"] * 0.5
+        r_inst = self.r_pack_ohm * (1 - self.POL_FRACTION)
+        v = v_ocv - i * r_inst - self._pol if self._soc > 0 else self._p["cutoff_v"] * 0.5
         return v, i, v * i
 
     def step(self, dt_s: float) -> LoadStatus:
@@ -158,6 +166,8 @@ class Simulator6060B(ElectronicLoad):
                 if t not in self._flags: self._flags.append(t)
             self._errors.append("SIM: input tripped — " + ",".join(trips))
             return self.read_status()
+        target = i * self.r_pack_ohm * self.POL_FRACTION
+        self._pol += (target - self._pol) * (1 - math.exp(-dt_s / self.POL_TAU_S))
         self._soc = max(0.0, self._soc - i * dt_s / 3600.0 / self.capacity_ah)
         self._t_s += dt_s
         if self._soc <= 0 and "BATTERY_EMPTY" not in self._flags:
