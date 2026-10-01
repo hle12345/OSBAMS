@@ -29,6 +29,7 @@ import math
 SP = math.ceil(sp_need * 1000) / 1000
 row(f"Trimmed to {SP:.3f} V (window-limited)", rt_, rm_, SP)
 row("Trimmed, only 2 GND contacts (no 14/20)", R(Jtyp, Ptyp, F2, 2), R(Jmax, Pmax, F2, 2), SP)
+row("Socket contact 25 mOhm (placeholder + 5), trimmed", R(Jtyp, 25*0.6, F2), R(Jmax, 25.0, F2), SP)
 row("Hot F2 (x1.3), trimmed", R(Jtyp, Ptyp, F2 * 1.3), R(Jmax, Pmax, F2 * 1.3), SP)
 cur = 5.0 / 2
 # ---- trim-up resistor, Mean Well formula (owner-cited): a = Vref*R1/(Vout-Vref); Rt = a*R2/(R2-a) - R3 ; Rt from TRIM to -Vout
@@ -79,7 +80,7 @@ f"Source tolerance from the datasheet: accuracy +-1 % + line +-0.2 % + load +-0.
 "## Results at the Pi 5V pins", "", *tab, "",
 f"Feasibility window (25 C stack): one setpoint can meet both limits only if worst-case path R <= {rwin:.1f} mOhm; this design is {rm_:.1f} mOhm -> **{'feasible' if rm_ <= rwin else 'NOT feasible without per-unit calibration'}** (margin {rwin - rm_:+.1f} mOhm). Untrimmed, the 5 A worst case is below the Pi floor, so **trim is required**.",
 "", "Required stacking-socket contact resistance (max, per contact; 2 contacts on +5 V, 4 on GND) for a single fixed setpoint to satisfy both limits:", "", *sk, "",
-f"Contact loading at 5 A: {cur:.1f} A per Pi 5 V pin/socket contact vs a nominal 3 A rating ({cur/3*100:.0f} %) - **no derating headroom**; the Pi has only two 5 V pins (2 and 4), so this cannot be improved by adding 5 V contacts. At 8 A the contacts and Pi header pins would be overloaded (4 A each): keep real load <= ~5 A. See the Pi_end note.", "",
+f"Contact loading at 5 A: {cur:.1f} A per Pi 5 V pin/socket contact. Samtec SSW rates 4.7 A with one pin powered per row (derate for adjacent powered pins - catalog curve needed); the Pi header pin is a nominal 3 A class ({cur/3*100:.0f} %) - **no derating headroom**; the Pi has only two 5 V pins (2 and 4), so this cannot be improved by adding 5 V contacts. At 8 A the contacts and Pi header pins would be overloaded (4 A each): keep real load <= ~5 A. See the Pi_end note.", "",
 "## Tolerance scenarios (does one setpoint satisfy both limits?)", "", *tt, "", "The +-1 % accuracy alone (as first assumed) hides the line/load terms and the 0.05 %/C coefficient. At 25 C the design closes by only a few mV; with realistic temperature rise it does **not** close by the stated criteria unless each unit is calibrated (measure the untrimmed output, then select Rt) and/or path resistance is reduced.", "",
 "## Trim-up resistor (Mean Well formula, verified)", "",
 f"Vref = {Vr} V, R1 = {R1} k, R2 = {R2} k, R3 = {R3} k; nominal Vout = {vnom:.3f} V. `a = Vref*R1/(Vout - Vref)`, `Rt = a*R2/(R2 - a) - R3`, Rt from TRIM to -Vout (board pad **R3**; R2 pad is trim-down and is not used).", "",

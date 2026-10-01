@@ -34,14 +34,16 @@ Target: **>= 4.85 V at the Pi header at 5 A, worst case**; **<= 5.25 V no-load /
 | rsdw_ripple_mvpp | 100 | verified | spec: single output 3.3-15 Vo: 100 mVp-p (20 MHz, 0.1 uF + 47 uF) |
 | f1_mpn | 0407008.WR | verified | Littelfuse 407 Series datasheet (rev 09/14/20, uploaded): 1206 time-lag, amp code 008., part number 0407 008. W R (W = 3000 pcs, R = reel). Replaces 0453008.MRL, which is very fast-acting (451/453 datasheet). |
 | f1_resistance_mohm | 9.0 | verified | 407 datasheet nominal resistance 0.009 ohm (measured <10 % rated current); hot value from 0.097 V drop at 8 A = 12.1 mOhm |
-| interposer_socket_mpn | None | unverified | CANDIDATE (owner): Samtec SSM-120-S-DV-K-TR, 40 pos, 2 rows, 2.54 mm, ~5.2 A/contact. NOT selected yet: Samtec datasheet/drawing not available; SSM-xxx-S-DV looks like a low-profile SURFACE-MOUNT strip (from memory, unverified) - confirm height, tail/mating geometry, SMT pad pattern, and that it can mate down onto the Pi's 0.64 mm pins from the interposer's underside. |
-| interposer_socket_contact_mohm | 20.0 | unverified | PLACEHOLDER 20 mOhm until the Samtec datasheet gives a contact resistance (owner data has current rating only) |
+| interposer_socket_mpn | None | unverified | Family chosen (SSW through-hole; replaces the SMT SSM-120 idea) but the exact 2x20 ordering code (lead style/tail length, plating, body height) needs the SSW-120 catalog page/drawing. Not selected yet. |
+| interposer_socket_contact_mohm | 20.0 | unverified | PLACEHOLDER. Samtec gives only a post-test change (delta 15 mOhm max), no initial value; 20 mOhm ~ assumed 5 mOhm initial + 15 mOhm drift. Replace with the SSW-120 initial LLCR from the catalog page. |
 | interposer_key_3d_check | False | unverified | Key standoffs must be verified against Raspberry Pi 5 mechanical drawing/3D (header edge distance, nearby parts) and the enclosure |
 | f1_spec | {'rating_a': 8, 'max_voltage_v': 24, 'interrupt': '60 A @ 24 VDC', 'nominal_resistance_mohm': 9.0, 'melting_i2t_a2s': 24.12, 'vdrop_at_rated_v': 0.097, 'power_at_rated_w': 0.8, 'continuous_derate': '<=80 % of rating (6.4 A), plus temperature re-rating curve', 'time_lag': '100 %: 4 h min; 200 %: 1-120 s; 300 %: 0.1-3 s; 800 %: 2-50 ms', 'land_pattern_mm': 'pad 1.0 x 1.8, gap 1.5, span 3.5; body 3.2 x 1.6'} | verified | 407 datasheet electrical specs by item |
 | f2_spec | {'mpn': '0451008.MRL', 'rating_a': 8, 'max_voltage_v': 125, 'nominal_cold_resistance_mohm': 7.7, 'melting_i2t_a2s': 20.23, 'interrupt': 'PSE: 100 A @ 100 VAC', 'land_pattern': 'pad 1.96 x 3.15, outer span 6.86 mm - matches the KiCad library footprint used', 'class': 'very fast-acting'} | verified | Littelfuse 451/453 datasheet (uploaded) - confirms owner's 7.7 mOhm |
 | pi_hat_plus_guidance | {'power_hat_min': '3 A @ 5.1 V (strongly recommend 5 A @ 5.1 V)', 'standby': '5 V rail powered, 3.3 V unpowered', 'mech': '65 x 56.5 board, holes 3.5 mm from edges (58 x 49 pattern), header centred between the end holes on the hole-row axis; at least one hole aligned; stacking header + spacers; >=15 mm (16 ideal) board-to-board over an Active Cooler; do not foul PoE header or camera/display/PCIe flex connectors'} | verified | Raspberry Pi HAT+ specification RP-008281-DS-1 (uploaded), ch. 6-7, Fig. 2 |
-| interposer_socket_current_a | 5.2 | owner_cited | Samtec ~5.2 A per contact (owner-cited). The Pi's own 0.64 mm header pins/traces, not this socket, then set the practical limit. |
+| interposer_socket_current_a | 4.7 | verified | Samtec SSW/TSW spec 3.1: 4.7 A, one pin powered per row. We power +5 V pins 2 and 4 side by side and GND pins in both rows, so derate (catalog curve needed). The Pi header pins/traces (~3 A per pin class) remain the practical limit. |
 | pi5_mechanical_drawing_step | False | unverified | Official Pi 5 mechanical drawing PDF + STEP (with/without graphics) NOT available to the build environment (raspberrypi.com blocked, nothing uploaded). Required for the 180-degree key check. |
+| interposer_socket_family | Samtec SSW vertical through-hole socket, 0.100 in / 2.54 mm pitch, 0.025 in square post, 2x20 dual row | verified | Samtec SSW/TSW product specification rev C (2023-02-08, uploaded; two identical copies): current 4.7 A with ONE PIN POWERED PER ROW; 465 VAC; gold -55..+125 C; durability 1000 cycles; normal force >= 30 g (gold); contact resistance is specified only as a CHANGE (LLCR delta 15 mOhm max after tests), no absolute initial value; standoffs recommended. Prints, footprints and lead styles are on the Samtec product page, NOT in this spec. |
+| pi5_envelope_docs | {'board_mm': '85 x 56 (bumper 89.6 x 60.6 implies +4.6 mm per side)', 'official_case_mm': '98.5 x 70.3 x 33 (approx, reference only)', 'pcie_ffc': '16-pin 0.5 mm FFC; 5 V pins 1,2 rated 500 mA each (1 A total), not a power path', 'power_states': 'STANDBY = +5 V rail powered, other rails off'} | verified | Raspberry Pi RP-008159 (case), RP-008144 (bumper), RP-008298 (PCIe connector) briefs - envelope info only; NOT the header/component geometry needed for the 180-degree key check |
 
 `owner_cited` = supplied by the project owner with a source; the build environment cannot reach Mean Well, Molex, Littelfuse or Harwin, so re-check against the PDFs. Assumptions: stacking-socket contact resistance is a PLACEHOLDER (socket MPN not chosen), interposer copper 2 mOhm/rail, hot-fuse 1.3x sensitivity.
 
@@ -54,6 +56,7 @@ Source tolerance from the datasheet: accuracy +-1 % + line +-0.2 % + load +-0.5 
 | Untrimmed (5.00 V) | 35.8 / 51.3 | 5.000 | 4.82 / 4.67 | 4.77 | 5.085 |
 | Trimmed to 5.185 V (window-limited) | 35.8 / 51.3 | 5.185 | 5.01 / 4.85 | 4.95 | 5.273 |
 | Trimmed, only 2 GND contacts (no 14/20) | 38.8 / 56.3 | 5.185 | 4.99 / 4.83 | 4.94 | 5.273 |
+| Socket contact 25 mOhm (placeholder + 5), trimmed | 38.0 / 55.1 | 5.185 | 4.99 / 4.83 | 4.94 | 5.273 |
 | Hot F2 (x1.3), trimmed | 38.1 / 53.6 | 5.185 | 4.99 / 4.84 | 4.95 | 5.273 |
 
 Feasibility window (25 C stack): one setpoint can meet both limits only if worst-case path R <= 46.8 mOhm; this design is 51.3 mOhm -> **NOT feasible without per-unit calibration** (margin -4.5 mOhm). Untrimmed, the 5 A worst case is below the Pi floor, so **trim is required**.
@@ -66,7 +69,7 @@ Required stacking-socket contact resistance (max, per contact; 2 contacts on +5 
 | stack + 15 C drift | not achievable (even 0 mOhm contacts) |
 | calibrated unit + 15 C drift | 20.8 |
 
-Contact loading at 5 A: 2.5 A per Pi 5 V pin/socket contact vs a nominal 3 A rating (83 %) - **no derating headroom**; the Pi has only two 5 V pins (2 and 4), so this cannot be improved by adding 5 V contacts. At 8 A the contacts and Pi header pins would be overloaded (4 A each): keep real load <= ~5 A. See the Pi_end note.
+Contact loading at 5 A: 2.5 A per Pi 5 V pin/socket contact. Samtec SSW rates 4.7 A with one pin powered per row (derate for adjacent powered pins - catalog curve needed); the Pi header pin is a nominal 3 A class (83 %) - **no derating headroom**; the Pi has only two 5 V pins (2 and 4), so this cannot be improved by adding 5 V contacts. At 8 A the contacts and Pi header pins would be overloaded (4 A each): keep real load <= ~5 A. See the Pi_end note.
 
 ## Tolerance scenarios (does one setpoint satisfy both limits?)
 
