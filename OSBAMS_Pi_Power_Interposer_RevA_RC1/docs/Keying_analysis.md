@@ -28,3 +28,6 @@ Reversed, K1/K2 land ~14.5 mm inboard of the header axis (18 mm from the Pi edge
 
 ## Waveshare display
 The Waveshare 5 V/GND leads stay on Pi GPIO 5 V/GND per Waveshare. Use **stacking (long-tail) sockets** so the Pi pins remain reachable above J2, or land the Waveshare leads on spare 5 V/GND positions via a second keyed outlet if you prefer — decision for you. Display current also flows through Pi pins 2/4, so the 3 A-per-contact consideration applies to the sum.
+
+## Official Pi 5 files — required, not yet available here
+Please upload the official **Raspberry Pi 5 mechanical drawing (PDF)** and the **STEP model (with graphics and without)**. With them I will place the interposer in both orientations (header-axis alignment from the HAT+ geometry, spacers on the end holes) and check: reversed posts land on solid PCB, correct orientation seats fully, clearances to the Active Cooler, DSI/PCIe/fan/PoE areas and the USB/Ethernet connectors, and hole alignment. The post length and seated gap depend on the selected socket (see `Pi_end_connector_requirements.md`).

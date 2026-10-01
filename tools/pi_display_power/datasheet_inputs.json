@@ -156,12 +156,12 @@
  "interposer_socket_mpn": {
   "value": null,
   "status": "unverified",
-  "source": "2x20 2.54 mm gold stacking female header, >=3 A/contact, published contact resistance - exact MPN still to be chosen from a datasheet"
+  "source": "CANDIDATE (owner): Samtec SSM-120-S-DV-K-TR, 40 pos, 2 rows, 2.54 mm, ~5.2 A/contact. NOT selected yet: Samtec datasheet/drawing not available; SSM-xxx-S-DV looks like a low-profile SURFACE-MOUNT strip (from memory, unverified) - confirm height, tail/mating geometry, SMT pad pattern, and that it can mate down onto the Pi's 0.64 mm pins from the interposer's underside."
  },
  "interposer_socket_contact_mohm": {
   "value": 20.0,
   "status": "unverified",
-  "source": "PLACEHOLDER until socket MPN chosen"
+  "source": "PLACEHOLDER 20 mOhm until the Samtec datasheet gives a contact resistance (owner data has current rating only)"
  },
  "interposer_key_3d_check": {
   "value": false,
@@ -206,5 +206,15 @@
   },
   "status": "verified",
   "source": "Raspberry Pi HAT+ specification RP-008281-DS-1 (uploaded), ch. 6-7, Fig. 2"
+ },
+ "interposer_socket_current_a": {
+  "value": 5.2,
+  "status": "owner_cited",
+  "source": "Samtec ~5.2 A per contact (owner-cited). The Pi's own 0.64 mm header pins/traces, not this socket, then set the practical limit."
+ },
+ "pi5_mechanical_drawing_step": {
+  "value": false,
+  "status": "unverified",
+  "source": "Official Pi 5 mechanical drawing PDF + STEP (with/without graphics) NOT available to the build environment (raspberrypi.com blocked, nothing uploaded). Required for the 180-degree key check."
  }
 }
