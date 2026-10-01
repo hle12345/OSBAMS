@@ -43,7 +43,7 @@
 | R42, R43 | ERJ-P08F10R0V | Panasonic | UNVERIFIED | UNKNOWN (not checked) | PCBWay source (orderable suffix to be confirmed) | Vishay CRCW1206 pulse-rated series / Bourns CR1206-FX-pulse series (pulse rating to be confirmed) (UNVERIFIED alternate) |
 | D5, D6, D7 | 1.5SMBJ48A | Bourns | USER_RELAYED_MANUFACTURER | UNKNOWN (not checked) | CONSIGN (owned: 2; 3 needed) or PCBWay source | Littelfuse 1.5SMC / SMBJ48A (UNVERIFIED alternate) |
 | D15, D16, D17, D18, D19 | 1.5SMBJ48A | Bourns | USER_RELAYED_MANUFACTURER | UNKNOWN (not checked) | CONSIGN (owned: 2; 8 needed incl. D5-D7) or PCBWay source | purpose-built >=48 V ESD diode with datasheet Rdyn <= 1 ohm (none identified from the supplied files) (UNVERIFIED alternate) |
-| D20 | 1.5SMBJ12CA | Bourns | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Littelfuse SMBJ12CA (600 W) / 1.5SMC12CA (UNVERIFIED alternate) |
+| D20 | 1.5SMBJ12CA | Bourns | USER_RELAYED_MANUFACTURER | UNKNOWN (not checked) | PCBWay source | Littelfuse SMBJ12CA (600 W) / 1.5SMC12CA (UNVERIFIED alternate) |
 | R11, R12, R13 | CRCW060310R0FKEA | Vishay Dale | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Yageo RC0603-FR-07 series (UNVERIFIED alternate) |
 | C26, C28 | GRM188R71H104KA93D | Murata | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Samsung CL10B104KB8NNNC (UNVERIFIED alternate) |
 | U2 | INA228AIDGSR | Texas Instruments | USER_RELAYED_MANUFACTURER | ACTIVE (user-confirmed) | PCBWay source | INA228AIDGST (small reel) (UNVERIFIED alternate) |

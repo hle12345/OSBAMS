@@ -1,6 +1,6 @@
 # Connector footprint check — RC1.3 (2026-10-01)
 
-**Status: PARTLY CLOSED.** J7 (JST) and J8 (GCT USB-C) are verified against the manufacturer drawings supplied (committed in `docs/rev2/pcb/evidence/`). **J5/J6 (Molex 22-27-2031/-2041) and J9 (Samtec FTSH-105-01-L-DV-K) remain OPEN (RC1.3: J5/J6 pad/hole/body dimensions flagged only; J9 exact land pattern and key orientation BLOCKED until the Samtec footprint is supplied - the KiCad generic footprint is NOT claimed to be exact):** the Molex files supplied are the product-detail web pages (they confirm circuits, 2.54 mm pitch, 3.56 mm tail, 1.60 mm PCB, partially shrouded/polarized to the mating part — all consistent with the footprints — but contain no dimensioned drawing; the sales drawings `022272031_sd.pdf` / `022272041_sd.pdf` they list are still needed), and the Samtec document supplied (CLP/FTSH/FTS/FW product specification) contains no print or footprint — it refers to samtec.com for them. The EB21A footprint is verified separately.
+**Status: PARTLY CLOSED.** J7 (JST) and J8 (GCT USB-C) are verified against the manufacturer drawings supplied (committed in `docs/rev2/pcb/evidence/`). **J5/J6 (Molex 22-27-2031/-2041) and J9 (Samtec FTSH-105-01-L-DV-K) remain OPEN (RC1.3: J5/J6 pad/hole/body dimensions flagged only; J9 land pattern CLOSED against Samtec drawing FTSH-1XX-XX-XXX-DV-XXX-FOOTPRINT rev H (custom footprint OSBAMS_Rev2:FTSH-105-01-L-DV-K: pads 0.74 x 2.79, rows +-2.035, pin 1 bottom-left); only the key-notch position is not on the supplied sheets):** the Molex files supplied are the product-detail web pages (they confirm circuits, 2.54 mm pitch, 3.56 mm tail, 1.60 mm PCB, partially shrouded/polarized to the mating part — all consistent with the footprints — but contain no dimensioned drawing; the sales drawings `022272031_sd.pdf` / `022272041_sd.pdf` they list are still needed), and the Samtec document supplied (CLP/FTSH/FTS/FW product specification) contains no print or footprint — it refers to samtec.com for them. The EB21A footprint is verified separately.
 
 ## Results
 | Part | Footprint | Source | Result |
@@ -57,19 +57,19 @@
   pad  SH oval      size 1.00x1.80 drill 0.60x1.40 rel (1.07,-4.32) THT
   bbox 8.99 x 10.69 mm
   courtyard 9.03 x 10.73 mm
-== J9 Connector_PinHeader_1.27mm:PinHeader_2x05_P1.27mm_Vertical_SMD rot 0.0 layer F.Cu
-  pad   1 rect      size 2.40x0.74 drill 0.00x0.00 rel (-1.95,-2.54) SMD
-  pad   2 rect      size 2.40x0.74 drill 0.00x0.00 rel (1.95,-2.54) SMD
-  pad   3 rect      size 2.40x0.74 drill 0.00x0.00 rel (-1.95,-1.27) SMD
-  pad   4 rect      size 2.40x0.74 drill 0.00x0.00 rel (1.95,-1.27) SMD
-  pad   5 rect      size 2.40x0.74 drill 0.00x0.00 rel (-1.95,0.00) SMD
-  pad   6 rect      size 2.40x0.74 drill 0.00x0.00 rel (1.95,0.00) SMD
-  pad   7 rect      size 2.40x0.74 drill 0.00x0.00 rel (-1.95,1.27) SMD
-  pad   8 rect      size 2.40x0.74 drill 0.00x0.00 rel (1.95,1.27) SMD
-  pad   9 rect      size 2.40x0.74 drill 0.00x0.00 rel (-1.95,2.54) SMD
-  pad  10 rect      size 2.40x0.74 drill 0.00x0.00 rel (1.95,2.54) SMD
-  bbox 8.63 x 7.41 mm
-  courtyard 8.67 x 7.45 mm
+== J9 OSBAMS_Rev2:FTSH-105-01-L-DV-K rot 0.0 layer F.Cu
+  pad   1 rect      size 0.74x2.79 drill 0.00x0.00 rel (-2.54,2.04) SMD
+  pad   2 rect      size 0.74x2.79 drill 0.00x0.00 rel (-2.54,-2.04) SMD
+  pad   3 rect      size 0.74x2.79 drill 0.00x0.00 rel (-1.27,2.04) SMD
+  pad   4 rect      size 0.74x2.79 drill 0.00x0.00 rel (-1.27,-2.04) SMD
+  pad   5 rect      size 0.74x2.79 drill 0.00x0.00 rel (0.00,2.04) SMD
+  pad   6 rect      size 0.74x2.79 drill 0.00x0.00 rel (0.00,-2.04) SMD
+  pad   7 rect      size 0.74x2.79 drill 0.00x0.00 rel (1.27,2.04) SMD
+  pad   8 rect      size 0.74x2.79 drill 0.00x0.00 rel (1.27,-2.04) SMD
+  pad   9 rect      size 0.74x2.79 drill 0.00x0.00 rel (2.54,2.04) SMD
+  pad  10 rect      size 0.74x2.79 drill 0.00x0.00 rel (2.54,-2.04) SMD
+  bbox 6.85 x 7.45 mm
+  courtyard 6.89 x 7.49 mm
 
 ```
 

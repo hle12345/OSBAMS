@@ -2,7 +2,7 @@
 	(version 20260306)
 	(generator "eeschema")
 	(generator_version "10.0")
-	(uuid "9140d847-5959-4a8c-901d-1c9d0a73e191")
+	(uuid "5d69e387-208e-453d-addd-241cb42a9b45")
 	(paper "A3")
 	(title_block
 		(title "E-stop / ARM / K1 coil chain and MOSFET driver")
@@ -8594,39 +8594,6 @@
 			(embedded_fonts no)
 		)
 	)
-	(text "OSBAMS Rev.2 Controller RC1 - REVIEW CANDIDATE, NOT FOR FABRICATION. Evidence: VERIFIED_LOCAL / USER_RELAYED_MANUFACTURER / UNVERIFIED (see evidence register)."
-		(exclude_from_sim no)
-		(at 25.4 19.05 0)
-		(effects
-			(font
-				(size 1.5 1.5)
-			)
-			(justify left)
-		)
-		(uuid "064f7c17-ea94-46f4-b30b-b8a5e2cac715")
-	)
-	(text "Coil chain: +12V -> J2 E-stop (Eaton M22-PV-K02 NC) -> J3 ARM (C&K T102SHZQE) -> J4 K1 coil -> Q1 -> GND. E-stop and ARM physically open the coil supply; firmware cannot bypass either."
-		(exclude_from_sim no)
-		(at 25.4 25.4 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "25cb0917-9a17-43a6-876c-570f67ce394a")
-	)
-	(text "Q1 gate: 220 ohm series, 10k pull-down (default OFF). Flyback D9 cathode on the +12 V side. No fast-release TVS in RC1. Battery discharge current never flows through this board."
-		(exclude_from_sim no)
-		(at 25.4 28.9 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "67d179a3-8391-497b-bc5e-47df019516b2")
-	)
 	(text "E-stop / ARM / K1 coil chain and MOSFET driver"
 		(exclude_from_sim no)
 		(at 25.4 12.7 0)
@@ -8637,37 +8604,40 @@
 			)
 			(justify left)
 		)
-		(uuid "fc48e019-7aef-4d80-a2a2-430c73253ac7")
+		(uuid "4ede4c18-4c68-4b25-8946-3a0c531a350f")
 	)
-	(wire
-		(pts
-			(xy 175.26 59.69) (xy 175.26 54.61)
+	(text "OSBAMS Rev.2 Controller RC1 - REVIEW CANDIDATE, NOT FOR FABRICATION. Evidence: VERIFIED_LOCAL / USER_RELAYED_MANUFACTURER / UNVERIFIED (see evidence register)."
+		(exclude_from_sim no)
+		(at 25.4 19.05 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
 		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "059044bf-f3f7-4955-a81f-724caf680d87")
+		(uuid "6305e7d4-95cb-4cec-b488-b7bc3d3fd5fe")
 	)
-	(wire
-		(pts
-			(xy 48.26 45.72) (xy 43.18 45.72)
+	(text "Q1 gate: 220 ohm series, 10k pull-down (default OFF). Flyback D9 cathode on the +12 V side. No fast-release TVS in RC1. Battery discharge current never flows through this board."
+		(exclude_from_sim no)
+		(at 25.4 28.9 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
 		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "09bbe370-d11a-4d0c-b19f-d16f2ad839dd")
+		(uuid "6353578b-f7d5-4cab-9050-1ea2fcd26cbd")
 	)
-	(wire
-		(pts
-			(xy 190.5 57.15) (xy 190.5 52.07)
+	(text "Coil chain: +12V -> J2 E-stop (Eaton M22-PV-K02 NC) -> J3 ARM (C&K T102SHZQE) -> J4 K1 coil -> Q1 -> GND. E-stop and ARM physically open the coil supply; firmware cannot bypass either."
+		(exclude_from_sim no)
+		(at 25.4 25.4 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
 		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "2687fca6-11f2-40cf-856b-3b37d5ac464c")
+		(uuid "ab48236a-b41a-4906-92f4-31be6622c623")
 	)
 	(wire
 		(pts
@@ -8677,87 +8647,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "33b01662-4ba1-4bd9-8efd-2899ac076e67")
-	)
-	(wire
-		(pts
-			(xy 160.02 60.96) (xy 160.02 55.88)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "4f55b379-054c-4786-b737-0ae4530ef046")
-	)
-	(wire
-		(pts
-			(xy 295.91 45.72) (xy 300.99 45.72)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "50b75501-4a81-44d3-8e78-f4052eef5e62")
-	)
-	(wire
-		(pts
-			(xy 288.29 45.72) (xy 283.21 45.72)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "5e586913-db08-471e-8050-d688512e4ba5")
-	)
-	(wire
-		(pts
-			(xy 48.26 48.26) (xy 43.18 48.26)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "5ff8350f-9998-454e-841f-d4814c161c90")
-	)
-	(wire
-		(pts
-			(xy 219.71 45.72) (xy 214.63 45.72)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "6c0edc91-ad17-4911-baf0-ee6fc465a061")
-	)
-	(wire
-		(pts
-			(xy 160.02 71.12) (xy 160.02 76.2)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "754ac1f1-ae6a-4ce4-a131-e028e93353f8")
-	)
-	(wire
-		(pts
-			(xy 190.5 64.77) (xy 190.5 69.85)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "7a2146bb-b856-4b54-9de7-c5798f6d355c")
-	)
-	(wire
-		(pts
-			(xy 227.33 45.72) (xy 232.41 45.72)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "7e1a9c6e-62e3-4871-8410-5232269f5a32")
+		(uuid "0a649f6c-775e-4354-bf67-96dc95c7d8e9")
 	)
 	(wire
 		(pts
@@ -8767,37 +8657,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "8be6eeb0-99e6-4cda-bd7f-6b717d2f4f4f")
-	)
-	(wire
-		(pts
-			(xy 121.92 45.72) (xy 116.84 45.72)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "a71830ac-3c53-497e-9790-29496ce76ef8")
-	)
-	(wire
-		(pts
-			(xy 259.08 67.31) (xy 259.08 72.39)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ba9e9b18-7290-444e-adca-ac502fd0e4f5")
-	)
-	(wire
-		(pts
-			(xy 152.4 66.04) (xy 147.32 66.04)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "dc37b452-3482-4595-ab90-8421fcae581c")
+		(uuid "2d27d5c9-085e-452e-af6b-a1473f0717d6")
 	)
 	(wire
 		(pts
@@ -8807,7 +8667,47 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "e1118aca-977c-4fd8-a7be-2e99e3e45c3b")
+		(uuid "2e8d0036-e1b1-41ad-a71d-4c43f9b76f65")
+	)
+	(wire
+		(pts
+			(xy 219.71 45.72) (xy 214.63 45.72)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3008fc9f-dd5f-43b1-953c-5ee60fb55e5e")
+	)
+	(wire
+		(pts
+			(xy 227.33 45.72) (xy 232.41 45.72)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "40357db9-60bc-4b9c-9c05-1207d152902f")
+	)
+	(wire
+		(pts
+			(xy 190.5 57.15) (xy 190.5 52.07)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4491c521-cb71-499b-b469-7298127fceed")
+	)
+	(wire
+		(pts
+			(xy 152.4 66.04) (xy 147.32 66.04)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4a67ec58-91a8-4d55-830f-06efb2ccbebb")
 	)
 	(wire
 		(pts
@@ -8817,7 +8717,107 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "e6f65d1e-cd0c-4ee1-a25f-3eaedabc0de2")
+		(uuid "4ddd9462-b7cb-4a64-b033-0a3e2151ecc2")
+	)
+	(wire
+		(pts
+			(xy 259.08 67.31) (xy 259.08 72.39)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5ff9e079-d734-4964-a6d8-c15b3837e0e4")
+	)
+	(wire
+		(pts
+			(xy 175.26 59.69) (xy 175.26 54.61)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6d9ac2ce-2182-4781-b138-c1e0bce72322")
+	)
+	(wire
+		(pts
+			(xy 48.26 48.26) (xy 43.18 48.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6f2d5cee-55c2-4700-973f-6b0db7752b2a")
+	)
+	(wire
+		(pts
+			(xy 160.02 60.96) (xy 160.02 55.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "77986751-b08b-416f-a51a-ab5d21de5bf5")
+	)
+	(wire
+		(pts
+			(xy 288.29 45.72) (xy 283.21 45.72)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a2f8a0ef-72fa-4685-a07b-ee8922544049")
+	)
+	(wire
+		(pts
+			(xy 48.26 45.72) (xy 43.18 45.72)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b128cbbb-aed9-4d88-9bc8-98921ab31a34")
+	)
+	(wire
+		(pts
+			(xy 295.91 45.72) (xy 300.99 45.72)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b8fd8240-dd0c-4a13-b9e1-3b8f3b6112e5")
+	)
+	(wire
+		(pts
+			(xy 160.02 71.12) (xy 160.02 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "be35d662-1745-4553-9fb0-d3946baaf76f")
+	)
+	(wire
+		(pts
+			(xy 190.5 64.77) (xy 190.5 69.85)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bfafc84d-239c-4274-b596-8e33e7f4cbb7")
+	)
+	(wire
+		(pts
+			(xy 121.92 45.72) (xy 116.84 45.72)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ce2a670b-f316-486a-baff-ad94a9957af7")
 	)
 	(wire
 		(pts
@@ -8827,17 +8827,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "ebccf60d-10f4-4545-80e8-670fec39d9d8")
-	)
-	(label "LED_COIL"
-		(at 300.99 45.72 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "8334a826-da13-4b3a-b7d8-3857db235a73")
+		(uuid "df7b54ee-e678-43bc-90df-470aa90100d7")
 	)
 	(label "LED_COIL"
 		(at 259.08 72.39 270)
@@ -8847,161 +8837,17 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "b3a9c801-ce4b-46a9-a1f3-a4c5e04d9ca5")
+		(uuid "0524f965-3176-4aa1-aab6-9c6524c734d4")
 	)
-	(global_label "COIL_SW"
-		(shape bidirectional)
-		(at 116.84 48.26 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "175d4f87-c92f-4cc9-9f74-e26986de722a")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 116.84 48.26 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-	)
-	(global_label "GATE"
-		(shape bidirectional)
-		(at 147.32 66.04 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "31729652-1585-4a22-a7d2-8a2172d93609")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 147.32 66.04 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-	)
-	(global_label "GATE"
-		(shape bidirectional)
-		(at 190.5 52.07 90)
+	(label "LED_COIL"
+		(at 300.99 45.72 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify left bottom)
 		)
-		(uuid "340fb0fa-eb9e-4021-856b-519d8c07736c")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 190.5 52.07 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-	)
-	(global_label "COIL_SW"
-		(shape bidirectional)
-		(at 283.21 45.72 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "4a9dd8e4-9bf5-49ef-a39c-1589eb72e3b1")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 283.21 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-	)
-	(global_label "COIL_V"
-		(shape bidirectional)
-		(at 116.84 45.72 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "56a9d114-27a2-477d-946e-903915a49f02")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 116.84 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-	)
-	(global_label "ESTOP_OUT"
-		(shape bidirectional)
-		(at 43.18 48.26 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "78268d0d-9da2-4075-a64d-04ae390ae6af")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 43.18 48.26 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-	)
-	(global_label "COIL_SW"
-		(shape bidirectional)
-		(at 232.41 45.72 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "80dcc6b2-4920-41e5-906e-9e6238cbbd33")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 232.41 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
+		(uuid "0d376d20-4a16-4347-aee1-c611da72045d")
 	)
 	(global_label "COIL_V"
 		(shape bidirectional)
@@ -9012,53 +8858,9 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "985412f9-521c-4348-98af-bc9908527366")
+		(uuid "09ea63d8-4743-4e1a-9cbb-11547ddecca9")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 81.28 48.26 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-	)
-	(global_label "LOAD_EN"
-		(shape bidirectional)
-		(at 175.26 54.61 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "9dab0be0-378a-43df-83e7-ce5db9c360b7")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 175.26 54.61 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-	)
-	(global_label "COIL_SW"
-		(shape bidirectional)
-		(at 160.02 55.88 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "a3baf0db-9619-4499-81e3-7c30d9e21ca7")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 160.02 55.88 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -9078,31 +8880,9 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "a658e5e0-3742-40d5-958a-93c0cd199ba3")
+		(uuid "23566d4c-13cd-4ce7-9688-dbdcd96cb122")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 175.26 72.39 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-	)
-	(global_label "COIL_V"
-		(shape bidirectional)
-		(at 259.08 54.61 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "ac779980-a8cd-4815-9ac6-8d7e3dfec92c")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 259.08 54.61 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -9122,9 +8902,31 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "bc662484-f7ea-4287-ab06-a1a21911c7d5")
+		(uuid "3189dac9-1d41-4282-92a2-97d047b2cd13")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 214.63 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+	)
+	(global_label "COIL_SW"
+		(shape bidirectional)
+		(at 232.41 45.72 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "329ac944-7c3f-4c0e-a4ae-fdb65e2337ca")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 232.41 45.72 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -9144,7 +8946,7 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "dd3455a2-ca1a-4a4d-b0c8-8749c425d20b")
+		(uuid "53646886-4eed-430e-9c87-250509c1cfa1")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 81.28 45.72 0)
 			(hide yes)
@@ -9157,20 +8959,18 @@
 			)
 		)
 	)
-	(symbol
-		(lib_id "power:+12V")
-		(at 43.18 45.72 90)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "097e59ed-a8d2-4e93-9369-5b63448307a5")
-		(property "Reference" "#PWR094"
-			(at 43.18 45.72 0)
+	(global_label "COIL_V"
+		(shape bidirectional)
+		(at 116.84 45.72 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "60cb1560-d0dc-41d6-a934-7737fd76f8c2")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 116.84 45.72 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -9180,8 +8980,208 @@
 				)
 			)
 		)
-		(property "Value" "+12V"
-			(at 45.18 43.72 0)
+	)
+	(global_label "COIL_V"
+		(shape bidirectional)
+		(at 259.08 54.61 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "6f42f944-06d3-46d1-9e88-9729c1f1ebf1")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 259.08 54.61 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+	)
+	(global_label "COIL_SW"
+		(shape bidirectional)
+		(at 160.02 55.88 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "81e777e7-1add-4149-a780-94fa555bb6b9")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 160.02 55.88 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+	)
+	(global_label "COIL_SW"
+		(shape bidirectional)
+		(at 116.84 48.26 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "ac6965de-0653-43d2-a819-44541d9e6981")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 116.84 48.26 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+	)
+	(global_label "GATE"
+		(shape bidirectional)
+		(at 190.5 52.07 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "c4df77df-e352-42ef-bf48-73785dd60f8b")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 190.5 52.07 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+	)
+	(global_label "ESTOP_OUT"
+		(shape bidirectional)
+		(at 43.18 48.26 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "de798098-960f-49ec-9088-9bef40e8d417")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 43.18 48.26 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+	)
+	(global_label "LOAD_EN"
+		(shape bidirectional)
+		(at 175.26 54.61 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "e2f06715-4787-4746-8127-c0171cb6fec0")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 175.26 54.61 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+	)
+	(global_label "COIL_SW"
+		(shape bidirectional)
+		(at 283.21 45.72 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "e51fe9dd-edea-47d4-8434-c564dba48556")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 283.21 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+	)
+	(global_label "GATE"
+		(shape bidirectional)
+		(at 147.32 66.04 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "efdfa30e-47c6-4a0d-82c6-1f939e0ac3d4")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 147.32 66.04 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 160.02 76.2 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "024a9d2a-9f96-484f-92ad-d982b6805712")
+		(property "Reference" "#PWR095"
+			(at 160.02 76.2 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 162.02 74.2 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9192,7 +9192,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 43.18 45.72 0)
+			(at 160.02 76.2 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -9203,7 +9203,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 43.18 45.72 0)
+			(at 160.02 76.2 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -9214,7 +9214,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 43.18 45.72 0)
+			(at 160.02 76.2 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -9224,171 +9224,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "f238954a-8032-4757-9dad-7f1f8e025112")
+			(uuid "96edb5cf-53cd-479b-a87d-ba13c8445ce1")
 		)
 		(instances
 			(project "OSBAMS_Rev2_RC13"
-				(path "/2875eb41-10e6-42a2-882d-9aa540e398c5/9140d847-5959-4a8c-901d-1c9d0a73e191"
-					(reference "#PWR094")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:D")
-		(at 223.52 45.72 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "139c663b-168b-47af-9e7a-a0cb9dd9e732")
-		(property "Reference" "D9"
-			(at 226.06 41.91 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "S1M"
-			(at 226.06 44.45 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Diode_SMD:D_SMA"
-			(at 223.52 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 223.52 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "1 A 1000 V rectifier SMA (relay-coil flyback)"
-			(at 223.52 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Manufacturer" "Diodes Inc."
-			(at 223.52 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "MPN" "S1M-13-F"
-			(at 223.52 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Evidence" "UNVERIFIED"
-			(at 223.52 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Lifecycle" "UNKNOWN (not checked)"
-			(at 223.52 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Source" "PCBWay source"
-			(at 223.52 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Alternate" "onsemi/owned 1N5408G (THT)"
-			(at 223.52 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Note" "Flyback: cathode on +12 V side"
-			(at 223.52 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "680b4b08-2bac-4257-adfb-90b27719e69c")
-		)
-		(pin "2"
-			(uuid "d12318d0-6cd7-43a5-8bc3-3d7d352728a8")
-		)
-		(instances
-			(project "OSBAMS_Rev2_RC13"
-				(path "/2875eb41-10e6-42a2-882d-9aa540e398c5/9140d847-5959-4a8c-901d-1c9d0a73e191"
-					(reference "D9")
+				(path "/1b2e69c0-b250-4732-98df-72e55cec14d5/5d69e387-208e-453d-addd-241cb42a9b45"
+					(reference "#PWR095")
 					(unit 1)
 				)
 			)
@@ -9405,7 +9246,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "244ba124-a9e5-46da-982a-0b36a2281476")
+		(uuid "19c18d59-6de6-4f4f-a2d4-de168ca9b25c")
 		(property "Reference" "R21"
 			(at 177.8 59.69 0)
 			(show_name no)
@@ -9539,810 +9380,15 @@
 			)
 		)
 		(pin "1"
-			(uuid "64bc0a91-63f0-46cb-880f-159974d874e6")
+			(uuid "51afb296-f416-436c-9ce8-5c0f065fddcb")
 		)
 		(pin "2"
-			(uuid "92eaae98-2df7-4c13-aa86-b919df1ec4df")
+			(uuid "fc44cbc3-3a34-47df-bc3c-e20c22414a7b")
 		)
 		(instances
 			(project "OSBAMS_Rev2_RC13"
-				(path "/2875eb41-10e6-42a2-882d-9aa540e398c5/9140d847-5959-4a8c-901d-1c9d0a73e191"
+				(path "/1b2e69c0-b250-4732-98df-72e55cec14d5/5d69e387-208e-453d-addd-241cb42a9b45"
 					(reference "R21")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 190.5 69.85 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "37ddb4ce-2eb7-4bbf-ae51-33141f264457")
-		(property "Reference" "#PWR096"
-			(at 190.5 69.85 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "GND"
-			(at 192.5 67.85 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 190.5 69.85 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 190.5 69.85 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 190.5 69.85 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "c570c4bc-6258-4a3e-8cf2-610255138bca")
-		)
-		(instances
-			(project "OSBAMS_Rev2_RC13"
-				(path "/2875eb41-10e6-42a2-882d-9aa540e398c5/9140d847-5959-4a8c-901d-1c9d0a73e191"
-					(reference "#PWR096")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Transistor_FET:IRLML0030")
-		(at 157.48 66.04 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "4750919d-de66-49b5-9dc2-53efd351168d")
-		(property "Reference" "Q1"
-			(at 160.02 62.23 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "IRLML0060"
-			(at 160.02 64.77 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
-			(at 157.48 66.04 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 157.48 66.04 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "N-MOSFET 60 V SOT-23 logic-level (relay low side). RDS(on) not specified at 3.3 V: gate-drive check required"
-			(at 157.48 66.04 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Manufacturer" "Infineon"
-			(at 157.48 66.04 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "MPN" "IRLML0060TRPBF"
-			(at 157.48 66.04 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Evidence" "USER_RELAYED_MANUFACTURER"
-			(at 157.48 66.04 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Lifecycle" "UNKNOWN (not checked)"
-			(at 157.48 66.04 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Source" "PCBWay source"
-			(at 157.48 66.04 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Alternate" "Diodes DMN6140L-7 / AOS AO3400A (30 V)"
-			(at 157.48 66.04 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Note" ""
-			(at 157.48 66.04 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "fea3127c-6342-4664-a05a-c6402e86edae")
-		)
-		(pin "2"
-			(uuid "a23d4178-ba7a-4161-8b1d-14fc04537b38")
-		)
-		(pin "3"
-			(uuid "e8fe42b1-939b-4daf-a022-8edbe34fa3ef")
-		)
-		(instances
-			(project "OSBAMS_Rev2_RC13"
-				(path "/2875eb41-10e6-42a2-882d-9aa540e398c5/9140d847-5959-4a8c-901d-1c9d0a73e191"
-					(reference "Q1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector_Generic:Conn_01x02")
-		(at 127 45.72 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "61f8d3fa-a85f-4964-92dc-a697e113badc")
-		(property "Reference" "J4"
-			(at 129.54 41.91 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "K1_COIL"
-			(at 129.54 44.45 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "OSBAMS_Rev2:EB21A-02-C"
-			(at 127 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 127 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "2-pos 5.00 mm right-angle screw terminal, 8 A / 300 V (footprint from Adam Tech drawing EB21A-XX-C rev B)"
-			(at 127 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Manufacturer" "Adam Tech"
-			(at 127 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "MPN" "EB21A-02-C"
-			(at 127 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Evidence" "USER_RELAYED_MANUFACTURER"
-			(at 127 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Lifecycle" "UNKNOWN (not checked)"
-			(at 127 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Source" "CONSIGN (owned: 5) or PCBWay source"
-			(at 127 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Alternate" "Phoenix MKDS 1/2-5,08 (different footprint)"
-			(at 127 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Note" "Durakool DG57CM-5021-76-1012-R coil (12 V). Pin 1 +12 V side, pin 2 MOSFET drain"
-			(at 127 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "e76df586-1b66-4961-b1c8-17cf787a6e5f")
-		)
-		(pin "2"
-			(uuid "71a0378c-b32e-44d5-bdff-7d88c229c42c")
-		)
-		(instances
-			(project "OSBAMS_Rev2_RC13"
-				(path "/2875eb41-10e6-42a2-882d-9aa540e398c5/9140d847-5959-4a8c-901d-1c9d0a73e191"
-					(reference "J4")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 160.02 76.2 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "6fb8b5f8-990c-455e-89f7-b56d41551d9a")
-		(property "Reference" "#PWR095"
-			(at 160.02 76.2 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "GND"
-			(at 162.02 74.2 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 160.02 76.2 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 160.02 76.2 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 160.02 76.2 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "66cb843e-3d16-4dd4-a8c2-01ea078319de")
-		)
-		(instances
-			(project "OSBAMS_Rev2_RC13"
-				(path "/2875eb41-10e6-42a2-882d-9aa540e398c5/9140d847-5959-4a8c-901d-1c9d0a73e191"
-					(reference "#PWR095")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 190.5 60.96 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "88b73ab0-3104-4f7f-8cd5-50902b9c0b57")
-		(property "Reference" "R22"
-			(at 193.04 57.15 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "10k"
-			(at 193.04 59.69 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 190.5 60.96 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 190.5 60.96 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "10k 1 % thick film 0603"
-			(at 190.5 60.96 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Manufacturer" "Vishay Dale"
-			(at 190.5 60.96 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "MPN" "CRCW060310K0FKEA"
-			(at 190.5 60.96 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Evidence" "UNVERIFIED"
-			(at 190.5 60.96 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Lifecycle" "UNKNOWN (not checked)"
-			(at 190.5 60.96 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Source" "PCBWay source"
-			(at 190.5 60.96 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Alternate" "Yageo RC0603-FR-07 series"
-			(at 190.5 60.96 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Note" "Default OFF"
-			(at 190.5 60.96 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "63ba3d59-cf73-4095-874c-c516ece719dd")
-		)
-		(pin "2"
-			(uuid "9288a30d-9cfa-4043-826e-38ebf5d193cf")
-		)
-		(instances
-			(project "OSBAMS_Rev2_RC13"
-				(path "/2875eb41-10e6-42a2-882d-9aa540e398c5/9140d847-5959-4a8c-901d-1c9d0a73e191"
-					(reference "R22")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector_Generic:Conn_01x02")
-		(at 91.44 45.72 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "9359cba9-010a-4ff4-a426-ef9fb9a176d2")
-		(property "Reference" "J3"
-			(at 93.98 41.91 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "ARM"
-			(at 93.98 44.45 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "OSBAMS_Rev2:EB21A-02-C"
-			(at 91.44 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 91.44 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "2-pos 5.00 mm right-angle screw terminal, 8 A / 300 V (footprint from Adam Tech drawing EB21A-XX-C rev B)"
-			(at 91.44 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Manufacturer" "Adam Tech"
-			(at 91.44 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "MPN" "EB21A-02-C"
-			(at 91.44 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Evidence" "USER_RELAYED_MANUFACTURER"
-			(at 91.44 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Lifecycle" "UNKNOWN (not checked)"
-			(at 91.44 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Source" "CONSIGN (owned: 5) or PCBWay source"
-			(at 91.44 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Alternate" "Phoenix MKDS 1/2-5,08 (different footprint)"
-			(at 91.44 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Note" "C&K T102SHZQE ARM switch in series"
-			(at 91.44 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "b8b8e3cd-5497-4cf5-8344-4bcb3aab9657")
-		)
-		(pin "2"
-			(uuid "9d67472d-573b-406a-925e-a8fbb0698492")
-		)
-		(instances
-			(project "OSBAMS_Rev2_RC13"
-				(path "/2875eb41-10e6-42a2-882d-9aa540e398c5/9140d847-5959-4a8c-901d-1c9d0a73e191"
-					(reference "J3")
 					(unit 1)
 				)
 			)
@@ -10359,7 +9405,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "d09d605f-edfc-4071-8425-b950cdb70b83")
+		(uuid "2df70994-1127-4ed2-aca0-1e24cce07f32")
 		(property "Reference" "J2"
 			(at 55.88 41.91 0)
 			(show_name no)
@@ -10493,174 +9539,15 @@
 			)
 		)
 		(pin "1"
-			(uuid "cbdc6eef-b4f7-4afe-909f-5e7e755432dc")
+			(uuid "288e969b-826e-4d04-b5b7-785cadb15f8d")
 		)
 		(pin "2"
-			(uuid "6fc3212b-e6e4-489c-94db-5d7c29084b34")
+			(uuid "0e24a9d6-4db3-47d1-a0a2-272960c34db4")
 		)
 		(instances
 			(project "OSBAMS_Rev2_RC13"
-				(path "/2875eb41-10e6-42a2-882d-9aa540e398c5/9140d847-5959-4a8c-901d-1c9d0a73e191"
+				(path "/1b2e69c0-b250-4732-98df-72e55cec14d5/5d69e387-208e-453d-addd-241cb42a9b45"
 					(reference "J2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 259.08 63.5 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "ef93eca1-fc01-42d6-9b21-5a20259ac0cd")
-		(property "Reference" "R23"
-			(at 261.62 59.69 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "2.2k"
-			(at 261.62 62.23 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 259.08 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 259.08 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "2.2k 1 % thick film 0603"
-			(at 259.08 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Manufacturer" "Vishay Dale"
-			(at 259.08 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "MPN" "CRCW06032K20FKEA"
-			(at 259.08 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Evidence" "UNVERIFIED"
-			(at 259.08 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Lifecycle" "UNKNOWN (not checked)"
-			(at 259.08 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Source" "PCBWay source"
-			(at 259.08 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Alternate" "Yageo RC0603-FR-07 series"
-			(at 259.08 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Note" ""
-			(at 259.08 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "a8644680-149a-49f2-873a-990ad6c85d46")
-		)
-		(pin "2"
-			(uuid "b6799870-bbd1-4f72-a2cd-5638fc52702e")
-		)
-		(instances
-			(project "OSBAMS_Rev2_RC13"
-				(path "/2875eb41-10e6-42a2-882d-9aa540e398c5/9140d847-5959-4a8c-901d-1c9d0a73e191"
-					(reference "R23")
 					(unit 1)
 				)
 			)
@@ -10677,7 +9564,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "f026b709-2a9d-42dc-9123-06673eb7a8ab")
+		(uuid "3a6abb0f-5109-412a-a364-3925101b8caf")
 		(property "Reference" "D10"
 			(at 294.64 41.91 0)
 			(show_name no)
@@ -10811,15 +9698,1128 @@
 			)
 		)
 		(pin "1"
-			(uuid "4740db5d-fb75-42fa-bec7-e55ec584317e")
+			(uuid "47860801-01b1-424f-be30-7bde9b23815c")
 		)
 		(pin "2"
-			(uuid "84be9859-4ea1-46b8-acf1-015f7984754f")
+			(uuid "68e0d246-8bc2-49db-a9dc-d296a34e52b7")
 		)
 		(instances
 			(project "OSBAMS_Rev2_RC13"
-				(path "/2875eb41-10e6-42a2-882d-9aa540e398c5/9140d847-5959-4a8c-901d-1c9d0a73e191"
+				(path "/1b2e69c0-b250-4732-98df-72e55cec14d5/5d69e387-208e-453d-addd-241cb42a9b45"
 					(reference "D10")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Transistor_FET:IRLML0030")
+		(at 157.48 66.04 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "3dc120c2-4e3b-46b3-b378-ebc042fa0cdd")
+		(property "Reference" "Q1"
+			(at 160.02 62.23 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "IRLML0060"
+			(at 160.02 64.77 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+			(at 157.48 66.04 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 157.48 66.04 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "N-MOSFET 60 V SOT-23 logic-level (relay low side). RDS(on) not specified at 3.3 V: gate-drive check required"
+			(at 157.48 66.04 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "Infineon"
+			(at 157.48 66.04 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "IRLML0060TRPBF"
+			(at 157.48 66.04 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Evidence" "USER_RELAYED_MANUFACTURER"
+			(at 157.48 66.04 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Lifecycle" "UNKNOWN (not checked)"
+			(at 157.48 66.04 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Source" "PCBWay source"
+			(at 157.48 66.04 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Alternate" "Diodes DMN6140L-7 / AOS AO3400A (30 V)"
+			(at 157.48 66.04 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Note" ""
+			(at 157.48 66.04 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "75533419-ded2-4a3e-971e-4cb9e4ba91d0")
+		)
+		(pin "2"
+			(uuid "d30ca283-93c4-4f1a-80e3-0d6b86a5393d")
+		)
+		(pin "3"
+			(uuid "e5437be8-9deb-4e01-8ad3-37692b760fa3")
+		)
+		(instances
+			(project "OSBAMS_Rev2_RC13"
+				(path "/1b2e69c0-b250-4732-98df-72e55cec14d5/5d69e387-208e-453d-addd-241cb42a9b45"
+					(reference "Q1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 259.08 63.5 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "3dcd9feb-1cfc-4e37-8a22-ea25299c1aac")
+		(property "Reference" "R23"
+			(at 261.62 59.69 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "2.2k"
+			(at 261.62 62.23 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 259.08 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 259.08 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "2.2k 1 % thick film 0603"
+			(at 259.08 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "Vishay Dale"
+			(at 259.08 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "CRCW06032K20FKEA"
+			(at 259.08 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Evidence" "UNVERIFIED"
+			(at 259.08 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Lifecycle" "UNKNOWN (not checked)"
+			(at 259.08 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Source" "PCBWay source"
+			(at 259.08 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Alternate" "Yageo RC0603-FR-07 series"
+			(at 259.08 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Note" ""
+			(at 259.08 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "38fa539c-970f-469f-82ab-d65320168303")
+		)
+		(pin "2"
+			(uuid "d76dd819-ba1a-49ed-9e73-4d84665b082c")
+		)
+		(instances
+			(project "OSBAMS_Rev2_RC13"
+				(path "/1b2e69c0-b250-4732-98df-72e55cec14d5/5d69e387-208e-453d-addd-241cb42a9b45"
+					(reference "R23")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x02")
+		(at 127 45.72 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "412b0b1d-5c83-4098-a085-c53ac6cd76e2")
+		(property "Reference" "J4"
+			(at 129.54 41.91 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "K1_COIL"
+			(at 129.54 44.45 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "OSBAMS_Rev2:EB21A-02-C"
+			(at 127 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 127 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "2-pos 5.00 mm right-angle screw terminal, 8 A / 300 V (footprint from Adam Tech drawing EB21A-XX-C rev B)"
+			(at 127 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "Adam Tech"
+			(at 127 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "EB21A-02-C"
+			(at 127 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Evidence" "USER_RELAYED_MANUFACTURER"
+			(at 127 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Lifecycle" "UNKNOWN (not checked)"
+			(at 127 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Source" "CONSIGN (owned: 5) or PCBWay source"
+			(at 127 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Alternate" "Phoenix MKDS 1/2-5,08 (different footprint)"
+			(at 127 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Note" "Durakool DG57CM-5021-76-1012-R coil (12 V). Pin 1 +12 V side, pin 2 MOSFET drain"
+			(at 127 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "1494d73d-56b1-4a7d-b57b-602ee30cbe2f")
+		)
+		(pin "2"
+			(uuid "77133b19-94cd-41d5-b782-ca6e08e90d10")
+		)
+		(instances
+			(project "OSBAMS_Rev2_RC13"
+				(path "/1b2e69c0-b250-4732-98df-72e55cec14d5/5d69e387-208e-453d-addd-241cb42a9b45"
+					(reference "J4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x02")
+		(at 91.44 45.72 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "68c0d126-2b79-4ccd-a4d0-ce50ccfc3286")
+		(property "Reference" "J3"
+			(at 93.98 41.91 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "ARM"
+			(at 93.98 44.45 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "OSBAMS_Rev2:EB21A-02-C"
+			(at 91.44 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 91.44 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "2-pos 5.00 mm right-angle screw terminal, 8 A / 300 V (footprint from Adam Tech drawing EB21A-XX-C rev B)"
+			(at 91.44 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "Adam Tech"
+			(at 91.44 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "EB21A-02-C"
+			(at 91.44 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Evidence" "USER_RELAYED_MANUFACTURER"
+			(at 91.44 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Lifecycle" "UNKNOWN (not checked)"
+			(at 91.44 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Source" "CONSIGN (owned: 5) or PCBWay source"
+			(at 91.44 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Alternate" "Phoenix MKDS 1/2-5,08 (different footprint)"
+			(at 91.44 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Note" "C&K T102SHZQE ARM switch in series"
+			(at 91.44 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "27a8cfb5-ad37-4213-a367-308513abc4f2")
+		)
+		(pin "2"
+			(uuid "4acbb1b9-6409-46c9-9eb5-86b8fb4e6f65")
+		)
+		(instances
+			(project "OSBAMS_Rev2_RC13"
+				(path "/1b2e69c0-b250-4732-98df-72e55cec14d5/5d69e387-208e-453d-addd-241cb42a9b45"
+					(reference "J3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:D")
+		(at 223.52 45.72 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "7fb91f9c-ef55-4902-be8c-cfa8c6b872d2")
+		(property "Reference" "D9"
+			(at 226.06 41.91 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "S1M"
+			(at 226.06 44.45 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Diode_SMD:D_SMA"
+			(at 223.52 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 223.52 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "1 A 1000 V rectifier SMA (relay-coil flyback)"
+			(at 223.52 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "Diodes Inc."
+			(at 223.52 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "S1M-13-F"
+			(at 223.52 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Evidence" "UNVERIFIED"
+			(at 223.52 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Lifecycle" "UNKNOWN (not checked)"
+			(at 223.52 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Source" "PCBWay source"
+			(at 223.52 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Alternate" "onsemi/owned 1N5408G (THT)"
+			(at 223.52 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Note" "Flyback: cathode on +12 V side"
+			(at 223.52 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "89fdd575-2caf-4222-bd5b-86fb950c8128")
+		)
+		(pin "2"
+			(uuid "359055f1-9dae-4bbe-84fe-470e5eb4fdb0")
+		)
+		(instances
+			(project "OSBAMS_Rev2_RC13"
+				(path "/1b2e69c0-b250-4732-98df-72e55cec14d5/5d69e387-208e-453d-addd-241cb42a9b45"
+					(reference "D9")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 190.5 69.85 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "83d159d7-8825-4126-af2e-78d5718034cb")
+		(property "Reference" "#PWR096"
+			(at 190.5 69.85 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 192.5 67.85 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 190.5 69.85 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 190.5 69.85 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 190.5 69.85 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "35e83986-625b-4e8e-9418-609af5bdad10")
+		)
+		(instances
+			(project "OSBAMS_Rev2_RC13"
+				(path "/1b2e69c0-b250-4732-98df-72e55cec14d5/5d69e387-208e-453d-addd-241cb42a9b45"
+					(reference "#PWR096")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+12V")
+		(at 43.18 45.72 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "c67080ce-470d-4441-bf21-d7972164e15b")
+		(property "Reference" "#PWR094"
+			(at 43.18 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "+12V"
+			(at 45.18 43.72 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 43.18 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 43.18 45.72 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 43.18 45.72 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "2be1fa6d-8a9a-42ca-a4bb-5fe8c7cf3bfa")
+		)
+		(instances
+			(project "OSBAMS_Rev2_RC13"
+				(path "/1b2e69c0-b250-4732-98df-72e55cec14d5/5d69e387-208e-453d-addd-241cb42a9b45"
+					(reference "#PWR094")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 190.5 60.96 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "d58489fb-6a8d-4a2e-b649-7d3ce4f06e6f")
+		(property "Reference" "R22"
+			(at 193.04 57.15 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10k"
+			(at 193.04 59.69 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 190.5 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 190.5 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "10k 1 % thick film 0603"
+			(at 190.5 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "Vishay Dale"
+			(at 190.5 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "CRCW060310K0FKEA"
+			(at 190.5 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Evidence" "UNVERIFIED"
+			(at 190.5 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Lifecycle" "UNKNOWN (not checked)"
+			(at 190.5 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Source" "PCBWay source"
+			(at 190.5 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Alternate" "Yageo RC0603-FR-07 series"
+			(at 190.5 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Note" "Default OFF"
+			(at 190.5 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "43f6c6f9-4980-48d2-bfdc-83e99e2e9b79")
+		)
+		(pin "2"
+			(uuid "757a768d-f1f3-4e59-8b45-77be8d2e5319")
+		)
+		(instances
+			(project "OSBAMS_Rev2_RC13"
+				(path "/1b2e69c0-b250-4732-98df-72e55cec14d5/5d69e387-208e-453d-addd-241cb42a9b45"
+					(reference "R22")
 					(unit 1)
 				)
 			)

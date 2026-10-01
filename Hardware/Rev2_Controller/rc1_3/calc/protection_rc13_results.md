@@ -1,6 +1,6 @@
 # RC1.3 protection calculations (INA228 differential clamp + connector-entry ESD stage)
 
-Status of inputs: **verified** = INA228 limits, 1.5SMBJ48A, ERJP08 (uploaded datasheets). **ASSUMED** = 1.5SMBJ12CA only (no datasheet supplied; replace with datasheet values before release). The connector-entry diodes D15-D19 are the verified 1.5SMBJ48A; the other connector-entry rows below are sensitivity cases only. Architecture: connector -> fast ESD diode -> pulse-rated series resistor (R41/R42/R43) -> surge TVS (1.5SMBJ48A) -> filter (R11/R12/R13 + C26/C28) -> INA228.
+Status of inputs: **verified** = INA228 limits, 1.5SMBJ48A, ERJP08 (uploaded datasheets). 1.5SMBJ12CA is now **verified** from the same Bourns 1.5SMBJ datasheet (VRWM 12 V, VBR 13.3-14.7 V, IR 1 uA, VC 19.9 V @ 75.4 A, 25.9 V @ 377 A). Only the D20 capacitance remains ASSUMED (not in the datasheet). The connector-entry diodes D15-D19 are the verified 1.5SMBJ48A; the other connector-entry rows below are sensitivity cases only. Architecture: connector -> fast ESD diode -> pulse-rated series resistor (R41/R42/R43) -> surge TVS (1.5SMBJ48A) -> filter (R11/R12/R13 + C26/C28) -> INA228.
 
 ESD target: IEC 61000-4-2 +-8 kV contact / +-15 kV air - a **design / first-article target, not a certification claim**. Generator model: 330 ohm / 150 pF discharge, source current Vg/330 into the clamp network (8 kV: 24 A; 15 kV: 45 A). DC-level clamp analysis only: the first-nanosecond L di/dt spike is not resolvable by a datasheet model (needs TLP / gun test).
 
@@ -46,7 +46,7 @@ ESD target: IEC 61000-4-2 +-8 kV contact / +-15 kV air - a **design / first-arti
 
 Reading the table: without a connector-entry device (RC1.2) the series resistor carries almost the whole gun current (21-44 A) and drops 0.2-1.9 kV across a 1206 anti-surge part whose datasheet gives only 125 V limiting-element voltage / 500 V overload voltage and **no pulse curve**, and the RC1.2 pin clamp reached 83-87 V (15 kV air: 85 V limit exceeded at +60 K): the RC1.2 ESD behaviour of R41/R42/R43 and the INA228 VBUS/CM margin was undemonstrated. With a connector-entry 1.5SMBJ48A (as built, Rdyn ~0.95 ohm) the connector node is held at ~80-104 V, the series resistor sees 19-41 V (Kelvin 10 ohm) / 22-41 V (VBUS 47 ohm) instead of 0.2-1.9 kV, the resistor pulse energy drops from 136-2440 uJ to 0.3-3.3 uJ, and the surge clamp D5/D7 stays near 60-66 V (margin >= 19 V to 85 V). The result depends strongly on the entry device's dynamic resistance: a 200 W SOD-123FL 48 V part (~7 ohm) would leave 93-269 V across the resistor and 76-79 V at the Kelvin pin (margin 6-9 V), which is why the SMF48A candidate used in the first RC1.3 draft was replaced. No purpose-built >= 48 V ESD diode with a verified Rdyn <= 1 ohm was identified in the supplied files. DC-level clamp analysis only; the first-nanosecond spike and the ERJP08 pulse survival remain first-article test items.
 
-## 2. INA228 IN+/IN- differential stress with D20 (1.5SMBJ12CA, ASSUMED) across SHUNT_INP_RAW / SHUNT_INN_RAW
+## 2. INA228 IN+/IN- differential stress with D20 (1.5SMBJ12CA, verified Bourns data) across SHUNT_INP_RAW / SHUNT_INN_RAW
 
 D20 sits on the connector side of R11/R12 so the INA228 pins only ever see the clamp level minus the pin-current drop (<= 5 mA x 10 ohm = 50 mV).
 
@@ -71,9 +71,9 @@ Without D20 (RC1.2) the same one-sided events put 77.9 / 83.4 V (IN- near 0 V or
 
 | item | assumption | result |
 |---|---|---|
-| D20 leakage current: flat worst-case bound: 5 uA at VRWM 12 V applied at all voltages | I = 5e+03 nA | differential error = I x (R42+R43) = 100 uV = 2000 ppm of 50 mV (and unchanged scale: removed by zero-current offset trim) |
-| D20 leakage current: ohmic scaling 5 uA/12 V x 0.05 V (leakage at 50 mV differential, 25 C) | I = 20.8 nA | differential error = I x (R42+R43) = 0.417 uV = 8 ppm of 50 mV (and unchanged scale: removed by zero-current offset trim) |
-| D20 leakage current: ohmic scaling x 10 for +85 C | I = 208 nA | differential error = I x (R42+R43) = 4.17 uV = 83 ppm of 50 mV (and unchanged scale: removed by zero-current offset trim) |
+| D20 leakage current: flat worst-case bound: IR 1 uA (datasheet, at VRWM 12 V) applied at all voltages | I = 1e+03 nA | differential error = I x (R42+R43) = 20 uV = 400 ppm of 50 mV (offset-like: removed by the zero-current offset trim) |
+| D20 leakage current: ohmic scaling 1 uA/12 V x 0.05 V (leakage at 50 mV differential, 25 C) | I = 4.17 nA | differential error = I x (R42+R43) = 0.0833 uV = 2 ppm of 50 mV (offset-like: removed by the zero-current offset trim) |
+| D20 leakage current: ohmic scaling x 10 for +85 C | I = 41.7 nA | differential error = I x (R42+R43) = 0.833 uV = 17 ppm of 50 mV (offset-like: removed by the zero-current offset trim) |
 | D20 leakage at a CM of 44 V | the clamp is differential: both terminals at the same potential -> no voltage across it | 0 (no common-mode leakage) |
 | D20 capacitance (ASSUMED 2 nF, 0 V bias; falls with bias) | in parallel with C26 100 nF | differential filter tau 4.00 -> 4.08 us (+2 %), fc 39.8 -> 39.0 kHz |
 | D20 recovery after a clamp event | clamp not conducting below VBR (14.7 V); recovery = filter settling | to 0.01 % of 50 mV: 9.2 tau = 38 us (INA228 conversion time >= 50 us; discard the first conversion after an event) |

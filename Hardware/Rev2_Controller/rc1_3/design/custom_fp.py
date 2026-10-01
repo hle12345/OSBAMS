@@ -34,10 +34,36 @@ def eb21a():
     return s
 
 
+def ftsh_105():
+    """Samtec FTSH-105-01-L-DV-K, 10-pin (2 x 5) 1.27 mm vertical SMT shrouded header.
+    Land pattern from Samtec drawing FTSH-1XX-XX-XXX-DV-XXX-FOOTPRINT rev H (8/27/2019, ECN-364793), Fig 1 (option -K: no alignment pegs / no NPTH):
+    pitch 1.27 mm; pads 0.74 x 2.79 mm; pad-row overall 6.86 mm (rows at +-2.035 mm, 1.28 mm between rows); connector outline = N x 1.27 = 6.35 mm wide x 3.43 mm,
+    all symmetric about the centerline. Numbering (drawing): 01 bottom-left, 02 directly above it, 03 bottom 2nd column ... (odd pins bottom row, even pins top row).
+    Stencil (sheet 2): apertures equal to the pads, 0.152 mm stencil. The key-notch position of the -K shroud is NOT on the supplied sheets (only pin 1 is)."""
+    s = '(footprint "FTSH-105-01-L-DV-K"\n  (version 20240108)\n  (generator "osbams")\n  (layer "F.Cu")\n'
+    s += '  (descr "Samtec FTSH-105-01-L-DV-K 2x5 1.27 mm vertical SMT keyed shrouded header; land pattern from Samtec FTSH-1XX-XX-XXX-DV-XXX footprint drawing rev H (VERIFIED_LOCAL). Pin 1 bottom-left (square-marked); key notch position not on the supplied sheets.")\n'
+    s += '  (tags "FTSH Samtec 1.27mm SWD Cortex debug")\n  (attr smd)\n'
+    s += '  (property "Reference" "REF**" (at 0 -5.0 0) (layer "F.SilkS") (effects (font (size 1 1) (thickness 0.15))))\n'
+    s += '  (property "Value" "FTSH-105-01-L-DV-K" (at 0 5.0 0) (layer "F.Fab") (effects (font (size 1 1) (thickness 0.15))))\n'
+    for n in range(1, 11):
+        col = (n - 1) // 2
+        x = round((col - 2) * 1.27, 3)
+        y = 2.035 if n % 2 == 1 else -2.035
+        s += f'  (pad "{n}" smd rect (at {x} {y}) (size 0.74 2.79) (layers "F.Cu" "F.Paste" "F.Mask"))\n'
+    s += rect(-3.175, -1.715, 3.175, 1.715, "F.Fab", 0.1)
+    s += line(-3.175, -1.715, -3.175, 1.715, "F.SilkS", 0.2) + line(3.175, -1.715, 3.175, 1.715, "F.SilkS", 0.2)
+    s += '  (fp_text user "1" (at -3.9 3.0 0) (layer "F.SilkS") (effects (font (size 0.8 0.8) (thickness 0.12))))\n'
+    s += '  (fp_text user "KEY NOTCH: verify vs Samtec print" (at 0 0 0) (layer "F.Fab") (effects (font (size 0.4 0.4) (thickness 0.06))))\n'
+    s += rect(-3.4, -3.7, 3.4, 3.7, "F.CrtYd", 0.05)
+    s += ')\n'
+    return s
+
+
 def write_all():
     d = os.path.join(PRJ, "OSBAMS_Rev2.pretty")
     os.makedirs(d, exist_ok=True)
     open(os.path.join(d, "EB21A-02-C.kicad_mod"), "w").write(eb21a())
+    open(os.path.join(d, "FTSH-105-01-L-DV-K.kicad_mod"), "w").write(ftsh_105())
 
 
 if __name__ == "__main__":

@@ -78,8 +78,8 @@ part("TVS15", lib="Device:D_Zener", fp="Diode_SMD:D_SMB", mfr="Littelfuse", mpn=
      evid=UR, life="UNKNOWN (not checked)", alt="Bourns SMBJ15A-Q", src="CONSIGN or PCBWay source")
 part("TVS48", lib="Device:D_Zener", fp="Diode_SMD:D_SMB", mfr="Bourns", mpn="1.5SMBJ48A", desc="Unidirectional TVS 48 V standoff 1500 W (K = pin 1)",
      evid=UR, life="UNKNOWN (not checked)", alt="Littelfuse 1.5SMC / SMBJ48A", src="CONSIGN (owned: 2; 3 needed) or PCBWay source")
-part("TVS12CA", lib="Device:D_TVS", fp="Diode_SMD:D_SMB", mfr="Bourns", mpn="1.5SMBJ12CA", desc="Bidirectional TVS 12 V standoff 1500 W (INA228 IN+/IN- differential clamp; datasheet NOT supplied, values UNVERIFIED)",
-     evid=UV, life="UNKNOWN (not checked)", alt="Littelfuse SMBJ12CA (600 W) / 1.5SMC12CA", src="PCBWay source")
+part("TVS12CA", lib="Device:D_TVS", fp="Diode_SMD:D_SMB", mfr="Bourns", mpn="1.5SMBJ12CA", desc="Bidirectional TVS 12 V standoff 1500 W (INA228 IN+/IN- differential clamp). Bourns datasheet: VBR 13.3-14.7 V, IR 1 uA @ 12 V, VC 19.9 V @ 75.4 A (10/1000 us), 25.9 V @ 377 A (8/20 us)",
+     evid=UR, life="UNKNOWN (not checked)", alt="Littelfuse SMBJ12CA (600 W) / 1.5SMC12CA", src="PCBWay source")
 part("ESD48", lib="Device:D_Zener", fp="Diode_SMD:D_SMB", mfr="Bourns", mpn="1.5SMBJ48A", desc="Connector-entry first-stage ESD/surge clamp, unidirectional 48 V standoff 1500 W (K = pin 1). Chosen for its low dynamic resistance (~1 ohm, verified clamp curve): a 200 W SOD-123FL 48 V part (~7 ohm) leaves 90-270 V across the series resistor in the RC1.3 ESD calculation",
      evid=UR, life="UNKNOWN (not checked)", alt="purpose-built >=48 V ESD diode with datasheet Rdyn <= 1 ohm (none identified from the supplied files)", src="CONSIGN (owned: 2; 8 needed incl. D5-D7) or PCBWay source")
 part("D1N4148", lib="Device:D", fp="Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal", mfr="onsemi", mpn="1N4148", desc="Small-signal diode DO-35 (LED reverse clamp)",
@@ -123,7 +123,7 @@ part("J_PH4", lib="Connector_Generic:Conn_01x04", fp="Connector_JST:JST_PH_B4B-P
      evid=UV, life="UNKNOWN (not checked)", alt="JST B4B-PH-K-S(LF)(SN)", src="PCBWay source")
 part("J_USBC", lib="Connector:USB_C_Receptacle_USB2.0_16P", fp="Connector_USB:USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal", mfr="GCT", mpn="USB4105-GF-A", desc="USB-C 2.0 receptacle 16-pin",
      evid=UV, life="UNKNOWN (not checked)", alt="Korean Hroparts TYPE-C-31-M-12", src="PCBWay source")
-part("J_SWD", lib="Connector:Conn_ARM_JTAG_SWD_10", fp="Connector_PinHeader_1.27mm:PinHeader_2x05_P1.27mm_Vertical_SMD", mfr="Samtec", mpn="FTSH-105-01-L-DV-K", desc="Cortex-debug 2x5 1.27 mm shrouded keyed header",
+part("J_SWD", lib="Connector:Conn_ARM_JTAG_SWD_10", fp="OSBAMS_Rev2:FTSH-105-01-L-DV-K", mfr="Samtec", mpn="FTSH-105-01-L-DV-K", desc="Cortex-debug 2x5 1.27 mm shrouded keyed header",
      evid=UV, life="UNKNOWN (not checked)", alt="Harwin M50-3600542", src="PCBWay source")
 
 # ----------------------------------------------------------------------------- components

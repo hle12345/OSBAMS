@@ -25,7 +25,7 @@
 Result: **PASS**. (Rev.1's symbol-vs-footprint polarity defect is not repeated: every diode uses a KiCad symbol with K = pin 1 and a footprint with the cathode bar at pad 1.)
 
 ## Layout statistics
-718 track segments, 395 vias, min track 0.20 mm, min via 0.60/0.30 mm, 111 SMD footprints, 12 through-hole footprints, 3 fiducials, 4 mounting holes, 27 test points.
+746 track segments, 385 vias, min track 0.20 mm, min via 0.60/0.30 mm, 111 SMD footprints, 12 through-hole footprints, 3 fiducials, 4 mounting holes, 27 test points.
 
 ## DFM items for review
 - 0.5 mm pitch LQFP-64 and QFN-20: confirm PCBWay minimum solder-mask bridge and paste stencil; ENIG recommended.

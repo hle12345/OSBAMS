@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """RC1.3 pack-sense protection calculations (INA228 differential clamp + connector-entry fast ESD stage).
 Verified inputs : INA228 limits, Bourns 1.5SMBJ48A (VBR, VC@IPP), Panasonic ERJP08 (no pulse curve).
-Assumed inputs  : 1.5SMBJ12CA (datasheet NOT supplied; every number from it is an engineering estimate flagged ASSUMED). The connector-entry diode is the same
+Verified (Bourns 1.5SMBJ datasheet, uploaded): 1.5SMBJ12CA VRWM 12 V, VBR 13.3-14.7 V, IR 1 uA at VRWM, VC 19.9 V @ 75.4 A (10/1000 us), VC 25.9 V @ 377 A (8/20 us), dVBR = 0.1 %/K.
+Assumed         : D20 capacitance only (not in the datasheet text). The connector-entry diode is the same
                   verified 1.5SMBJ48A; the other Rdyn rows are sensitivity cases for alternative parts."""
 import math, os
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -11,8 +12,9 @@ INA_ABS, INA_DIFF = 85.0, 40.0
 def v48(i, dT=0.0):                       # Bourns 1.5SMBJ48A (verified points: VBR max 58.9; 77.4 V @ 19.4 A; 100.6 V @ 97 A)
     v = 58.9 + (77.4 - 58.9) / 19.4 * i if i <= 19.4 else 77.4 + (100.6 - 77.4) / (97 - 19.4) * (i - 19.4)
     return v + 0.001 * 58.9 * dT
-def v12ca(i, dT=0.0):                     # 1.5SMBJ12CA ASSUMED: VBR max 14.7 V, VC 19.9 V @ 75.4 A (typical 1.5 kW series figures)
-    return 14.7 + (19.9 - 14.7) / 75.4 * i + 0.001 * 14.7 * dT
+def v12ca(i, dT=0.0):                     # Bourns 1.5SMBJ12CA (verified): VBR max 14.7; 19.9 V @ 75.4 A (10/1000); 25.9 V @ 377 A (8/20)
+    v = 14.7 + (19.9 - 14.7) / 75.4 * i if i <= 75.4 else 19.9 + (25.9 - 19.9) / (377 - 75.4) * (i - 75.4)
+    return v + 0.001 * 14.7 * dT
 def make_esd(rdyn):                       # connector-entry ESD diode ASSUMED: VBR max 58.9 V (48 V class), dynamic resistance rdyn
     return lambda i, dT=0.0: 58.9 + rdyn * i + 0.001 * 58.9 * dT
 ESD_CANDS = (("SMF48A-class 200 W SOD-123FL, Rdyn 7.1 ohm (sensitivity case; derived from 77.4 V @ 2.6 A, NOT a datasheet curve)", make_esd(7.1)),
@@ -39,7 +41,7 @@ def solve(vg, esd_fn, rseries, dT=0.0):
     return dict(vn=vn, itot=itot, ie=ie, ir=ir, vr=ir * rseries, vd=vd, er=er)
 
 P("# RC1.3 protection calculations (INA228 differential clamp + connector-entry ESD stage)\n")
-P("Status of inputs: **verified** = INA228 limits, 1.5SMBJ48A, ERJP08 (uploaded datasheets). **ASSUMED** = 1.5SMBJ12CA only (no datasheet supplied; replace with datasheet values before release). The connector-entry diodes D15-D19 are the verified 1.5SMBJ48A; the other connector-entry rows below are sensitivity cases only. Architecture: connector -> fast ESD diode -> pulse-rated series resistor (R41/R42/R43) -> surge TVS (1.5SMBJ48A) -> filter (R11/R12/R13 + C26/C28) -> INA228.\n")
+P("Status of inputs: **verified** = INA228 limits, 1.5SMBJ48A, ERJP08 (uploaded datasheets). 1.5SMBJ12CA is now **verified** from the same Bourns 1.5SMBJ datasheet (VRWM 12 V, VBR 13.3-14.7 V, IR 1 uA, VC 19.9 V @ 75.4 A, 25.9 V @ 377 A). Only the D20 capacitance remains ASSUMED (not in the datasheet). The connector-entry diodes D15-D19 are the verified 1.5SMBJ48A; the other connector-entry rows below are sensitivity cases only. Architecture: connector -> fast ESD diode -> pulse-rated series resistor (R41/R42/R43) -> surge TVS (1.5SMBJ48A) -> filter (R11/R12/R13 + C26/C28) -> INA228.\n")
 P("ESD target: IEC 61000-4-2 +-8 kV contact / +-15 kV air - a **design / first-article target, not a certification claim**. Generator model: 330 ohm / 150 pF discharge, source current Vg/330 into the clamp network (8 kV: 24 A; 15 kV: 45 A). DC-level clamp analysis only: the first-nanosecond L di/dt spike is not resolvable by a datasheet model (needs TLP / gun test).\n")
 
 for title, rs, lab in (("VBUS lead (J6.1): R41 = 47 ohm, then D7 1.5SMBJ48A, then R13 10 ohm to the INA228 VBUS pin", 47.0, "R41"),
@@ -55,7 +57,7 @@ for title, rs, lab in (("VBUS lead (J6.1): R41 = 47 ohm, then D7 1.5SMBJ48A, the
 P("Reading the table: without a connector-entry device (RC1.2) the series resistor carries almost the whole gun current (21-44 A) and drops 0.2-1.9 kV across a 1206 anti-surge part whose datasheet gives only 125 V limiting-element voltage / 500 V overload voltage and **no pulse curve**, and the RC1.2 pin clamp reached 83-87 V (15 kV air: 85 V limit exceeded at +60 K): the RC1.2 ESD behaviour of R41/R42/R43 and the INA228 VBUS/CM margin was undemonstrated. With a connector-entry 1.5SMBJ48A (as built, Rdyn ~0.95 ohm) the connector node is held at ~80-104 V, the series resistor sees 19-41 V (Kelvin 10 ohm) / 22-41 V (VBUS 47 ohm) instead of 0.2-1.9 kV, the resistor pulse energy drops from 136-2440 uJ to 0.3-3.3 uJ, and the surge clamp D5/D7 stays near 60-66 V (margin >= 19 V to 85 V). The result depends strongly on the entry device's dynamic resistance: a 200 W SOD-123FL 48 V part (~7 ohm) would leave 93-269 V across the resistor and 76-79 V at the Kelvin pin (margin 6-9 V), which is why the SMF48A candidate used in the first RC1.3 draft was replaced. No purpose-built >= 48 V ESD diode with a verified Rdyn <= 1 ohm was identified in the supplied files. DC-level clamp analysis only; the first-nanosecond spike and the ERJP08 pulse survival remain first-article test items.\n")
 
 # ---- differential stress with the clamp
-P("## 2. INA228 IN+/IN- differential stress with D20 (1.5SMBJ12CA, ASSUMED) across SHUNT_INP_RAW / SHUNT_INN_RAW\n")
+P("## 2. INA228 IN+/IN- differential stress with D20 (1.5SMBJ12CA, verified Bourns data) across SHUNT_INP_RAW / SHUNT_INN_RAW\n")
 P("D20 sits on the connector side of R11/R12 so the INA228 pins only ever see the clamp level minus the pin-current drop (<= 5 mA x 10 ohm = 50 mV).\n")
 P("| one-sided event on IN+ | IN+_RAW before D20 (D5 clamp, V) | IN- condition | I through D20 (A) | differential at pins (V) | limit | margin |\n|---|---|---|---|---|---|---|")
 for lab, vin in (("ESD 8 kV contact", 77.9), ("ESD 15 kV air", 83.4), ("hot-plug / interruption (D5 at 20 A)", v48(20.0)), ("hot-plug node (RLC model, 59.5 V)", 59.5)):
@@ -74,10 +76,10 @@ P("\nWithout D20 (RC1.2) the same one-sided events put 77.9 / 83.4 V (IN- near 0
 P("## 3. Normal-operation error, leakage, capacitance, recovery (0-50 mV differential, common mode up to 44 V)\n")
 Ish = 50e-3
 P("| item | assumption | result |\n|---|---|---|")
-for nm, ileak in (("flat worst-case bound: 5 uA at VRWM 12 V applied at all voltages", 5e-6), ("ohmic scaling 5 uA/12 V x 0.05 V (leakage at 50 mV differential, 25 C)", 5e-6 / 12 * 0.05), ("ohmic scaling x 10 for +85 C", 5e-6 / 12 * 0.05 * 10)):
+for nm, ileak in (("flat worst-case bound: IR 1 uA (datasheet, at VRWM 12 V) applied at all voltages", 1e-6), ("ohmic scaling 1 uA/12 V x 0.05 V (leakage at 50 mV differential, 25 C)", 1e-6 / 12 * 0.05), ("ohmic scaling x 10 for +85 C", 1e-6 / 12 * 0.05 * 10)):
     rloop = 10 + 10 + 10 + 10      # R42 + R43 + (R11 + R12 between filter and pin are outside the clamp) - clamp drawn through R42/R43 + cable
     dv = ileak * (10 + 10)        # leakage flows through R42 + R43 (clamp is downstream of them)
-    P(f"| D20 leakage current: {nm} | I = {ileak*1e9:.3g} nA | differential error = I x (R42+R43) = {dv*1e6:.3g} uV = {dv/Ish*1e6:.0f} ppm of 50 mV (and unchanged scale: removed by zero-current offset trim) |")
+    P(f"| D20 leakage current: {nm} | I = {ileak*1e9:.3g} nA | differential error = I x (R42+R43) = {dv*1e6:.3g} uV = {dv/Ish*1e6:.0f} ppm of 50 mV (offset-like: removed by the zero-current offset trim) |")
 P("| D20 leakage at a CM of 44 V | the clamp is differential: both terminals at the same potential -> no voltage across it | 0 (no common-mode leakage) |")
 dC = 2e-9
 tau_rc12 = (10 + 10 + 10 + 10) * 100e-9           # R42+R43+R11+R12 = 40 ohm x C26

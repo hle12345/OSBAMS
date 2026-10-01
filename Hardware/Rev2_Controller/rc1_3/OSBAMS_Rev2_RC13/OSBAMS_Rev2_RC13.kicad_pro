@@ -392,31 +392,11 @@
     "netclass_patterns": [
       {
         "netclass": "POWER",
-        "pattern": "3V3_HOST"
-      },
-      {
-        "netclass": "POWER",
-        "pattern": "12V_RAW"
-      },
-      {
-        "netclass": "POWER",
-        "pattern": "VBUS_USB"
-      },
-      {
-        "netclass": "POWER",
         "pattern": "12V_F"
       },
       {
         "netclass": "POWER",
-        "pattern": "+12V"
-      },
-      {
-        "netclass": "POWER",
-        "pattern": "ESTOP_OUT"
-      },
-      {
-        "netclass": "POWER",
-        "pattern": "COIL_V"
+        "pattern": "COIL_SW"
       },
       {
         "netclass": "POWER",
@@ -424,23 +404,55 @@
       },
       {
         "netclass": "POWER",
-        "pattern": "COIL_SW"
+        "pattern": "VBUS_USB"
       },
       {
-        "netclass": "RAIL",
-        "pattern": "+3V3"
+        "netclass": "POWER",
+        "pattern": "3V3_HOST"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "ESTOP_OUT"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "12V_RAW"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "COIL_V"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "+12V"
       },
       {
         "netclass": "RAIL",
         "pattern": "3V3_A"
       },
       {
-        "netclass": "PACKLEVEL",
-        "pattern": "INA_VBUS"
+        "netclass": "RAIL",
+        "pattern": "+3V3"
       },
       {
         "netclass": "PACKLEVEL",
-        "pattern": "FB_R1"
+        "pattern": "FB_R2"
+      },
+      {
+        "netclass": "PACKLEVEL",
+        "pattern": "SHUNT_INP_RAW"
+      },
+      {
+        "netclass": "PACKLEVEL",
+        "pattern": "RELAY_OUT"
+      },
+      {
+        "netclass": "PACKLEVEL",
+        "pattern": "PACK_INA"
+      },
+      {
+        "netclass": "PACKLEVEL",
+        "pattern": "PACK_INA_CON"
       },
       {
         "netclass": "PACKLEVEL",
@@ -452,14 +464,6 @@
       },
       {
         "netclass": "PACKLEVEL",
-        "pattern": "SHUNT_INN_CON"
-      },
-      {
-        "netclass": "PACKLEVEL",
-        "pattern": "SHUNT_INP_RAW"
-      },
-      {
-        "netclass": "PACKLEVEL",
         "pattern": "SHUNT_INP_CON"
       },
       {
@@ -468,19 +472,15 @@
       },
       {
         "netclass": "PACKLEVEL",
-        "pattern": "PACK_INA"
+        "pattern": "SHUNT_INN_CON"
       },
       {
         "netclass": "PACKLEVEL",
-        "pattern": "FB_R2"
+        "pattern": "FB_R1"
       },
       {
         "netclass": "PACKLEVEL",
-        "pattern": "PACK_INA_CON"
-      },
-      {
-        "netclass": "PACKLEVEL",
-        "pattern": "RELAY_OUT"
+        "pattern": "INA_VBUS"
       },
       {
         "netclass": "KELVIN",
@@ -492,15 +492,7 @@
       },
       {
         "netclass": "HOST",
-        "pattern": "3V3_HOST"
-      },
-      {
-        "netclass": "HOST",
-        "pattern": "USB_CC1"
-      },
-      {
-        "netclass": "HOST",
-        "pattern": "GND_HOST"
+        "pattern": "UART_RX_HOST"
       },
       {
         "netclass": "HOST",
@@ -508,31 +500,11 @@
       },
       {
         "netclass": "HOST",
-        "pattern": "USB_SHIELD"
-      },
-      {
-        "netclass": "HOST",
-        "pattern": "CP_VBUS_SENSE"
-      },
-      {
-        "netclass": "HOST",
-        "pattern": "USB_DP"
-      },
-      {
-        "netclass": "HOST",
         "pattern": "VBUS_USB"
       },
       {
         "netclass": "HOST",
-        "pattern": "USB_DM"
-      },
-      {
-        "netclass": "HOST",
-        "pattern": "UART_RX_HOST"
-      },
-      {
-        "netclass": "HOST",
-        "pattern": "UART_TX_HOST"
+        "pattern": "3V3_HOST"
       },
       {
         "netclass": "HOST",
@@ -540,11 +512,39 @@
       },
       {
         "netclass": "HOST",
+        "pattern": "USB_DM_J"
+      },
+      {
+        "netclass": "HOST",
+        "pattern": "CP_VBUS_SENSE"
+      },
+      {
+        "netclass": "HOST",
         "pattern": "CP_RSTB"
       },
       {
         "netclass": "HOST",
-        "pattern": "USB_DM_J"
+        "pattern": "USB_DP"
+      },
+      {
+        "netclass": "HOST",
+        "pattern": "GND_HOST"
+      },
+      {
+        "netclass": "HOST",
+        "pattern": "USB_CC1"
+      },
+      {
+        "netclass": "HOST",
+        "pattern": "USB_SHIELD"
+      },
+      {
+        "netclass": "HOST",
+        "pattern": "UART_TX_HOST"
+      },
+      {
+        "netclass": "HOST",
+        "pattern": "USB_DM"
       }
     ]
   },
