@@ -1,0 +1,68 @@
+"""Bill-of-materials knowledge for the OSBAMS controller PCB (what the design files actually say)."""
+
+# Every field comes from the schematic value / footprint, or is explicitly marked.
+NOT_SPEC = "NOT SPECIFIED"
+
+PARTS = [
+    dict(refs=["C1"], value="10 uF, 25 V", mfr="Panasonic", mpn="ECA-1EM100I",
+         package="Radial D5.0 mm, 2.0 mm pitch (CP_Radial_D5.0mm_P2.00mm)",
+         desc="Aluminium electrolytic capacitor, 10 uF, 25 V, radial through-hole (bulk on +12V rail)",
+         notes="THT. Polarised: + lead = pad 1 = +12V. MPN comes from the schematic value. 25 V rating vs SMBJ15A clamp (~24 V peak) leaves little margin - review item."),
+    dict(refs=["C2", "C3"], value="0.1 uF (100 nF)", mfr=NOT_SPEC, mpn=NOT_SPEC,
+         package="Radial disc, D5.0 mm, W2.5 mm, 5.0 mm pitch (C_Disc_D5.0mm_W2.5mm_P5.00mm)",
+         desc="100 nF ceramic disc capacitor, through-hole (C2 = TC74 bypass, C3 = +3V3 logic bypass)",
+         notes="THT. Voltage rating and dielectric not specified (needs >= 16 V, X7R/Z5U class) - customer must pick an MPN. Not polarised."),
+    dict(refs=["D1"], value="SMBJ15A", mfr=NOT_SPEC, mpn="SMBJ15A",
+         package="DO-214AA / SMB (Diode_SMD:D_SMB)",
+         desc="Unidirectional TVS diode, 15 V standoff, SMB, across the +12V rail",
+         notes="ONLY SMT PART ON THE BOARD. Polarity: schematic puts cathode on +12V; KiCad D_SMB footprint pad 1 (left, cathode) is on GND - POLARITY MISMATCH, resolve before ordering (see review). Manufacturer not named in design (Littelfuse/Vishay/Bourns all make SMBJ15A) - needs approval."),
+    dict(refs=["D2"], value="1N5408", mfr=NOT_SPEC, mpn="1N5408",
+         package="DO-201AD, 15.24 mm horizontal (D_DO-201AD_P15.24mm_Horizontal)",
+         desc="3 A, 1000 V rectifier diode used as contactor-coil flyback (axial through-hole)",
+         notes="THT. Cathode band = pad 1 (square pad, silk 'K'). Schematic wants cathode on COIL_V (+12V side) but pad 1 is on COIL_SW - POLARITY MISMATCH. Manufacturer not named (e.g. Vishay 1N5408-E3/54 would be a candidate - needs approval)."),
+    dict(refs=["D3"], value="SB560-E3/73", mfr="Vishay", mpn="SB560-E3/73",
+         package="DO-201AD, 15.24 mm horizontal (D_DO-201AD_P15.24mm_Horizontal)",
+         desc="5 A, 60 V Schottky rectifier, series reverse-polarity protection on the 12 V input",
+         notes="THT. MPN from the schematic value. Cathode band = pad 1, which the PCB connects to 12V_IN; schematic intends cathode on +12V (load side) - POLARITY MISMATCH, resolve before ordering."),
+    dict(refs=["Q1"], value="IRLZ44NPBF", mfr="Infineon (International Rectifier)", mpn="IRLZ44NPBF",
+         package="TO-220-3 vertical (TO-220-3_Vertical)",
+         desc="N-channel logic-level power MOSFET, 55 V, 47 A, low-side contactor-coil driver",
+         notes="THT. Pinout G-D-S = pads 1-2-3, matches the footprint. Gate driven from a 3.3 V GPIO via R1; do not substitute (safety part). No heat sink fitted/specified."),
+    dict(refs=["R1"], value="220 ohm", mfr=NOT_SPEC, mpn=NOT_SPEC,
+         package="Axial DIN0207, 10.16 mm pitch (R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal)",
+         desc="220 ohm gate resistor, axial through-hole",
+         notes="THT. Tolerance/power/series not specified (assumed 1%, 0.25 W) - customer must pick an MPN."),
+    dict(refs=["R2"], value="10 kohm", mfr=NOT_SPEC, mpn=NOT_SPEC,
+         package="Axial DIN0207, 10.16 mm pitch (R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal)",
+         desc="10 kohm MOSFET gate pull-down, axial through-hole",
+         notes="THT. Holds the gate low if the MCU pin floats (safety-relevant). Tolerance/power/series not specified - customer must pick an MPN."),
+    dict(refs=["U1"], value="TC74A5-3.3VAT", mfr="Microchip Technology", mpn="TC74A5-3.3VAT",
+         package="TO-220-5 vertical (TO-220-5_Vertical)",
+         desc="Digital temperature sensor, I2C/SMBus, 3.3 V, address 0x4D, TO-220-5",
+         notes="THT. Measurement part - do not substitute. NOTE the older repo BOM lists TC74A0-5.0VAT (5 V, addr 0x48); this PCB/schematic use the 3.3 V A5 variant - confirm. Pin 1 is NC. Pads have 0.087 mm annular ring (< 0.15 mm)."),
+    dict(refs=["J1", "J2", "J3"], value="MX126-5.0-02P (2-pos, 5.0 mm)", mfr=NOT_SPEC, mpn=NOT_SPEC,
+         package="Terminal block 1x02, 5.00 mm pitch (TerminalBlock_MaiXu_MX126-5.0-02P_1x02_P5.00mm)",
+         desc="2-position 5.0 mm screw terminal block (J1 = 12 V input, J2 = contactor coil, J3 = E-stop loop)",
+         notes="THT. Footprint name suggests 'MaiXu MX126-5.0-02P' but no MPN/manufacturer is in the schematic. These carry the 12 V coil current only (NOT the battery discharge current). No +/- legend on silkscreen."),
+    dict(refs=["J4"], value="INA228_MODULE (1x04, 2.54 mm)", mfr=NOT_SPEC, mpn=NOT_SPEC,
+         package="Pin header 1x04, 2.54 mm, vertical (PinHeader_1x04_P2.54mm_Vertical)",
+         desc="4-pin 2.54 mm header for the external INA228 breakout (3V3, GND, SCL, SDA)",
+         notes="THT. The INA228 itself is NOT on this PCB (Adafruit 5832 breakout plugs in; not assembled by the fab). Header MPN not specified."),
+    dict(refs=["J5"], value="NUCLEO_INTERFACE (2x04, 2.54 mm)", mfr=NOT_SPEC, mpn=NOT_SPEC,
+         package="Pin header 2x04, 2.54 mm, vertical (PinHeader_2x04_P2.54mm_Vertical)",
+         desc="2x4 2.54 mm header to the external NUCLEO-L476RG (3V3, GND, SDA, SCL, GPIO_GATE, UART_TX, UART_RX, SPARE)",
+         notes="THT. The STM32L476RG is NOT on this PCB (it is on the Nucleo module). Schematic note says 'keyed' but a plain header footprint is not keyed - orientation risk."),
+    dict(refs=["J6"], value="UART_HDR (1x04, 2.54 mm)", mfr=NOT_SPEC, mpn=NOT_SPEC,
+         package="Polarised 4-pin header footprint, 2.54 mm (Connector:FanPinHeader_1x04_P2.54mm_Vertical)",
+         desc="4-pin 2.54 mm UART header (3V3, GND, TX, RX) toward the Raspberry Pi/USB-UART",
+         notes="THT. Footprint is a fan-style header with locating pegs (two 1.1 mm NPTH); no MPN or mating connector specified - confirm part vs footprint."),
+]
+
+MECH = [dict(refs=["MH1", "MH2", "MH3", "MH4"], desc="M3 mounting holes (3.2 mm NPTH) - no component, hardware not supplied")]
+
+EXTERNAL = [
+    ("NUCLEO-L476RG (STM32L476RG)", "STMicroelectronics", "NUCLEO-L476RG", "Plugs into J5. Not assembled by the fab. Programming/ST-LINK is on this module."),
+    ("INA228 breakout", "Adafruit", "5832", "Plugs into J4. Not assembled by the fab. Shunt/VBUS wiring is on the module's own terminals."),
+    ("Contactor coil load", "Durakool (per firmware comments)", "DG57CM-5021-76-1012-R", "Connects to J2. External power hardware; relay contacts are NOT on this PCB."),
+    ("Battery fuse, disconnect, shunt, XT60 power path", "-", "-", "External high-current hardware. Not part of this PCB or its assembly."),
+]
