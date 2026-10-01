@@ -1,6 +1,6 @@
 # Manufacturing state — resolved
 
-**Current state: NO fabrication package exists.** No Gerber, drill, BOM, CPL or assembly output is in the repository.
+**Current state (2026-10-01): RELEASE CANDIDATE 1 exists for REVIEW (`Hardware/Rev2_Controller/OSBAMS_Rev2_RELEASE_CANDIDATE_1/`, KiCad 10 ERC 0 / DRC 0 electrical + 12 silk warnings). NOT authorized for fabrication — gates below remain false; its Gerber zip is marked NOT_FOR_FABRICATION.** Historical note: before RC1, No Gerber, drill, BOM, CPL or assembly output is in the repository.
 
 | Source | Date | Claim | Verdict |
 |---|---|---|---|

@@ -1,0 +1,8 @@
+#!/bin/bash
+# run a command inside the KiCad 10.0.6 container rootfs with the repo bind-mounted at /work
+R=/opt/kicad10
+mountpoint -q $R/proc || mount --bind /proc $R/proc
+mountpoint -q $R/dev || mount --bind /dev $R/dev
+mkdir -p $R/work
+mountpoint -q $R/work || mount --bind /home/user/OSBAMS $R/work
+exec chroot $R "$@"

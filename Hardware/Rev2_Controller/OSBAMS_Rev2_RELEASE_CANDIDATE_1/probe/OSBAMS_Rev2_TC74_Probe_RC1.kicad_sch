@@ -1,0 +1,89 @@
+(kicad_sch
+	(version 20260306)
+	(generator "eeschema")
+	(generator_version "10.0")
+	(uuid "ba1a70a1-b987-4c99-bb74-40f5b7653c49")
+	(paper "A3")
+	(title_block
+		(title "OSBAMS Rev.2 Controller")
+		(date "2026-10-01")
+		(rev "RC1")
+		(company "OSBAMS")
+		(comment 1 "RELEASE CANDIDATE 1 - NOT FOR FABRICATION")
+	)
+	(lib_symbols)
+	(text "Battery discharge current never enters this PCB. 44 V / 10 A MAX. Hierarchical sheets use global labels for cross-sheet nets."
+		(exclude_from_sim no)
+		(at 30 23 0)
+		(effects
+			(font
+				(size 2 2)
+			)
+			(justify left)
+		)
+		(uuid "579ea6ec-be52-4035-9fbb-3c92d48863eb")
+	)
+	(text "OSBAMS Rev.2 Controller - RELEASE CANDIDATE 1 (review only; NOT FOR FABRICATION)"
+		(exclude_from_sim no)
+		(at 30 15 0)
+		(effects
+			(font
+				(size 4 4)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "cde9e225-a614-4b5e-b33d-bc912cfd2399")
+	)
+	(sheet
+		(at 30 40)
+		(size 90 15)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "12d12192-a05b-4627-8350-4e277d950744")
+		(property "Sheetname" "01_Probe"
+			(at 30 39.3 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "01_Probe.kicad_sch"
+			(at 30 55.7 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "OSBAMS_Rev2_TC74_Probe_RC1"
+				(path "/ba1a70a1-b987-4c99-bb74-40f5b7653c49"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+)
