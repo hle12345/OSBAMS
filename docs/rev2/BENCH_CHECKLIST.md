@@ -18,7 +18,7 @@ Status of every step: **NOT_RUN**. Nothing here is BENCH_TESTED or HARDWARE_VALI
 ### A2 — Inspect the OSBAMS power path and wiring
 - [ ] **Status:** NOT_RUN
 - **Equipment:** handheld DMM
-- **Procedure:** Check polarity labelling, fuse/disconnect/contactor part numbers and ratings, wire gauge, connector type. Continuity and polarity with the handheld DMM, power OFF, no source connected.
+- **Procedure:** Read the exact Durakool DG57CM part number, shunt part number, fuse and fuse-holder part numbers, and the 12->5 V DC/DC converter(s) (the four open items in HARDWARE_FREEZE_CANDIDATE.md); check polarity labelling, wire gauge, connector type and that the shunt is in series. Continuity and polarity with the handheld DMM, power OFF, no source connected.
 - **Pass criterion:** Every power-path rating written into capability.PowerPathLimits or marked unspecified.
 
 
@@ -124,7 +124,7 @@ Status of every step: **NOT_RUN**. Nothing here is BENCH_TESTED or HARDWARE_VALI
 - [ ] **Status:** NOT_RUN · **Requires:** D2
 - **Equipment:** EDU34450A temperature function, TC74
 - **Procedure:** During D2/D3 compare pack-surface temperature (reference) with TC74; record peak.
-- **Pass criterion:** Peak temperature recorded; stop-on-limit behaviour verified or marked untested.
+- **Pass criterion:** Peak temperature recorded; stop-on-limit behaviour verified or marked untested. Thermal protection is NOT validated until the TC74 works and is attached at a suitable point.
 
 ### D5 — Repeat on Shenzhen Elite (12.8 Ah) then NEE1006-M (15.3 Ah)
 - [ ] **Status:** NOT_RUN · **Requires:** D3

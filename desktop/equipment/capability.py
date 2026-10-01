@@ -136,17 +136,23 @@ class PowerPathLimits:
     wiring_a:    Optional[float] = None
     contactor_a: Optional[float] = None
     shunt_a:     Optional[float] = None   # shunt / current-sensor range
+    max_voltage_v: Optional[float] = None # lowest DC voltage rating in the path
 
-    def as_dict(self) -> dict:
+    def as_dict(self) -> dict:   # current ratings only
         return {"connector": self.connector_a, "fuse": self.fuse_a,
                 "wiring": self.wiring_a, "contactor": self.contactor_a,
                 "shunt/sensor": self.shunt_a}
 
 
-# Rev.1 hardware as documented. Only the shunt rating is a known number
-# (RSA-20-50, 20 A / 50 mV). Everything else is unspecified until bought,
-# built and verified. The validated limit (config.SAFETY_MAX_CURRENT_A) caps all.
-REV1_POWER_PATH = PowerPathLimits(shunt_a=20.0)
+# Rev.2 power path (docs/rev2/HARDWARE_FREEZE_CANDIDATE.md). Known numbers only:
+#   shunt   RSA-20-50, 20 A class (repo)
+#   fuse    15 A TARGET (part number not yet confirmed)
+#   disconnect Blue Sea 6006: 48 V DC max, 25 A switching (manufacturer listing)
+# Contactor (Durakool DG57CM: ratings are VARIANT-dependent), connector and wiring
+# stay unspecified until the exact parts are read off the hardware.
+# The OSBAMS validated limits (config) cap everything regardless.
+REV2_POWER_PATH = PowerPathLimits(fuse_a=15.0, shunt_a=20.0, max_voltage_v=48.0)
+REV1_POWER_PATH = REV2_POWER_PATH      # backward-compatible alias
 
 
 @dataclass
@@ -162,6 +168,7 @@ class CurrentLimit:
     final_a:              float = 0.0
     limiting_factor:      str = ""
     blocked_reason:       str = ""
+    system_voltage_max_v: float = 0.0
 
     @property
     def blocked(self) -> bool:
@@ -183,6 +190,7 @@ class CurrentLimit:
             ("6060B current rating",            a(self.instrument_limit_a, 0)),
             ("6060B power-derived limit",       a(self.power_limit_a)),
             ("OSBAMS validated limit",          a(self.osbams_limit_a, 0)),
+            ("OSBAMS validated voltage ceiling", f"{self.system_voltage_max_v:g} V"),
             ("Battery-profile limit",           a(self.profile_limit_a)),
             ("FINAL PERMITTED",                 final),
             ("Limiting factor",                 self.limiting_factor or "—"),
@@ -192,21 +200,36 @@ class CurrentLimit:
         ]
 
 
+def _default_system_voltage_max_v() -> float:
+    try:
+        import config
+        return float(config.OSBAMS_VALIDATED_MAX_VOLTAGE_V)
+    except Exception:
+        return 44.0
+
+
 def compute_permitted_current(
         pack_voltage_v: Optional[float],
         profile_current_limit_a: Optional[float] = None,
         system_current_max_a: Optional[float] = None,
-        power_path: PowerPathLimits = REV1_POWER_PATH) -> CurrentLimit:
+        power_path: PowerPathLimits = REV2_POWER_PATH,
+        system_voltage_max_v: Optional[float] = None) -> CurrentLimit:
     """
     The one function that decides how much current may be requested.
     Fail-safe: unknown/out-of-range voltage -> 0 A with a blocked_reason.
     """
     osbams = _default_system_current_max_a() if system_current_max_a is None \
         else float(system_current_max_a)
+    vmax = _default_system_voltage_max_v() if system_voltage_max_v is None \
+        else float(system_voltage_max_v)
+    if power_path.max_voltage_v is not None:
+        vmax = min(vmax, power_path.max_voltage_v)
+    vmax = min(vmax, INSTRUMENT_VOLTAGE_MAX_V)
     comps  = {k: v for k, v in power_path.as_dict().items() if v is not None}
     unspec = [k for k, v in power_path.as_dict().items() if v is None]
     res = CurrentLimit(
         battery_voltage_v=pack_voltage_v, profile_limit_a=profile_current_limit_a,
+        system_voltage_max_v=vmax,
         osbams_limit_a=osbams, instrument_limit_a=INSTRUMENT_CURRENT_MAX_A,
         power_limit_a=None, component_limits_a=comps, unspecified=unspec)
 
@@ -223,6 +246,11 @@ def compute_permitted_current(
         res.blocked_reason = (f"pack voltage {pack_voltage_v:.2f} V above the "
                               f"6060B {INSTRUMENT_VOLTAGE_MAX_V:g} V maximum")
         res.limiting_factor = "6060B max voltage"
+        return res
+    if pack_voltage_v > vmax + _EPS:
+        res.blocked_reason = (f"pack voltage {pack_voltage_v:.2f} V above the OSBAMS "
+                              f"validated system ceiling {vmax:g} V (provisional)")
+        res.limiting_factor = "OSBAMS voltage ceiling"
         return res
 
     res.power_limit_a = INSTRUMENT_POWER_MAX_W / pack_voltage_v
@@ -245,7 +273,8 @@ def check_load_command(requested_voltage_v: float, requested_current_a: float,
                        requested_power_w: Optional[float] = None,
                        profile_current_limit_a: Optional[float] = None,
                        system_current_max_a: Optional[float] = None,
-                       power_path: PowerPathLimits = REV1_POWER_PATH) -> CurrentLimit:
+                       power_path: PowerPathLimits = REV2_POWER_PATH,
+                       system_voltage_max_v: Optional[float] = None) -> CurrentLimit:
     """
     Gate for EVERY load command. Raises EnvelopeViolation unless
         V <= 60, 3 <= V, I <= 60, V*I <= 300
@@ -256,7 +285,8 @@ def check_load_command(requested_voltage_v: float, requested_current_a: float,
     if i < 0:
         raise EnvelopeViolation(f"negative current request {i} A")
     lim = compute_permitted_current(v, profile_current_limit_a,
-                                    system_current_max_a, power_path)
+                                    system_current_max_a, power_path,
+                                    system_voltage_max_v)
     if lim.blocked:
         raise EnvelopeViolation(lim.blocked_reason)
     if i > INSTRUMENT_CURRENT_MAX_A + _EPS:

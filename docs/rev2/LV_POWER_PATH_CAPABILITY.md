@@ -1,4 +1,6 @@
-# Rev.2 LV power-path capability
+# Rev.2 power-path capability (battery / discharge side)
+
+Frozen candidate: see `HARDWARE_FREEZE_CANDIDATE.md`.
 
 **Purpose:** decide, component by component, how much of the 6060B's
 3–60 V / 60 A / 300 W envelope the OSBAMS power path can *actually* use.
@@ -16,9 +18,9 @@ Power path (from `Documentation/HARDWARE_DESIGN.md`):
 | Shunt RS1 (Rev.1: RSA-20-50, 2.5 mΩ) | n/a (sense element) | **20 A / 50 mV** | 20 A² × 2.5 mΩ = 1.0 W at rating | Repo (`app_config.h`, `HARDWARE_DESIGN.md`) | **Hard cap 20 A** — firmware trip 18.5 A (protection); operating ceiling 10 A |
 | INA228 (U2) | Bus 0–85 V; covers 60 V | n/a (set by shunt) | Shunt input ±163.84 mV (ADCRANGE 0) | Repo + INA228 datasheet (range figures as used in `ina228.c`) | Not the limit: 85 V > 60 V. Current range is set by the shunt |
 | Current-scale register | — | `OSBAMS_INA228_IMAX_MA` = 30 A | digital scale only | Repo (`app_config.h`) | Above shunt rating on purpose; not a capability |
-| Fuse F1 | "58 V DC" noted | **NOT SPECIFIED** | needs DC interrupt rating ≥ 60 V and ≥ prospective pack short-circuit current | Repo notes only; part not chosen | Unspecified → cannot support any claim; sized to operating limit |
-| Manual disconnect SW1 (Blue Sea 6006 noted) | not verified here | not verified here | contact heating | Repo names the part; rating **not checked in this build** | Read the datasheet before relying on it |
-| Contactor K1 | needs published **DC breaking** rating ≥ 60 V | **NOT SPECIFIED / not frozen** | coil power, contact heating | Repo: "single most important remaining hardware selection" | Unspecified → blocks anything beyond the validated limit |
+| Fuse F1 | needs DC rating ≥ 44 V (≥ 48 V preferred) | **15 A target** (part/holder not confirmed) | needs DC interrupt rating ≥ 60 V and ≥ prospective pack short-circuit current | Repo notes only; part not chosen | Unspecified → cannot support any claim; sized to operating limit |
+| Manual disconnect SW1 (Blue Sea 6006) | **48 V DC max** | 300 A continuous; **25 A switching** | contact heating | Manufacturer values as shown in distributor listings (not a Blue Sea datasheet) | Sets the 44 V ceiling margin; not for routine opening under load |
+| Contactor K1 (Durakool DG57CM, 12 V coil) | up to 145 V DC max switching (listing) | variant-dependent: ~80 A@12 V, 60 A@36 V, 50 A@48 V | coil power, contact heating | Durakool product listing; **exact suffix not yet read** | Left unspecified in `PowerPathLimits` until the suffix is known |
 | Connector J1 (XT30 / XT60 / XT90 + adapters) | XT-series nominal ratings are well above 60 V | Nominal XT30 ≈ 30 A, XT60 ≈ 60 A, XT90 ≈ 90 A (manufacturer figures, **not re-verified; derate for continuous use**) | contact resistance heating | Manufacturer nominal values from memory/not rechecked | **Connector never sets test current.** Always derated by profile/instrument |
 | Wiring | insulation ≥ 60 V | depends on gauge/length/temperature; e.g. 14 AWG is a ~15–25 A class conductor, a 60 A run needs ~6 AWG class | I²R heating, voltage drop to the sense point | General engineering practice — **check the wire-ampacity chart** for the actual cable | Wire actually installed is unspecified |
 | PCB copper (KiCad board) | — | A standard 1 oz trace cannot carry tens of amps | trace heating | Board not inspected for this document | Keep the power path **off-PCB** (bus bar/cable + off-board shunt) |
@@ -31,7 +33,7 @@ Power path (from `Documentation/HARDWARE_DESIGN.md`):
 
 | Quantity | Rev.2 initial value | Why |
 |---|---|---|
-| Voltage | 3 – 60 V instrument window; **profile decides within it** | 6060B range; INA228 85 V |
+| Voltage | **44 V system ceiling (provisional)**; 6060B window is 3–60 V; profile decides within it | Blue Sea 6006 is 48 V DC max; margin above a 42 V pack; INA228 85 V |
 | Current (OSBAMS validated hardware limit) | **10 A** (`config.SAFETY_MAX_CURRENT_A`) | Largest value the documented path can plausibly support; fuse, contactor, wiring, connector are unspecified, so nothing higher is claimed |
 | Power | ≤ 300 W | 6060B |
 | Shunt cap (known) | 20 A | RSA-20-50 rating |
@@ -41,8 +43,8 @@ Effective current for the actual SFSU batteries:
 | Pack | V_max | 300 W / V | OSBAMS 10 A | **Permitted** |
 |---|---|---|---|---|
 | 36 V Ninebot / Shenzhen Elite / NEE1006-M | 42 V | 7.14 A | 10 A | **7.14 A** (then profile) |
-| 48 V-class | 54.6 V | 5.49 A | 10 A | 5.49 A |
-| 60 V boundary | 60 V | 5.00 A | 10 A | 5.00 A |
+| 48 V-class | 54.6 V | 5.49 A | 10 A | **blocked** — above the 44 V OSBAMS ceiling |
+| 60 V boundary | 60 V | 5.00 A | 10 A | **blocked** — above the 44 V OSBAMS ceiling |
 | 24 V | 25.2 V | 11.9 A | 10 A | 10 A |
 | 12 V | 12.6 V | 23.8 A | 10 A | 10 A |
 

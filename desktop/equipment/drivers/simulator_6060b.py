@@ -90,9 +90,19 @@ class Simulator6060B(ElectronicLoad):
     PROFILES = SCENARIOS            # name kept for demo/serial tooling
 
     def __init__(self, profile: str = "normal", sample_rate_ms: int = 500, **limits):
-        super().__init__(**limits)
         if profile not in SCENARIOS:
             raise ValueError(f"unknown scenario {profile!r}")
+        # Scenarios above the OSBAMS validated voltage ceiling (44 V) are
+        # INSTRUMENT-boundary studies (48 V, 60 V): the simulated 6060B still
+        # enforces 60 V / 60 A / 300 W, but the hypothetical system ceiling is
+        # lifted to 60 V and the run is flagged. They are not Rev.2 targets.
+        self.beyond_validated_ceiling = (
+            SCENARIOS[profile]["start_v"] > cap._default_system_voltage_max_v() + 1e-9)
+        if self.beyond_validated_ceiling:
+            limits.setdefault("system_voltage_max_v", cap.INSTRUMENT_VOLTAGE_MAX_V)
+            limits.setdefault("power_path", cap.PowerPathLimits(
+                fuse_a=15.0, shunt_a=20.0, max_voltage_v=None))
+        super().__init__(**limits)
         self._profile_name = profile
         self._p = dict(SCENARIOS[profile])
         self._sample_ms = sample_rate_ms
@@ -111,7 +121,7 @@ class Simulator6060B(ElectronicLoad):
         # an out-of-envelope scenario is a bug in the scenario table
         cap.check_load_command(self._p["start_v"], self._p["current_a"], None,
                                self.profile_current_limit_a, self.system_current_max_a,
-                               self.power_path)
+                               self.power_path, self.system_voltage_max_v)
 
     # ── battery model ───────────────────────────────────────────────────
     @property

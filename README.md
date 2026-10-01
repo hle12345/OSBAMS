@@ -9,7 +9,8 @@ energy, DCIR, voltage-sag, thermal, SOH and battery-history analysis.**
 Status: **2.0.0-dev1 — design and host-tested software; no physical validation
 has been run.** The 60 V / 60 A / 300 W figures are the *instrument's* rating,
 not an OSBAMS capability: the OSBAMS envelope is the intersection of the 6060B,
-the battery profile and the validated power path (10 A today).
+the battery profile and the validated power path (**≤ 44 V, ≤ 10 A** provisionally).
+Hardware freeze candidate: `docs/rev2/HARDWARE_FREEZE_CANDIDATE.md`.
 
 ## The one rule
 `permitted current = min(profile, OSBAMS hardware, connector, fuse, wiring, contactor, shunt, 60 A, 300 W / V)`

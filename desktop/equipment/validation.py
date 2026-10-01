@@ -41,8 +41,9 @@ STEPS = [
          "No asset ID or calibration status left UNKNOWN for an instrument used as a reference."),
     Step("A2", "A. Records", "Inspect the OSBAMS power path and wiring",
          "handheld DMM",
-         "Check polarity labelling, fuse/disconnect/contactor part numbers and ratings, wire gauge, "
-         "connector type. Continuity and polarity with the handheld DMM, power OFF, no source connected.",
+         "Read the exact Durakool DG57CM part number, shunt part number, fuse and fuse-holder part numbers, and the 12->5 V DC/DC converter(s) "
+         "(the four open items in HARDWARE_FREEZE_CANDIDATE.md); check polarity labelling, wire gauge, connector type and that the shunt is in series. "
+         "Continuity and polarity with the handheld DMM, power OFF, no source connected.",
          "Every power-path rating written into capability.PowerPathLimits or marked unspecified."),
     # ── B: low-energy commissioning (no battery, no 6060B) ──────────────
     Step("B1", "B. Low-energy commissioning", "Controller, I2C and UART bring-up",
@@ -117,7 +118,7 @@ STEPS = [
     Step("D4", "D. Battery tests", "Thermal observation",
          "EDU34450A temperature function, TC74",
          "During D2/D3 compare pack-surface temperature (reference) with TC74; record peak.",
-         "Peak temperature recorded; stop-on-limit behaviour verified or marked untested.", "D2"),
+         "Peak temperature recorded; stop-on-limit behaviour verified or marked untested. Thermal protection is NOT validated until the TC74 works and is attached at a suitable point.", "D2"),
     Step("D5", "D. Battery tests", "Repeat on Shenzhen Elite (12.8 Ah) then NEE1006-M (15.3 Ah)",
          "as D1-D4",
          "Same sequence. Packs with BMS anomalies in the intake notes (blinking blue, cut wire) are inspected and judged safe BEFORE any connection.",

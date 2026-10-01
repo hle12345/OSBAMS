@@ -10,7 +10,7 @@
 | Hardware | unbuilt / unvalidated |
 
 Host tests at this baseline:
-- `python3 -m pytest tests` — 145 passed (Rev.2 equipment, orchestrator, dashboard wiring under offscreen Qt, protocol cross-language, scoring, suitability). Needs `pytest numpy scikit-learn pyserial PySide6 pyqtgraph`.
+- `python3 -m pytest tests` — 147 passed (Rev.2 equipment, orchestrator, dashboard wiring under offscreen Qt, protocol cross-language, scoring, suitability). Needs `pytest numpy scikit-learn pyserial PySide6 pyqtgraph`.
 - `make -C Firmware/Tests run` — all 12 C test binaries run, exit 0.
 
 Status: orchestrator/dashboard are host- and simulator-tested only. 6060B remote control blocked (no confirmed GPIB path; no command VERIFIED). **Nothing is BENCH_TESTED or HARDWARE_VALIDATED**; next work is `BENCH_CHECKLIST.md`.

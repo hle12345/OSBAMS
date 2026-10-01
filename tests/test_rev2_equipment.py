@@ -45,11 +45,30 @@ class TestCapability(unittest.TestCase):
         self.assertIn("connector", lim.unspecified)
 
     def test_voltage_bounds_block(self):
+        # instrument window alone (hypothetical hardware validated to 60 V)
+        wide = dict(system_voltage_max_v=60.0, power_path=cap.PowerPathLimits())
         for v in (None, 0.0, 2.9, 60.01, 72.0, 100.0, 150.0, 500.0):
-            self.assertTrue(cap.compute_permitted_current(v).blocked, v)
-            self.assertEqual(cap.compute_permitted_current(v).final_a, 0.0)
+            self.assertTrue(cap.compute_permitted_current(v, **wide).blocked, v)
+            self.assertEqual(cap.compute_permitted_current(v, **wide).final_a, 0.0)
         for v in (3.0, 60.0):
-            self.assertFalse(cap.compute_permitted_current(v).blocked)
+            self.assertFalse(cap.compute_permitted_current(v, **wide).blocked)
+
+    def test_osbams_validated_voltage_ceiling_44v(self):
+        import config
+        self.assertEqual(config.OSBAMS_VALIDATED_MAX_VOLTAGE_V, 44.0)
+        self.assertFalse(cap.compute_permitted_current(44.0).blocked)
+        for v in (44.1, 48.0, 60.0):                  # inside the 6060B, outside OSBAMS
+            lim = cap.compute_permitted_current(v)
+            self.assertTrue(lim.blocked, v)
+            self.assertEqual(lim.limiting_factor, "OSBAMS voltage ceiling")
+            with self.assertRaises(cap.EnvelopeViolation):
+                cap.check_load_command(v, 1.0)
+
+    def test_rev2_power_path_values(self):
+        pp = cap.REV2_POWER_PATH
+        self.assertEqual((pp.fuse_a, pp.shunt_a, pp.max_voltage_v), (15.0, 20.0, 48.0))
+        self.assertIsNone(pp.contactor_a)             # DG57CM ratings are variant-dependent
+        self.assertLess(cap.compute_permitted_current(42.0).power_limit_a, 7.15)
 
     def test_check_rejects_power_current_voltage(self):
         with self.assertRaises(cap.EnvelopeViolation):
@@ -59,9 +78,12 @@ class TestCapability(unittest.TestCase):
         with self.assertRaises(cap.EnvelopeViolation):
             cap.check_load_command(5.0, 61.0, system_current_max_a=100.0)
         with self.assertRaises(cap.EnvelopeViolation):
+            cap.check_load_command(45.0, 1.0)             # above the 44 V system ceiling
+        with self.assertRaises(cap.EnvelopeViolation):
             cap.check_load_command(12.0, -1.0)
         cap.check_load_command(42.0, 7.14)               # ok
-        cap.check_load_command(60.0, 5.0)                # exactly 300 W
+        cap.check_load_command(60.0, 5.0, system_voltage_max_v=60.0,
+                               power_path=cap.PowerPathLimits())   # exactly 300 W
 
     def test_xt90_is_not_90a(self):
         # Connector never appears in the model; 42 V is 7.14 A at best.
@@ -129,7 +151,11 @@ class TestSimulator(unittest.TestCase):
     def test_scenarios_all_within_envelope_and_below_60v(self):
         for name, p in Simulator6060B.SCENARIOS.items():
             self.assertLessEqual(p["start_v"], 60.0, name)
-            cap.check_load_command(p["start_v"], p["current_a"])
+            sim = Simulator6060B(name)                    # constructor enforces the envelope
+            self.assertEqual(sim.beyond_validated_ceiling, p["start_v"] > 44.0, name)
+        self.assertTrue(Simulator6060B("48v_healthy").beyond_validated_ceiling)
+        self.assertTrue(Simulator6060B("60v_boundary_healthy").beyond_validated_ceiling)
+        self.assertFalse(Simulator6060B("42v_full_healthy").beyond_validated_ceiling)
         self.assertTrue(all(k in Simulator6060B.SCENARIOS for k in (
             "12v_healthy", "24v_healthy", "36v_5p2ah_healthy", "36v_15p3ah_healthy",
             "42v_full_healthy", "48v_healthy", "60v_boundary_healthy",

@@ -85,7 +85,8 @@ class Manual6060B(ElectronicLoad):
         try:
             cap.check_load_command(max(v, self._pack_voltage_v or 0.0), i, None,
                                    self.profile_current_limit_a,
-                                   self.system_current_max_a, self.power_path)
+                                   self.system_current_max_a, self.power_path,
+                                   self.system_voltage_max_v)
         except cap.EnvelopeViolation as e:
             return str(e)
         return None

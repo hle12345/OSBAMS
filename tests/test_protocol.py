@@ -204,6 +204,8 @@ class TestConfigSync(unittest.TestCase):
                          int(config.FIRMWARE_HARD_TRIP_A * 1000))
         self.assertEqual(c["OSBAMS_DEFAULT_MAX_TEMP_C10"],
                          int(config.FIRMWARE_HARD_TRIP_TEMP_C * 10))
+        self.assertEqual(c["OSBAMS_DEFAULT_MAX_VOLTAGE_MV"],
+                         int(config.OSBAMS_VALIDATED_MAX_VOLTAGE_V * 1000))
         self.assertLess(config.SAFETY_MAX_CURRENT_A, config.FIRMWARE_HARD_TRIP_A)
         self.assertLess(config.SAFETY_MAX_TEMP_C, config.FIRMWARE_HARD_TRIP_TEMP_C)
         # Rev.2: there is NO global minimum battery voltage. Cutoff is

@@ -39,7 +39,9 @@ class ElectronicLoad(ABC):
 
     def __init__(self, profile_current_limit_a: Optional[float] = None,
                  system_current_max_a: Optional[float] = None,
-                 power_path: cap.PowerPathLimits = cap.REV1_POWER_PATH):
+                 power_path: cap.PowerPathLimits = cap.REV2_POWER_PATH,
+                 system_voltage_max_v: Optional[float] = None):
+        self.system_voltage_max_v = system_voltage_max_v
         self.profile_current_limit_a = profile_current_limit_a
         self.system_current_max_a = system_current_max_a
         self.power_path = power_path
@@ -57,14 +59,15 @@ class ElectronicLoad(ABC):
     def permitted_current(self) -> cap.CurrentLimit:
         return cap.compute_permitted_current(
             self._pack_voltage_for_limit(), self.profile_current_limit_a,
-            self.system_current_max_a, self.power_path)
+            self.system_current_max_a, self.power_path, self.system_voltage_max_v)
 
     def _guard_current(self, amps: float) -> cap.CurrentLimit:
         v = self._pack_voltage_for_limit()
         if v is None:
             raise cap.EnvelopeViolation("pack voltage unknown — measure OCV first")
         return cap.check_load_command(v, amps, None, self.profile_current_limit_a,
-                                      self.system_current_max_a, self.power_path)
+                                      self.system_current_max_a, self.power_path,
+                                      self.system_voltage_max_v)
 
     def _guard_resistance(self, ohms: float) -> cap.CurrentLimit:
         if ohms <= 0:
@@ -74,7 +77,8 @@ class ElectronicLoad(ABC):
             raise cap.EnvelopeViolation("pack voltage unknown — measure OCV first")
         # CR draws I = V / R at the HIGHEST pack voltage.
         return cap.check_load_command(v, v / ohms, None, self.profile_current_limit_a,
-                                      self.system_current_max_a, self.power_path)
+                                      self.system_current_max_a, self.power_path,
+                                      self.system_voltage_max_v)
 
     def _guard_cv(self, volts: float, max_expected_current_a: Optional[float]) -> cap.CurrentLimit:
         """
@@ -95,7 +99,8 @@ class ElectronicLoad(ABC):
                 f"{cap.INSTRUMENT_VOLTAGE_MAX_V:g} V")
         return cap.check_load_command(v, max_expected_current_a, None,
                                       self.profile_current_limit_a,
-                                      self.system_current_max_a, self.power_path)
+                                      self.system_current_max_a, self.power_path,
+                                      self.system_voltage_max_v)
 
     # ── interface ───────────────────────────────────────────────────────
     @property

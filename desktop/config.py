@@ -127,6 +127,13 @@ SAFETY_MAX_CURRENT_A   = 10.0     # A   — OSBAMS operating ceiling (provisiona
 #                         tests/test_protocol.py checks the mirror is exact)
 #   SAFETY_MAX_*          desktop operating/test boundary, always BELOW the trip
 # Commanded current = min(profile, OSBAMS ceiling, 6060B 60 A, 300 W / V, ...).
+# OSBAMS validated SYSTEM voltage ceiling (provisional). Not a battery minimum
+# and not a global cutoff — an upper bound set by the weakest power-path part
+# (Blue Sea 6006 disconnect: 48 V DC max) with margin above a 42 V full-charge
+# pack. Mirrors OSBAMS_DEFAULT_MAX_VOLTAGE_MV in app_config.h. The 6060B's 60 V
+# is the INSTRUMENT rating, not this.
+OSBAMS_VALIDATED_MAX_VOLTAGE_V = 44.0
+
 FIRMWARE_HARD_TRIP_A      = 18.5   # A   — OSBAMS_DEFAULT_MAX_CURRENT_MA
 FIRMWARE_HARD_TRIP_TEMP_C = 60.0   # C   — OSBAMS_DEFAULT_MAX_TEMP_C10
 SAFETY_RECOVERY_REST_S = 30       # s   — rest after discharge before OCV read

@@ -1,5 +1,7 @@
 # OSBAMS Hardware Design
 
+> **Naming:** Rev.2 calls the sides "A. battery / discharge power path" and "B. low-voltage control / instrumentation path" (see `docs/rev2/HARDWARE_FREEZE_CANDIDATE.md`).
+>
 > **Rev.2 note:** the Rev.1 design below is retained for history. Rev.2 power-path limits and the redesign needed to use more of the 6060B envelope are in `docs/rev2/LV_POWER_PATH_CAPABILITY.md`; targets above 60 V are out of scope.
 
 

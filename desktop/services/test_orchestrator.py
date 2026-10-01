@@ -276,7 +276,9 @@ class _Run:
             return
         self.vcons.update(ocv)
         self.permitted = cap.compute_permitted_current(
-            self.vcons.volts, p.maximum_osbams_test_current_a)
+            self.vcons.volts, p.maximum_osbams_test_current_a,
+            self.load.system_current_max_a, self.load.power_path,
+            self.load.system_voltage_max_v)
         self.log("permitted: " + " | ".join(f"{k}: {v}" for k, v in self.permitted.rows()[:6]))
         self.load.set_pack_voltage(self.vcons.volts)   # before any load command
         try:
@@ -296,7 +298,9 @@ class _Run:
         """Hard gate for any current this run will ever command."""
         cap.assert_power_invariant(amps, self.vcons.volts)
         cap.check_load_command(self.vcons.volts, amps, None,
-                               self.profile.maximum_osbams_test_current_a)
+                               self.profile.maximum_osbams_test_current_a,
+                               self.load.system_current_max_a,
+                               self.load.power_path, self.load.system_voltage_max_v)
 
     def _on_ready(self, s: Sample) -> None:
         if not self.load.is_controllable and abs(s.current_a) > 0.25 * self.commanded_a:

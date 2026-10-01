@@ -44,6 +44,10 @@ class BatteryProfile:
         p = []
         if self.maximum_voltage_v > cap.INSTRUMENT_VOLTAGE_MAX_V:
             p.append(f"max voltage {self.maximum_voltage_v} V exceeds 6060B {cap.INSTRUMENT_VOLTAGE_MAX_V:g} V — OUT_OF_SCOPE_FOR_REV2")
+        ceiling = cap.compute_permitted_current(None).system_voltage_max_v
+        if cap.INSTRUMENT_VOLTAGE_MAX_V >= self.maximum_voltage_v > ceiling:
+            p.append(f"max voltage {self.maximum_voltage_v} V above the OSBAMS validated "
+                     f"system ceiling {ceiling:g} V (provisional)")
         if self.cutoff_voltage_v < cap.INSTRUMENT_VOLTAGE_MIN_V:
             p.append(f"cutoff {self.cutoff_voltage_v} V below 6060B {cap.INSTRUMENT_VOLTAGE_MIN_V:g} V minimum")
         if not self.cutoff_voltage_v < self.nominal_voltage_v <= self.maximum_voltage_v:

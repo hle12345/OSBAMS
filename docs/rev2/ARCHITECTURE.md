@@ -14,8 +14,9 @@ the active system (nothing of it existed in code; the concepts live only as
 
 Not claimed: Dat Bike, 72 V, 100 V, EV-pack compatibility, or a "90 A tester".
 The 60 V / 60 A figures are the **instrument's** rating; the OSBAMS envelope
-is the intersection with the profile and the validated power path (currently
-10 A, see `LV_POWER_PATH_CAPABILITY.md`).
+is the intersection with the profile and the validated power path: currently
+**≤ 44 V and ≤ 10 A (provisional)**, see `HARDWARE_FREEZE_CANDIDATE.md` and
+`LV_POWER_PATH_CAPABILITY.md`.
 
 ## Layers
 ```
