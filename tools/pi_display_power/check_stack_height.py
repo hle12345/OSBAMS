@@ -13,6 +13,7 @@ POST = 20.0                              # M2.5 x 20 mm key standoff
 rev_face = POST - BODY                   # reversed: socket face height above the Pi PCB when the posts rest on the PCB
 out = ["Stack-height check - Samtec SSW-120-01-S-D (owner-cited: body 8.51 mm, tail 2.64 mm) on the Raspberry Pi 5 header", "",
        f"Seated gap G (interposer underside to Pi PCB) = body {BODY} + Pi header plastic {PLASTIC} (assumed) = {G:.2f} mm  ->  M1/M2 spacers: M2.5 x 11 mm (standard HAT length).",
+       f"Mating insertion depth per catalog: {d['insertion_depth_mm'][0]}-{d['insertion_depth_mm'][1]} mm; Pi pin protrusion ~{TIP - PLASTIC:.1f} mm -> " + ("within range" if TIP - PLASTIC <= d['insertion_depth_mm'][1] + 0.3 else "pin longer than max depth") + f" (a pin up to {TIP - PLASTIC - d['insertion_depth_mm'][1]:.2f} mm beyond the 6.35 mm maximum would bottom out and leave the socket that far above the plastic; the 11 mm spacer tolerates it).",
        f"Pin engagement: Pi pins protrude {PIN_IN:.1f} mm above the plastic (tip height {TIP} mm from the Pi drawing) -> need socket contact depth >= {PIN_IN:.1f} mm of the {BODY} mm body: " + ("OK (body is deeper than the pin length)" if BODY > PIN_IN else "FAIL"),
        f"Tail: {TAIL} mm through a {PCB_T} mm board leaves {TAIL - PCB_T:.2f} mm protruding on the top side for soldering: " + ("OK" if TAIL - PCB_T >= 0.5 else "short"),
        f"Interposer top surface height over the Pi PCB = {G + PCB_T:.1f} mm; J1 (Micro-Fit right-angle) adds its own height on top - check against the enclosure lid.",

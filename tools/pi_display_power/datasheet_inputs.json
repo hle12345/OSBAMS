@@ -156,7 +156,7 @@
  "interposer_socket_mpn": {
   "value": "SSW-120-01-S-D",
   "status": "owner_cited",
-  "source": "Owner selection: Samtec SSW-120-01-S-D - 40 pos, 2 rows, 2.54 mm, through-hole vertical receptacle, 30 uin gold mating, tin tails, 4.7 A/contact (family spec, one pin powered per row), body 8.51 mm, tail 2.64 mm, -55..+125 C, active/stocked. The uploaded files are the family spec only (identical x4); ordering code, 8.51/2.64 mm and plating are NOT in them - re-check vs the SSW-120 product page. SSW-120-04-G-D (14.83 mm tail, no stock) rejected."
+  "source": "Owner selection. CATALOG MISMATCH: on catalog page F-226 the plating options are -F (gold flash, tin tail), -L (10 uin Au, tin tail), -G (20 uin Au, gold-flash tail) and -T (tin); '-S' there is a ROW option (single row), so '-S' in the plating position is not a listed code and no 30 uin gold option appears. Confirm the exact orderable code with the distributor/Samtec; catalog-valid equivalents: SSW-120-01-L-D (10 uin Au) or SSW-120-01-G-D (20 uin Au). Dimensions (8.51 mm body, lead style -01 tail 2.64 mm) ARE confirmed by the catalog."
  },
  "interposer_socket_contact_mohm": {
   "value": 20.0,
@@ -220,7 +220,7 @@
  "interposer_socket_family": {
   "value": "Samtec SSW vertical through-hole socket, 0.100 in / 2.54 mm pitch, 0.025 in square post, 2x20 dual row",
   "status": "verified",
-  "source": "Samtec SSW/TSW product specification rev C (2023-02-08, uploaded; two identical copies): current 4.7 A with ONE PIN POWERED PER ROW; 465 VAC; gold -55..+125 C; durability 1000 cycles; normal force >= 30 g (gold); contact resistance is specified only as a CHANGE (LLCR delta 15 mOhm max after tests), no absolute initial value; standoffs recommended. Prints, footprints and lead styles are on the Samtec product page, NOT in this spec."
+  "source": "Samtec SSW/TSW product specification rev C (2023-02-08, uploaded; two identical copies): current 4.7 A with ONE PIN POWERED PER ROW; 465 VAC; gold -55..+125 C; durability 1000 cycles; normal force >= 30 g (gold); contact resistance is specified only as a CHANGE (LLCR delta 15 mOhm max after tests), no absolute initial value; standoffs recommended. Prints, footprints and lead styles are on the Samtec product page, NOT in this spec. | Catalog F-226 (uploaded): 4.7 A per pin with 2 pins powered (= one per row in a double-row part; same basis as the spec), 465 VAC/655 VDC, -55..+125 C gold, max 100 cycles with 10 uin Au, phosphor bronze over 50 uin Ni."
  },
  "pi5_envelope_docs": {
   "value": {
@@ -244,10 +244,14 @@
    "pitch_mm": 2.54,
    "rows": 2,
    "positions": 40,
+   "insertion_depth_mm": [
+    3.68,
+    6.35
+   ],
    "pi_header_plastic_mm": 2.5,
    "pi_pin_tip_height_mm": 9.0
   },
-  "status": "owner_cited",
-  "source": "body/tail from owner (SSW-120-01-S-D); Pi header plastic 2.5 mm = standard 2.54 mm header ASSUMPTION; pin-tip height ~9 mm read from the Pi 5 drawing side view"
+  "status": "verified",
+  "source": "Samtec SSW/SSQ through-hole catalog page F-226 (uploaded): straight-pin body height 8.51 mm (.335 in); lead style -01 tail A = 2.64 mm (.104 in) (-02 4.93, -03 10.00, -04 14.83, -06 3.15); double row width 4.95 mm; mating insertion depth 3.68-6.35 mm; Pi header plastic 2.5 mm is a standard-header ASSUMPTION; pin tip ~9 mm from the Pi 5 drawing."
  }
 }
