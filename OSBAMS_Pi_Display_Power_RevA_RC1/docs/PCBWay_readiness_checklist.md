@@ -7,7 +7,8 @@
 - [x] Electrical DRC: 0 errors (silk warnings only)
 - [x] Schematic ↔ PCB connectivity cross-check PASS (custom script)
 - [ ] KiCad ERC run (needs KiCad 8+; not available in build env)
-- [ ] **RSDW40F-05 land pattern vs Mean Well drawing (BLOCKER)**
+- [x] RSDW40F-05 land pattern implemented from Mean Well drawing (double-check mirror/rotation in KiCad)
+- [ ] F1 5 A fast-acting vs Mean Well's recommended 8 A delay-type input fuse (decision)
 - [x] Molex 43045-0200/-0400 (with pegs), Nano2 451/453, SMB, radial caps, passives now from official KiCad libraries
 - [ ] Cross-check those library footprints against manufacturer PDFs; Molex mating parts verified
 - [ ] 5 V voltage-drop gate closed with datasheet values (Voltage_drop_budget.md)

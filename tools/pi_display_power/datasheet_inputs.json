@@ -38,28 +38,28 @@
    "R3_kohm": 33.0,
    "trim_up": "resistor from TRIM to -Vout"
   },
-  "status": "owner_cited",
-  "source": "5 V model trim network + trim-up formula (owner-cited from Mean Well spec): a = Vref*R1/(Vout-Vref); Rt = a*R2/(R2-a) - R3; trim-up resistor TRIM -> -Vout. Identical to the topology assumed earlier."
+  "status": "verified",
+  "source": "spec p.4: Rtrim-up = a*R2/(R2-a) - R3, a = Vref/(Vo'-Vref)*R1; 5 V model Vref 1.24 V, R1 15.47k, R2 5.1k, R3 33k; trim-up resistor TRIM to -Vo; range +-10 %. Datasheet example 5.5 V -> 5.476 kOhm reproduced."
  },
  "rsdw_tolerance_pct": {
   "value": 1.0,
-  "status": "owner_cited",
-  "source": "RSDW40F-05 output accuracy +-1 % (Mean Well RSDW40/RDDW40 spec, owner-cited; assumed to hold at trimmed setpoints - confirm)"
+  "status": "verified",
+  "source": "RSDW40/RDDW40 spec 2022-05-24: VOLTAGE ACCURACY +-1 % (at normal input 24 V, rated load, 25 C)"
  },
  "rsdw_footprint_drawing": {
-  "value": false,
-  "status": "unverified",
-  "source": "Pin X/Y positions, pin pitch/rows, drill and keepout needed from the Mean Well drawing. Footprint remains the placeholder."
+  "value": true,
+  "status": "verified",
+  "source": "spec p.5 mechanical drawing (Bottom View): pins 4/5/6 at 2.54/12.7/22.86 mm across, 2.54 mm from one end; pins 1/2/3 at 5.08/10.16/20.32 mm across, 2.54 mm from the other end (45.72 mm between rows); body 50.8x25.4x10.5; pin dia 1+-0.1; tol +-0.35. Implemented in build_pcb.py (mirrored for PCB top view)."
  },
  "pi_end_connector_mpn": {
-  "value": "Harwin M20-1070500 housing + M20-1160042 gold crimp contacts",
+  "value": "Harwin M20-1070500 housing + M20-1160042 contacts",
   "status": "owner_cited",
-  "source": "Harwin M20: 3 A/contact, 20 mOhm max initial, 22-30 AWG crimp (owner-cited). Housing pin count/layout to be confirmed from the Harwin drawing."
+  "source": "Contact verified from uploaded datasheet; housing M20-1070500 datasheet NOT supplied (pin count/layout unconfirmed)"
  },
  "pi_end_contact_max_mohm": {
   "value": 20.0,
   "status": "owner_cited",
-  "source": "Harwin M20 series 20 mOhm max initial per contact (owner-cited)"
+  "source": "Harwin M20 20 mOhm max initial (owner-cited; not in the uploaded M20-1160042 datasheet - need the M20 series spec)"
  },
  "pi_end_contact_typ_mohm": {
   "value": 12.0,
@@ -85,8 +85,8 @@
  },
  "pi_end_contact_rating_a": {
   "value": 3.0,
-  "status": "owner_cited",
-  "source": "Harwin M20 3 A per contact (owner-cited)"
+  "status": "verified",
+  "source": "Harwin M20-1160042 datasheet (TraceParts, 2025-11-18): current rating (signal) 3 A; 22-30 AWG; mating pin 0.64 mm square; gold contact. NOTE: the 20 mOhm figure is NOT in this file."
  },
  "branch_wire": {
   "value": {
@@ -107,5 +107,45 @@
   "value": false,
   "status": "unverified",
   "source": "Bench measurement at Pi header under real load"
+ },
+ "rsdw_line_reg_pct": {
+  "value": 0.2,
+  "status": "verified",
+  "source": "spec: line regulation +-0.2 % (single output)"
+ },
+ "rsdw_load_reg_pct": {
+  "value": 0.5,
+  "status": "verified",
+  "source": "spec: load regulation +-0.5 % (0-100 % load)"
+ },
+ "rsdw_tempco_pct_per_c": {
+  "value": 0.05,
+  "status": "verified",
+  "source": "spec: temperature coefficient 0.05 %/C (0~55 C)"
+ },
+ "delta_t_c": {
+  "value": 15.0,
+  "status": "unverified",
+  "source": "ASSUMED module temperature rise above 25 C in the enclosure; measure"
+ },
+ "rsdw_remote_onoff": {
+  "value": "open = ON",
+  "status": "verified",
+  "source": "spec: Power ON: R.C ~ -Vin >3~12 Vdc or open circuit; OFF < 1.2 V or short. Pin 3 left open = enabled."
+ },
+ "rsdw_input_fuse_recommendation": {
+  "value": "24Vin models: 8 A delay (time-lag) type",
+  "status": "verified",
+  "source": "spec INPUT PROTECTION: 'Fuse recommended. 24Vin models: 8A delay time Type'. F1 is 5 A fast-acting - see docs/Datasheet_findings.md"
+ },
+ "rsdw_ripple_mvpp": {
+  "value": 100,
+  "status": "verified",
+  "source": "spec: single output 3.3-15 Vo: 100 mVp-p (20 MHz, 0.1 uF + 47 uF)"
+ },
+ "rsdw_input_fuse_recommendation_resolved": {
+  "value": false,
+  "status": "unverified",
+  "source": "Decision needed: F1 (5 A fast-acting, locked) vs Mean Well recommended 8 A delay type"
  }
 }

@@ -2,7 +2,7 @@
 
 **Status: NOT FINAL, NOT AUTHORIZED FOR FABRICATION. `..._RC2` has deliberately NOT been generated** — it is gated on the items below (the Mean Well RSDW40F-05 footprint cannot be verified from the build environment, and the 5 V worst-case voltage margin is unproven).
 
-RC1.1 changes vs RC1: (a) every footprint except U1 now comes from the official KiCad libraries (fixes a real error: Micro-Fit dual-row pin numbering runs along rows, so +5 V = outer row, GND = inner row; Nano2 fuse is ~6 mm, not 12 mm); (b) 5 V distribution re-laid and budgeted (`docs/Voltage_drop_budget.md`); (c) harness changed to 16 AWG ≤150 mm; (d) DNP trim-network pads R2/R3 added.
+RC1.1 changes vs RC1: (a) every footprint comes from the official KiCad libraries or the Mean Well drawing (U1 now implemented from the drawing) (fixes a real error: Micro-Fit dual-row pin numbering runs along rows, so +5 V = outer row, GND = inner row; Nano2 fuse is ~6 mm, not 12 mm); (b) 5 V distribution re-laid and budgeted (`docs/Voltage_drop_budget.md`); (c) harness changed to 16 AWG ≤150 mm; (d) DNP trim-network pads R2/R3 added.
 
 PCB #2 of OSBAMS: isolated 5 V / 8 A supply for Raspberry Pi 5 + Waveshare 10.1" DSI display.
 `120 VAC → XDR-75-12 → 12 V bus → (this board) → RSDW40F-05 → isolated 5 V → Pi 5 + display`.
@@ -12,10 +12,11 @@ No STM32, ADC, INA228, relay or safety logic on this board. `PI_GND` is **not** 
 
 | # | Gate | State |
 |---|------|-------|
-| 1 | **5 V voltage-drop budget** ≥ 4.85 V at Pi header @ 5 A worst case, ≤ 5.25 V no-load | **CLOSED on paper** (inputs owner-cited): ±1 % RSDW, F2 7.7 mΩ, Micro-Fit 10 mΩ, Harwin M20 20 mΩ ×2/rail → untrimmed worst 4.72 V; **trim to 5.14 V (Rt = 105 kΩ)** gives 4.86 V worst, 5.19 V no-load max. Hot-fuse case 4.84 V. Needs bench confirmation. |
-| 2 | RSDW40F-05 footprint | **OPEN** — body 50.8×25.4 mm, pin Ø≈1.0 mm and pinout recorded (owner-cited) but pin X/Y/drill/keepout not supplied; still placeholder. Drawing site unreachable from here. |
+| 1 | **5 V voltage-drop budget** ≥ 4.85 V at Pi header @ 5 A worst case, ≤ 5.25 V no-load | **OPEN — marginal.** With the datasheet's full tolerance stack (±1 % + 0.2 % line + 0.5 % load) one setpoint (≈5.161 V, Rt ≈ 81 kΩ) closes at 25 °C by only ~2 mV; with 15 °C temperature rise (0.05 %/°C) it fails by ~76 mV unless each unit is calibrated (measure untrimmed Vout, then choose Rt). See `docs/Voltage_drop_budget.md`; decision needed. |
+| 2 | RSDW40F-05 footprint | **IMPLEMENTED from the Mean Well drawing** (pin XY, Ø1.3 drill, 50.8×25.4 body; layout redone). Verify the mirror/rotation against the drawing in KiCad. No datasheet info on copper under the module/spacing — still open for the isolation review. |
 | 3 | Other footprints (Molex 43045-0400/-0200, Nano2 0451, SMB, radial caps, passives) | **LIBRARY-SOURCED, not manufacturer-PDF-verified** — official KiCad library, which cites the Molex/Littelfuse datasheets, incl. Micro-Fit pegs/drills. Cross-check against the Molex drawing before release. |
-| 4 | Mating parts / Pi end | Molex 43025/43030 candidates; Pi end = Harwin M20 (owner-cited). **Pi-end pin map + anti-reversal keying OPEN** — an unkeyed reversed housing swaps +5 V and GND (`docs/Pi_end_connector_requirements.md`). |
+| 4 | Mating parts / Pi end | Harwin M20-1160042 contact verified (3 A, 22–30 AWG; **no resistance figure in the file**). M20-1070500 housing datasheet + 20 mΩ source not supplied. **Pin map + anti-reversal keying OPEN** (`docs/Pi_end_connector_requirements.md`). |
+|4b| Input fuse F1 vs Mean Well recommendation (8 A delay type) | **OPEN decision** — `docs/Datasheet_findings.md` |
 | 5 | KiCad ERC passes | **OPEN** — build container only has KiCad 7.0.11 (no `sch erc`; KiCad 10 not obtainable here). Custom connectivity check passes (`reports/ERC_equivalent_connectivity_report.txt`). Run ERC in KiCad 10 locally, then regenerate. |
 | 6 | KiCad DRC passes | **PARTIAL** — 0 electrical/courtyard/clearance errors; only silkscreen-overlap and "library not configured" warnings. Re-run in KiCad 10. |
 | 7 | Isolation spacing checked | **PARTIAL** — 10 mm copper-free lane, no crossing; module-specific spacing not verified |

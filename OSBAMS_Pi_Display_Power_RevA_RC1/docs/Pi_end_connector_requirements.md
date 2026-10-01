@@ -1,6 +1,7 @@
 # Pi-end connector — Harwin M20 crimp system (owner-selected; pin map + keying still OPEN)
 
-## Selection (owner-cited, re-check vs Harwin PDFs)
+## Selection (contact verified from the uploaded M20-1160042 datasheet; housing + 20 mΩ still owner-cited)
+Uploaded datasheet: 3 A ("signal") rating, 22–30 AWG, 0.64 mm square mating pin, gold, brass — **no contact-resistance value in that file**.
 - Housing: Harwin **M20-1070500** (2×N 2.54 mm cable housing; confirm pin count/layout on the drawing). Contacts: Harwin **M20-1160042** gold crimp, 22–30 AWG, **3 A per contact, 20 mΩ max initial**. Wire: **22 AWG** per contact. Harwin M20 housings are **not polarised**.
 - Two contacts in parallel for +5 V (Pi pins 2, 4) and at least two for GND (e.g. pins 6, 9). 16 AWG trunk (≤150 mm) from J_OUT splits/splices to 22 AWG branch leads (~50 mm) near the Pi. No 16 AWG into the Pi-end contacts.
 

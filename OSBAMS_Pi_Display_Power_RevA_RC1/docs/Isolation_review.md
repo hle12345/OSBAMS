@@ -6,7 +6,7 @@
 - Both ground pours are separate zones (B.Cu); no stitching, no Y-cap, no ferrite or resistor between `PI_GND` and `12V_GND`. The only primary↔secondary path is through U1 (1.6 kVDC rated).
 - Y capacitor / bonding: none, by decision (see README).
 - U1 pins: primary pins at x = 27.14, secondary pins at x = 72.86; no copper under the module body inside the lane.
-- **Not verified:** Mean Well's required clearance/creepage under and around the module, and whether copper under the module body is allowed at all. Footprint geometry is a placeholder. Gate stays OPEN.
+- **Not verified:** Mean Well's required clearance/creepage under and around the module, and whether copper under the module body is allowed at all. Footprint geometry now follows the Mean Well drawing; the datasheet gives no under-module copper/spacing rule. Gate stays OPEN.
 - 12V_GND is the XDR-75-12 return shared with PCB #1 by design. The Pi side is floating: leakage/common-mode considerations → see `Proposals.md`.
 
 ## Voltage budget

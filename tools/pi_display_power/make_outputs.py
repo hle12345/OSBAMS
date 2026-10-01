@@ -45,7 +45,7 @@ ws.append(hdr)
 special = {"U1": "Verify PCBWay stock; if not sourceable mark CONSIGNED / customer-supplied (do not substitute without approval)",
            "F1": "Active; DigiKey-stocked per design brief", "F2": "Active; DigiKey-stocked per design brief"}
 LIBNOTE = "Footprint: official KiCad library (generated from manufacturer datasheet); NOT cross-checked against the manufacturer PDF"
-status = {"U1": "FOOTPRINT PLACEHOLDER - OPEN: verify vs Mean Well drawing", "F1": LIBNOTE, "F2": LIBNOTE, "TVS1": LIBNOTE,
+status = {"U1": "Footprint from Mean Well RSDW40/RDDW40 spec drawing (2022-05-24); verify mirror/rotation in KiCad", "F1": LIBNOTE, "F2": LIBNOTE, "TVS1": LIBNOTE,
           "J_IN": LIBNOTE + "; mating parts unverified", "J_OUT": LIBNOTE + " (pegs + drills included); mating parts unverified",
           "C2": LIBNOTE + "; verify body D8/pitch 3.5 vs EEU-FM1H101", "C4": LIBNOTE + "; verify body D10/pitch 5.0 vs EEU-FR1C681",
           "R2": "DNP - do not fit", "R3": "DNP - do not fit"}
