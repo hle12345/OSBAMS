@@ -1,6 +1,6 @@
 # Rev.2 controller schematic / PCB plan — PROPOSAL, board NOT modified
 
-Status: plan only. The KiCad files are untouched. No fabrication outputs exist (`MANUFACTURING_STATE.md`). The existing board is **revised, not redrawn**: same 80×80 mm 2-layer THT carrier, same J1–J6, Q1, U1, same Nucleo-header architecture.
+Status: **APPROVED by the user 2026-10-01** (see `APPROVED_DECISIONS.md`); plan only until V1–V10 are filed. The KiCad files are untouched. No fabrication outputs exist (`MANUFACTURING_STATE.md`). The existing board is **revised, not redrawn**: same 80×80 mm 2-layer THT carrier, same J1–J6, Q1, U1, same Nucleo-header architecture.
 
 ## 0. Sequence
 1. Bench: fill `BENCH_V1_V10_ONE_PAGE.pdf` (P1 rows first: V7, V6, V1, V9, V2, V4).
@@ -13,8 +13,8 @@ Status: plan only. The KiCad files are untouched. No fabrication outputs exist (
 | Topic | Position | Document |
 |---|---|---|
 | Relay | Keep Durakool DG57CM-5021-76-1012-R unless verified DC rating is inadequate. Footprint stays; no SW60. | `RELAY_VERIFICATION.md` |
-| Pi 5 / display 5 V | Not on the PCB. External supply recommended; user decides. | `PI_POWER_ARCHITECTURE.md` |
-| TC74 | **HOLD.** Root cause unproven. No interface redesign until the four V1 discriminators are recorded. No-regret only: 100 nF at VDD, SDA/SCL test points, DNP pull-up pads (see §2.9). Sensor choice, remote probe connector and pull-up values wait for V1. | audit F2, Inventory §5 |
+| Pi 5 / display 5 V | **Decided: dedicated external supply.** Spec in `PI_POWER_ARCHITECTURE.md`. | `PI_POWER_ARCHITECTURE.md` |
+| TC74 | **HOLD until V1.** If V1 confirms viability the final sensor is a remote pack-surface probe (keyed 4-wire connector, 100 nF at sensor, SDA/SCL TPs, DNP pull-ups, ≤ 100 kHz I²C, short cable); if the needed cable length is unreliable, stop and propose a different interface. **Previously:** Root cause unproven. No interface redesign until the four V1 discriminators are recorded. No-regret only: 100 nF at VDD, SDA/SCL test points, DNP pull-up pads (see §2.9). Sensor choice, remote probe connector and pull-up values wait for V1. | audit F2, Inventory §5 |
 
 ## 2. Mandatory Rev.2 schematic additions (existing board)
 
@@ -40,7 +40,7 @@ Firmware: active-low, external pull-up, VO610A-1. Reconstruct from V2: LED chain
 Module header J4 kept (3V3/GND/SCL/SDA); add ALERT and A0/A1 strap pads and document. Add a 4-pin keyed **shunt sense connector** (IN+, IN−, VBUS, GND) so the shunt sense leads are a twisted pair soldered at the shunt sense terminals — no power current on the PCB. Whether the module sits at the shunt (preferred, short Kelvin) or on the PCB follows V3/V4.
 
 ### 2.6 ARM switch wiring (G-14)
-ARM goes in **series with the coil path after the E-stop** (E-stop → ARM → coil), on a defined 2-pin header J7. No firmware sense exists; optional ARM_SENSE to a free GPIO (candidate chosen after V9) is DNP and needs a firmware change — not part of this plan unless approved.
+ARM goes in **series with the coil path after the E-stop** (E-stop → ARM → coil), on a defined 2-pin header J7. No firmware sense exists; ARM_SENSE on a free GPIO (candidate PC10, confirm in V9) is **approved**: status/diagnostics only, can never bypass ARM (`APPROVED_DECISIONS.md`). The Nucleo interface must also be widened — J5 carries no PA0/PA1/PC9 today.
 
 ### 2.7 Verified connector footprints and MPNs (G-07/G-08)
 Every connector's footprint is checked against the purchased part's drawing (pitch, drill, keying) from V8 and purchase records; no footprint is accepted from a name match. MPN rules in §5.
@@ -74,9 +74,8 @@ Markings: board name/Rev/date, polarity marks on D1–D3 and J1, pin-1 and signa
 ## 5. BOM policy
 Manufacturer + exact orderable MPN on every populated line; no generic "resistor/diode". Currently missing: C2, C3, R1, R2, J1–J6 (and new parts). Fuse, XT60, shunt, relay contacts, 6060B are off-board and excluded.
 
-## 6. Decisions needed from you
-1. Pi/display 5 V: A external (recommended) vs B on-PCB.
-2. E-stop sense: A (second NC) vs B (opto) — decided by V6.
-3. Whether to authorise the optional ARM_SENSE GPIO + firmware change.
-4. Whether TC74 stays board-mounted (bench) or moves to a remote probe — after V1.
-5. Approve the plan, then I revise the existing KiCad files.
+## 6. Decisions
+1. Pi/display 5 V — decided: external.
+2. ARM sense — decided: yes, GPIO status only.
+3. TC74 remote probe — decided conditional on V1.
+4. E-stop sense A vs B — open until V6.
