@@ -2,7 +2,7 @@
 
 Every register entry that is **not VERIFIED_LOCAL** is classified by what a wrong value could actually cause. `USER_RELAYED_MANUFACTURER` values are used as authoritative for electrical checks; the PDFs have not been read by the build. Entries read locally (ISO7721, CP2102N, SRN6045TA-100M, EB21A drawing, KiCad library facts) are not listed.
 
-68 entries are not VERIFIED_LOCAL: WRONG_PINOUT: 5, EXCEEDED_ABS_MAX: 14, WRONG_FOOTPRINT: 5, UNSAFE_PROTECTION: 5, FIRST_ARTICLE / INFORMATIONAL: 39.
+69 entries are not VERIFIED_LOCAL: WRONG_PINOUT: 5, EXCEEDED_ABS_MAX: 14, WRONG_FOOTPRINT: 5, UNSAFE_PROTECTION: 5, FIRST_ARTICLE / INFORMATIONAL: 40.
 
 
 ## Could cause a WRONG PINOUT (supply the datasheet to move these to VERIFIED_LOCAL — highest priority)
@@ -21,8 +21,8 @@ Every register entry that is **not VERIFIED_LOCAL** is classified by what a wron
 |---|---|---|---|---|
 | `vo610a_ratings` | VO610A-1 | VCEO 70 V, IC max 50 mA, IF max 60 mA, operating -55..+110 C | USER_RELAYED_MANUFACTURER | VCEO 70 V vs the 3.3 V pull-up: large margin. |
 | `vo610a_led_vr` | VO610A-1 | LED reverse voltage absolute max | USER_RELAYED_MANUFACTURER | 1N4148 limits the LED reverse voltage to ~0.7 V. |
-| `ina228_cm` | INA228 | common-mode / VBUS range | USER_RELAYED_MANUFACTURER | 85 V limit used in the protection analysis (closed by the RC1.2 network, relayed value). |
-| `ina228_diff_max` | INA228 | IN+ to IN- differential absolute maximum | USER_RELAYED_MANUFACTURER | differential absolute maximum +/-40 V (relayed): the ground-referenced TVS pair cannot limit it (one Kelvin lead open -> 44 V difference) -> D15 added in RC1.2e; PDF still to be read. |
+| `ina228_cm` | INA228 | common-mode at IN+/IN- -0.3 to +85 V; VBUS -0.3 to +85 V; input current into any pin 5 mA; VS 6 V max (absolut | USER_RELAYED_MANUFACTURER | 85 V limit used in the protection analysis (closed by the RC1.2 network, relayed value). |
+| `ina228_diff_max` | INA228 | IN+ to IN- differential absolute maximum VIN+ - VIN- = -40 V to +40 V (an absolute-maximum rating, NOT the +/- | USER_RELAYED_MANUFACTURER | VIN+ - VIN- = -40 to +40 V absolute maximum (TI table, relayed; not the 163.84/40.96 mV measurement ranges): closed as USER_RELAYED, PDF still to be committed; D15 is a backstop. |
 | `lmr_limits` | LMR14006Y | VIN recommended 4-40 V, absolute max 45 V; IOUT 600 mA; current limit ~1.2 A typ; max duty (Y) ~97 % | USER_RELAYED_MANUFACTURER | VIN abs max 45 V vs SMBJ15A clamp 24.4 V (relayed). |
 | `lmr_en` | LMR14006Y | EN threshold / abs max / pull-up method | UNVERIFIED | SHDN threshold/abs max not relayed; SHDN is pulled to +12V through 100 k (limits current); confirm the pin allows +12 V through 100 k. |
 | `dg57_vmax` | DG57CM-5021-76-1012-R | maximum switching voltage | USER_RELAYED_MANUFACTURER | 145 VDC switching vs 44 V ceiling. |
@@ -50,9 +50,9 @@ Every register entry that is **not VERIFIED_LOCAL** is classified by what a wron
 |---|---|---|---|---|
 | `ina228_status` | INA228 | lifecycle / package | USER_RELAYED_MANUFACTURER | informational. |
 | `dg57_dc1` | DG57CM-5021-76-1012-R | DC1 rated load | USER_RELAYED_MANUFACTURER | relay DC rating >> the 10 A / 44 V ceiling. |
-| `rs_pulse_rating` | Panasonic ERJ-P08F47R0V / ERJ-P08F10R0V | ERJ-P08F47R0V / ERJ-P08F10R0V PULSE CAPABILITY (energy / peak power vs pulse duration, single and repeated pul | UNVERIFIED | OPEN: the catalog (read) gives DC ratings and the +/-3 kV 150 pF ESD test only; the pulse-data document AOA0000C331.pdf is not checked. Event energy <= 0.37 mJ (interruption), 0.53 mJ (8 kV ESD) vs the 0.675 mJ ESD-test energy. |
-| `tvs_diff` | SMF12CA (D15) | Littelfuse SMF12CA bidirectional TVS (SMF/SOD-123FL): assumed VRWM 12 V, VBR 13.3-14.7 V, IR <= 1 uA at VRWM,  | UNVERIFIED | D15 SMF12CA: clamp levels are estimates; datasheet (VRWM/VBR/IR/VC/C, land pattern) not read. |
-| `esd_connector` | J5/J6 connectors | ESD at accessible connectors (IEC 61000-4-2, +/-8 kV contact / +/-15 kV air, 150 pF/330 ohm): first-ns peak an | UNVERIFIED | ESD at J5/J6 cannot be shown by simulation; R41-R43 sit upstream of the TVS -> first-article test F1, connector-level TVS = RC1.3 fallback. |
+| `rs_pulse_rating` | Panasonic ERJ-P08F47R0V / ERJ-P08F10R0V | ERJ-P08F47R0V / ERJ-P08F10R0V PULSE CAPABILITY (energy / peak power vs pulse duration, single and repeated pul | UNVERIFIED | OPEN: the catalog (read) gives DC ratings and the +/-3 kV 150 pF ESD test only; the pulse-data document AOA0000C331.pdf is not checked. ERJP08 ratings (relayed from the current datasheet): 125 V limiting / 500 V overload; modeled 8 kV ESD = about 1.3 kV across R41, above the overload rating -> ESD_PROTECTION_OPEN. |
+| `tvs_diff` | SMF12CA (D15) | Littelfuse SMF12CA bidirectional (CA) TVS: VRWM 12 V, VBR 13.3-14.7 V, VC about 19.9 V at IPP about 10.1 A (re | USER_RELAYED_MANUFACTURER | D15 SMF12CA: VRWM 12 V, VBR 13.3-14.7 V, VC 19.9 V at 10.1 A relayed; leakage, capacitance, pulse curve and land pattern vs D_SMF open. |
+| `esd_connector` | J5/J6 connectors | ESD_PROTECTION_OPEN: ESD at accessible connectors (IEC 61000-4-2, 8 kV contact / 15 kV air). R41-R43 sit upstr | UNVERIFIED | ESD at J5/J6 cannot be shown by simulation; R41-R43 sit upstream of the TVS -> first-article test F1, connector-level TVS = RC1.3 fallback. |
 
 ## First-article measurements / design margins / informational (cannot cause a wrong pinout, absolute-maximum violation, wrong footprint or unsafe protection)
 
@@ -97,6 +97,7 @@ Every register entry that is **not VERIFIED_LOCAL** is classified by what a wron
 | `q_rds` | IRLML0060TRPBF | RDS(on) at VGS = 3.3 V (not specified: conservative placeholder) | UNVERIFIED |  |
 | `q_rds_4v5` | IRLML0060TRPBF | RDS(on) max 116 mohm @ VGS 4.5 V, 92 mohm @ 10 V; ID 2.7 A @10 V; VGS +/-16 V; RthJA ~100 C/W (NOT guaranteed  | USER_RELAYED_MANUFACTURER |  |
 | `q_curves` | IRLML0060TRPBF | Infineon typical output curves at VGS 3.0 and 3.3 V make the ~0.17 A coil load plausible; RDS(on) is NOT guara | USER_RELAYED_MANUFACTURER |  |
+| `rs_voltage_ratings` | Panasonic ERJP08 (R41-R43) | ERJP08 (1206): 0.66 W, limiting element voltage 125 V, maximum overload voltage 500 V (current ERJP08 datashee | USER_RELAYED_MANUFACTURER |  |
 
 ## Mandatory first-article measurements (not PCBWay blockers)
 1. **Relay driver (IRLML0060, K1 coil):** VGS at the gate, VDS while energized, coil current (expect ≈ 121–148 mA at 12.0 V), MOSFET case temperature; XDR output set and verified at 12.0 V (coil limit 12.5 V at 85 °C).

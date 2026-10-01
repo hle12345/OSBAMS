@@ -21,8 +21,8 @@ NOTES = {
     "q_pinout": "relayed 1 G / 2 S / 3 D matches; a mismatch would leave the relay always off/on.",
     "tc74_pinmap": "relayed table matches (probe board).",
     "ina228_cm": "85 V limit used in the protection analysis (closed by the RC1.2 network, relayed value).",
-    "ina228_diff_max": "differential absolute maximum +/-40 V (relayed): the ground-referenced TVS pair cannot limit it (one Kelvin lead open -> 44 V difference) -> D15 added in RC1.2e; PDF still to be read.",
-    "tvs_diff": "D15 SMF12CA: clamp levels are estimates; datasheet (VRWM/VBR/IR/VC/C, land pattern) not read.",
+    "ina228_diff_max": "VIN+ - VIN- = -40 to +40 V absolute maximum (TI table, relayed; not the 163.84/40.96 mV measurement ranges): closed as USER_RELAYED, PDF still to be committed; D15 is a backstop.",
+    "tvs_diff": "D15 SMF12CA: VRWM 12 V, VBR 13.3-14.7 V, VC 19.9 V at 10.1 A relayed; leakage, capacitance, pulse curve and land pattern vs D_SMF open.",
     "esd_connector": "ESD at J5/J6 cannot be shown by simulation; R41-R43 sit upstream of the TVS -> first-article test F1, connector-level TVS = RC1.3 fallback.",
     "conn_molex": "022272041 drawing is a 3D isometric without dimensions, 022272031 not supplied -> J5/J6 pad/drill/outline/ramp side OPEN.",
     "conn_samtec_key": "J9 land pattern is verified; which shroud side carries the -K key slot is not resolved by the drawings -> check on the part (F6).",
@@ -40,7 +40,7 @@ NOTES = {
     "conn_footprints": "J7, J8 and J9 verified against manufacturer drawings; J5/J6 (Molex) still OPEN.",
     "conn_pitch": "pitch and pin count match.",
     "lmr_pkg": "KiCad SOT-23-6 vs the TI DDC land pattern (pitch/pin numbering match; land pattern not compared).",
-    "rs_pulse_rating": "OPEN: the catalog (read) gives DC ratings and the +/-3 kV 150 pF ESD test only; the pulse-data document AOA0000C331.pdf is not checked. Event energy <= 0.37 mJ (interruption), 0.53 mJ (8 kV ESD) vs the 0.675 mJ ESD-test energy.",
+    "rs_pulse_rating": "OPEN: the catalog (read) gives DC ratings and the +/-3 kV 150 pF ESD test only; the pulse-data document AOA0000C331.pdf is not checked. ERJP08 ratings (relayed from the current datasheet): 125 V limiting / 500 V overload; modeled 8 kV ESD = about 1.3 kV across R41, above the overload rating -> ESD_PROTECTION_OPEN.",
     "tvs_leakage_temp": "Bourns gives IR <= 1.0 uA at 48 V/25 C only; leakage vs temperature/voltage is unspecified: sets the hot Kelvin-line offset (4 mA per uA) and the PACK_INA error (47 uV per uA) -> first-article measurement.",
     "tvs48": "protection analysis (model) in calculations 2b uses the datasheet clamp points; NOT closed (see rs_pulse_rating, tvs_leakage, tvs_diff, esd_connector and CONTROLLER_PROTECTION_AND_CONNECTOR_AUDIT.md).",
     "tvs48_820": "same (the 8/20 us point exceeds 85 V; the added series resistors keep the credible set within the limit).",
@@ -152,7 +152,7 @@ Checked with KiCad 10.0.6 in the build container (`BUILD_ENVIRONMENT.md`):
 - **ERC: {s['erc']} violations.** **DRC: {s['drc_viol']} violations, {s['drc_unconn']} unconnected pads, {s['drc_fp']} footprint errors** (types: {drc_types}). **Netlist vs PCB: {len(net_errs)} mismatches.** Diode/LED polarity: {'PASS' if not pol_errs else 'FAIL'}.
 - **Isolation:** every HOST-net item keeps ≥ 1.0 mm from every controller-net item on all layers (custom DRC rule; 3.0 mm in the ISO7721 area) — `ISOLATION_CHECK.txt`.
 - **Pack-level clearance:** 0.2 mm class (IPC-2221B B4 0.13 mm × 1.5), INA228 courtyard exempt at 0.15 mm — see `FABRICATION_NOTES.md`; PCBWay capability to be confirmed in their tool.
-- **Pack-sense protection — hot-plug and interruption bounds PASS; protection NOT closed.** Series resistors R41 (47 Ω) and R42/R43 (10 Ω) upstream of the TVS diodes; ≤ 76.5 V at the 18.5 A bound, hot-plug ≤ 60 V, limit 85 V. RC1.2e adds **D15 (SMF12CA) across IN+/IN−** because the INA228 differential limit (±40 V, relayed) is violated by a one-Kelvin-lead-open fault. Open: resistor pulse capability (AOA0000C331.pdf), D15 datasheet, ESD at the connectors (first-article test; R41–R43 carry the ESD current) — `CONTROLLER_PROTECTION_AND_CONNECTOR_AUDIT.md`.
+- **Pack-sense protection — hot-plug and interruption bounds PASS; protection NOT closed.** Series resistors R41 (47 Ω) and R42/R43 (10 Ω) upstream of the TVS diodes; ≤ 76.5 V at the 18.5 A bound, hot-plug ≤ 60 V, limit 85 V. RC1.2e adds **D15 (SMF12CA) across IN+/IN−** because the INA228 differential limit (±40 V, relayed) is violated by a one-Kelvin-lead-open fault. Classification `MODELED_PASS / DATASHEET_VERIFICATION_OPEN`; `ESD_PROTECTION_OPEN` (ERJP08 overload rating 500 V vs ≈ 1.3 kV modeled across R41 at 8 kV; a connector-level clamp is a likely RC1.3 change if bare pins are accessible). Open: resistor µs–ms pulse curve, SMF12CA leakage/capacitance/land pattern — `CONTROLLER_PROTECTION_AND_CONNECTOR_AUDIT.md`.
 - **CP2102N VBUS divider:** R38 19.1 kΩ / R39 47.5 kΩ — +0.12 V margin to VIH at VBUS 4.40 V / VDD 3.6 V / 1 % resistors (the 22.1 k reference is −16 mV there); pin ≤ 3.77 V at 5.25 V (limit 5.6 V) — §8.
 - **Custom rule check:** `ISOLATION_RULE_CHECK.txt` shows the `.kicad_dru` is applied when the project is opened from a fresh folder (clean 0 violations; tightened rule → 131).
 - **Buck:** XDR 12.0 V ±1 %; maximum continuous controller input 14.4 V; 24.4 V transient treated separately (pulse skipping, millivolt-level rail excursion) — §3.

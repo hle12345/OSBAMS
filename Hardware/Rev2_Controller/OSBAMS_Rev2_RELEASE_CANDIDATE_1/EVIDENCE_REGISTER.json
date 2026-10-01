@@ -169,12 +169,12 @@
   {
    "id": "ina228_cm",
    "part": "INA228",
-   "parameter": "common-mode / VBUS range",
+   "parameter": "common-mode at IN+/IN- -0.3 to +85 V; VBUS -0.3 to +85 V; input current into any pin 5 mA; VS 6 V max (absolute maximum table, relayed)",
    "value": "-0.3 to +85 V",
    "unit": "",
    "evidence": "USER_RELAYED_MANUFACTURER",
    "critical": true,
-   "source": "user message 2026-10-01 (manufacturer information relayed by the user; PDF not opened in this build environment)",
+   "source": "user message 2026-10-01 (TI SLYS021A absolute-maximum table as relayed by the user; PDF not read by this build)",
    "doc": null
   },
   {
@@ -235,12 +235,12 @@
   {
    "id": "ina228_diff_max",
    "part": "INA228",
-   "parameter": "IN+ to IN- differential absolute maximum",
+   "parameter": "IN+ to IN- differential absolute maximum VIN+ - VIN- = -40 V to +40 V (an absolute-maximum rating, NOT the +/-163.84 / +/-40.96 mV measurement ranges); TI also discusses overloads above 40 V differential / 85 V common mode and recommends low-value series resistors (10 ohm) plus transient suppression",
    "value": "+/-40 V",
    "unit": "",
    "evidence": "USER_RELAYED_MANUFACTURER",
    "critical": true,
-   "source": "user message 2026-10-01 (INA228 differential abs max +/-40 V; PDF not opened in this build environment)",
+   "source": "user message 2026-10-01 (TI SLYS021A absolute-maximum table as relayed by the user; PDF not read by this build)",
    "doc": null
   },
   {
@@ -972,23 +972,34 @@
   {
    "id": "tvs_diff",
    "part": "SMF12CA (D15)",
-   "parameter": "Littelfuse SMF12CA bidirectional TVS (SMF/SOD-123FL): assumed VRWM 12 V, VBR 13.3-14.7 V, IR <= 1 uA at VRWM, VC about 19.9 V at about 10 A, 200 W (8/20 us ~ 600 W class), junction capacitance tens of pF. NONE of these were read from a datasheet; part choice and the clamp-level estimates in the audit are UNVERIFIED",
-   "value": null,
+   "parameter": "Littelfuse SMF12CA bidirectional (CA) TVS: VRWM 12 V, VBR 13.3-14.7 V, VC about 19.9 V at IPP about 10.1 A (relayed from the Littelfuse SMF table). Still open: leakage at/below 12 V, junction capacitance, pulse-power curve, and the exact Littelfuse land pattern vs Diode_SMD:D_SMF",
+   "value": "VRWM 12 V, VBR 13.3-14.7 V, VC 19.9 V at IPP 10.1 A",
    "unit": "",
-   "evidence": "UNVERIFIED",
+   "evidence": "USER_RELAYED_MANUFACTURER",
    "critical": true,
-   "source": "engineering estimate; Littelfuse/Bourns SMF12CA datasheet not supplied",
+   "source": "user message 2026-10-01 (Littelfuse SMF series table as relayed; PDF not read by this build)",
    "doc": null
   },
   {
    "id": "esd_connector",
    "part": "J5/J6 connectors",
-   "parameter": "ESD at accessible connectors (IEC 61000-4-2, +/-8 kV contact / +/-15 kV air, 150 pF/330 ohm): first-ns peak and the R41-R43-before-TVS ordering cannot be proven by simulation (parasitic L, TVS turn-on, resistor-body withstand unknown) -> first-article test, with a connector-level fast TVS as the RC1.3 fallback",
+   "parameter": "ESD_PROTECTION_OPEN: ESD at accessible connectors (IEC 61000-4-2, 8 kV contact / 15 kV air). R41-R43 sit upstream of the TVS and carry the pulse; modeled 1.3 kV across R41 at 8 kV exceeds the ERJP08 500 V overload rating. Closes only by a connector-level clamp ahead of R41-R43 (RC1.3) or by first-article IEC 61000-4-2 testing with the resistor body stress justified",
    "value": null,
    "unit": "",
    "evidence": "UNVERIFIED",
    "critical": false,
    "source": "audit analysis; no test data",
+   "doc": null
+  },
+  {
+   "id": "rs_voltage_ratings",
+   "part": "Panasonic ERJP08 (R41-R43)",
+   "parameter": "ERJP08 (1206): 0.66 W, limiting element voltage 125 V, maximum overload voltage 500 V (current ERJP08 datasheet AOA0000C331, as relayed). This resolves the earlier 500 V / 1000 V figures read from the 24-Feb-22 ERJ P/PA/PM catalog: those were not the ERJP08 row. A modeled 8 kV ESD pulse puts about 1.3 kV across R41, above the 500 V overload rating (the rating is a 5 s overload test, not a pulse rating, but no pulse curve supports the event)",
+   "value": "125 V / 500 V",
+   "unit": "",
+   "evidence": "USER_RELAYED_MANUFACTURER",
+   "critical": true,
+   "source": "user message 2026-10-01 (AOA0000C331 table as relayed; PDF not read by this build)",
    "doc": null
   }
  ]
