@@ -16,7 +16,7 @@ Order: records → bench bring-up with no battery → pack connected, relay open
 ### A2 — Inspect the OSBAMS power path and wiring
 - [ ] **Status:** NOT_RUN · **Requires:** A1
 - **Equipment:** EDU34450A (continuity / resistance)
-- **Procedure:** Read the exact Durakool DG57CM part number, shunt part number, fuse and fuse-holder part numbers and the 12->5 V DC/DC converter(s) (the four open items in HARDWARE_FREEZE_CANDIDATE.md). Check polarity labelling, wire gauge, XT60 connector and that the shunt is in series. Continuity and polarity with the EDU34450A, power OFF, nothing connected.
+- **Procedure:** Fill in docs/rev2/HARDWARE_ACCEPTANCE_RECORD.md: read the exact relay part number (firmware records Durakool DG57CM-5021-76-1012-R), shunt, fuse and fuse-holder part numbers and the 12->5 V DC/DC converter(s) off the installed parts. Check polarity labelling, wire gauge, XT60 connector and that the shunt is in series. Continuity and polarity with the EDU34450A, power OFF, nothing connected.
 - **Pass criterion:** Every power-path rating written into capability.PowerPathLimits or marked unspecified.
 
 

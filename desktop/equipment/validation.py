@@ -44,8 +44,8 @@ STEPS = [
          "No asset ID or calibration status left UNKNOWN for the 6060B or the EDU34450A."),
     Step("A2", "A. Records", "Inspect the OSBAMS power path and wiring",
          "EDU34450A (continuity / resistance)",
-         "Read the exact Durakool DG57CM part number, shunt part number, fuse and fuse-holder part numbers and the 12->5 V DC/DC converter(s) "
-         "(the four open items in HARDWARE_FREEZE_CANDIDATE.md). Check polarity labelling, wire gauge, XT60 connector and that the shunt is in series. "
+         "Fill in docs/rev2/HARDWARE_ACCEPTANCE_RECORD.md: read the exact relay part number (firmware records Durakool DG57CM-5021-76-1012-R), shunt, fuse and fuse-holder part numbers and the 12->5 V DC/DC converter(s) off the installed parts. "
+         "Check polarity labelling, wire gauge, XT60 connector and that the shunt is in series. "
          "Continuity and polarity with the EDU34450A, power OFF, nothing connected.",
          "Every power-path rating written into capability.PowerPathLimits or marked unspecified.", "A1"),
     # ── B: bench bring-up, no battery ──────────────────────────────────

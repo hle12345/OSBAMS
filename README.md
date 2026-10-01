@@ -6,7 +6,7 @@ Raspberry Pi 5 interface, INA228-based measurement, independent voltage verifica
 Keysight reference instrumentation to validate capacity, energy, DCIR, thermal behavior, and
 battery health metrics of compatible lithium-ion battery packs within the verified hardware envelope.**
 
-Supported: lithium-ion packs, approximately 30–42 V (10S-class; Ninebot/Segway, Shenzhen Elite), XT60.
+Supported: lithium-ion packs, approximately 30–42 V (10S-class; Ninebot/Segway, Shenzhen Elite), XT60 (connector type does not determine test capability — the validated power path does).
 Status: **2.0.0-dev1 — host- and simulator-tested; no physical validation has been run**
 (nothing is BENCH_TESTED or HARDWARE_VALIDATED).
 
@@ -22,6 +22,9 @@ Agilent/Keysight **6060B** (primary and only external load) · Keysight **EDU344
 
 ## Test orchestrator and dashboard
 `services/test_orchestrator.py`: Capacity (`PROFILE → OCV screen → hardware safety check → capability calculation → READY → CC discharge → cutoff → load OFF verified → recovery → results`) and a separate DCIR current-step test. The dashboard shows the live permitted-current breakdown and drives a *manual* 6060B (operator sets/enables the load; OSBAMS verifies from measurements). Hard invariant: commanded current × conservative pack voltage ≤ 300 W; sag never raises current.
+
+## Next milestone: first real battery test
+`docs/rev2/FIRST_BATTERY_TEST_PROCEDURE.md`, with `CALIBRATION_RECORD_TEMPLATE.md` and `HARDWARE_ACCEPTANCE_RECORD.md`. Software is ahead of hardware; no more features until measurements exist.
 
 ## Bench work
 `docs/rev2/BENCH_CHECKLIST.md` — the exact physical tests, in order (workflow: `LV_HARDWARE_VALIDATION_PLAN.md`; verification: `INSTRUMENT_CALIBRATION_PLAN.md`). `docs/rev2/6060B_DRIVER_EVIDENCE.md` — remote-control command evidence (nothing VERIFIED yet).

@@ -18,4 +18,4 @@ Analog Discovery 2, waveform generators (Keysight EDU33212A, HP 33120A), extra b
 secondary instruments (HP 34401A DMM, HP 54601B oscilloscope), a handheld multimeter, and OptiMate 12.8 V LiFePO4 chargers
 (separate lab equipment; never used on the 36–42 V packs). Using them would restore pre-battery commissioning
 sources, protocol debugging and signal injection — see "Limits of this workflow" in `docs/rev2/LV_HARDWARE_VALIDATION_PLAN.md`.
-Also removed: XT30/XT90 connector support and any high-current connector claim.
+Connectors: XT60 is the supported Rev.2 interface. A future adapter (e.g. XT90) is easy, but connector type does not determine test capability — the validated power path does — so no adapter implies a higher test current.

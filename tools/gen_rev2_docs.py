@@ -87,7 +87,7 @@ def matrix_md() -> str:
             "| Brand | Model | Nominal V | Max V | Ah | Wh |", "|---|---|---|---|---|---|"]
     for b in inv.SFSU_BATTERIES:
         out.append(f"| {b['brand']} | {b['model']} | {b['nominal_v']} | {b['max_v']} | {b['ah']} | {b['wh']} |")
-    out += ["", "Connector: **XT60** (adapter support only if needed). No high-current connector capability is claimed.",
+    out += ["", "Connector: **XT60 = supported.** Connector type does not determine test capability — the validated power path does.",
             "", "## The physical story", "", "```",
             "lithium pack -> connector -> fuse -> disconnect -> relay -> shunt -> Agilent 6060B -> controlled discharge",
             "EDU34450A   -> independent reference measurements (calibration / verification only)",

@@ -15,8 +15,9 @@ The permitted test current is the minimum of EVERYTHING in the chain:
         connector / fuse / wiring / contactor / shunt-sensor limits,
         6060B 60 A current limit, 6060B 300 W power-derived limit)
 
-Connector type never determines test current; the connector is a physical
-compatibility statement only.
+Connector type does not determine test capability — the validated power path
+does. XT60 is the supported Rev.2 interface; other adapters are a physical
+compatibility matter and never set the test current.
 
 Which voltage to pass in: the power-derived limit must use the HIGHEST
 voltage the pack can present while the load is attached (see
@@ -149,8 +150,9 @@ class PowerPathLimits:
 #   shunt   RSA-20-50, 20 A class (repo)
 #   fuse    15 A TARGET (part number not yet confirmed)
 #   disconnect Blue Sea 6006: 48 V DC max, 25 A switching (manufacturer listing)
-# Contactor (Durakool DG57CM: ratings are VARIANT-dependent), connector and wiring
-# stay unspecified until the exact parts are read off the hardware.
+# Relay (firmware records Durakool DG57CM-5021-76-1012-R; ratings are
+# VARIANT-dependent), connector and wiring stay unspecified until the exact
+# parts are read off the hardware.
 # The OSBAMS validated limits (config) cap everything regardless.
 REV2_POWER_PATH = PowerPathLimits(fuse_a=15.0, shunt_a=20.0, disconnect_a=300.0,
                                   max_voltage_v=48.0)
@@ -158,11 +160,11 @@ REV2_POWER_PATH = PowerPathLimits(fuse_a=15.0, shunt_a=20.0, disconnect_a=300.0,
 # Where each number comes from. NONE of these is read off the physical unit yet,
 # so nothing here is "verified OSBAMS hardware"; the 10 A ceiling covers the gap.
 POWER_PATH_STATUS = {
-    "fuse":            "TARGET 15 A — part/holder not confirmed",
+    "fuse":            "TARGET 15 A, >=58 V DC (Littelfuse/Eaton, HOLD - verify part): protects against abnormal fault current, not normal regulation",
     "disconnect":      "Blue Sea 6006 listing: 48 V DC, 300 A continuous, 25 A switching — not read from the unit",
-    "relay/contactor": "Durakool DG57CM — variant-dependent ratings, suffix not read — UNSPECIFIED",
-    "shunt/sensor":    "RSA-20-50, 20 A class (repo) — installed part not confirmed",
-    "connector":       "XT60 — UNSPECIFIED rating; a connector never sets test current",
+    "relay/contactor": "firmware records Durakool DG57CM-5021-76-1012-R (no aux contact; feedback via VO610A) — datasheet rating for this suffix not read — UNSPECIFIED",
+    "shunt/sensor":    "RSA-20-50 (2.5 mOhm, 20 A / 50 mV) per firmware; purchase list still says 15 A or 20 A candidate — installed part not confirmed",
+    "connector":       "Amass XT60 (supported). Connector type does not determine test capability — the validated power path does",
     "wiring":          "UNSPECIFIED",
 }
 REV1_POWER_PATH = REV2_POWER_PATH      # backward-compatible alias

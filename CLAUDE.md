@@ -8,8 +8,8 @@ Keep the active project and docs to that stack; removed scope lives only in `doc
 `legacy/rev1/` — do not reintroduce it, and do not list other lab equipment in Rev.2 docs.
 
 ## Claim (keep narrow)
-Use `config.REV2_CLAIM`. Never claim BENCH_TESTED / HARDWARE_VALIDATED without recorded data, high-current connector capability,
-60 A at all voltages, or full smart-BMS support.
+Use `config.REV2_CLAIM`. Never claim BENCH_TESTED / HARDWARE_VALIDATED without recorded data, 60 A at all voltages, or full smart-BMS support.
+XT60 = supported; connector type does not determine test capability — the validated power path does.
 
 ## Hard rules
 - Allowed current = min(profile, OSBAMS hardware limit (10 A ceiling; fuse, disconnect, relay, shunt, wiring, connector), 6060B 60 A, 300 W / conservative pack voltage). 42 V → 7.14 A; 36 V → 8.33 A. The 60 A rating never overrides 300 W. System ceiling **≤ 44 V, ≤ 10 A (provisional)** until the power path is physically validated.
@@ -23,7 +23,9 @@ Use `config.REV2_CLAIM`. Never claim BENCH_TESTED / HARDWARE_VALIDATED without r
 - Instrument serial / asset ID / calibration status stay UNKNOWN until read off the instrument. No variable source is in the stack: voltage/current are verified at the pack's own operating points.
 
 ## Open items
-Exact DG57CM suffix, shunt P/N, 12→5 V converter, fuse + holder P/N; the 15 A fuse is below the 18.5 A firmware trip — decide ordering; shunt high/low-side vs PCB; TC74 bring-up (thermal protection unvalidated, safety check refuses to start without a temperature); read the two official 6060B manuals (www.keysight.com was blocked in the cloud environment).
+Read the installed part numbers off the hardware and record them in `docs/rev2/HARDWARE_ACCEPTANCE_RECORD.md` (relay — firmware records DG57CM-5021-76-1012-R; shunt — firmware RSA-20-50; fuse + holder; 12→5 V converter + Pi 5 supply; XT60 supplier); identify the 6060B interface; ADC divider and TVS unfinished; shunt high/low-side vs PCB; TC74 bring-up (thermal protection unvalidated, safety check refuses to start without a temperature); read the two official 6060B manuals (www.keysight.com was blocked in the cloud environment). The 15 A fuse vs 10 A software limit vs 18.5 A firmware trip is a documented layered design, not a defect.
+
+Next milestone: **physical validation** — `docs/rev2/FIRST_BATTERY_TEST_PROCEDURE.md`. Do not add features until real measurements exist.
 
 ## Commands
 `python3 -m pytest tests` (needs pytest numpy scikit-learn pyserial PySide6 pyqtgraph; `QT_QPA_PLATFORM=offscreen`) · `make -C Firmware/Tests run` · `python3 tools/gen_rev2_docs.py` after editing `commands.py`, `validation.py` or `inventory.py` (tests fail if the generated docs are stale).

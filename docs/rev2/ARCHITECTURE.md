@@ -10,7 +10,7 @@
 > verified hardware envelope.
 
 Supported batteries: lithium-ion (NMC/NCA/LFP), approximately 30–42 V, 10S-class
-(Ninebot/Segway, Shenzhen Elite). Connector: XT60, adapter only if needed.
+(Ninebot/Segway, Shenzhen Elite). Connector: XT60 = supported; connector type does not determine test capability — the validated power path does.
 Removed scope is recorded only in `docs/research/OUT_OF_SCOPE_FOR_REV2.md`.
 
 ## The Rev.2 equipment stack

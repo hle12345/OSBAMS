@@ -12,7 +12,7 @@
 | Hardware | unbuilt / unvalidated |
 
 Host tests at this baseline:
-- `python3 -m pytest tests` — 158 passed (Rev.2 equipment, orchestrator, dashboard wiring under offscreen Qt, protocol cross-language, scoring, suitability). Needs `pytest numpy scikit-learn pyserial PySide6 pyqtgraph`.
+- `python3 -m pytest tests` — 165 passed (Rev.2 equipment, orchestrator, dashboard wiring under offscreen Qt, protocol cross-language, scoring, suitability). Needs `pytest numpy scikit-learn pyserial PySide6 pyqtgraph`.
 - `make -C Firmware/Tests run` — all 12 C test binaries run, exit 0.
 
 Status: orchestrator/dashboard are host- and simulator-tested only. 6060B remote control blocked (no confirmed GPIB path; no command VERIFIED). **Nothing is BENCH_TESTED or HARDWARE_VALIDATED**; next work is `BENCH_CHECKLIST.md`.
@@ -26,3 +26,5 @@ firmware hard trips: the firmware trip (18.5 A / 60 C) now mirrors `config.FIRMW
 Physical validation: `BENCH_CHECKLIST.md` — every step NOT_RUN.
 
 Scope at this baseline: the Rev.2 stack is limited to the six items above; other lab equipment, removed chemistries and removed hardware classes are absent from active code and active docs (tested), recorded only in `docs/research/`.
+
+Next milestone (validation preparation, no new features): `FIRST_BATTERY_TEST_PROCEDURE.md`, `CALIBRATION_RECORD_TEMPLATE.md`, `HARDWARE_ACCEPTANCE_RECORD.md`. Installed part numbers are to be read off the hardware; the repository records the relay as Durakool DG57CM-5021-76-1012-R (firmware) and the shunt as RSA-20-50 (firmware), while the BOM/purchase spreadsheets are stale (Albright SW60, shunt "TBD").

@@ -458,12 +458,64 @@ class TestValidationWorkflowAndDocs(unittest.TestCase):
             self.assertIn(must, config.REV2_CLAIM)
 
 
+class TestFirstBatteryTestDocs(unittest.TestCase):
+    """The procedure's numbers must come from the code, and the records must exist."""
+
+    def _read(self, n):
+        return open(os.path.join(ROOT, "docs", "rev2", n)).read()
+
+    def test_documents_exist_and_reference_real_steps(self):
+        from equipment import validation as v
+        for n in ("FIRST_BATTERY_TEST_PROCEDURE.md", "CALIBRATION_RECORD_TEMPLATE.md",
+                  "HARDWARE_ACCEPTANCE_RECORD.md"):
+            text = self._read(n)
+            for sid in set(re.findall(r"\b([A-F][0-9])\b", text)):
+                self.assertIn(sid, v.STEP_BY_ID, f"{n} references unknown step {sid}")
+
+    def test_procedure_numbers_match_code(self):
+        import config
+        from services.battery_profiles import PROFILES
+        from equipment import capability as cap
+        t = self._read("FIRST_BATTERY_TEST_PROCEDURE.md")
+        p = PROFILES["ninebot_neb1002"]
+        lim = cap.compute_permitted_current(42.0, p.maximum_osbams_test_current_a)
+        for needle in (f"{p.cutoff_voltage_v:.1f} V", f"{p.recommended_test_current_a:.1f} A",
+                       f"{lim.power_limit_a:.2f} A", f"{lim.final_a:.1f} A",
+                       f"{config.SAFETY_MAX_TEMP_C:.0f} °C", f"{config.SAFETY_MAX_CURRENT_A:.0f} A",
+                       f"{config.FIRMWARE_HARD_TRIP_A:g} A", "300 W"):
+            self.assertIn(needle, t, needle)
+        self.assertEqual(lim.limiting_factor, "battery profile")
+
+    def test_procedure_covers_required_sections(self):
+        t = self._read("FIRST_BATTERY_TEST_PROCEDURE.md").lower()
+        for topic in ("battery inspection", "wiring check", "polarity check", "ocv measurement",
+                      "profile selection", "relay-open verification", "6060b setup",
+                      "edu34450a", "start conditions", "stop conditions",
+                      "emergency stop procedure", "data to record"):
+            self.assertIn(topic, t, topic)
+        self.assertNotIn("bench_tested:", t)           # no result is claimed
+
+    def test_fuse_documented_as_layered_not_defect(self):
+        t = self._read("HARDWARE_FREEZE_CANDIDATE.md")
+        self.assertIn("abnormal fault current", t)
+        self.assertIn("not a defect", t)
+
+    def test_relay_part_recorded_from_firmware(self):
+        fw = open(os.path.join(ROOT, "Firmware", "Drivers", "Src", "load_driver.c")).read()
+        self.assertIn("DG57CM-5021-76-1012-R", fw)
+        self.assertIn("DG57CM-5021-76-1012-R", self._read("HARDWARE_ACCEPTANCE_RECORD.md"))
+
+    def test_xt60_supported_connector_not_a_capability(self):
+        for n in ("HARDWARE_FREEZE_CANDIDATE.md", "ARCHITECTURE.md"):
+            self.assertIn("does not determine test capability", self._read(n).replace("\n", " "))
+
+
 class TestRev2ScopeCleanup(unittest.TestCase):
     """Removed capabilities must not exist in active code."""
     FORBIDDEN = (r"nimh|ni-mh|medicool|owon|oel1515|dat ?bike|regenerative|bitrode|arbin|chroma|digatron|itech|\bLTO\b"
-                 r"|\bAD2\b|analog discovery|EDU36311A|E3630A|34401|54601|33120|EDU33212A|optimate|xt90|xt30|handheld")
+                 r"|\bAD2\b|analog discovery|EDU36311A|E3630A|34401|54601|33120|EDU33212A|optimate|handheld")
     DOC_FORBIDDEN = (r"nimh|medicool|owon|dat ?bike|\b72 ?V\b|\b100 ?V\b|EV[- ]pack|bitrode|chroma|digatron|arbin|itech|regenerative"
-                     r"|\bAD2\b|analog discovery|waveform generator|EDU36311A|E3630A|34401|54601|33120|EDU33212A|optimate|xt90|xt30")
+                     r"|\bAD2\b|analog discovery|waveform generator|EDU36311A|E3630A|34401|54601|33120|EDU33212A|optimate")
 
     def _active(self):
         for base in ("desktop", "tools", "Firmware"):

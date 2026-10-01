@@ -66,7 +66,7 @@ Only equipment that is part of the Rev.2 system or its validation workflow is li
 | Shenzhen Elite | HY-RDF-S1004UM-MH1 | 37.0 | 42.0 | 12.8 | 473.6 |
 | Ninebot (Fujian Eincio) | NEE1006-M | 36.0 | 42.0 | 15.3 | 551.0 |
 
-Connector: **XT60** (adapter support only if needed). No high-current connector capability is claimed.
+Connector: **XT60 = supported.** Connector type does not determine test capability — the validated power path does.
 
 ## The physical story
 
