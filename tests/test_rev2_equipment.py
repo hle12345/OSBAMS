@@ -85,8 +85,8 @@ class TestCapability(unittest.TestCase):
         cap.check_load_command(60.0, 5.0, system_voltage_max_v=60.0,
                                power_path=cap.PowerPathLimits())   # exactly 300 W
 
-    def test_xt90_is_not_90a(self):
-        # Connector never appears in the model; 42 V is 7.14 A at best.
+    def test_connector_never_sets_current(self):
+        # No connector appears in the model; 42 V is 7.14 A at best.
         self.assertLess(cap.compute_permitted_current(42.0).final_a, 7.15)
 
     def test_ui_rows(self):
@@ -370,24 +370,29 @@ class TestValidationWorkflowAndDocs(unittest.TestCase):
             for dep in [d.strip() for d in s.blocked_by.split(",") if d.strip()]:
                 self.assertLess(ids.index(dep), ids.index(s.id), s.id)
 
-    def test_required_order_and_real_pack_gate(self):
-        """commissioning -> EDU34450A cal -> 34401A -> current -> scope -> AD2 -> real pack."""
+    def test_required_order_and_first_load_gate(self):
+        """records -> bring-up (no battery) -> pack, relay open -> first low-current load -> full tests."""
         from equipment import validation as v
         pos = {s.id: i for i, s in enumerate(v.STEPS)}
-        def first(phase_prefix):
-            return min(i for i, s in enumerate(v.STEPS) if s.phase.startswith(phase_prefix))
-        order = [first(p) for p in ("B.", "C.", "D.", "E.", "F.", "G.", "H.", "I.")]
+        def first(prefix):
+            return min(i for i, s in enumerate(v.STEPS) if s.phase.startswith(prefix))
+        order = [first(p) for p in ("A.", "B.", "C.", "D.", "E.")]
         self.assertEqual(order, sorted(order))
-        # every non-optional pre-pack step is a (transitive) prerequisite of the first real-pack step
-        need = set(); todo = [x.strip() for x in v.STEP_BY_ID["I1"].blocked_by.split(",")]
+        # no battery is connected before bring-up and relay coil timing pass
+        self.assertIn("B3", v.STEP_BY_ID["C1"].blocked_by)
+        self.assertIn("B2", v.STEP_BY_ID["C1"].blocked_by)
+        # every non-optional earlier step is a (transitive) prerequisite of the first LOADED run (D1)
+        need = set(); todo = [x.strip() for x in v.STEP_BY_ID["D1"].blocked_by.split(",")]
         while todo:
             d = todo.pop()
             if d in need: continue
             need.add(d)
             todo += [x.strip() for x in v.STEP_BY_ID[d].blocked_by.split(",") if x.strip()]
         for s in v.STEPS:
-            if pos[s.id] < pos["I1"] and not s.optional and s.id != "I1":
-                self.assertIn(s.id, need, f"{s.id} is not a prerequisite of connecting a real pack")
+            if pos[s.id] < pos["D1"] and not s.optional:
+                self.assertIn(s.id, need, f"{s.id} is not a prerequisite of the first loaded run")
+        # low-current first load
+        self.assertIn("0.5 A", v.STEP_BY_ID["D1"].equipment)
 
     def test_cannot_claim_validated(self):
         from equipment import validation as v
@@ -395,24 +400,22 @@ class TestValidationWorkflowAndDocs(unittest.TestCase):
         self.assertNotIn("HARDWARE_VALIDATED", v.STATUSES)
         log = v.ValidationLog()
         with self.assertRaises(ValueError):
-            log.record("C1", v.PASS, "jl", data_location="x")      # B1 (and A1) not PASS yet
-        log.record("A1", v.PASS, "jl", data_location="notebook p1")
-        log.record("B1", v.PASS, "jl", data_location="records/b1.csv")
+            log.record("B1", v.PASS, "jl", data_location="x")      # A1 not PASS yet
+        for sid in ("A1", "A2", "B1", "B2", "B3"):
+            log.record(sid, v.PASS, "jl", data_location=f"records/{sid}.csv")
+        with self.assertRaises(ValueError):
+            log.record("C1", v.PASS, "", data_location="x")        # needs operator
+        with self.assertRaises(ValueError):
+            log.record("C1", "BENCH_TESTED", "jl")
         log.record("C1", v.PASS, "jl", data_location="records/c1.csv")
         with self.assertRaises(ValueError):
-            log.record("D1", v.PASS, "", data_location="x")        # needs operator
-        with self.assertRaises(ValueError):
-            log.record("C2", "BENCH_TESTED", "jl")
-        log.record("F1", v.PASS, "jl", data_location="scope/f1.png")
-        log.record("F2", v.PASS, "jl", data_location="scope/f2.png")   # optional F3 never blocks
+            log.record("D1", v.PASS, "jl", data_location="x")      # C2-C4 not PASS yet
 
-    def test_equipment_roles_in_workflow(self):
+    def test_workflow_uses_only_the_stack(self):
         from equipment import validation as v
         text = " ".join(s.equipment + s.procedure for s in v.STEPS)
-        for name in ("EDU36311A", "E3630A", "EDU34450A", "34401A", "EDUX1052G", "54601B",
-                     "EDU33212A", "33120A", "AD2", "6060B"):
+        for name in ("EDU34450A", "EDUX1052G", "6060B"):
             self.assertIn(name, text)
-        self.assertNotIn("OptiMate", text)       # chargers never appear in the test workflow
 
     def test_generated_docs_in_sync(self):
         sys.path.insert(0, os.path.join(ROOT, "tools"))
@@ -429,33 +432,38 @@ class TestValidationWorkflowAndDocs(unittest.TestCase):
                   "INSTRUMENT_CALIBRATION_PLAN.md"):
             self.assertTrue(os.path.exists(os.path.join(ROOT, "docs", "rev2", n)), n)
 
-    def test_inventory_twelve_roles(self):
-        from equipment.inventory import SFSU_EQUIPMENT, UNKNOWN, PRIMARY, SECONDARY, SEPARATE
-        want = {"6060B": PRIMARY, "EDU34450A": PRIMARY, "HP34401A": SECONDARY,
-                "EDU36311A": PRIMARY, "HPE3630A": SECONDARY, "EDUX1052G": PRIMARY,
-                "HP54601B": SECONDARY, "EDU33212A": PRIMARY, "HP33120A": SECONDARY,
-                "AD2": PRIMARY, "HANDHELD_DMM": SECONDARY, "OPTIMATE": SEPARATE}
-        self.assertEqual({k: i.tier for k, i in SFSU_EQUIPMENT.items()}, want)
+    def test_inventory_is_exactly_the_rev2_stack(self):
+        from equipment.inventory import (SFSU_EQUIPMENT, SYSTEM_STACK, UNKNOWN,
+                                         PRIMARY_LOAD, REFERENCE, VALIDATION_ONLY, PI_STM32_RULE)
+        self.assertEqual({k: i.tier for k, i in SFSU_EQUIPMENT.items()},
+                         {"6060B": PRIMARY_LOAD, "EDU34450A": REFERENCE, "EDUX1052G": VALIDATION_ONLY})
+        self.assertEqual(set(SYSTEM_STACK), {"UI", "SAFETY", "POWER_PATH"})
         for k, i in SFSU_EQUIPMENT.items():
             self.assertNotEqual(i.model, UNKNOWN)
             self.assertEqual((i.asset_id, i.calibration_status, i.serial_number),
                              (UNKNOWN, UNKNOWN, UNKNOWN), k)
-        # only the 6060B is in the battery-test path; OptiMate chargers never are
         self.assertEqual([k for k, i in SFSU_EQUIPMENT.items() if i.in_battery_test_path], ["6060B"])
-        self.assertTrue(any("NEVER use on the 36-42 V" in x for x in SFSU_EQUIPMENT["OPTIMATE"].limits))
+        self.assertEqual([k for k, i in SFSU_EQUIPMENT.items() if i.in_automated_loop], ["6060B"])
+        self.assertFalse(SFSU_EQUIPMENT["EDU34450A"].in_automated_loop)
+        self.assertTrue(any("not part of normal operation" in x for x in SFSU_EQUIPMENT["EDUX1052G"].limits))
+        self.assertEqual(PI_STM32_RULE, "The Pi requests actions. The STM32 authorizes them.")
+        self.assertIn("Raspberry Pi 5", SYSTEM_STACK["UI"]["name"])
+        self.assertIn("STM32L476RG", SYSTEM_STACK["SAFETY"]["name"])
 
-    def test_secondary_reference_cross_check(self):
-        from equipment.reference import make_record, EDU34450A, HP34401A
-        r = make_record("voltage", 30.000, 30.05, operator="jl", commit="x",
-                        secondary=HP34401A, secondary_reading=30.004)
-        self.assertEqual(r.secondary_reference_model, "HP 34401A")
-        self.assertAlmostEqual(r.secondary_diff, 0.004)
-        self.assertEqual(r.secondary_reference_asset_id, "UNKNOWN")
+    def test_claim_text(self):
+        import config
+        self.assertTrue(config.REV2_CLAIM.startswith(
+            "OSBAMS Rev.2 is a standalone lithium-ion battery characterization platform"))
+        for must in ("6060B", "STM32L476RG", "Raspberry Pi 5", "INA228", "independent voltage verification"):
+            self.assertIn(must, config.REV2_CLAIM)
 
 
 class TestRev2ScopeCleanup(unittest.TestCase):
     """Removed capabilities must not exist in active code."""
-    FORBIDDEN = r"nimh|ni-mh|medicool|owon|oel1515|dat ?bike|regenerative|bitrode|arbin|chroma|digatron|itech|\bLTO\b"
+    FORBIDDEN = (r"nimh|ni-mh|medicool|owon|oel1515|dat ?bike|regenerative|bitrode|arbin|chroma|digatron|itech|\bLTO\b"
+                 r"|\bAD2\b|analog discovery|EDU36311A|E3630A|34401|54601|33120|EDU33212A|optimate|xt90|xt30|handheld")
+    DOC_FORBIDDEN = (r"nimh|medicool|owon|dat ?bike|\b72 ?V\b|\b100 ?V\b|EV[- ]pack|bitrode|chroma|digatron|arbin|itech|regenerative"
+                     r"|\bAD2\b|analog discovery|waveform generator|EDU36311A|E3630A|34401|54601|33120|EDU33212A|optimate|xt90|xt30")
 
     def _active(self):
         for base in ("desktop", "tools", "Firmware"):
@@ -469,6 +477,14 @@ class TestRev2ScopeCleanup(unittest.TestCase):
     def test_no_removed_features_in_active_code(self):
         bad = [os.path.relpath(p, ROOT) for p in self._active()
                if re.search(self.FORBIDDEN, open(p, errors="replace").read(), re.I)]
+        self.assertEqual(bad, [])
+
+    def test_no_removed_items_in_active_docs(self):
+        files = [os.path.join(ROOT, "README.md"), os.path.join(ROOT, "CLAUDE.md")]
+        d = os.path.join(ROOT, "docs", "rev2")
+        files += [os.path.join(d, f) for f in os.listdir(d) if f.endswith(".md")]
+        bad = [os.path.relpath(p, ROOT) for p in files
+               if re.search(self.DOC_FORBIDDEN, open(p).read(), re.I)]
         self.assertEqual(bad, [])
 
     def test_chemistry_is_lithium_ion_only(self):

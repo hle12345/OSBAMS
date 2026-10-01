@@ -14,8 +14,7 @@ LESSONS = [
     ("Why 60 A does not mean 60 A at 42 V",
      "The 6060B has THREE simultaneous limits: 60 V, 60 A and 300 W. Current "
      "available is min(60 A, 300 W / V). At 5 V that is 60 A; at 42 V it is only "
-     "7.14 A. Connector names are not current ratings either: an XT90 is a plug, "
-     "not a 90 A test."),
+     "7.14 A. A connector never sets the test current either."),
     ("Why power matters",
      "P = V x I. A battery's voltage rises as it charges, so the same current "
      "means more watts on a full pack than on an empty one. The load must never "

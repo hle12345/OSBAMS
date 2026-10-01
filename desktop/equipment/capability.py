@@ -15,8 +15,8 @@ The permitted test current is the minimum of EVERYTHING in the chain:
         connector / fuse / wiring / contactor / shunt-sensor limits,
         6060B 60 A current limit, 6060B 300 W power-derived limit)
 
-Connector type never determines test current: an XT90 is a physical
-compatibility statement, not a 90 A test.
+Connector type never determines test current; the connector is a physical
+compatibility statement only.
 
 Which voltage to pass in: the power-derived limit must use the HIGHEST
 voltage the pack can present while the load is attached (see
@@ -162,7 +162,7 @@ POWER_PATH_STATUS = {
     "disconnect":      "Blue Sea 6006 listing: 48 V DC, 300 A continuous, 25 A switching — not read from the unit",
     "relay/contactor": "Durakool DG57CM — variant-dependent ratings, suffix not read — UNSPECIFIED",
     "shunt/sensor":    "RSA-20-50, 20 A class (repo) — installed part not confirmed",
-    "connector":       "XT60 (XT30/XT90 adapters) — UNSPECIFIED; a plug never sets test current",
+    "connector":       "XT60 — UNSPECIFIED rating; a connector never sets test current",
     "wiring":          "UNSPECIFIED",
 }
 REV1_POWER_PATH = REV2_POWER_PATH      # backward-compatible alias

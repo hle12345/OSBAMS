@@ -17,7 +17,7 @@ side is only ~30–44 V for the packs on hand.
 
 ## 2. A. Battery / discharge power path
 ```
-USED Li-ion PACK (10S, ~30-42 V) → XT60 adapter (XT30/XT90 optional)
+USED Li-ion PACK (10S-class, ~30-42 V) → XT60 connector (adapter only if needed)
   → FUSE (15 A target) → BLUE SEA 6006 manual disconnect
   → DURAKOOL DG57CM relay (SPST-NO, 12 V coil)
   → CURRENT SHUNT (existing 20 A class, Kelvin sense, IN SERIES with the current)
@@ -41,7 +41,7 @@ none increases what a 300 W load can test on these packs.
 - **Safety path (independent of the Pi):** 12 V → E-stop (NC) in series with ARM → relay-coil permission → DG57CM coil. In parallel, E-stop status, ARM status, relay command (MOSFET driver) and relay feedback go to the STM32. The Pi must never be the last thing between a fault and the relay opening.
 - **Auxiliary power:** 120 VAC → Mean Well XDR-75-12 (12 V / 6.3 A, adjustable 12–15 V) → relay coil, controls, and 5 V rails. Pi 5 is specified for 5 V / 5 A and the Waveshare 10.1" panel ~5 V / 0.8 A, so size the converter **≥ 7 A** regulated, or better two rails: 5 V / 5 A for the Pi and 5 V / 1–2 A for display/control, keeping Pi transients off the measurement rail.
 - **UI path:** STM32 → USB/UART → Raspberry Pi 5 (SQLite, OSBAMS application) → HDMI/USB touch → 10.1" screen. STM32 owns deterministic safety; Pi owns application/storage/UI. (The current software is the PySide6 desktop app; the Pi 5 deployment has not been tested.)
-- **External instruments (outside the enclosure):** 6060B (the only one in the normal test power path); EDU34450A (calibration reference), EDUX1052G (transient validation), EDU36311A (commissioning), AD2 (logic/protocol debug).
+- **External instruments (outside the enclosure):** 6060B (the only one in the normal test power path); EDU34450A (reference measurement); EDUX1052G (validation-only observation).
 
 ## 4. Enforced in software now
 44 V system ceiling and 10 A ceiling in `equipment/capability.py` (packs above 44 V are refused even though the 6060B accepts 60 V); the 15 A fuse, 20 A shunt and 48 V disconnect rating are in `REV2_POWER_PATH`; firmware `OSBAMS_DEFAULT_MAX_VOLTAGE_MV` (44000) is checked equal to the config ceiling by `tests/test_protocol.py`. Simulator 48 V / 60 V scenarios are labelled instrument-boundary studies (`beyond_validated_ceiling`), not Rev.2 targets.

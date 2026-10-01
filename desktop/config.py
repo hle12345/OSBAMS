@@ -258,9 +258,13 @@ ELECTRONIC_LOAD_SCOPE = (
 )
 
 REV2_CLAIM = (
-    "OSBAMS Rev.2 is an open lithium-ion battery characterization platform for "
-    "supported battery packs within the validated OSBAMS hardware envelope and "
-    "the Agilent 6060B electronic-load envelope."
+    "OSBAMS Rev.2 is a standalone lithium-ion battery characterization platform "
+    "optimized around the SFSU Agilent 6060B electronic load. It uses an "
+    "STM32L476RG safety controller, Raspberry Pi 5 interface, INA228-based "
+    "measurement, independent voltage verification, and Keysight reference "
+    "instrumentation to validate capacity, energy, DCIR, thermal behavior, and "
+    "battery health metrics of compatible lithium-ion battery packs within the "
+    "verified hardware envelope."
 )
 
 

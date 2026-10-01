@@ -13,5 +13,9 @@ Removed from the active project:
 - "60 A at all voltages" or "90 A" testing claims (the 6060B is limited to `min(60 A, 300 W / V)`; an XT90 plug is not a test current)
 - Full smart-BMS support (only normal, read-only communication with documented packs is ever in scope; unsupported packs report `SMART_PACK_UNSUPPORTED`; no BMS bypass)
 
-OptiMate 12.8 V LiFePO4 chargers are separate lab equipment: documented in the
-equipment matrix, never integrated into the test path and never used on the 36–42 V packs.
+Lab equipment that exists at SFSU but is NOT part of the Rev.2 stack or validation workflow (future research notes only):
+Analog Discovery 2, waveform generators (Keysight EDU33212A, HP 33120A), extra bench supplies (Keysight EDU36311A, HP E3630A),
+secondary instruments (HP 34401A DMM, HP 54601B oscilloscope), a handheld multimeter, and OptiMate 12.8 V LiFePO4 chargers
+(separate lab equipment; never used on the 36–42 V packs). Using them would restore pre-battery commissioning
+sources, protocol debugging and signal injection — see "Limits of this workflow" in `docs/rev2/LV_HARDWARE_VALIDATION_PLAN.md`.
+Also removed: XT30/XT90 connector support and any high-current connector claim.

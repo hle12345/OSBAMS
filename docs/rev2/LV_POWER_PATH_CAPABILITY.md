@@ -1,7 +1,7 @@
 # Rev.2 power-path capability (battery / discharge side)
 
 Frozen candidate and open part numbers: `HARDWARE_FREEZE_CANDIDATE.md`.
-Instrument roles: `SFSU_EQUIPMENT_MATRIX.md`.
+Equipment stack: `SFSU_EQUIPMENT_MATRIX.md`.
 
 **Final permitted current**
 
@@ -29,7 +29,7 @@ Power path: `pack → XT60 → fuse → Blue Sea 6006 → Durakool DG57CM → sh
 | Fuse F1 | needs DC rating ≥ 44 V (≥ 48 V preferred) | **15 A target** | must sit above the operating ceiling and below the wire limit | not confirmed (part/holder unknown) | 15 A; note it is **below** the firmware trip (18.5 A) — see freeze doc |
 | Manual disconnect (Blue Sea 6006) | 48 V DC max | 300 A continuous; **25 A switching** | contact heating | manufacturer values as shown in distributor listings; not read from the unit | not for routine opening under load |
 | Relay/contactor K1 (Durakool DG57CM, 12 V coil) | up to 145 V DC switching (listing) | variant-dependent: ~60 A@36 V, 50 A@48 V | coil power, contact heating | Durakool listing; **suffix not read** | UNSPECIFIED in the model until the suffix is known |
-| Connector (XT60; XT30/XT90 adapters) | XT-series nominal ratings far above 44 V | nominal ratings are derated for continuous use | contact resistance | manufacturer nominal values, not re-verified | **a plug never sets test current** |
+| Connector (XT60; adapter only if needed) | XT-series nominal rating far above 44 V | nominal rating is derated for continuous use | contact resistance | manufacturer nominal values, not re-verified | **a connector never sets test current**; no high-current capability is claimed |
 | Wiring | insulation ≥ 48 V | depends on gauge/length — check the ampacity chart for the installed cable | I²R, voltage drop to the sense point | not specified | UNSPECIFIED |
 | PCB copper | — | not a power conductor | trace heating | board not inspected | keep the power path off the PCB |
 | Battery profile | per pack | per profile (`maximum_osbams_test_current_a`) | cell/BMS limits | `services/battery_profiles.py` | always part of the `min()` |

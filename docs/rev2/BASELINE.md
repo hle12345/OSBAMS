@@ -6,7 +6,7 @@
 | Protocol / schema | 1 / 6 (+ `calibration_records` table by `migrate()`) |
 | OSBAMS operating ceiling (provisional) | 10 A / 44 V (`config.SAFETY_MAX_CURRENT_A`, `OSBAMS_VALIDATED_MAX_VOLTAGE_V`) |
 | Supported battery class | lithium-ion (NMC/NCA/LFP), ~10S, ~30–42 V |
-| Equipment | 12 roles — `SFSU_EQUIPMENT_MATRIX.md` |
+| Equipment stack | 6060B · EDU34450A · Pi 5 + touchscreen · STM32L476RG · power path · EDUX1052G — `SFSU_EQUIPMENT_MATRIX.md` |
 | 6060B envelope (instrument) | 3–60 V, 60 A, 300 W |
 | 6060B remote control | BLOCKED_BY_INTERFACE_CONFIRMATION |
 | Hardware | unbuilt / unvalidated |
@@ -25,4 +25,4 @@ firmware hard trips: the firmware trip (18.5 A / 60 C) now mirrors `config.FIRMW
 
 Physical validation: `BENCH_CHECKLIST.md` — every step NOT_RUN.
 
-Rev.2 scope cleanup at this baseline: NiMH/LTO chemistries, OWON, Dat Bike, MV/HV/EV and cycler concepts removed from active code (tested: `TestRev2ScopeCleanup`); simulator scenarios are 36–44 V lithium-ion only; the orchestrator gained an explicit hardware safety check; `HP 34401A` cross-check records and the 12-role equipment matrix were added.
+Scope at this baseline: the Rev.2 stack is limited to the six items above; other lab equipment, removed chemistries and removed hardware classes are absent from active code and active docs (tested), recorded only in `docs/research/`.
