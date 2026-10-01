@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""RC2 gate: refuses unless every required datasheet input is verified."""
+"""RC2 gate: refuses unless every required input is verified or owner-cited."""
 import json, os, sys
 I = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "datasheet_inputs.json")))
-need = ["j_out_contact_max_mohm", "pi_end_contact_max_mohm", "f2_resistance_max_mohm", "rsdw_tolerance_pct", "rsdw_footprint_drawing", "erc_clean_kicad10"]
-bad = [k for k in need if not I[k]["verified"]]
-trim_ok = I["rsdw_trim_allowed"]["verified"]
-print("RC2 gate:", "OPEN" if bad or not trim_ok else "CLEAR")
-for k in bad: print("  unverified:", k, "-", I[k]["source"])
-if not trim_ok: print("  unverified: rsdw_trim_allowed (trim range/formula) - R2/R3 stay DNP")
-sys.exit(1 if bad or not trim_ok else 0)
+need = ["f2_resistance_cold_mohm", "j_out_contact_max_mohm", "rsdw_trim_network", "rsdw_tolerance_pct", "rsdw_footprint_drawing", "pi_end_connector_mpn", "pi_end_contact_max_mohm", "erc_clean_kicad10"]
+ok = lambda k: I[k]["status"] in ("verified", "owner_cited") and I[k]["value"] not in (None, False)
+bad = [k for k in need if not ok(k)]
+print("RC2 gate:", "OPEN" if bad else "CLEAR")
+for k in bad: print("  open:", k, "-", I[k]["source"])
+for k in need:
+    if I[k]["status"] == "owner_cited": print("  note: owner-cited, re-check vs PDF:", k)
+sys.exit(1 if bad else 0)
