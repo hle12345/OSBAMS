@@ -4,7 +4,7 @@
 # the candidates, run DRC/ERC, and upload ONLY the KiCad-exported files.
 # Verify the option names with `kicad-cli pcb export gerbers --help` for your KiCad build.
 set -euo pipefail
-PRJ="${1:-Hardware/Schematic}"           # folder containing 'OSBAMS PCB.kicad_pcb' / .kicad_sch
+PRJ="${1:-legacy/reference/rev1_kicad}"           # folder containing 'OSBAMS PCB.kicad_pcb' / .kicad_sch
 OUT="${2:-manufacturing/PCBWay_OSBAMS_Rev2_PCBA/KICAD_EXPORT}"
 PCB="$PRJ/OSBAMS PCB.kicad_pcb"; SCH="$PRJ/OSBAMS PCB.kicad_sch"
 mkdir -p "$OUT"/{Gerber,Drill,PickAndPlace,Documentation}

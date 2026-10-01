@@ -3,9 +3,9 @@ import math, os, re
 from .sexp import parse, find, prop
 
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-PCB_FILE = os.path.join(REPO, "Hardware", "Schematic", "OSBAMS PCB.kicad_pcb")
-SCH_FILE = os.path.join(REPO, "Hardware", "Schematic", "OSBAMS PCB.kicad_sch")
-PRO_FILE = os.path.join(REPO, "Hardware", "Schematic", "OSBAMS PCB.kicad_pro")
+PCB_FILE = os.path.join(REPO, "legacy", "reference", "rev1_kicad", "OSBAMS PCB.kicad_pcb")
+SCH_FILE = os.path.join(REPO, "legacy", "reference", "rev1_kicad", "OSBAMS PCB.kicad_sch")
+PRO_FILE = os.path.join(REPO, "legacy", "reference", "rev1_kicad", "OSBAMS PCB.kicad_pro")
 
 F = float
 

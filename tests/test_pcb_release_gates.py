@@ -46,6 +46,17 @@ class TestReleaseGates(unittest.TestCase):
             self.assertRegex(md, rf"\| V{i} \|")
         self.assertNotIn("reconstruct", md.lower())
 
+    def test_rev2_architecture_doc_is_the_design_phase_deliverable(self):
+        d = os.path.join(ROOT, "Hardware", "Rev2_Controller")
+        t = open(os.path.join(d, "REV2_CONTROLLER_ARCHITECTURE.md")).read()
+        for kw in ("Block diagram", "MCU decision", "schematic section list", "Pin assignment", "Power tree",
+                   "INA228 / shunt calculation", "Independent ADC", "Relay driver calculation",
+                   "E-stop / ARM / relay-feedback", "Connector / interface table", "Preliminary BOM", "Open questions"):
+            self.assertIn(kw.lower(), t.lower(), kw)
+        self.assertEqual([f for f in os.listdir(d) if f.endswith((".kicad_sch", ".kicad_pcb"))], [],
+                         "no Rev.2 KiCad files before the architecture is approved")
+        self.assertTrue(os.path.isdir(os.path.join(ROOT, "legacy", "reference", "rev1_kicad")))
+
     def test_plan_covers_all_mandatory_items_and_is_not_applied(self):
         plan = open(os.path.join(PCB, "REV2_SCHEMATIC_PCB_PLAN.md")).read()
         for kw in ("polarity", "PA0", "PC9", "PA1", "Kelvin", "ARM", "MPN", "test point", "marking"):

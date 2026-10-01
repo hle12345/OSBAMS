@@ -20,3 +20,6 @@ Gates (set true only with evidence filed in this directory)
 4. DRC clean (KiCad 10 run, report filed)
 5. BOM: manufacturer + exact MPN on every populated part
 6. Rev.1 physical observations recorded (bench sheet V1–V10 filed, truth inventory updated)
+
+## Update 2026-10-01 (direction change)
+Rev.1 KiCad source moved to `legacy/reference/rev1_kicad/` (reference only). Rev.2 is a new design in `Hardware/Rev2_Controller/`; no Rev.2 schematic, layout or manufacturing file exists yet. The six gates apply to the new board.

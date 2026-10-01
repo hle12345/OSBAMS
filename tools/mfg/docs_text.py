@@ -132,7 +132,7 @@ def power_tree_figure():
 
 def schematic_cover_pdf(s, review, path):
     st = [P("OSBAMS Rev.2 controller PCB - schematic package", H1),
-          P(f"Source: Hardware/Schematic/OSBAMS PCB.kicad_sch (KiCad format {s.version}) | generated {TODAY} by tools/mfg", SMALL),
+          P(f"Source: legacy/reference/rev1_kicad/OSBAMS PCB.kicad_sch (KiCad format {s.version}) | generated {TODAY} by tools/mfg", SMALL),
           P("STATUS: NOT RELEASED FOR PRODUCTION. These pages are drawn by a script from the KiCad file (KiCad was not available); they are not a KiCad plot and ERC has not been run. "
             "Export the authoritative PDF with tools/mfg/export_with_kicad_cli.sh.", WARN),
           P("Contents", H2),

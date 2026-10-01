@@ -1,4 +1,8 @@
-# Rev.2 controller schematic / PCB plan — PROPOSAL, board NOT modified
+# Rev.2 controller schematic / PCB plan — SUPERSEDED (2026-10-01)
+
+> **Direction changed:** Rev.2 is a new integrated controller PCB, not a revision of the Rev.1 carrier. This plan (written for revising the old board) is kept for its reasoning only; where it conflicts, `Hardware/Rev2_Controller/REV2_CONTROLLER_ARCHITECTURE.md` wins.
+
+# (historical) plan — PROPOSAL, board NOT modified
 
 Status: **APPROVED by the user 2026-10-01** (see `APPROVED_DECISIONS.md`); plan only until V1–V10 are filed. The KiCad files are untouched. No fabrication outputs exist (`MANUFACTURING_STATE.md`). The existing board is **revised, not redrawn**: same 80×80 mm 2-layer THT carrier, same J1–J6, Q1, U1, same Nucleo-header architecture.
 
