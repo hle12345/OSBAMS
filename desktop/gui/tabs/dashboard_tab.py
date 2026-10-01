@@ -449,7 +449,8 @@ class DashboardTab(QWidget):
         self._test_id = start_test(self._battery_id, "dcir" if dcir else "discharge")
         cls = DcirTest if dcir else CapacityTest
         self._load = Manual6060B()
-        self._orch = cls(self._profile, self._load, RunConfig(),
+        self._orch = cls(self._profile, self._load,
+                         RunConfig(battery_safety_status=(self._batt or {}).get("safety_status")),
                          prompt=self._on_prompt)
         self._orch.start()
         self._show_phase()

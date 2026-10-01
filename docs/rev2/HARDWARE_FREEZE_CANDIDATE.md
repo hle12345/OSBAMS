@@ -32,8 +32,8 @@ USED Li-ion PACK (10S, ~30-42 V) → XT60 adapter (XT30/XT90 optional)
 | INA228 | bus 85 V | covers 44 V with wide margin |
 
 Current-sensing redesign stays deferred (`CURRENT_SENSING_REDESIGN.md`).
-Not to be bought/added: Albright SW60, EV200, precharge, SB120, 90 A wiring, any
-Dat Bike / EV hardware — none increases what a 300 W load can test.
+Not to be bought/added: Albright SW60, EV200, precharge, SB120, 90 A wiring —
+none increases what a 300 W load can test on these packs.
 
 ## 3. B. Measurement, temperature, safety, power, UI
 - **Measurement:** INA228 (primary V/I/P) and an independent ADC divider cross-check feed the STM32L476RG. Calibrate both against the EDU34450A.

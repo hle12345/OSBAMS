@@ -22,7 +22,8 @@ class ReferenceInstrument:
     calibration_status: str = "UNKNOWN"      # e.g. "in-cal, due 2027-03-01"
 
 
-EDU34450A = ReferenceInstrument(model="Keysight EDU34450A")
+EDU34450A = ReferenceInstrument(model="Keysight EDU34450A")          # primary reference
+HP34401A = ReferenceInstrument(model="HP 34401A")                    # secondary cross-check
 
 
 @dataclass
@@ -41,6 +42,10 @@ class CalibrationRecord:
     channel: str = ""
     load_readback: Optional[float] = None    # 6060B reading, when practical
     load_abs_error: Optional[float] = None   # 6060B vs reference
+    secondary_reference_model: str = ""      # e.g. HP 34401A
+    secondary_reference_asset_id: str = ""
+    secondary_reading: Optional[float] = None
+    secondary_diff: Optional[float] = None   # |secondary - primary reference|
     notes: str = ""
 
     def as_dict(self) -> dict:
@@ -60,6 +65,8 @@ def make_record(quantity: str, reference_reading: float, osbams_reading: float,
                 operator: str, reference: ReferenceInstrument = EDU34450A,
                 load_readback: Optional[float] = None, channel: str = "",
                 notes: str = "", commit: Optional[str] = None,
+                secondary: Optional[ReferenceInstrument] = None,
+                secondary_reading: Optional[float] = None,
                 timestamp: Optional[str] = None) -> CalibrationRecord:
     if quantity not in QUANTITIES:
         raise ValueError(f"quantity must be one of {QUANTITIES}")
@@ -77,6 +84,10 @@ def make_record(quantity: str, reference_reading: float, osbams_reading: float,
         software_commit=commit or software_commit(), operator=operator,
         channel=channel, load_readback=load_readback,
         load_abs_error=None if load_readback is None else abs(load_readback - reference_reading),
+        secondary_reference_model=secondary.model if secondary else "",
+        secondary_reference_asset_id=secondary.asset_id if secondary else "",
+        secondary_reading=secondary_reading,
+        secondary_diff=None if secondary_reading is None else abs(secondary_reading - reference_reading),
         notes=notes)
 
 
@@ -86,11 +97,13 @@ def save_record(conn, rec: CalibrationRecord) -> int:
         INSERT INTO calibration_records
           (recorded_at, quantity, channel, reference_model, reference_asset_id,
            reference_cal_status, reference_reading, osbams_reading, load_readback,
-           abs_error, pct_error, software_commit, operator, notes)
-        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+           abs_error, pct_error, software_commit, operator, notes,
+           secondary_reference_model, secondary_reading, secondary_diff)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
         (rec.timestamp, rec.quantity, rec.channel, rec.reference_model,
          rec.reference_asset_id, rec.reference_cal_status, rec.reference_reading,
          rec.osbams_reading, rec.load_readback, rec.abs_error, rec.pct_error,
-         rec.software_commit, rec.operator, rec.notes))
+         rec.software_commit, rec.operator, rec.notes,
+         rec.secondary_reference_model, rec.secondary_reading, rec.secondary_diff))
     conn.commit()
     return cur.lastrowid

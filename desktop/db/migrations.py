@@ -144,9 +144,16 @@ def migrate():
             pct_error             REAL,
             software_commit       TEXT,
             operator              TEXT,
-            notes                 TEXT
+            notes                 TEXT,
+            secondary_reference_model TEXT,     -- e.g. HP 34401A cross-check
+            secondary_reading     REAL,
+            secondary_diff        REAL
         )
     """)
+    for col, defn in (("secondary_reference_model", "TEXT"),
+                      ("secondary_reading", "REAL"), ("secondary_diff", "REAL")):
+        if _add_col(c, "calibration_records", col, defn):
+            added.append(f"calibration_records.{col}")
 
     # ── Log migration itself ──────────────────────────────────────────
     if added:

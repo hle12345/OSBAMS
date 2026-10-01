@@ -11,7 +11,7 @@ verified mirror, not one physical file for both languages.
 
 Version scheme (see VERSIONS below):
     System / Desktop / Firmware : 2.0.0-dev1  (Rev.2, SFSU lab-optimized)
-    Hardware validation pending — see docs/rev2/PHYSICAL_VALIDATION_PLAN.md
+    Hardware validation pending — see docs/rev2/LV_HARDWARE_VALIDATION_PLAN.md
     Serial protocol     : 1
     Database schema     : 6
 
@@ -239,10 +239,10 @@ INA228_SCOPE = (
     "42 V maximum of a fully charged 10S NMC pack."
 )
 
-PRIMARY_DEVELOPMENT_TARGET = "Packs inside the validated 3-60 V / 300 W SFSU envelope"
+PRIMARY_DEVELOPMENT_TARGET = "Lithium-ion packs, approximately 10S, ~30-42 V (Ninebot/Segway, Shenzhen Elite)"
 CHEMISTRY_SCOPE = (
-    "Architecture supports multiple chemistries within the Rev.2 envelope. "
-    "No chemistry or pack has been validated against hardware yet."
+    "Rev.2 supports lithium-ion only (NMC / NCA / LFP). No chemistry or pack "
+    "has been validated against hardware yet."
 )
 
 # Rev.2 is designed around the equipment physically available at SFSU
@@ -250,20 +250,17 @@ CHEMISTRY_SCOPE = (
 # not an OSBAMS capability: the OSBAMS envelope is the intersection of it with
 # the battery profile and the validated power path.
 ELECTRONIC_LOAD_SCOPE = (
-    "Rev.2 primary load: Keysight/Agilent 6060B (3-60 V, 60 A, 300 W; "
-    "CC/CV/CR; GPIB). Remote control is BLOCKED_BY_INTERFACE_CONFIRMATION "
-    "until an SFSU GPIB path is confirmed; Manual6060B and Simulator6060B "
-    "are the active alternatives. Permitted current is always "
-    "min(profile, OSBAMS hardware, 60 A, 300 W / V, component limits)."
+    "Rev.2 primary load: Agilent/Keysight 6060B (3-60 V, 60 A, 300 W). "
+    "Remote GPIB control is BLOCKED_BY_INTERFACE_CONFIRMATION and each remote "
+    "command must be VERIFIED against the official manuals; Manual6060B and "
+    "Simulator6060B are the active modes. Permitted current is always "
+    "min(profile, OSBAMS 10 A, 60 A, 300 W / conservative pack voltage, component limits)."
 )
 
 REV2_CLAIM = (
-    "OSBAMS Rev.2 is an open battery characterization and health-assessment "
-    "platform designed around the available SFSU laboratory instrumentation. "
-    "It supports battery packs within a validated subset of the Agilent "
-    "6060B's 3-60 V, 60 A, 300 W operating envelope and performs automated "
-    "capacity, energy, DCIR, voltage-sag, thermal, SOH and battery-history "
-    "analysis."
+    "OSBAMS Rev.2 is an open lithium-ion battery characterization platform for "
+    "supported battery packs within the validated OSBAMS hardware envelope and "
+    "the Agilent 6060B electronic-load envelope."
 )
 
 

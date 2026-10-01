@@ -20,7 +20,7 @@ When confirmed:
 2. For each entry in `desktop/equipment/drivers/keysight_6060b/commands.py`
    with status `UNVERIFIED`, check the syntax, fix it, set `MANUAL_CONFIRMED`, and note the page.
 3. Construct `Keysight6060B(resource="GPIB0::<addr>::INSTR", interface_confirmed=True)`.
-4. Run `REMOTE-01…` in `PHYSICAL_VALIDATION_PLAN.md`.
+4. Run steps J1–J4 in `BENCH_CHECKLIST.md`.
 
 The official PDFs could not be downloaded when the driver was written (network
 egress blocked), so only commands seen in public excerpts (`MODE CURR`,

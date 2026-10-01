@@ -46,7 +46,7 @@ class Keysight6060B(ElectronicLoad):
         if bad:
             raise CommandNotVerified(
                 f"operation '{operation}' blocked: command(s) {bad} not VERIFIED "
-                f"against the official 6060B manuals (see 6060B_COMMAND_EVIDENCE.md)")
+                f"against the official 6060B manuals (see 6060B_DRIVER_EVIDENCE.md)")
 
     def _cmd(self, key: str) -> Cmd:
         return COMMANDS[key]

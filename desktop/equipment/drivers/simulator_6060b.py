@@ -5,10 +5,10 @@ Enforces the SAME 60 V / 60 A / 300 W envelope as the real instrument (same
 capability model), and models what a real load would do if the envelope were
 exceeded mid-discharge (input trips off, flag raised).
 
-Scenarios = pack (12/24/36/42/48/60 V class) x condition (healthy, degraded,
-high_resistance, cell_bms_fault, overtemp, comm_loss), plus the Rev.1-era
-short names (normal, degraded, hot, ...) kept for the demo-data tooling.
-No pack above 60 V exists in this simulator by construction.
+Scenarios = lithium-ion ~10S pack (36-44 V) x condition (healthy, degraded,
+high_resistance, cell_bms_fault, overtemp, comm_loss), plus short names
+(normal, degraded, hot, ...) kept for the demo-data tooling. Every scenario is
+inside the OSBAMS 44 V ceiling and the 6060B envelope by construction.
 """
 
 import math
@@ -19,13 +19,11 @@ from equipment.drivers.base import ElectronicLoad, LoadStatus
 
 # ── Packs (all inside the 3-60 V envelope) ───────────────────────────────────
 PACKS = {
-    "12v":          dict(label="12 V (3S NMC)",         start_v=12.6, cutoff_v=9.0,  rated_ah=5.0,  current_a=2.0),
-    "24v":          dict(label="24 V (6S NMC)",         start_v=25.2, cutoff_v=18.0, rated_ah=10.0, current_a=3.0),
-    "36v_5p2ah":    dict(label="36 V 5.2 Ah (Ninebot NEB1002)", start_v=42.0, cutoff_v=30.0, rated_ah=5.2,  current_a=1.0),
-    "36v_15p3ah":   dict(label="36 V 15.3 Ah (Ninebot NEE1006-M)", start_v=42.0, cutoff_v=31.0, rated_ah=15.3, current_a=3.0),
-    "42v_full":     dict(label="42 V fully charged (12.8 Ah)", start_v=42.0, cutoff_v=30.0, rated_ah=12.8, current_a=2.5),
-    "48v":          dict(label="48 V (13S NMC)",        start_v=54.6, cutoff_v=39.0, rated_ah=10.0, current_a=4.0),
-    "60v_boundary": dict(label="60 V boundary case",    start_v=60.0, cutoff_v=42.0, rated_ah=5.0,  current_a=4.0),
+    "36v_5p2ah":  dict(label="36 V 5.2 Ah (Ninebot NEB1002)", start_v=42.0, cutoff_v=30.0, rated_ah=5.2,  current_a=1.0),
+    "36v_15p3ah": dict(label="36 V 15.3 Ah (Ninebot NEE1006-M)", start_v=42.0, cutoff_v=31.0, rated_ah=15.3, current_a=3.0),
+    "37v_12p8ah": dict(label="37 V 12.8 Ah (Shenzhen Elite)", start_v=42.0, cutoff_v=30.0, rated_ah=12.8, current_a=2.5),
+    "42v_full":   dict(label="10S fully charged, 42 V", start_v=42.0, cutoff_v=30.0, rated_ah=10.0, current_a=2.0),
+    "44v_boundary": dict(label="44 V OSBAMS ceiling boundary case", start_v=44.0, cutoff_v=30.0, rated_ah=10.0, current_a=2.0),
 }
 
 # soh, per-cell R (mohm), temp rise, fault
@@ -92,16 +90,6 @@ class Simulator6060B(ElectronicLoad):
     def __init__(self, profile: str = "normal", sample_rate_ms: int = 500, **limits):
         if profile not in SCENARIOS:
             raise ValueError(f"unknown scenario {profile!r}")
-        # Scenarios above the OSBAMS validated voltage ceiling (44 V) are
-        # INSTRUMENT-boundary studies (48 V, 60 V): the simulated 6060B still
-        # enforces 60 V / 60 A / 300 W, but the hypothetical system ceiling is
-        # lifted to 60 V and the run is flagged. They are not Rev.2 targets.
-        self.beyond_validated_ceiling = (
-            SCENARIOS[profile]["start_v"] > cap._default_system_voltage_max_v() + 1e-9)
-        if self.beyond_validated_ceiling:
-            limits.setdefault("system_voltage_max_v", cap.INSTRUMENT_VOLTAGE_MAX_V)
-            limits.setdefault("power_path", cap.PowerPathLimits(
-                fuse_a=15.0, shunt_a=20.0, max_voltage_v=None))
         super().__init__(**limits)
         self._profile_name = profile
         self._p = dict(SCENARIOS[profile])

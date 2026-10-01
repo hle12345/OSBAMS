@@ -66,8 +66,8 @@ def power_limit_lesson(pack_voltage_v: float = 42.0,
              "=> outside the 6060B voltage range",
              ""]
     lines += [f"  {k:<42} {v}" for k, v in lim.rows()]
-    lines += ["", "Instrument-only envelope:"]
-    for v, a, final in cap.envelope_table():
+    lines += ["", "Supported pack range (60 A exists only below 5 V — outside every supported pack):"]
+    for v, a, final in cap.envelope_table((30, 33, 36, 37, 40, 42, 44)):
         shown = f"{final:5.2f} A" if final > 0 else "BLOCKED (above the OSBAMS voltage ceiling)"
         lines.append(f"  {v:>3} V -> {a:5.2f} A (6060B)   {shown} (OSBAMS permitted)")
     return "\n".join(lines)

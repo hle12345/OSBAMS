@@ -1,11 +1,12 @@
 """
 services/bms.py — software BMS abstraction (Rev.2).
 
-Interfaces researched for packs INSIDE the 60 V envelope: CAN, UART, SMBus and
-other documented buses. A pack whose protocol is not documented/implemented is
-SMART_PACK_UNSUPPORTED; OSBAMS may still take permitted external measurements
-on its normal discharge output. OSBAMS NEVER bypasses or overrides BMS
-protection: it has no write path to cell-protection state.
+Limited to supported, documented low-voltage lithium-ion packs and NORMAL
+communication only (read-only). No smart-BMS protocol is implemented or
+verified today, so every pack reports SMART_PACK_UNSUPPORTED; OSBAMS may still
+take permitted external measurements on the pack's normal discharge output.
+OSBAMS NEVER bypasses or overrides BMS protection: it has no write path to
+cell-protection state. Full smart-BMS support is NOT claimed.
 """
 
 from abc import ABC, abstractmethod

@@ -134,14 +134,15 @@ class PowerPathLimits:
     connector_a: Optional[float] = None
     fuse_a:      Optional[float] = None
     wiring_a:    Optional[float] = None
-    contactor_a: Optional[float] = None
+    contactor_a: Optional[float] = None   # relay / contactor
+    disconnect_a: Optional[float] = None  # manual disconnect (continuous carrying)
     shunt_a:     Optional[float] = None   # shunt / current-sensor range
     max_voltage_v: Optional[float] = None # lowest DC voltage rating in the path
 
     def as_dict(self) -> dict:   # current ratings only
         return {"connector": self.connector_a, "fuse": self.fuse_a,
-                "wiring": self.wiring_a, "contactor": self.contactor_a,
-                "shunt/sensor": self.shunt_a}
+                "wiring": self.wiring_a, "relay/contactor": self.contactor_a,
+                "disconnect": self.disconnect_a, "shunt/sensor": self.shunt_a}
 
 
 # Rev.2 power path (docs/rev2/HARDWARE_FREEZE_CANDIDATE.md). Known numbers only:
@@ -151,7 +152,19 @@ class PowerPathLimits:
 # Contactor (Durakool DG57CM: ratings are VARIANT-dependent), connector and wiring
 # stay unspecified until the exact parts are read off the hardware.
 # The OSBAMS validated limits (config) cap everything regardless.
-REV2_POWER_PATH = PowerPathLimits(fuse_a=15.0, shunt_a=20.0, max_voltage_v=48.0)
+REV2_POWER_PATH = PowerPathLimits(fuse_a=15.0, shunt_a=20.0, disconnect_a=300.0,
+                                  max_voltage_v=48.0)
+
+# Where each number comes from. NONE of these is read off the physical unit yet,
+# so nothing here is "verified OSBAMS hardware"; the 10 A ceiling covers the gap.
+POWER_PATH_STATUS = {
+    "fuse":            "TARGET 15 A — part/holder not confirmed",
+    "disconnect":      "Blue Sea 6006 listing: 48 V DC, 300 A continuous, 25 A switching — not read from the unit",
+    "relay/contactor": "Durakool DG57CM — variant-dependent ratings, suffix not read — UNSPECIFIED",
+    "shunt/sensor":    "RSA-20-50, 20 A class (repo) — installed part not confirmed",
+    "connector":       "XT60 (XT30/XT90 adapters) — UNSPECIFIED; a plug never sets test current",
+    "wiring":          "UNSPECIFIED",
+}
 REV1_POWER_PATH = REV2_POWER_PATH      # backward-compatible alias
 
 
@@ -186,7 +199,7 @@ class CurrentLimit:
             parts.append(f"{self.profile_limit_a:.2f} A (profile)")
         final = a(self.final_a) if not self.blocked else f"BLOCKED — {self.blocked_reason}"
         return [
-            ("Battery",                         v),
+            ("Pack voltage (conservative)",     v),
             ("6060B current rating",            a(self.instrument_limit_a, 0)),
             ("6060B power-derived limit",       a(self.power_limit_a)),
             ("OSBAMS validated limit",          a(self.osbams_limit_a, 0)),

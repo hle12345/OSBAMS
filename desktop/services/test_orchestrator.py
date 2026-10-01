@@ -1,11 +1,13 @@
 """
 services/test_orchestrator.py — the Rev.2 test orchestrator.
 
-Capacity test:
-    PROFILE -> OCV -> READY -> controlled CC DISCHARGE (live V/I/P/T, Ah/Wh)
-            -> profile CUTOFF -> LOAD OFF (verified) -> RECOVERY -> COMPLETE
+Capacity test (lithium-ion ~10S packs on the Agilent 6060B):
+    PROFILE -> OCV screen -> HARDWARE SAFETY CHECK -> 6060B capability calculation
+            -> READY -> controlled CC DISCHARGE (live V/I/P/T, Ah/Wh)
+            -> automatic profile CUTOFF -> LOAD OFF (verified) -> RECOVERY -> COMPLETE
 DCIR test (separate, controlled current steps):
-    PROFILE -> OCV -> READY -> STEP(I1) -> STEP(I2) ... -> LOAD OFF -> RECOVERY -> COMPLETE
+    PROFILE -> OCV screen -> HARDWARE SAFETY CHECK -> capability calculation -> READY
+            -> STEP(I1) -> STEP(I2) ... -> LOAD OFF -> RECOVERY -> COMPLETE
 
 Push-based: feed `Sample`s from any source (STM32/INA228 serial frames,
 Simulator6060B, a manual bench) into `on_sample()`. All timing comes from
@@ -35,6 +37,7 @@ class Phase(str, Enum):
     IDLE = "IDLE"
     PROFILE = "PROFILE"
     OCV = "OCV"
+    SAFETY_CHECK = "SAFETY_CHECK"
     READY = "READY"
     DISCHARGE = "DISCHARGE"
     DCIR_STEP = "DCIR_STEP"
@@ -85,6 +88,8 @@ class RunConfig:
     dcir_step_s: float = 10.0
     dcir_avg_s: float = 2.0
     dcir_rest_between_s: float = 0.0
+    # hardware safety check inputs
+    battery_safety_status: Optional[str] = None   # registry status; Quarantine/Unsafe blocks
 
 
 @dataclass
@@ -110,6 +115,7 @@ class Results:
     soh_capacity: Optional[float] = None
     dcir_steps: list = field(default_factory=list)      # dicts
     dcir_mohm: Optional[float] = None
+    safety_checks: list = field(default_factory=list)   # dicts: name, ok, detail
     n_samples: int = 0
     events: list = field(default_factory=list)
 
@@ -149,6 +155,9 @@ class _Run:
         self._first_loaded_v: Optional[float] = None
         self._duration = 0.0
         self._confirm_t: Optional[float] = None
+        self._last_temp: Optional[float] = None
+        self._ocv_idle_i = 0.0
+        self.safety_checks: list = []
 
     # ── public API ──────────────────────────────────────────────────────
     @property
@@ -202,6 +211,7 @@ class _Run:
                 self.phase in (Phase.DISCHARGE, Phase.DCIR_STEP):
             return self._fault(f"sample gap {gap:.0f} s while loaded")
         self.samples.append((s.t_s, s.voltage_v, s.current_a, s.temp_c, self.phase.value))
+        self._last_temp = s.temp_c
         if s.temp_c is not None:
             self._t_max = s.temp_c if self._t_max is None else max(self._t_max, s.temp_c)
 
@@ -261,6 +271,7 @@ class _Run:
         if span >= self.cfg.ocv_window_s * 0.9 and len(vs) >= self.cfg.ocv_min_samples \
                 and max(vs) - min(vs) <= self.cfg.ocv_stable_v:
             self.ocv_v = sum(vs) / len(vs)
+            self._ocv_idle_i = s.current_a
             self._plan()
         elif s.t_s - self._ocv_t0 > self.cfg.ocv_timeout_s:
             self._fault("OCV did not stabilise")
@@ -275,6 +286,11 @@ class _Run:
             self._fault(f"OCV {ocv:.2f} V above profile maximum {p.maximum_voltage_v} V")
             return
         self.vcons.update(ocv)
+        self.phase = Phase.SAFETY_CHECK
+        failed = self._hardware_safety_check()
+        if failed:
+            self._fault("hardware safety check failed: " + "; ".join(failed))
+            return
         self.permitted = cap.compute_permitted_current(
             self.vcons.volts, p.maximum_osbams_test_current_a,
             self.load.system_current_max_a, self.load.power_path,
@@ -290,6 +306,41 @@ class _Run:
         self.log(f"READY — commanded {self.commanded_a:.3f} A at <= {self.vcons.volts:.2f} V "
                  f"({self.commanded_a * self.vcons.volts:.1f} W)")
         self.prompt(f"READY: {self.commanded_a:.2f} A CC. Confirm to enable the load.")
+
+    def _check(self, name: str, ok: bool, detail: str) -> None:
+        self.safety_checks.append({"name": name, "ok": bool(ok), "detail": detail})
+        self.log(f"safety check {'PASS' if ok else 'FAIL'}: {name} — {detail}")
+
+    def _hardware_safety_check(self) -> list:
+        """Run before any load command. Returns the names of failed checks."""
+        import config
+        p, c = self.profile, self.cfg
+        self.safety_checks = []
+        st = (c.battery_safety_status or "").strip()
+        self._check("registry safety status",
+                    st.lower() not in ("quarantine", "unsafe — recycle", "unsafe"),
+                    st or "not supplied")
+        t = self._last_temp
+        self._check("pack temperature within profile limits",
+                    t is not None and p.temp_min_c <= t < min(p.temp_max_c, config.SAFETY_MAX_TEMP_C),
+                    "no temperature reading (thermal monitoring unavailable)" if t is None
+                    else f"{t:.1f} C (limit {p.temp_min_c:g}..{min(p.temp_max_c, config.SAFETY_MAX_TEMP_C):g} C)")
+        lim = cap.compute_permitted_current(
+            self.vcons.volts, p.maximum_osbams_test_current_a, self.load.system_current_max_a,
+            self.load.power_path, self.load.system_voltage_max_v)
+        self._check("pack voltage inside OSBAMS and 6060B voltage envelope", not lim.blocked,
+                    lim.blocked_reason or f"{self.vcons.volts:.2f} V <= {lim.system_voltage_max_v:g} V")
+        self._check("a positive permitted current exists", lim.final_a > 0,
+                    f"{lim.final_a:.2f} A ({lim.limiting_factor})")
+        self._check("OSBAMS operating ceiling below firmware hard trip",
+                    config.SAFETY_MAX_CURRENT_A < config.FIRMWARE_HARD_TRIP_A,
+                    f"{config.SAFETY_MAX_CURRENT_A:g} A < {config.FIRMWARE_HARD_TRIP_A:g} A")
+        self._check("load idle (no current before the test)", abs(self._ocv_idle_i) <= c.idle_current_a,
+                    f"{self._ocv_idle_i:.3f} A")
+        if lim.unspecified:
+            self.log("power-path ratings still unspecified (capped by the OSBAMS ceiling): "
+                     + ", ".join(lim.unspecified))
+        return [x["name"] for x in self.safety_checks if not x["ok"]]
 
     def _plan_current(self) -> None:
         raise NotImplementedError
@@ -392,6 +443,7 @@ class _Run:
                     avg_power_w=(self._wh * 3600 / d) if d > 0 else 0.0,
                     v_min=self._v_min, v_end=self._prev.voltage_v if self._prev else None,
                     max_temp_c=self._t_max, recovery_v=dict(self._rec),
+                    safety_checks=list(self.safety_checks),
                     n_samples=len(self.samples), events=list(self.events))
         if self.ocv_v is not None and self._first_loaded_v is not None:
             r.initial_sag_v = self.ocv_v - self._first_loaded_v

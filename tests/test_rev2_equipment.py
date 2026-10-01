@@ -91,7 +91,7 @@ class TestCapability(unittest.TestCase):
 
     def test_ui_rows(self):
         labels = [k for k, _ in cap.compute_permitted_current(42.0, 5.0).rows()]
-        for want in ("Battery", "6060B current rating", "6060B power-derived limit",
+        for want in ("Pack voltage (conservative)", "6060B current rating", "6060B power-derived limit",
                      "OSBAMS validated limit", "Battery-profile limit",
                      "FINAL PERMITTED", "Limiting factor"):
             self.assertIn(want, labels)
@@ -136,9 +136,9 @@ class TestSimulator(unittest.TestCase):
         self.assertAlmostEqual(ah, s.capacity_ah, delta=0.05)
 
     def test_hardware_trip_if_voltage_rises_past_envelope(self):
-        s = Simulator6060B("48v_healthy"); s.connect()
-        s.set_pack_voltage(54.6); s.set_cc(5.0); s.input_on()
-        s._setpoint = 6.0                             # bypass guard = fault injection
+        s = Simulator6060B("44v_boundary_healthy"); s.connect()
+        s.set_pack_voltage(44.0); s.set_cc(6.0); s.input_on()
+        s._setpoint = 7.5                             # bypass guard = fault injection (7.5 A x ~43 V > 300 W)
         st = s.step(1.0)
         self.assertFalse(st.input_on)
         self.assertIn("OVERPOWER", st.flags)
@@ -151,17 +151,16 @@ class TestSimulator(unittest.TestCase):
     def test_scenarios_all_within_envelope_and_below_60v(self):
         for name, p in Simulator6060B.SCENARIOS.items():
             self.assertLessEqual(p["start_v"], 60.0, name)
-            sim = Simulator6060B(name)                    # constructor enforces the envelope
-            self.assertEqual(sim.beyond_validated_ceiling, p["start_v"] > 44.0, name)
-        self.assertTrue(Simulator6060B("48v_healthy").beyond_validated_ceiling)
-        self.assertTrue(Simulator6060B("60v_boundary_healthy").beyond_validated_ceiling)
-        self.assertFalse(Simulator6060B("42v_full_healthy").beyond_validated_ceiling)
+            Simulator6060B(name)                          # constructor enforces the envelope
         self.assertTrue(all(k in Simulator6060B.SCENARIOS for k in (
-            "12v_healthy", "24v_healthy", "36v_5p2ah_healthy", "36v_15p3ah_healthy",
-            "42v_full_healthy", "48v_healthy", "60v_boundary_healthy",
+            "36v_5p2ah_healthy", "36v_15p3ah_healthy", "37v_12p8ah_healthy",
+            "42v_full_healthy", "44v_boundary_healthy",
             "36v_15p3ah_degraded", "36v_15p3ah_high_resistance",
             "36v_15p3ah_cell_bms_fault", "36v_15p3ah_overtemp", "36v_15p3ah_comm_loss")))
-        self.assertFalse(any(("400" in k or "ev_" in k) for k in Simulator6060B.SCENARIOS))
+        # lithium-ion ~10S only: nothing below 36 V class or above the 44 V ceiling
+        for k, p in Simulator6060B.SCENARIOS.items():
+            self.assertGreaterEqual(p["start_v"], 36.0, k)
+            self.assertLessEqual(p["start_v"], 44.0, k)
 
 
 class TestManual(unittest.TestCase):
@@ -308,10 +307,12 @@ class TestProfilesAndRecords(unittest.TestCase):
             self.assertEqual(p.validate(), [], k)
             self.assertLessEqual(p.permitted_current().final_a, 7.15)
 
-    def test_over_60v_profile_flagged(self):
+    def test_profiles_above_ceiling_flagged(self):
         from services.battery_profiles import BatteryProfile
-        p = BatteryProfile("x", "Dat", "72V", "NMC", 72, 84, 60, 20, 1440, 3, 5, "XT90", 0, 50)
-        self.assertTrue(any("OUT_OF_SCOPE_FOR_REV2" in m for m in p.validate()))
+        too_high = BatteryProfile("x", "m", "hi", "NMC", 48, 54.6, 39, 10, 480, 2, 4, "XT60", 0, 50)
+        self.assertTrue(any("44" in m for m in too_high.validate()))        # above OSBAMS ceiling
+        way_high = BatteryProfile("y", "m", "hi2", "NMC", 72, 84, 60, 20, 1440, 3, 5, "XT90", 0, 50)
+        self.assertTrue(any("OUT_OF_SCOPE_FOR_REV2" in m for m in way_high.validate()))
 
     def test_no_global_min_voltage(self):
         import config
@@ -342,45 +343,19 @@ class TestProfilesAndRecords(unittest.TestCase):
         from gui.validators import validate_test_config
         e, _ = validate_test_config(current_setpoint_a=8.0, pack_voltage_v=42.0)
         self.assertTrue(e)
-        e, _ = validate_test_config(current_setpoint_a=3.0, pack_voltage_v=42.0, cutoff_voltage_v=9.0)
-        self.assertFalse(e)                          # 9 V cutoff fine for a 3S pack
+        e, _ = validate_test_config(current_setpoint_a=3.0, pack_voltage_v=42.0, cutoff_voltage_v=30.0)
+        self.assertFalse(e)                          # cutoff is profile-specific
         e, _ = validate_test_config(cutoff_voltage_v=2.0)
         self.assertTrue(e)
 
     def test_learning_mode_live_lesson(self):
         from services.learning_mode import power_limit_lesson, LESSONS
         txt = power_limit_lesson(42.0)
+        self.assertNotIn(" 12 V ", txt); self.assertNotIn(" 24 V ", txt)
         self.assertIn("300 / 42 = 7.14 A", txt)
         self.assertIn("FINAL PERMITTED", txt)
         self.assertIn("Limiting factor", txt)
         self.assertTrue(any("60 A" in t for t, _ in LESSONS))
-
-
-class TestNoLegacyDependencies(unittest.TestCase):
-    """OWON and out-of-scope hardware must not appear in active Rev.2 code."""
-
-    def _active_files(self):
-        for base in ("desktop", "tools", "Firmware"):
-            for root, _d, files in os.walk(os.path.join(ROOT, base)):
-                for f in files:
-                    if f.endswith((".py", ".c", ".h")):
-                        yield os.path.join(root, f)
-
-    def test_no_owon_in_active_code(self):
-        bad = [p for p in self._active_files()
-               if re.search(r"owon|oel1515", open(p, errors="replace").read(), re.I)]
-        self.assertEqual(bad, [])
-
-    def test_no_legacy_imports(self):
-        bad = [p for p in self._active_files()
-               if p.endswith(".py") and re.search(r"^\s*(from|import)\s+legacy", open(p).read(), re.M)]
-        self.assertEqual(bad, [])
-
-    def test_no_out_of_scope_drivers(self):
-        names = ("owon", "itech", "bitrode", "arbin", "chroma", "digatron")
-        drv = os.path.join(ROOT, "desktop", "equipment", "drivers")
-        found = [f for f in os.listdir(drv) if any(n in f.lower() for n in names)]
-        self.assertEqual(found, [])
 
 
 class TestValidationWorkflowAndDocs(unittest.TestCase):
@@ -395,41 +370,139 @@ class TestValidationWorkflowAndDocs(unittest.TestCase):
             for dep in [d.strip() for d in s.blocked_by.split(",") if d.strip()]:
                 self.assertLess(ids.index(dep), ids.index(s.id), s.id)
 
+    def test_required_order_and_real_pack_gate(self):
+        """commissioning -> EDU34450A cal -> 34401A -> current -> scope -> AD2 -> real pack."""
+        from equipment import validation as v
+        pos = {s.id: i for i, s in enumerate(v.STEPS)}
+        def first(phase_prefix):
+            return min(i for i, s in enumerate(v.STEPS) if s.phase.startswith(phase_prefix))
+        order = [first(p) for p in ("B.", "C.", "D.", "E.", "F.", "G.", "H.", "I.")]
+        self.assertEqual(order, sorted(order))
+        # every non-optional pre-pack step is a (transitive) prerequisite of the first real-pack step
+        need = set(); todo = [x.strip() for x in v.STEP_BY_ID["I1"].blocked_by.split(",")]
+        while todo:
+            d = todo.pop()
+            if d in need: continue
+            need.add(d)
+            todo += [x.strip() for x in v.STEP_BY_ID[d].blocked_by.split(",") if x.strip()]
+        for s in v.STEPS:
+            if pos[s.id] < pos["I1"] and not s.optional and s.id != "I1":
+                self.assertIn(s.id, need, f"{s.id} is not a prerequisite of connecting a real pack")
+
     def test_cannot_claim_validated(self):
         from equipment import validation as v
         self.assertNotIn("BENCH_TESTED", v.STATUSES)
         self.assertNotIn("HARDWARE_VALIDATED", v.STATUSES)
         log = v.ValidationLog()
         with self.assertRaises(ValueError):
-            log.record("B2", v.PASS, "jl", data_location="x")      # A1 not PASS yet
+            log.record("C1", v.PASS, "jl", data_location="x")      # B1 (and A1) not PASS yet
         log.record("A1", v.PASS, "jl", data_location="notebook p1")
-        log.record("B2", v.PASS, "jl", data_location="records/b2.csv")
+        log.record("B1", v.PASS, "jl", data_location="records/b1.csv")
+        log.record("C1", v.PASS, "jl", data_location="records/c1.csv")
         with self.assertRaises(ValueError):
-            log.record("B3", v.PASS, "", data_location="x")        # needs operator
+            log.record("D1", v.PASS, "", data_location="x")        # needs operator
         with self.assertRaises(ValueError):
-            log.record("B4", "BENCH_TESTED", "jl")
+            log.record("C2", "BENCH_TESTED", "jl")
+        log.record("F1", v.PASS, "jl", data_location="scope/f1.png")
+        log.record("F2", v.PASS, "jl", data_location="scope/f2.png")   # optional F3 never blocks
 
     def test_equipment_roles_in_workflow(self):
         from equipment import validation as v
         text = " ".join(s.equipment + s.procedure for s in v.STEPS)
-        for name in ("EDU36311A", "EDU34450A", "EDUX1052G", "AD2", "6060B"):
+        for name in ("EDU36311A", "E3630A", "EDU34450A", "34401A", "EDUX1052G", "54601B",
+                     "EDU33212A", "33120A", "AD2", "6060B"):
             self.assertIn(name, text)
+        self.assertNotIn("OptiMate", text)       # chargers never appear in the test workflow
 
     def test_generated_docs_in_sync(self):
         sys.path.insert(0, os.path.join(ROOT, "tools"))
         import gen_rev2_docs as g
-        for name, text in (("6060B_COMMAND_EVIDENCE.md", g.evidence_md()),
-                           ("BENCH_CHECKLIST.md", g.checklist_md())):
+        for name, text in (("6060B_DRIVER_EVIDENCE.md", g.evidence_md()),
+                           ("BENCH_CHECKLIST.md", g.checklist_md()),
+                           ("SFSU_EQUIPMENT_MATRIX.md", g.matrix_md())):
             on_disk = open(os.path.join(ROOT, "docs", "rev2", name)).read()
             self.assertEqual(on_disk.strip(), text.strip(), f"{name} stale: run tools/gen_rev2_docs.py")
 
-    def test_inventory_models_populated_ids_unknown(self):
-        from equipment.inventory import SFSU_EQUIPMENT, UNKNOWN
-        for k in ("6060B", "EDU34450A", "EDU36311A", "EDUX1052G", "EDU33212A", "AD2", "HANDHELD_DMM"):
-            i = SFSU_EQUIPMENT[k]
+    def test_required_docs_exist(self):
+        for n in ("SFSU_EQUIPMENT_MATRIX.md", "LV_POWER_PATH_CAPABILITY.md",
+                  "LV_HARDWARE_VALIDATION_PLAN.md", "6060B_DRIVER_EVIDENCE.md",
+                  "INSTRUMENT_CALIBRATION_PLAN.md"):
+            self.assertTrue(os.path.exists(os.path.join(ROOT, "docs", "rev2", n)), n)
+
+    def test_inventory_twelve_roles(self):
+        from equipment.inventory import SFSU_EQUIPMENT, UNKNOWN, PRIMARY, SECONDARY, SEPARATE
+        want = {"6060B": PRIMARY, "EDU34450A": PRIMARY, "HP34401A": SECONDARY,
+                "EDU36311A": PRIMARY, "HPE3630A": SECONDARY, "EDUX1052G": PRIMARY,
+                "HP54601B": SECONDARY, "EDU33212A": PRIMARY, "HP33120A": SECONDARY,
+                "AD2": PRIMARY, "HANDHELD_DMM": SECONDARY, "OPTIMATE": SEPARATE}
+        self.assertEqual({k: i.tier for k, i in SFSU_EQUIPMENT.items()}, want)
+        for k, i in SFSU_EQUIPMENT.items():
             self.assertNotEqual(i.model, UNKNOWN)
             self.assertEqual((i.asset_id, i.calibration_status, i.serial_number),
                              (UNKNOWN, UNKNOWN, UNKNOWN), k)
+        # only the 6060B is in the battery-test path; OptiMate chargers never are
+        self.assertEqual([k for k, i in SFSU_EQUIPMENT.items() if i.in_battery_test_path], ["6060B"])
+        self.assertTrue(any("NEVER use on the 36-42 V" in x for x in SFSU_EQUIPMENT["OPTIMATE"].limits))
+
+    def test_secondary_reference_cross_check(self):
+        from equipment.reference import make_record, EDU34450A, HP34401A
+        r = make_record("voltage", 30.000, 30.05, operator="jl", commit="x",
+                        secondary=HP34401A, secondary_reading=30.004)
+        self.assertEqual(r.secondary_reference_model, "HP 34401A")
+        self.assertAlmostEqual(r.secondary_diff, 0.004)
+        self.assertEqual(r.secondary_reference_asset_id, "UNKNOWN")
+
+
+class TestRev2ScopeCleanup(unittest.TestCase):
+    """Removed capabilities must not exist in active code."""
+    FORBIDDEN = r"nimh|ni-mh|medicool|owon|oel1515|dat ?bike|regenerative|bitrode|arbin|chroma|digatron|itech|\bLTO\b"
+
+    def _active(self):
+        for base in ("desktop", "tools", "Firmware"):
+            for root, _d, files in os.walk(os.path.join(ROOT, base)):
+                if "__pycache__" in root or os.sep + "build" in root:
+                    continue
+                for f in files:
+                    if f.endswith((".py", ".c", ".h")):
+                        yield os.path.join(root, f)
+
+    def test_no_removed_features_in_active_code(self):
+        bad = [os.path.relpath(p, ROOT) for p in self._active()
+               if re.search(self.FORBIDDEN, open(p, errors="replace").read(), re.I)]
+        self.assertEqual(bad, [])
+
+    def test_chemistry_is_lithium_ion_only(self):
+        from services.chemistry_profiles import CHEMISTRIES, LITHIUM_ION_CHEMISTRIES
+        self.assertEqual(set(CHEMISTRIES) - {"unknown"}, set(LITHIUM_ION_CHEMISTRIES))
+
+    def test_non_lithium_or_unknown_chemistry_refused(self):
+        from services.battery_profiles import profile_from_battery
+        base = dict(model="X", nominal_voltage=36, max_charge_voltage=42, cutoff_voltage=30,
+                    capacity_rated_ah=10, osbams_id="OSB-9")
+        for chem in ("NiMH", "LTO", "lead-acid", None, "unknown"):
+            with self.assertRaises(ValueError, msg=str(chem)):
+                profile_from_battery(dict(base, chemistry=chem))
+        self.assertEqual(profile_from_battery(dict(base, chemistry="NMC")).validate(), [])
+
+    def test_no_legacy_imports(self):
+        bad = [os.path.relpath(p, ROOT) for p in self._active()
+               if p.endswith(".py") and re.search(r"^\s*(from|import)\s+legacy", open(p).read(), re.M)]
+        self.assertEqual(bad, [])
+
+    def test_no_extra_equipment_drivers(self):
+        drv = os.path.join(ROOT, "desktop", "equipment", "drivers")
+        self.assertEqual(sorted(f for f in os.listdir(drv) if f.endswith(".py") or
+                                os.path.isdir(os.path.join(drv, f)) and f != "__pycache__"),
+                         ["__init__.py", "base.py", "keysight_6060b", "manual_6060b.py",
+                          "simulator_6060b.py"])
+
+    def test_smart_bms_unsupported_no_bypass(self):
+        from services.bms import bms_for, UnsupportedBms
+        from services.battery_profiles import PROFILES, SMART_PACK_UNSUPPORTED
+        b = bms_for(PROFILES["ninebot_nee1006m"])
+        self.assertIsInstance(b, UnsupportedBms)
+        self.assertEqual(b.status, SMART_PACK_UNSUPPORTED)
+        self.assertFalse(hasattr(b, "write") or hasattr(b, "bypass") or hasattr(b, "disable_protection"))
 
 
 if __name__ == "__main__":

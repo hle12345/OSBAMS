@@ -52,7 +52,7 @@ class TestInvariant(unittest.TestCase):
 
     def test_panel_rows_show_limiting_factor(self):
         rows = dict(cap.compute_permitted_current(42.0, 5.0).rows())
-        self.assertEqual(rows["Battery"], "42.0 V")
+        self.assertEqual(rows["Pack voltage (conservative)"], "42.0 V")
         self.assertEqual(rows["6060B current rating"], "60 A")
         self.assertEqual(rows["6060B power-derived limit"], "7.14 A")
         self.assertEqual(rows["OSBAMS validated limit"], "10 A")
@@ -153,6 +153,49 @@ class TestCapacityRun(unittest.TestCase):
         self.assertIn("invariant", run.stop_reason)
 
 
+class TestHardwareSafetyCheck(unittest.TestCase):
+    def test_checks_logged_and_pass(self):
+        run, sim, r = sim_run(cfg=RunConfig(battery_safety_status="OK"))
+        self.assertEqual(r.phase, "COMPLETE")
+        names = [c["name"] for c in r.safety_checks]
+        for want in ("registry safety status", "pack temperature within profile limits",
+                     "pack voltage inside OSBAMS and 6060B voltage envelope",
+                     "a positive permitted current exists",
+                     "OSBAMS operating ceiling below firmware hard trip",
+                     "load idle (no current before the test)"):
+            self.assertIn(want, names)
+        self.assertTrue(all(c["ok"] for c in r.safety_checks))
+        phases = [e[1] for e in r.events]
+        self.assertLess(phases.index("SAFETY_CHECK"), phases.index("READY"))
+
+    def test_quarantine_blocks_before_any_load_command(self):
+        run, sim, r = sim_run(cfg=RunConfig(battery_safety_status="Quarantine"))
+        self.assertEqual(r.phase, "FAULT")
+        self.assertIn("hardware safety check failed", r.stop_reason)
+        self.assertIn("registry safety status", r.stop_reason)
+        self.assertFalse(sim.read_status().input_on)
+        self.assertEqual(r.commanded_current_a, None)             # never planned a current
+
+    def test_missing_temperature_blocks(self):
+        sim = Simulator6060B("36v_5p2ah_healthy"); sim.connect()
+        run = CapacityTest(NEB, sim, RunConfig()); run.start(); t = 0.0
+        while not run.done and run.phase is not Phase.READY and t < 100:
+            t += 1; st = sim.step(1.0)
+            run.on_sample(Sample(t, st.voltage_v, st.current_a, None))   # no TC74 reading
+        self.assertEqual(run.phase, Phase.FAULT)
+        self.assertIn("pack temperature", run.stop_reason)
+
+    def test_pack_above_44v_refused(self):
+        hot = Simulator6060B("44v_boundary_healthy"); hot.connect()
+        hot._p["start_v"] = 45.5                                   # pack above the OSBAMS ceiling
+        prof = PROFILES["ninebot_nee1006m"]
+        run = CapacityTest(prof, hot); run.start(); t = 0.0
+        while not run.done and t < 100:
+            t += 1; st = hot.step(1.0)
+            run.on_sample(Sample(t, st.voltage_v, st.current_a, 25.0))
+        self.assertEqual(run.phase, Phase.FAULT)
+
+
 class TestManualLoad(unittest.TestCase):
     def test_manual_requires_operator_and_verifies_off(self):
         prompts = []
@@ -224,15 +267,15 @@ class TestDcir(unittest.TestCase):
 class TestProfileResolver(unittest.TestCase):
     def test_known_model_and_derived(self):
         self.assertIs(profile_from_battery({"model": "NEE1006-M"}), PROFILES["ninebot_nee1006m"])
-        p = profile_from_battery(dict(model="X", nominal_voltage=24, max_charge_voltage=25.2,
-                                      cutoff_voltage=18, capacity_rated_ah=10, osbams_id="OSB-9"))
+        p = profile_from_battery(dict(model="X", chemistry="NMC", nominal_voltage=36, max_charge_voltage=42,
+                                      cutoff_voltage=30, capacity_rated_ah=10, osbams_id="OSB-9"))
         self.assertEqual((p.recommended_test_current_a, p.maximum_osbams_test_current_a), (2.0, 5.0))
         self.assertEqual(p.validate(), [])
 
     def test_missing_cutoff_refused(self):
         with self.assertRaises(ValueError):
-            profile_from_battery(dict(model="X", nominal_voltage=24, max_charge_voltage=25.2,
-                                      capacity_rated_ah=10))
+            profile_from_battery(dict(model="X", chemistry="NMC", nominal_voltage=36,
+                                      max_charge_voltage=42, capacity_rated_ah=10))
 
 
 try:
@@ -282,12 +325,12 @@ class TestDashboardWiring(unittest.TestCase):
             def wait(self): pass
         dt.SerialReader = FakeReader
         # coarse 10 s simulated sampling for test speed (real stream is 0.5 s)
-        dt.RunConfig = lambda: RunConfig(sample_gap_s=60, ocv_min_samples=2,
-                                         recovery_s=60, recovery_marks_s=(30.0,))
+        dt.RunConfig = lambda **kw: RunConfig(sample_gap_s=60, ocv_min_samples=2,
+                                              recovery_s=60, recovery_marks_s=(30.0,), **kw)
         tab = dt.DashboardTab()
         tab.set_battery(self.bid, "OSB test")
         rows = dict(tab.limit_panel._labels)
-        self.assertEqual(rows["Battery"].text(), "42.0 V")            # worst case before OCV
+        self.assertEqual(rows["Pack voltage (conservative)"].text(), "42.0 V")            # worst case before OCV
         self.assertEqual(rows["6060B power-derived limit"].text(), "7.14 A")
         tab.port_combo.clear(); tab.port_combo.addItem("FAKE")
         tab._start_test()
@@ -307,7 +350,7 @@ class TestDashboardWiring(unittest.TestCase):
                 self.assertTrue(tab.confirm_btn.isEnabled())
                 self.assertEqual(rows["FINAL PERMITTED"].text(), "5.20 A")   # profile limit < 7.14 A
                 self.assertEqual(rows["Limiting factor"].text(), "battery profile")
-                self.assertEqual(rows["Battery"].text(), "42.0 V")
+                self.assertEqual(rows["Pack voltage (conservative)"].text(), "42.0 V")
                 tab.confirm_btn.click()
             if ph is Phase.DISCHARGE and not enabled:
                 sim.set_cc(tab._orch.commanded_a); sim.input_on(); enabled = True
@@ -325,11 +368,19 @@ class TestDashboardWiring(unittest.TestCase):
 
     def test_dashboard_refuses_battery_without_cutoff(self):
         import gui.tabs.dashboard_tab as dt
-        bid, _ = self.dbm.create_battery(source_type="fleet", model="Z",
+        bid, _ = self.dbm.create_battery(source_type="fleet", model="Z", chemistry="NMC",
                 nominal_voltage=36, max_charge_voltage=42, capacity_rated_ah=5)
         tab = dt.DashboardTab(); tab.set_battery(bid, "no cutoff")
         self.assertIsNone(tab._profile)
         self.assertIn("cutoff", tab.prompt_lbl.text().lower())
+
+    def test_dashboard_refuses_non_lithium_chemistry(self):
+        import gui.tabs.dashboard_tab as dt
+        bid, _ = self.dbm.create_battery(source_type="fleet", model="Q", chemistry="NiMH",
+                nominal_voltage=36, max_charge_voltage=42, cutoff_voltage=30, capacity_rated_ah=5)
+        tab = dt.DashboardTab(); tab.set_battery(bid, "nimh")
+        self.assertIsNone(tab._profile)
+        self.assertIn("lithium-ion", tab.prompt_lbl.text().lower())
 
 
 if __name__ == "__main__":

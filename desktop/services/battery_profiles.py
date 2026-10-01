@@ -1,5 +1,5 @@
 """
-services/battery_profiles.py — Rev.2 battery profiles.
+services/battery_profiles.py — Rev.2 battery profiles (lithium-ion, ~10S, ~30-44 V).
 
 A profile says what a battery is and what is SAFE for it. It does not say what
 the 6060B can do: the actual test current is always
@@ -92,6 +92,12 @@ def profile_from_battery(batt: dict) -> BatteryProfile:
     for p in PROFILES.values():
         if model and model == p.model.lower():
             return p
+    from services.chemistry_profiles import LITHIUM_ION_CHEMISTRIES
+    chem = (batt.get("chemistry") or "").strip().upper()
+    if chem not in LITHIUM_ION_CHEMISTRIES:
+        raise ValueError(
+            f"chemistry {batt.get('chemistry') or 'unknown'!r} is not supported: Rev.2 "
+            f"tests lithium-ion packs only ({', '.join(LITHIUM_ION_CHEMISTRIES)})")
     try:
         ah = float(batt["capacity_rated_ah"])
         vmax = float(batt["max_charge_voltage"])
