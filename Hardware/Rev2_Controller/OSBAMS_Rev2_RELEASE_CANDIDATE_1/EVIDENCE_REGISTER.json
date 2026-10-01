@@ -161,21 +161,21 @@
    "parameter": "supply range",
    "value": "2.7-5.5 V",
    "unit": "",
-   "evidence": "USER_RELAYED_MANUFACTURER",
+   "evidence": "VERIFIED_LOCAL",
    "critical": false,
-   "source": "user message 2026-10-01 (manufacturer information relayed by the user; PDF not opened in this build environment)",
-   "doc": null
+   "source": "TI INA228 datasheet SLYS021A (Jan 2021, rev. May 2022), read locally from the user-supplied PDF",
+   "doc": "docs/rev2/pcb/evidence/TI_INA228_datasheet_SLYS021A_revA.pdf"
   },
   {
    "id": "ina228_cm",
    "part": "INA228",
-   "parameter": "common-mode at IN+/IN- -0.3 to +85 V; VBUS -0.3 to +85 V; input current into any pin 5 mA; VS 6 V max (absolute maximum table, relayed)",
+   "parameter": "Absolute Maximum Ratings (sec. 6.1): VIN+/VIN- common-mode -0.3 to 85 V; VBUS -0.3 to 85 V; VS 6 V; ALERT -0.3 to VS+0.3 V; SDA/SCL -0.3 to 6 V; input current into any pin 5 mA; HBM +/-2 kV, CDM +/-1 kV",
    "value": "-0.3 to +85 V",
    "unit": "",
-   "evidence": "USER_RELAYED_MANUFACTURER",
+   "evidence": "VERIFIED_LOCAL",
    "critical": true,
-   "source": "user message 2026-10-01 (TI SLYS021A absolute-maximum table as relayed by the user; PDF not read by this build)",
-   "doc": null
+   "source": "TI INA228 datasheet SLYS021A (Jan 2021, rev. May 2022), read locally from the user-supplied PDF",
+   "doc": "docs/rev2/pcb/evidence/TI_INA228_datasheet_SLYS021A_revA.pdf"
   },
   {
    "id": "ina228_ranges",
@@ -183,10 +183,10 @@
    "parameter": "shunt full-scale ranges",
    "value": "+/-163.84 mV, +/-40.96 mV",
    "unit": "",
-   "evidence": "USER_RELAYED_MANUFACTURER",
+   "evidence": "VERIFIED_LOCAL",
    "critical": false,
-   "source": "user message 2026-10-01 (manufacturer information relayed by the user; PDF not opened in this build environment)",
-   "doc": null
+   "source": "TI INA228 datasheet SLYS021A (Jan 2021, rev. May 2022), read locally from the user-supplied PDF",
+   "doc": "docs/rev2/pcb/evidence/TI_INA228_datasheet_SLYS021A_revA.pdf"
   },
   {
    "id": "ina228_vos",
@@ -194,10 +194,10 @@
    "parameter": "shunt input offset max",
    "value": 1e-06,
    "unit": "V",
-   "evidence": "USER_RELAYED_MANUFACTURER",
+   "evidence": "VERIFIED_LOCAL",
    "critical": false,
-   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
-   "doc": null
+   "source": "TI INA228 datasheet SLYS021A (Jan 2021, rev. May 2022), read locally from the user-supplied PDF",
+   "doc": "docs/rev2/pcb/evidence/TI_INA228_datasheet_SLYS021A_revA.pdf"
   },
   {
    "id": "ina228_pinmap",
@@ -205,10 +205,10 @@
    "parameter": "DGS VSSOP-10 pin map (TI table; symbol compared pin-for-pin: PASS)",
    "value": "1 A1, 2 A0, 3 ALERT, 4 SDA, 5 SCL, 6 VS, 7 GND, 8 VBUS, 9 IN-, 10 IN+",
    "unit": "",
-   "evidence": "USER_RELAYED_MANUFACTURER",
+   "evidence": "VERIFIED_LOCAL",
    "critical": true,
-   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
-   "doc": null
+   "source": "TI INA228 datasheet SLYS021A (Jan 2021, rev. May 2022), read locally from the user-supplied PDF",
+   "doc": "docs/rev2/pcb/evidence/TI_INA228_datasheet_SLYS021A_revA.pdf"
   },
   {
    "id": "ina228_shunt_cal",
@@ -216,10 +216,10 @@
    "parameter": "SHUNT_CAL = 13107.2e6 x CURRENT_LSB x RSHUNT (ADCRANGE 0); RSA-20-50, IMAX 20 A -> 1250",
    "value": "13107.2e6 x CURRENT_LSB x RSHUNT (x4 for ADCRANGE=1); max 32767",
    "unit": "",
-   "evidence": "USER_RELAYED_MANUFACTURER",
+   "evidence": "VERIFIED_LOCAL",
    "critical": true,
-   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
-   "doc": null
+   "source": "TI INA228 datasheet SLYS021A (Jan 2021, rev. May 2022), read locally from the user-supplied PDF",
+   "doc": "docs/rev2/pcb/evidence/TI_INA228_datasheet_SLYS021A_revA.pdf"
   },
   {
    "id": "ina228_bias",
@@ -227,21 +227,21 @@
    "parameter": "input bias current",
    "value": 2.5e-09,
    "unit": "A",
-   "evidence": "USER_RELAYED_MANUFACTURER",
+   "evidence": "VERIFIED_LOCAL",
    "critical": false,
-   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
-   "doc": null
+   "source": "TI INA228 datasheet SLYS021A (Jan 2021, rev. May 2022), read locally from the user-supplied PDF",
+   "doc": "docs/rev2/pcb/evidence/TI_INA228_datasheet_SLYS021A_revA.pdf"
   },
   {
    "id": "ina228_diff_max",
    "part": "INA228",
-   "parameter": "IN+ to IN- differential absolute maximum VIN+ - VIN- = -40 V to +40 V (an absolute-maximum rating, NOT the +/-163.84 / +/-40.96 mV measurement ranges); TI also discusses overloads above 40 V differential / 85 V common mode and recommends low-value series resistors (10 ohm) plus transient suppression",
+   "parameter": "Absolute Maximum Ratings (sec. 6.1): differential (VIN+) - (VIN-) = -40 V to +40 V. This is an absolute-maximum rating, separate from the +/-163.84 / +/-40.96 mV measurement ranges. Sec. 8.1: inputs tolerate +/-40 V differential; 10 ohm in series with each input protects against the dV/dt failure up to the 40 V differential rating; use RFILTER <= 100 ohm and CFILTER 0.1-1 uF",
    "value": "+/-40 V",
    "unit": "",
-   "evidence": "USER_RELAYED_MANUFACTURER",
+   "evidence": "VERIFIED_LOCAL",
    "critical": true,
-   "source": "user message 2026-10-01 (TI SLYS021A absolute-maximum table as relayed by the user; PDF not read by this build)",
-   "doc": null
+   "source": "TI INA228 datasheet SLYS021A (Jan 2021, rev. May 2022), read locally from the user-supplied PDF",
+   "doc": "docs/rev2/pcb/evidence/TI_INA228_datasheet_SLYS021A_revA.pdf"
   },
   {
    "id": "lmr_status",
@@ -1001,6 +1001,17 @@
    "critical": true,
    "source": "user message 2026-10-01 (AOA0000C331 table as relayed; PDF not read by this build)",
    "doc": null
+  },
+  {
+   "id": "ina228_zvbus_rdiff",
+   "part": "INA228",
+   "parameter": "Electrical characteristics: VBUS pin input impedance (active mode) 0.8 / 1 / 1.2 Mohm; input differential impedance RDIFF 92 kohm typical in active mode with |VIN+ - VIN-| < 164 mV (specified for active mode only, so it does not hold an open input pin when the device is unpowered or in shutdown); VBUS leakage in shutdown 10 nA at 85 V",
+   "value": "ZVBUS 0.8-1.2 Mohm, RDIFF 92 kohm (active)",
+   "unit": "",
+   "evidence": "VERIFIED_LOCAL",
+   "critical": false,
+   "source": "TI INA228 datasheet SLYS021A (Jan 2021, rev. May 2022), read locally from the user-supplied PDF",
+   "doc": "docs/rev2/pcb/evidence/TI_INA228_datasheet_SLYS021A_revA.pdf"
   }
  ]
 }

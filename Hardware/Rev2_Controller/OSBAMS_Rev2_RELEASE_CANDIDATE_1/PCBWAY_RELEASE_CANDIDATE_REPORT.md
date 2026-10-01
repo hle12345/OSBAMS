@@ -13,15 +13,15 @@ Checked with KiCad 10.0.6 in the build container (`BUILD_ENVIRONMENT.md`):
 - **Custom rule check:** `ISOLATION_RULE_CHECK.txt` shows the `.kicad_dru` is applied when the project is opened from a fresh folder (clean 0 violations; tightened rule → 131).
 - **Buck:** XDR 12.0 V ±1 %; maximum continuous controller input 14.4 V; 24.4 V transient treated separately (pulse skipping, millivolt-level rail excursion) — §3.
 - **IRLML0060:** kept; margin ≈ 7× the coil load by estimate; RDS(on) at 3.3 V not claimed as guaranteed; first-article measurements mandatory — §4.
-- **Evidence:** VERIFIED_LOCAL 22 · USER_RELAYED_MANUFACTURER 50 · UNVERIFIED 19; classified by consequence in `EVIDENCE_RISK_CLASSIFICATION.md`. Read locally: ISO7721, CP2102N, SRN6045TA-100M, EB21A drawing.
+- **Evidence:** VERIFIED_LOCAL 31 · USER_RELAYED_MANUFACTURER 42 · UNVERIFIED 19; classified by consequence in `EVIDENCE_RISK_CLASSIFICATION.md`. Read locally: ISO7721, CP2102N, SRN6045TA-100M, EB21A drawing.
 - **Outputs:** schematic PDF, BOM xlsx/csv (Qty, MPN, suffix status, source, DNP), CPL, assembly drawing, copper-layer PDF, assembly/fabrication notes, test-point map, power-tree/calculation report, DFM/DFA report, supply-chain report, evidence register, reconciliation, connector check, pre-PCBWay checklist, TC74 probe project (`probe/`).
 
 ## BLOCKERS BEFORE PCBWAY ORDER
 1. **Connector footprints J5/J6 (Molex 22-27-2031/-2041) not compared with dimensioned drawings** (the 022272041 file is a 3D isometric without dimensions; the 022272031 sheet was not supplied). J7 (JST), J8 (GCT) and J9 (Samtec land pattern, replaced in RC1.2e) are verified — `CONNECTOR_FOOTPRINT_CHECK.md`.
-1b. **Protection items open:** resistor pulse capability (Panasonic AOA0000C331.pdf), D15 SMF12CA datasheet, INA228 ±40 V / 85 V limits read from the TI datasheet, ESD first-article test — `CONTROLLER_PROTECTION_AND_CONNECTOR_AUDIT.md`.
+1b. **Protection items open:** resistor pulse capability (Panasonic AOA0000C331.pdf), D15 SMF12CA datasheet, ESD first-article test — `CONTROLLER_PROTECTION_AND_CONNECTOR_AUDIT.md`.
 1a. **Residual (first-article):** TVS leakage vs temperature is not published by Bourns; covered by first-article measurement.
-2. **Wrong-pinout-class datasheets still USER_RELAYED** (INA228, LMR14006Y, IRLML0060, VO610A, TC74): they match the netlist but the PDFs have not been read — `EVIDENCE_RISK_CLASSIFICATION.md`.
-3. **Your local actions** in `PRE_PCBWAY_RELEASE_CHECKLIST.md`: KiCad 10 ERC/DRC, Gerber/drill export, Gerber viewer inspection, PCBWay CAM and CPL inspection, stock/substitution review (33 critical register entries are not VERIFIED_LOCAL).
+2. **Wrong-pinout-class datasheets still USER_RELAYED** (LMR14006Y, IRLML0060, VO610A, TC74; the INA228 datasheet has been read): they match the netlist but the PDFs have not been read — `EVIDENCE_RISK_CLASSIFICATION.md`.
+3. **Your local actions** in `PRE_PCBWAY_RELEASE_CHECKLIST.md`: KiCad 10 ERC/DRC, Gerber/drill export, Gerber viewer inspection, PCBWay CAM and CPL inspection, stock/substitution review (29 critical register entries are not VERIFIED_LOCAL).
 4. Open measured/first-article items are listed in `EVIDENCE_RISK_CLASSIFICATION.md` and are **not** order blockers.
 
 ## Package contents

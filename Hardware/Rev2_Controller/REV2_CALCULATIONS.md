@@ -59,15 +59,15 @@ RSA-20-50: ±0.25 % tolerance, ±15 ppm/°C, continuous ≤ 13.3 A (2/3 rated) [
 | 20 A | 50.00 mV | 1.000 W |
 
 **ADCRANGE = 0 (±163.84 mV)**: range 1 (±40.96 mV = ±16.38 A) would saturate before the 18.5 A firmware trip (46.25 mV).
-- IMAX = 20 A: CURRENT_LSB = 38.147 µA, **SHUNT_CAL = 1250** (limit 32767; equation [UR]). Current firmware header still uses 30 A / 1875 → firmware change.
-- Offset ±1 µV [UR] → 0.40 mA = 0.0040 % of 10 A. Native current LSB 125 µA (range 0).
-- Input filter 2 × 10 Ω + 100 nF: fc = 80 kHz; bias 2 nA [UR] × 10 Ω = 25 nV.
-- VBUS: own lead PACK_INA through 10 Ω (error 10 Ω / ~830 kΩ ≈ 0.001 %, UV) + TVS; common-mode / VBUS range -0.3 to +85 V [UR]. **TVS clamp vs the 85 V limit is NOT a single-number comparison — see §2b.**
-- INA228 DGS-10 pin map [UR]: symbol compared pin-for-pin with the relayed TI table → **PASS** (1 A1, 2 A0, 3 ALERT, 4 SDA, 5 SCL, 6 VS, 7 GND, 8 VBUS, 9 IN−, 10 IN+). Firmware: IMAX 20 A / SHUNT_CAL 1250 (`app_config.h`; the Rev.1 30 A / 1875 setting is retired).
+- IMAX = 20 A: CURRENT_LSB = 38.147 µA, **SHUNT_CAL = 1250** (limit 32767; equation). Current firmware header still uses 30 A / 1875 → firmware change.
+- Offset ±1 µV → 0.40 mA = 0.0040 % of 10 A. Native current LSB 125 µA (range 0).
+- Input filter 2 × 10 Ω + 100 nF: fc = 80 kHz; bias 2 nA × 10 Ω = 25 nV.
+- VBUS: own lead PACK_INA through 10 Ω (error 10 Ω / 0.8 MΩ min ≈ 0.0013 %, ZVBUS 0.8–1.2 MΩ from the TI datasheet) + TVS; common-mode / VBUS range -0.3 to +85 V. **TVS clamp vs the 85 V limit is NOT a single-number comparison — see §2b.**
+- INA228 DGS-10 pin map: symbol compared pin-for-pin with the relayed TI table → **PASS** (1 A1, 2 A0, 3 ALERT, 4 SDA, 5 SCL, 6 VS, 7 GND, 8 VBUS, 9 IN−, 10 IN+). Firmware: IMAX 20 A / SHUNT_CAL 1250 (`app_config.h`; the Rev.1 30 A / 1875 setting is retired).
 
 ### 2b. Pack-sense protection: 1.5SMBJ48A + surge-limiting series resistors vs the INA228 85 V absolute maximum
 
-**Manufacturer points:** VRWM 48 V, VBR 53.3-58.9 V; VC ≤ 77.4 V at 19.4 A (10/1000 µs) and ≤ 100.6 V at 97 A (8/20 µs). INA228 IN+/IN−/VBUS absolute maximum -0.3 to +85 V [UR]. '77.4 V < 85 V' is **not** used as a blanket pass: the clamp exceeds 85 V above ≈ 45 A (straight line between the two rating points = engineering estimate [UV], not a datasheet curve).
+**Manufacturer points:** VRWM 48 V, VBR 53.3-58.9 V; VC ≤ 77.4 V at 19.4 A (10/1000 µs) and ≤ 100.6 V at 97 A (8/20 µs). INA228 IN+/IN−/VBUS absolute maximum -0.3 to +85 V. '77.4 V < 85 V' is **not** used as a blanket pass: the clamp exceeds 85 V above ≈ 45 A (straight line between the two rating points = engineering estimate [UV], not a datasheet curve).
 
 **RC1.2 hardware change:** series surge-limiting resistors **upstream of the TVS**: R41 47 Ω on PACK_INA (J6.1 → R41 → D7/R13) and R42/R43 10 Ω on each Kelvin line (J5 → R42/R43 → D5/D6 + the existing 10 Ω R11/R12 → INA228). 1206 anti-surge parts (Panasonic ERJ-P08F series, pulse rating to be confirmed from the datasheet [UV]).
 
@@ -137,11 +137,11 @@ With Rs = 0 the clamp at the 18.5 A bound is 76.5 V (margin 8.5 V); with the ser
 These rows are **model results**: the clamp curve is a straight line between two rating points [UV], the waveform is assumed, the 1.5SMBJ48A dynamic impedance and the ERJ-P08F pulse rating have not been read from the datasheets. **No 600 V / 2 kV protection limit is claimed.**
 
 **Measurement-error budget of the new resistors:**
-- INA228 input bias 2.5 nA [UR] × 20 Ω per Kelvin line = 50 nV worst case unmatched (20 µA of shunt-current equivalent); with matched 1 % resistors the common component cancels (< 1 pV difference) — negligible vs the ±1 µV offset.
+- INA228 input bias 2.5 nA × 20 Ω per Kelvin line = 50 nV worst case unmatched (20 µA of shunt-current equivalent); with matched 1 % resistors the common component cancels (< 1 pV difference) — negligible vs the ±1 µV offset.
 - TVS leakage drops across R42/R43 (10 Ω each): up to 1 µA [UV; leakage not relayed] × 10 Ω = 10 µV worst-case line-to-line mismatch = 4 mA of shunt-current equivalent (0.04 % at 10 A; 0.4 mA for a typical 0.1 µA). This is the price of the Kelvin resistors and is why they are 10 Ω rather than 47 Ω; it is removed by the no-load zero calibration only if leakage is stable — verify at first article (shunt voltage at 0 A, 25 °C and warm).
-- VBUS: 47 Ω + 10 Ω = 57 Ω into the INA228 VBUS input (assumed ≥ 830 kΩ [UV]) → ≤ 0.007 % gain error (3 mV at 44 V), a fixed ratio that the VBUS calibration against the EDU34450A removes; TVS leakage 1 µA × 57 Ω = 57 µV (1.3 ppm).
+- VBUS: 47 Ω + 10 Ω = 57 Ω into the INA228 VBUS input (ZVBUS ≥ 0.8 MΩ, TI datasheet) → ≤ 0.0071 % gain error (3 mV at 44 V), a fixed ratio that the VBUS calibration against the EDU34450A removes; TVS leakage 1 µA × 57 Ω = 57 µV (1.3 ppm).
 - Filtering: differential Kelvin filter = 2 × 20 Ω with C26 100 nF → fc ≈ 40 kHz (τ 4 µs ≪ the INA228 conversion time ≥ 50 µs → no effect on logging or the ALERT latency); VBUS: 57 Ω with C28 100 nF → fc ≈ 28 kHz.
-- Common mode: both Kelvin lines carry identical series resistance, so the common-mode level (≤ 44 V, limit 85 V) and the bias-current common-mode shift cancel; the TVS pair clamps each line to ground, so a one-sided transient is limited to the TVS clamp (INA228 IN+/IN− differential absolute maximum ±40 V [UR]: a one-Kelvin-lead-open / late-connect fault is NOT limited by these two ground clamps — the bidirectional clamp D15 across the INA228 pins limits it, see CONTROLLER_PROTECTION_AND_CONNECTOR_AUDIT.md).
+- Common mode: both Kelvin lines carry identical series resistance, so the common-mode level (≤ 44 V, limit 85 V) and the bias-current common-mode shift cancel; the TVS pair clamps each line to ground, so a one-sided transient is limited to the TVS clamp (INA228 IN+/IN− differential absolute maximum ±40 V (TI datasheet, read locally): a one-Kelvin-lead-open / late-connect fault is NOT limited by these two ground clamps — the bidirectional clamp D15 across the INA228 pins limits it, see CONTROLLER_PROTECTION_AND_CONNECTOR_AUDIT.md).
 - Normal 44 V operation: VRWM 48 V > 44 V and VBR min 53.3 V > 44 V (no conduction); resistor dissipation at DC ≈ 0 (bias/leakage only); 1206 working voltage ≫ 44 V [UV].
 
 **Recomputed values for the defined transient (model; source values marked [UV] are unverified):**
@@ -293,5 +293,5 @@ Regulator: VREGIN 3.0-5.25 V, VDD 3.1-3.6 V, IREGOUT 100 mA **total including th
 
 ## 9. Evidence summary
 
-VERIFIED_LOCAL 22 · USER_RELAYED_MANUFACTURER 50 · UNVERIFIED 19 (total 91). Critical entries not yet VERIFIED_LOCAL: **33** — these are fabrication gates, not schematic/layout gates.
+VERIFIED_LOCAL 31 · USER_RELAYED_MANUFACTURER 42 · UNVERIFIED 19 (total 92). Critical entries not yet VERIFIED_LOCAL: **29** — these are fabrication gates, not schematic/layout gates.
 

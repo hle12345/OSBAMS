@@ -5,6 +5,8 @@ Input: "MANUFACTURER DATA VERIFICATION INPUT" (user message, 2026-10-01): offici
 
 Update (RC1.1): the user then supplied the ISO7721, CP2102N and SRN6045TA datasheets; those three rows are now **VERIFIED_LOCAL** (read by the build). The ISO7721 row was a real mismatch (fixed), and reading the CP2102N datasheet added two further required changes (RSTb pull-up, 4.7 µF VDD bypass). All other rows remain USER_RELAYED_MANUFACTURER.
 
+Update (RC1.2e): the TI INA228 datasheet SLYS021A (rev. May 2022) was supplied and read — pin map, absolute maximum ratings (differential ±40 V, CM and VBUS −0.3…85 V, 5 mA per pin), ZVBUS 0.8–1.2 MΩ, RDIFF 92 kΩ (active mode only), bias 2.5 nA, offset ±1 µV, SHUNT_CAL equation (×4 for ADCRANGE 1) are now **VERIFIED_LOCAL**; no mismatch with the symbol or the firmware (IMAX 20 A / SHUNT_CAL 1250). Panasonic ERJP08 (125 V / 500 V) and Littelfuse SMF12CA values remain USER_RELAYED.
+
 Original audit result: **no pin-map mismatch was found on the board**, with **one unresolved conflict (ISO7721)** that could not be settled from relayed text alone. Two calculations were corrected (LMR14006Y minimum on-time, 1.5SMBJ48A vs INA228 85 V) and one firmware constant was changed (INA228 IMAX 30 A → 20 A, SHUNT_CAL 1875 → 1250). (RC1.0 audit: no electrical change; RC1.1: schematic and PCB regenerated and re-routed for ISO7721, CP2102N VBUS divider, R40, C22.)
 
 | # | Component | Manufacturer | Existing symbol pin map | Manufacturer pin map (relayed) | Existing footprint | Manufacturer package | Electrical assumptions checked | Manufacturer values (relayed) | Result | Action taken | Evidence |

@@ -2,7 +2,7 @@
 
 Every register entry that is **not VERIFIED_LOCAL** is classified by what a wrong value could actually cause. `USER_RELAYED_MANUFACTURER` values are used as authoritative for electrical checks; the PDFs have not been read by the build. Entries read locally (ISO7721, CP2102N, SRN6045TA-100M, EB21A drawing, KiCad library facts) are not listed.
 
-69 entries are not VERIFIED_LOCAL: WRONG_PINOUT: 5, EXCEEDED_ABS_MAX: 14, WRONG_FOOTPRINT: 5, UNSAFE_PROTECTION: 5, FIRST_ARTICLE / INFORMATIONAL: 40.
+61 entries are not VERIFIED_LOCAL: WRONG_PINOUT: 4, EXCEEDED_ABS_MAX: 12, WRONG_FOOTPRINT: 5, UNSAFE_PROTECTION: 5, FIRST_ARTICLE / INFORMATIONAL: 35.
 
 
 ## Could cause a WRONG PINOUT (supply the datasheet to move these to VERIFIED_LOCAL — highest priority)
@@ -10,7 +10,6 @@ Every register entry that is **not VERIFIED_LOCAL** is classified by what a wron
 | id | part | parameter | evidence | note |
 |---|---|---|---|---|
 | `vo610a_pinout` | VO610A-1 | DIP-4 pinout: 1 LED anode, 2 LED cathode, 3 emitter, 4 collector | USER_RELAYED_MANUFACTURER | DIP-4 opto: wrong pin order would make both status inputs dead; relayed pinout matches the netlist. |
-| `ina228_pinmap` | INA228 | DGS VSSOP-10 pin map (TI table; symbol compared pin-for-pin: PASS) | USER_RELAYED_MANUFACTURER | relayed TI table matches the symbol pin-for-pin; a mismatch would make the INA228 unusable (no measurement). |
 | `lmr_pinmap` | LMR14006Y | DDC TSOT-6 pin map: 1 CB, 2 GND, 3 FB, 4 /SHDN, 5 VIN, 6 SW (symbol compared: PASS) | USER_RELAYED_MANUFACTURER | relayed table matches; a mismatch would stop the 3.3 V rail. |
 | `q_pinout` | IRLML0060TRPBF | SOT-23 (Micro3) pinout 1 G, 2 S, 3 D (netlist compared: PASS) | USER_RELAYED_MANUFACTURER | relayed 1 G / 2 S / 3 D matches; a mismatch would leave the relay always off/on. |
 | `tc74_pinmap` | TC74A5-3.3VAT | TO-220-5 pin map: 1 NC, 2 SDA, 3 GND, 4 SCLK, 5 VDD; tab = pin 3 (GND); supply 2.7-5.5 V; +/-2 C (25-85 C); sy | USER_RELAYED_MANUFACTURER | relayed table matches (probe board). |
@@ -21,8 +20,6 @@ Every register entry that is **not VERIFIED_LOCAL** is classified by what a wron
 |---|---|---|---|---|
 | `vo610a_ratings` | VO610A-1 | VCEO 70 V, IC max 50 mA, IF max 60 mA, operating -55..+110 C | USER_RELAYED_MANUFACTURER | VCEO 70 V vs the 3.3 V pull-up: large margin. |
 | `vo610a_led_vr` | VO610A-1 | LED reverse voltage absolute max | USER_RELAYED_MANUFACTURER | 1N4148 limits the LED reverse voltage to ~0.7 V. |
-| `ina228_cm` | INA228 | common-mode at IN+/IN- -0.3 to +85 V; VBUS -0.3 to +85 V; input current into any pin 5 mA; VS 6 V max (absolut | USER_RELAYED_MANUFACTURER | 85 V limit used in the protection analysis (closed by the RC1.2 network, relayed value). |
-| `ina228_diff_max` | INA228 | IN+ to IN- differential absolute maximum VIN+ - VIN- = -40 V to +40 V (an absolute-maximum rating, NOT the +/- | USER_RELAYED_MANUFACTURER | VIN+ - VIN- = -40 to +40 V absolute maximum (TI table, relayed; not the 163.84/40.96 mV measurement ranges): closed as USER_RELAYED, PDF still to be committed; D15 is a backstop. |
 | `lmr_limits` | LMR14006Y | VIN recommended 4-40 V, absolute max 45 V; IOUT 600 mA; current limit ~1.2 A typ; max duty (Y) ~97 % | USER_RELAYED_MANUFACTURER | VIN abs max 45 V vs SMBJ15A clamp 24.4 V (relayed). |
 | `lmr_en` | LMR14006Y | EN threshold / abs max / pull-up method | UNVERIFIED | SHDN threshold/abs max not relayed; SHDN is pulled to +12V through 100 k (limits current); confirm the pin allows +12 V through 100 k. |
 | `dg57_vmax` | DG57CM-5021-76-1012-R | maximum switching voltage | USER_RELAYED_MANUFACTURER | 145 VDC switching vs 44 V ceiling. |
@@ -68,11 +65,6 @@ Every register entry that is **not VERIFIED_LOCAL** is classified by what a wron
 | `vo610a_vf_max` | VO610A-1 | LED forward voltage max: 1.6 V at IF = 50 mA (used as a conservative bound at the low IF of this design; VF at | USER_RELAYED_MANUFACTURER |  |
 | `vo610a_vcesat` | VO610A-1 | VCE(sat) max at IC ~0.1 mA | UNVERIFIED |  |
 | `vo610a_vcesat_rel` | VO610A-1 | VCE(sat) max 0.3 V at IF = 10 mA, IC = 1 mA (design uses 0.4 V at IC ~ 0.07 mA as the conservative figure) | USER_RELAYED_MANUFACTURER |  |
-| `ina228_supply` | INA228 | supply range | USER_RELAYED_MANUFACTURER |  |
-| `ina228_ranges` | INA228 | shunt full-scale ranges | USER_RELAYED_MANUFACTURER |  |
-| `ina228_vos` | INA228 | shunt input offset max | USER_RELAYED_MANUFACTURER |  |
-| `ina228_shunt_cal` | INA228 | SHUNT_CAL = 13107.2e6 x CURRENT_LSB x RSHUNT (ADCRANGE 0); RSA-20-50, IMAX 20 A -> 1250 | USER_RELAYED_MANUFACTURER |  |
-| `ina228_bias` | INA228 | input bias current | USER_RELAYED_MANUFACTURER |  |
 | `lmr_status` | LMR14006Y | lifecycle / input / current | USER_RELAYED_MANUFACTURER |  |
 | `lmr_fsw` | LMR14006Y | switching frequency (Y suffix) | USER_RELAYED_MANUFACTURER |  |
 | `lmr_fsw_range` | LMR14006Y | switching frequency Y version: min 1.785 / typ 2.100 / max 2.415 MHz | USER_RELAYED_MANUFACTURER |  |
