@@ -154,14 +154,14 @@
   "source": "407 datasheet nominal resistance 0.009 ohm (measured <10 % rated current); hot value from 0.097 V drop at 8 A = 12.1 mOhm"
  },
  "interposer_socket_mpn": {
-  "value": null,
-  "status": "unverified",
-  "source": "Family chosen (SSW through-hole; replaces the SMT SSM-120 idea) but the exact 2x20 ordering code (lead style/tail length, plating, body height) needs the SSW-120 catalog page/drawing. Not selected yet."
+  "value": "SSW-120-01-S-D",
+  "status": "owner_cited",
+  "source": "Owner selection: Samtec SSW-120-01-S-D - 40 pos, 2 rows, 2.54 mm, through-hole vertical receptacle, 30 uin gold mating, tin tails, 4.7 A/contact (family spec, one pin powered per row), body 8.51 mm, tail 2.64 mm, -55..+125 C, active/stocked. The uploaded files are the family spec only (identical x4); ordering code, 8.51/2.64 mm and plating are NOT in them - re-check vs the SSW-120 product page. SSW-120-04-G-D (14.83 mm tail, no stock) rejected."
  },
  "interposer_socket_contact_mohm": {
   "value": 20.0,
   "status": "unverified",
-  "source": "PLACEHOLDER. Samtec gives only a post-test change (delta 15 mOhm max), no initial value; 20 mOhm ~ assumed 5 mOhm initial + 15 mOhm drift. Replace with the SSW-120 initial LLCR from the catalog page."
+  "source": "CONSERVATIVE PLACEHOLDER - no initial contact resistance is published for this ordering code (Samtec spec gives delta 15 mOhm max after tests only). Treated as a FIRST-ARTICLE MEASURED parameter: measure it on the assembled interposer; do not substitute a lower value on paper."
  },
  "interposer_key_3d_check": {
   "value": true,
@@ -236,5 +236,18 @@
   "value": "M.2 HAT+ ships with a 16 mm stacking header + threaded spacers so it fits over the Active Cooler",
   "status": "verified",
   "source": "Raspberry Pi M.2 HAT+ product brief RP-009234-MM-1 (uploaded)"
+ },
+ "interposer_socket_dims": {
+  "value": {
+   "body_height_mm": 8.51,
+   "tail_length_mm": 2.64,
+   "pitch_mm": 2.54,
+   "rows": 2,
+   "positions": 40,
+   "pi_header_plastic_mm": 2.5,
+   "pi_pin_tip_height_mm": 9.0
+  },
+  "status": "owner_cited",
+  "source": "body/tail from owner (SSW-120-01-S-D); Pi header plastic 2.5 mm = standard 2.54 mm header ASSUMPTION; pin-tip height ~9 mm read from the Pi 5 drawing side view"
  }
 }

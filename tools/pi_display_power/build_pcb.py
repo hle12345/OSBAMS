@@ -149,7 +149,7 @@ text("1,2=+5V 3,4=GND", 56.0, 68.4, 0.8)
 text("PI SIDE — ISOLATED", 56.0, 66.2, 1.1); text("ISOLATION BARRIER", 50, 38.5, 1.0, just=C)
 text("NO COPPER CROSSING / 10mm GAP", 50, 40.2, 0.8, just=C)
 text("R2/R3 DNP - TRIM OPTION", 56.0, 52.0, 0.8); text("U1 PIN1 SIDE", 28.0, 14.5, 0.8)
-text("RC1.1 - NOT FOR FAB", 50, 69.0, 0.8, pcbnew.F_SilkS, C)
+text(os.environ.get("REL", "RC1.1") + " - NOT FOR FAB", 50, 69.0, 0.8, pcbnew.F_SilkS, C)
 text("OSBAMS Pi/Display Power Rev.A  2oz Cu", 50, 68.0, 0.9, pcbnew.B_SilkS, C)
 for y in range(5, 66, 4):
     s = pcbnew.PCB_SHAPE(b); s.SetShape(pcbnew.SHAPE_T_SEGMENT); s.SetStart(P(50, y)); s.SetEnd(P(50, y + 2.0))

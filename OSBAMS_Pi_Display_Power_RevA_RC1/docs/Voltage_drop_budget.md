@@ -34,8 +34,8 @@ Target: **>= 4.85 V at the Pi header at 5 A, worst case**; **<= 5.25 V no-load /
 | rsdw_ripple_mvpp | 100 | verified | spec: single output 3.3-15 Vo: 100 mVp-p (20 MHz, 0.1 uF + 47 uF) |
 | f1_mpn | 0407008.WR | verified | Littelfuse 407 Series datasheet (rev 09/14/20, uploaded): 1206 time-lag, amp code 008., part number 0407 008. W R (W = 3000 pcs, R = reel). Replaces 0453008.MRL, which is very fast-acting (451/453 datasheet). |
 | f1_resistance_mohm | 9.0 | verified | 407 datasheet nominal resistance 0.009 ohm (measured <10 % rated current); hot value from 0.097 V drop at 8 A = 12.1 mOhm |
-| interposer_socket_mpn | None | unverified | Family chosen (SSW through-hole; replaces the SMT SSM-120 idea) but the exact 2x20 ordering code (lead style/tail length, plating, body height) needs the SSW-120 catalog page/drawing. Not selected yet. |
-| interposer_socket_contact_mohm | 20.0 | unverified | PLACEHOLDER. Samtec gives only a post-test change (delta 15 mOhm max), no initial value; 20 mOhm ~ assumed 5 mOhm initial + 15 mOhm drift. Replace with the SSW-120 initial LLCR from the catalog page. |
+| interposer_socket_mpn | SSW-120-01-S-D | owner_cited | Owner selection: Samtec SSW-120-01-S-D - 40 pos, 2 rows, 2.54 mm, through-hole vertical receptacle, 30 uin gold mating, tin tails, 4.7 A/contact (family spec, one pin powered per row), body 8.51 mm, tail 2.64 mm, -55..+125 C, active/stocked. The uploaded files are the family spec only (identical x4); ordering code, 8.51/2.64 mm and plating are NOT in them - re-check vs the SSW-120 product page. SSW-120-04-G-D (14.83 mm tail, no stock) rejected. |
+| interposer_socket_contact_mohm | 20.0 | unverified | CONSERVATIVE PLACEHOLDER - no initial contact resistance is published for this ordering code (Samtec spec gives delta 15 mOhm max after tests only). Treated as a FIRST-ARTICLE MEASURED parameter: measure it on the assembled interposer; do not substitute a lower value on paper. |
 | interposer_key_3d_check | True | verified | PLAN-VIEW check PASS against the official drawing (reports/Pi5_keying_check.txt): correct orientation posts hang beyond the Pi edge; reversed they land on bare PCB (1.6 mm and 3.3 mm clear of components for a 5 mm post). Height/engagement check (post length vs seated gap G) still pending the SSW-120 drawing; optional STEP confirmation. |
 | f1_spec | {'rating_a': 8, 'max_voltage_v': 24, 'interrupt': '60 A @ 24 VDC', 'nominal_resistance_mohm': 9.0, 'melting_i2t_a2s': 24.12, 'vdrop_at_rated_v': 0.097, 'power_at_rated_w': 0.8, 'continuous_derate': '<=80 % of rating (6.4 A), plus temperature re-rating curve', 'time_lag': '100 %: 4 h min; 200 %: 1-120 s; 300 %: 0.1-3 s; 800 %: 2-50 ms', 'land_pattern_mm': 'pad 1.0 x 1.8, gap 1.5, span 3.5; body 3.2 x 1.6'} | verified | 407 datasheet electrical specs by item |
 | f2_spec | {'mpn': '0451008.MRL', 'rating_a': 8, 'max_voltage_v': 125, 'nominal_cold_resistance_mohm': 7.7, 'melting_i2t_a2s': 20.23, 'interrupt': 'PSE: 100 A @ 100 VAC', 'land_pattern': 'pad 1.96 x 3.15, outer span 6.86 mm - matches the KiCad library footprint used', 'class': 'very fast-acting'} | verified | Littelfuse 451/453 datasheet (uploaded) - confirms owner's 7.7 mOhm |
@@ -45,10 +45,11 @@ Target: **>= 4.85 V at the Pi header at 5 A, worst case**; **<= 5.25 V no-load /
 | interposer_socket_family | Samtec SSW vertical through-hole socket, 0.100 in / 2.54 mm pitch, 0.025 in square post, 2x20 dual row | verified | Samtec SSW/TSW product specification rev C (2023-02-08, uploaded; two identical copies): current 4.7 A with ONE PIN POWERED PER ROW; 465 VAC; gold -55..+125 C; durability 1000 cycles; normal force >= 30 g (gold); contact resistance is specified only as a CHANGE (LLCR delta 15 mOhm max after tests), no absolute initial value; standoffs recommended. Prints, footprints and lead styles are on the Samtec product page, NOT in this spec. |
 | pi5_envelope_docs | {'board_mm': '85 x 56 (bumper 89.6 x 60.6 implies +4.6 mm per side)', 'official_case_mm': '98.5 x 70.3 x 33 (approx, reference only)', 'pcie_ffc': '16-pin 0.5 mm FFC; 5 V pins 1,2 rated 500 mA each (1 A total), not a power path', 'power_states': 'STANDBY = +5 V rail powered, other rails off'} | verified | Raspberry Pi RP-008159 (case), RP-008144 (bumper), RP-008298 (PCIe connector) briefs - envelope info only; NOT the header/component geometry needed for the 180-degree key check |
 | pi_m2_hat_reference | M.2 HAT+ ships with a 16 mm stacking header + threaded spacers so it fits over the Active Cooler | verified | Raspberry Pi M.2 HAT+ product brief RP-009234-MM-1 (uploaded) |
+| interposer_socket_dims | {'body_height_mm': 8.51, 'tail_length_mm': 2.64, 'pitch_mm': 2.54, 'rows': 2, 'positions': 40, 'pi_header_plastic_mm': 2.5, 'pi_pin_tip_height_mm': 9.0} | owner_cited | body/tail from owner (SSW-120-01-S-D); Pi header plastic 2.5 mm = standard 2.54 mm header ASSUMPTION; pin-tip height ~9 mm read from the Pi 5 drawing side view |
 
-`owner_cited` = supplied by the project owner with a source; the build environment cannot reach Mean Well, Molex, Littelfuse or Harwin, so re-check against the PDFs. Assumptions: stacking-socket contact resistance is a PLACEHOLDER (socket MPN not chosen), interposer copper 2 mOhm/rail, hot-fuse 1.3x sensitivity.
+`owner_cited` = supplied by the project owner with a source; the build environment cannot reach Mean Well, Molex, Littelfuse or Harwin, so re-check against the PDFs. Assumptions: socket contact resistance (SSW-120-01-S-D, no initial value published) is a conservative 20 mOhm PLACEHOLDER to be MEASURED on first articles - not lowered on paper, interposer copper 2 mOhm/rail, hot-fuse 1.3x sensitivity.
 
-Source tolerance from the datasheet: accuracy +-1 % + line +-0.2 % + load +-0.5 % (low corner at 5 A = -1.51 %, no-load high corner = +1.70 %, at 25 C). PCB copper 2.2 mOhm; F2 7.7 mOhm cold; J_OUT 10.0 mOhm max/contact; stacking-socket contact 20 mOhm max (placeholder), 2 contacts on +5 V and 4 on GND.
+Source tolerance from the datasheet: accuracy +-1 % + line +-0.2 % + load +-0.5 % (low corner at 5 A = -1.51 %, no-load high corner = +1.70 %, at 25 C). PCB copper 2.2 mOhm; F2 7.7 mOhm cold; J_OUT 10.0 mOhm max/contact; SSW-120-01-S-D socket contact 20 mOhm (placeholder, first-article measured), 2 contacts on +5 V and 4 on GND.
 
 ## Results at the Pi 5V pins
 
@@ -70,7 +71,7 @@ Required stacking-socket contact resistance (max, per contact; 2 contacts on +5 
 | stack + 15 C drift | not achievable (even 0 mOhm contacts) |
 | calibrated unit + 15 C drift | 20.8 |
 
-Contact loading at 5 A: 2.5 A per Pi 5 V pin/socket contact. Samtec SSW rates 4.7 A with one pin powered per row (derate for adjacent powered pins - catalog curve needed); the Pi header pin is a nominal 3 A class (83 %) - **no derating headroom**; the Pi has only two 5 V pins (2 and 4), so this cannot be improved by adding 5 V contacts. At 8 A the contacts and Pi header pins would be overloaded (4 A each): keep real load <= ~5 A. See the Pi_end note.
+Contact loading at 5 A: 2.5 A per Pi 5 V pin/socket contact. Samtec SSW rates 4.7 A with one pin powered per row; that is NOT 4.7 A per contact with all adjacent power contacts loaded - here two +5 V pins share ~5 A (2.5 A each, 53 % of 4.7 A, comfortable) and the Pi header pin is the nominal ~3 A-class limit (83 %) - **no derating headroom**; the Pi has only two 5 V pins (2 and 4), so this cannot be improved by adding 5 V contacts. At 8 A the contacts and Pi header pins would be overloaded (4 A each): keep real load <= ~5 A. See the Pi_end note.
 
 ## Tolerance scenarios (does one setpoint satisfy both limits?)
 
@@ -100,6 +101,5 @@ F1 = 0407008.WR (Littelfuse 407, 1206 time-lag, 8 A, 24 V max, interrupt 60 A @ 
 
 ## Remaining RC2 gates
 
-1. Stacking-socket MPN with published current/resistance; key-standoff 3D check (`OSBAMS_Pi_Power_Interposer_RevA_RC1/docs/Keying_analysis.md`).
-2. RSDW40F-05 pin X/Y, drill and keepout from the Mean Well drawing (body 50.8 x 25.4 mm, pin dia ~1.0 mm are recorded; coordinates not supplied).
-3. KiCad 10 ERC.  First article (not a gate): per-unit trim calibration (`Trim_calibration_procedure.md`), bench Pi voltage and harness temperature.
+1. Local KiCad 10 ERC.
+2. First article (not a gate): per-unit trim calibration, **measured socket contact resistance on the assembled interposer** (replaces the 20 mOhm placeholder), loaded Pi voltage and harness/connector temperature rise.

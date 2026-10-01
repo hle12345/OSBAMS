@@ -3,7 +3,7 @@
 import json, os, sys
 I = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "datasheet_inputs.json")))
 need = ["f2_resistance_cold_mohm", "j_out_contact_max_mohm", "rsdw_trim_network", "rsdw_tolerance_pct", "rsdw_footprint_drawing",
-        "f1_mpn", "interposer_socket_mpn", "pi5_mechanical_drawing_step", "interposer_key_3d_check", "erc_clean_kicad10"]
+        "f1_mpn", "interposer_socket_mpn", "pi5_mechanical_drawing_step", "interposer_key_3d_check", "erc_clean_kicad10"]  # socket contact resistance is a first-article measured parameter, not a gate
 ok = lambda k: I[k]["status"] in ("verified", "owner_cited") and I[k]["value"] not in (None, False)
 bad = [k for k in need if not ok(k)]
 print("RC2 gate:", "OPEN" if bad else "CLEAR")

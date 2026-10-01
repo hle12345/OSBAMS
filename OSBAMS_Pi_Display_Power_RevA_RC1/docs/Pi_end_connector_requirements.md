@@ -14,16 +14,15 @@
 2. Key-standoff 3D check against the Raspberry Pi 5 drawing, active cooler and enclosure; physical reversed-fit test.
 3. Waveshare 5 V/GND leads: confirm which Pi pins they use and keep them reachable above the stacking socket.
 
-## Socket family — Samtec SSW (through-hole), per the uploaded SSW/TSW specification
-The SMT SSM strip is dropped in favour of the **SSW** vertical through-hole socket family (fits the existing THT interposer footprint; the socket is inserted from the underside, soldered from the top).
-Verified from the spec (rev C, 2023): 4.7 A **with one pin powered per row**, 465 VAC, gold −55…+125 °C, 1000 cycles, normal force ≥ 30 g (gold), standoffs recommended for a robust board-to-board joint (our M2.5 spacers).
-**Gaps (not in this spec):**
-1. The exact **2×20 ordering code** (lead style / tail length, plating, body height) and its footprint/drawing — on the Samtec SSW-120 product page; please upload that page/drawing.
-2. **Multi-pin current derating** — we power +5 V pins 2 and 4 side by side (two in the same row) and four GND pins across both rows, so the 4.7 A single-pin figure does not apply directly; the catalog derating curve is needed. 2.5 A per 5 V contact is ~53 % of 4.7 A.
-3. **Contact resistance:** Samtec specifies only a *change* (ΔLLCR 15 mΩ max after testing), not an initial value; the budget keeps a 20 mΩ placeholder (≈ 5 mΩ initial + 15 mΩ drift), with a 25 mΩ sensitivity row.
-4. Body height vs the Pi header (pin length ~6 mm above the plastic): confirm full engagement; it also sets the seated gap, the M2.5 spacer length and the key-post length.
+## Socket — Samtec SSW-120-01-S-D (owner-selected baseline)
+40 positions, 2 rows, 2.54 mm, through-hole vertical receptacle, 30 µin gold mating / tin tails, **body 8.51 mm, tail 2.64 mm**, −55…+125 °C, 4.7 A (Samtec SSW/TSW spec: **one pin powered per row** — not 4.7 A per contact with all adjacent power contacts loaded). The uploaded files (four identical copies) are the family spec only; the ordering code, 8.51/2.64 mm and plating are **owner-cited**, to be re-checked against the SSW-120 product page. `SSW-120-04-G-D` (14.83 mm tail, no stock) is rejected — nothing mechanical requires it.
+- **Use:** 2 contacts for +5 V (Pi pins 2, 4 → 2.5 A each at 5 A, 53 % of 4.7 A) and 4 for GND (6, 9, 14, 20). The Pi header pin (~3 A class) is the practical limit.
+- **Mounting:** from the interposer underside, soldered on top; 2.64 mm tails through the 1.6 mm board leave 1.04 mm for soldering. Hole size 1.0 mm is carried over — confirm against Samtec's footprint.
+- **Heights** (`OSBAMS_Pi_Power_Interposer_RevA_RC1/reports/Stack_height_check.txt`): seated gap G = 8.51 + ~2.5 mm Pi header plastic = **11.0 mm** → M2.5 × 11 mm spacers; Pi pins protrude 6.5 mm above the plastic and enter the 8.51 mm body; key posts **M2.5 × 20 mm** keep the reversed socket face 11.5 mm above the Pi PCB vs pin tips at ~9 mm (+2.5 mm margin). Posts hang ~9 mm below the Pi PCB plane, 11 mm beyond its edge — an enclosure consideration.
+- **No collision** with the Active Cooler (17 mm away in plan, board 11 mm above the header-side chips). The official Pi 5 case does not accommodate the overhang with the lid on.
+- **Contact resistance:** none published for this ordering code (only ΔLLCR 15 mΩ after tests). The budget keeps a **conservative 20 mΩ placeholder, treated as a first-article measured parameter** (measure on the assembled interposer; do not substitute a lower value on paper).
 
 ## Enclosure interactions (from the Raspberry Pi case and bumper briefs, uploaded)
-- Official Pi 5 case (98.5 × 70.3 × 33 mm, approximate): HATs mount **on top of the case with standoffs and GPIO header extenders**, and cables leave through a GPIO breakout slot. The interposer's outward overhang (~14 mm beyond the Pi edge, key posts ~11 mm beyond) will not fit inside this case with the lid on; it is intended for your own enclosure or the open/lid-off case.
-- Bumper (89.6 × 60.6 mm): wraps ~4.6 mm around the board edge — check it against the key posts and the overhanging board.
+- Official Pi 5 case (98.5 × 70.3 × 33 mm, approximate): HATs mount **on top of the case with standoffs and GPIO header extenders**, cables leave through a breakout slot. The interposer's outward overhang (~14 mm beyond the Pi edge, key posts ~11 mm) will not fit inside this case with the lid on — use your own enclosure or the open case.
+- Bumper (89.6 × 60.6 mm) wraps ~4.6 mm around the board edge — check against the posts and the overhanging board.
 - PCIe FFC power pins are 500 mA each (1 A total): not an alternative path.

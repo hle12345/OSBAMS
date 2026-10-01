@@ -1,19 +1,19 @@
 ** Drc report for ../../OSBAMS_Pi_Power_Interposer_RevA_RC1/kicad/OSBAMS_Pi_Power_Interposer_RevA.kicad_pcb **
-** Created on 2026-10-01 17:36:48 **
+** Created on 2026-10-01 17:54:46 **
 
 ** Found 11 DRC violations **
 [silk_overlap]: Silkscreen overlap
     Rule: board setup constraints silk; Severity: warning
-    @(33.3700 mm, 22.7000 mm): PCB Text 'RC1 - NOT FOR FAB' on F.Silkscreen
+    @(33.3700 mm, 22.7000 mm): PCB Text 'RC1.1 - NOT FOR FAB' on F.Silkscreen
+    @(58.8700 mm, 22.8000 mm): Line on F.Silkscreen
+[silk_overlap]: Silkscreen overlap
+    Rule: board setup constraints silk; Severity: warning
+    @(6.0000 mm, 22.9000 mm): PCB Text 'PI PIN 1' on F.Silkscreen
     @(58.8700 mm, 22.8000 mm): Line on F.Silkscreen
 [silk_overlap]: Silkscreen overlap
     Rule: board setup constraints silk; Severity: warning
     @(6.0000 mm, 22.9000 mm): PCB Text 'PI PIN 1' on F.Silkscreen
     @(6.8700 mm, 22.8000 mm): Line on F.Silkscreen
-[silk_overlap]: Silkscreen overlap
-    Rule: board setup constraints silk; Severity: warning
-    @(6.0000 mm, 22.9000 mm): PCB Text 'PI PIN 1' on F.Silkscreen
-    @(58.8700 mm, 22.8000 mm): Line on F.Silkscreen
 [silk_over_copper]: Silkscreen clipped by solder mask
     Local override; Severity: warning
     @(34.3700 mm, 21.2000 mm): PCB Text 'Rev.A  2oz Cu  1.6mm' on B.Silkscreen
@@ -22,22 +22,22 @@
     @(6.0000 mm, 22.9000 mm): PCB Text 'PI PIN 1' on F.Silkscreen
 [lib_footprint_issues]: The current configuration does not include the library 'OSBAMS_PiPwr'.
     Local override; Severity: warning
+    @(8.3700 mm, 20.0000 mm): Footprint J2
+[lib_footprint_issues]: The current configuration does not include the library 'OSBAMS_PiPwr'.
+    Local override; Severity: warning
+    @(3.5000 mm, 20.0000 mm): Footprint M1
+[lib_footprint_issues]: The current configuration does not include the library 'OSBAMS_PiPwr'.
+    Local override; Severity: warning
     @(18.5000 mm, 5.5000 mm): Footprint K1
 [lib_footprint_issues]: The current configuration does not include the library 'OSBAMS_PiPwr'.
     Local override; Severity: warning
     @(43.2500 mm, 5.5000 mm): Footprint K2
-[lib_footprint_issues]: The current configuration does not include the library 'OSBAMS_PiPwr'.
-    Local override; Severity: warning
-    @(61.5000 mm, 20.0000 mm): Footprint M2
-[lib_footprint_issues]: The current configuration does not include the library 'OSBAMS_PiPwr'.
-    Local override; Severity: warning
-    @(8.3700 mm, 20.0000 mm): Footprint J2
 [lib_footprint_issues]: The current configuration does not include the library 'Connector_Molex'.
     Local override; Severity: warning
     @(24.3700 mm, 11.1000 mm): Footprint J1
 [lib_footprint_issues]: The current configuration does not include the library 'OSBAMS_PiPwr'.
     Local override; Severity: warning
-    @(3.5000 mm, 20.0000 mm): Footprint M1
+    @(61.5000 mm, 20.0000 mm): Footprint M2
 
 ** Found 0 unconnected pads **
 

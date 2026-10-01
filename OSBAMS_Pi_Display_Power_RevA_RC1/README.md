@@ -15,7 +15,7 @@ No STM32, ADC, INA228, relay or safety logic on this board. `PI_GND` is **not** 
 | 1 | **5 V voltage-drop budget** ≥ 4.85 V at the Pi header @ 5 A worst case (target kept), ≤ 5.25 V no-load | **Closes only with per-unit calibration** (accepted): with the interposer path and a placeholder 20 mΩ socket contact, a fixed setpoint fails at 25 °C (−23 mV) but calibrated units pass (+3 mV with 15 °C drift). A socket contact ≤ ~14 mΩ closes the uncalibrated 25 °C case. See `docs/Voltage_drop_budget.md`, `docs/Trim_calibration_procedure.md`. |
 | 2 | RSDW40F-05 footprint | **IMPLEMENTED from the Mean Well drawing** (pin XY, Ø1.3 drill, 50.8×25.4 body; layout redone). Verify the mirror/rotation against the drawing in KiCad. No datasheet info on copper under the module/spacing — still open for the isolation review. |
 | 3 | Other footprints (Molex 43045-0400/-0200, Nano2 0451, SMB, radial caps, passives) | **LIBRARY-SOURCED, not manufacturer-PDF-verified** — official KiCad library, which cites the Molex/Littelfuse datasheets, incl. Micro-Fit pegs/drills. Cross-check against the Molex drawing before release. |
-| 4 | Pi end | **Keyed interposer designed** (`OSBAMS_Pi_Power_Interposer_RevA_RC1/`, HAT+ geometry). 180° key check **PASSES in plan view** against the official Pi 5 drawing (`OSBAMS_Pi_Power_Interposer_RevA_RC1/reports/Pi5_keying_check.txt`). Open: exact Samtec SSW-120 ordering code (needs its drawing for height/post length, initial contact resistance, derating). |
+| 4 | Pi end | **Keyed interposer with Samtec SSW-120-01-S-D** (`OSBAMS_Pi_Power_Interposer_RevA_RC1/`): fit/keying PASS (plan view vs the official Pi 5 drawing), stack-height PASS (M2.5×11 spacers, ×20 key posts), no Active-Cooler collision. Socket MPN/dimensions owner-cited — re-check vs the product page. Contact resistance = conservative 20 mΩ placeholder, **first-article measured**. |
 | 4b | F1 | **8 A time-lag Littelfuse 407, 0407008.WR — datasheet-verified** (24 V, 9 mΩ, I²t 24.12). 0453008.MRL removed (very fast-acting). |
 | 5 | KiCad ERC passes | **OPEN** — build container only has KiCad 7.0.11 (no `sch erc`; KiCad 10 not obtainable here). Custom connectivity check passes (`reports/ERC_equivalent_connectivity_report.txt`). Run ERC in KiCad 10 locally, then regenerate. |
 | 6 | KiCad DRC passes | **PARTIAL** — 0 electrical/courtyard/clearance errors; only silkscreen-overlap and "library not configured" warnings. Re-run in KiCad 10. |
@@ -41,5 +41,7 @@ Regenerate: `tools/pi_display_power/build_all.sh`.
 ## Interposer
 `OSBAMS_Pi_Power_Interposer_RevA_RC1/` — keyed Pi-end interposer (own KiCad project, Gerbers, BOM, reports).
 
-## RC2 gate
+## RC2 gate (only KiCad 10 ERC remains)
 `python3 tools/pi_display_power/rc2_gate.py` lists exactly which datasheet inputs (F2 resistance, RSDW tolerance/trim/formula, RSDW drawing, Pi-end terminal, KiCad 10 ERC) are still unverified. RC2 is generated only when it reports CLEAR. R2/R3 stay DNP; **R3 (TRIM→PI_GND) is the trim-up resistor**, R2 (TRIM→+VOUT) is trim-down and likely unneeded. Candidate Rt values are in `Voltage_drop_budget.md` under an assumed topology — confirm against the Mean Well formula first.
+
+`tools/pi_display_power/make_rc2.sh` creates `..._RC2` for both boards but refuses until `rc2_gate.py` is clear: run KiCad 10 ERC on both schematics, save the reports into each `reports/` folder, set `erc_clean_kicad10` to verified in `datasheet_inputs.json`.

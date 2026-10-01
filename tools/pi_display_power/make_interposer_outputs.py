@@ -13,9 +13,9 @@ wb = Workbook(); ws = wb.active; ws.title = "BOM"
 ws.append(["Designator", "Qty", "Description", "Manufacturer", "MPN", "Footprint", "Status"])
 rows = [
  ["J1", 1, "Micro-Fit 3.0 header, right-angle, dual row, 4 circuits (keyed)", "Molex", "430450400", "Connector_Molex:Molex_Micro-Fit_3.0_43045-0400_2x02_P3.00mm_Horizontal", "Locked part; library footprint (pegs included); not cross-checked vs Molex PDF"],
- ["J2", 1, "2x20 2.54 mm gold STACKING female header (Pi GPIO), >=3 A/contact, long tails so Pi pins stay reachable for the Waveshare leads", "TBD", "TBD", "OSBAMS_PiPwr:PinSocket_2x20_P2.54mm_RPi_TopView (pad pattern by Pi pin number)", "OPEN - exact MPN with published per-contact current/resistance must be chosen from a datasheet"],
- ["K1, K2", 2, "M2.5 key standoffs/posts (outward side) - length set by the 3D check so a 180-degree fitting cannot seat", "TBD", "TBD", "NPTH 2.7 mm", "OPEN - 3D check vs Pi 5 drawing + enclosure"],
- ["M1, M2", 2, "M2.5 standoff/spacer + screw to the Pi header-end mounting holes; spacer length = seated height of the chosen stacking socket", "TBD", "TBD", "NPTH 2.7 mm", "OPEN - depends on socket MPN"],
+ ["J2", 1, "Samtec SSW-120-01-S-D: 2x20, 2.54 mm, through-hole vertical receptacle, 30 uin gold / tin tails, body 8.51 mm, tail 2.64 mm, 4.7 A (one pin powered per row). Mounted from the UNDERSIDE, soldered from the top.", "Samtec", "SSW-120-01-S-D", "OSBAMS_PiPwr:SSW-120-01-S-D_RPi_TopView (pad pattern by Pi pin number, 1.0 mm drill - confirm vs Samtec footprint)", "Owner-selected; ordering code/dimensions to re-check vs the SSW-120 product page. Do NOT use SSW-120-04-G-D (14.83 mm tail, no stock)"],
+ ["K1, K2", 2, "M2.5 female-female hex standoff, 20 mm (key posts, outward side) + M2.5 screws - length from check_stack_height.py", "generic", "M2.5 x 20 mm standoff", "NPTH 2.7 mm", "Length computed: socket face stays 11.5 mm above the Pi PCB when reversed (pin tips ~9 mm)"],
+ ["M1, M2", 2, "M2.5 female-female hex standoff, 11 mm (= 8.51 mm socket body + ~2.5 mm Pi header plastic) + M2.5 screws, to the Pi header-end mounting holes", "generic", "M2.5 x 11 mm standoff", "NPTH 2.7 mm", "Standard HAT spacer length; confirm on a physical Pi 5"],
  ["Harness", 1, "Micro-Fit receptacle housing 43025-0400 at both ends (candidate), 4x 16 AWG, <=150 mm, crimped, 43030-family terminals", "Molex", "43025-0400 + 43030 (candidate)", "", "OPEN - confirm terminal for 16 AWG; strain relief (cable tie / clip)"],
 ]
 for r in rows: ws.append(r)

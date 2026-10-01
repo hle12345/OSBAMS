@@ -1,0 +1,13 @@
+Stack-height check - Samtec SSW-120-01-S-D (owner-cited: body 8.51 mm, tail 2.64 mm) on the Raspberry Pi 5 header
+
+Seated gap G (interposer underside to Pi PCB) = body 8.51 + Pi header plastic 2.5 (assumed) = 11.01 mm  ->  M1/M2 spacers: M2.5 x 11 mm (standard HAT length).
+Pin engagement: Pi pins protrude 6.5 mm above the plastic (tip height 9.0 mm from the Pi drawing) -> need socket contact depth >= 6.5 mm of the 8.51 mm body: OK (body is deeper than the pin length)
+Tail: 2.64 mm through a 1.6 mm board leaves 1.04 mm protruding on the top side for soldering: OK
+Interposer top surface height over the Pi PCB = 12.6 mm; J1 (Micro-Fit right-angle) adds its own height on top - check against the enclosure lid.
+
+Key posts: M2.5 x 20 mm standoffs. Reversed, they rest on bare Pi PCB (see Pi5_keying_check.txt) and the socket mating face stops at 11.5 mm above the Pi PCB vs pin tips at 9.0 mm -> +2.5 mm margin: pins cannot enter the socket (PASS)
+Minimum post length for >= 1.5 mm margin: 19.0 mm.
+Correct orientation: posts hang 20 mm below the interposer = 9.0 mm below the Pi PCB plane, 11 mm beyond the Pi edge (free air; relevant to the enclosure).
+
+Collisions: Active Cooler / SoC area is 17.1 mm from the interposer footprint in plan (Pi5_keying_check.txt) and the board floats at 11 mm over the header-side chips (<= ~2 mm tall) -> no Active Cooler collision. Enclosure: the interposer overhangs the Pi edge by ~14 mm and posts by ~11 mm; the official Pi 5 case (98.5 x 70.3 x 33 mm) is not compatible with the lid on - custom enclosure or open case. Report to owner before any socket-family change (none needed).
+SSW-120-04-G-D (14.83 mm tail, no stock) rejected: not mechanically required.
