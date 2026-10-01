@@ -14,10 +14,16 @@
 2. Key-standoff 3D check against the Raspberry Pi 5 drawing, active cooler and enclosure; physical reversed-fit test.
 3. Waveshare 5 V/GND leads: confirm which Pi pins they use and keep them reachable above the stacking socket.
 
-## Socket candidate under review — Samtec SSM-120-S-DV-K-TR (owner proposal; not yet selected)
-Owner data: 40 positions, 2 rows, 2.54 mm, ~5.2 A per contact. Not yet checked (no datasheet/drawing available here):
-1. **Geometry:** the SSM-xxx-S-DV family appears (from memory, unverified) to be a low-profile **surface-mount** strip, not a pass-through/stacking socket. If so it must be soldered to the interposer's *underside* pads and mate downward onto the Pi pins: then (a) the interposer needs an SMT pad pattern from Samtec's drawing instead of the current THT pattern, (b) the Pi's pins are no longer reachable from above for the Waveshare 5 V/GND leads (they would need a separate keyed outlet), and (c) the seated gap/engagement depth, hence the key-post length, change.
-2. **Mechanical load:** an SMT joint is the only retention besides the M2.5 spacers; the spacers must carry the insertion/extraction force.
-3. **Electrical:** 5.2 A/contact is the socket's rating; the mating Pi header pin (0.64 mm square) and the Pi's traces still limit to roughly 3 A per pin, so 2 × 5 V pins at 2.5 A each stay at ~83 % of that. The Samtec data supplied has no contact resistance; the budget keeps a 20 mΩ placeholder until it does.
-4. If SMT is unsuitable, pick a through-hole 2×20 stacking/pass-through family (Samtec offers 2.54 mm 40-position receptacles in other series) — again from a datasheet that gives height, tail length, contact rating and contact resistance.
-**Needed from you:** the Samtec datasheet/drawing (PDF, plus footprint/3D if available) for the exact variant.
+## Socket family — Samtec SSW (through-hole), per the uploaded SSW/TSW specification
+The SMT SSM strip is dropped in favour of the **SSW** vertical through-hole socket family (fits the existing THT interposer footprint; the socket is inserted from the underside, soldered from the top).
+Verified from the spec (rev C, 2023): 4.7 A **with one pin powered per row**, 465 VAC, gold −55…+125 °C, 1000 cycles, normal force ≥ 30 g (gold), standoffs recommended for a robust board-to-board joint (our M2.5 spacers).
+**Gaps (not in this spec):**
+1. The exact **2×20 ordering code** (lead style / tail length, plating, body height) and its footprint/drawing — on the Samtec SSW-120 product page; please upload that page/drawing.
+2. **Multi-pin current derating** — we power +5 V pins 2 and 4 side by side (two in the same row) and four GND pins across both rows, so the 4.7 A single-pin figure does not apply directly; the catalog derating curve is needed. 2.5 A per 5 V contact is ~53 % of 4.7 A.
+3. **Contact resistance:** Samtec specifies only a *change* (ΔLLCR 15 mΩ max after testing), not an initial value; the budget keeps a 20 mΩ placeholder (≈ 5 mΩ initial + 15 mΩ drift), with a 25 mΩ sensitivity row.
+4. Body height vs the Pi header (pin length ~6 mm above the plastic): confirm full engagement; it also sets the seated gap, the M2.5 spacer length and the key-post length.
+
+## Enclosure interactions (from the Raspberry Pi case and bumper briefs, uploaded)
+- Official Pi 5 case (98.5 × 70.3 × 33 mm, approximate): HATs mount **on top of the case with standoffs and GPIO header extenders**, and cables leave through a GPIO breakout slot. The interposer's outward overhang (~14 mm beyond the Pi edge, key posts ~11 mm beyond) will not fit inside this case with the lid on; it is intended for your own enclosure or the open/lid-off case.
+- Bumper (89.6 × 60.6 mm): wraps ~4.6 mm around the board edge — check it against the key posts and the overhanging board.
+- PCIe FFC power pins are 500 mA each (1 A total): not an alternative path.
