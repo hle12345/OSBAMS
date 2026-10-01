@@ -349,7 +349,15 @@
       },
       {
         "netclass": "POWER",
+        "pattern": "/*/+12V"
+      },
+      {
+        "netclass": "POWER",
         "pattern": "12V_F"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "/*/12V_F"
       },
       {
         "netclass": "POWER",
@@ -357,7 +365,15 @@
       },
       {
         "netclass": "POWER",
+        "pattern": "/*/12V_RAW"
+      },
+      {
+        "netclass": "POWER",
         "pattern": "3V3_HOST"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "/*/3V3_HOST"
       },
       {
         "netclass": "POWER",
@@ -365,7 +381,15 @@
       },
       {
         "netclass": "POWER",
+        "pattern": "/*/BUCK_SW"
+      },
+      {
+        "netclass": "POWER",
         "pattern": "COIL_SW"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "/*/COIL_SW"
       },
       {
         "netclass": "POWER",
@@ -373,11 +397,23 @@
       },
       {
         "netclass": "POWER",
+        "pattern": "/*/COIL_V"
+      },
+      {
+        "netclass": "POWER",
         "pattern": "ESTOP_OUT"
       },
       {
         "netclass": "POWER",
+        "pattern": "/*/ESTOP_OUT"
+      },
+      {
+        "netclass": "POWER",
         "pattern": "VBUS_USB"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "/*/VBUS_USB"
       },
       {
         "netclass": "RAIL",
@@ -385,7 +421,15 @@
       },
       {
         "netclass": "RAIL",
+        "pattern": "/*/+3V3"
+      },
+      {
+        "netclass": "RAIL",
         "pattern": "3V3_A"
+      },
+      {
+        "netclass": "RAIL",
+        "pattern": "/*/3V3_A"
       },
       {
         "netclass": "PACKLEVEL",
@@ -393,7 +437,15 @@
       },
       {
         "netclass": "PACKLEVEL",
+        "pattern": "/*/ADC_MID"
+      },
+      {
+        "netclass": "PACKLEVEL",
         "pattern": "FB_R1"
+      },
+      {
+        "netclass": "PACKLEVEL",
+        "pattern": "/*/FB_R1"
       },
       {
         "netclass": "PACKLEVEL",
@@ -401,7 +453,15 @@
       },
       {
         "netclass": "PACKLEVEL",
+        "pattern": "/*/FB_R2"
+      },
+      {
+        "netclass": "PACKLEVEL",
         "pattern": "INA_VBUS"
+      },
+      {
+        "netclass": "PACKLEVEL",
+        "pattern": "/*/INA_VBUS"
       },
       {
         "netclass": "PACKLEVEL",
@@ -409,7 +469,15 @@
       },
       {
         "netclass": "PACKLEVEL",
+        "pattern": "/*/PACK_ADC"
+      },
+      {
+        "netclass": "PACKLEVEL",
         "pattern": "PACK_INA"
+      },
+      {
+        "netclass": "PACKLEVEL",
+        "pattern": "/*/PACK_INA"
       },
       {
         "netclass": "PACKLEVEL",
@@ -417,7 +485,15 @@
       },
       {
         "netclass": "PACKLEVEL",
+        "pattern": "/*/PACK_INA_CON"
+      },
+      {
+        "netclass": "PACKLEVEL",
         "pattern": "RELAY_OUT"
+      },
+      {
+        "netclass": "PACKLEVEL",
+        "pattern": "/*/RELAY_OUT"
       },
       {
         "netclass": "PACKLEVEL",
@@ -425,7 +501,15 @@
       },
       {
         "netclass": "PACKLEVEL",
+        "pattern": "/*/SHUNT_INN_CON"
+      },
+      {
+        "netclass": "PACKLEVEL",
         "pattern": "SHUNT_INN_RAW"
+      },
+      {
+        "netclass": "PACKLEVEL",
+        "pattern": "/*/SHUNT_INN_RAW"
       },
       {
         "netclass": "PACKLEVEL",
@@ -433,7 +517,15 @@
       },
       {
         "netclass": "PACKLEVEL",
+        "pattern": "/*/SHUNT_INP_CON"
+      },
+      {
+        "netclass": "PACKLEVEL",
         "pattern": "SHUNT_INP_RAW"
+      },
+      {
+        "netclass": "PACKLEVEL",
+        "pattern": "/*/SHUNT_INP_RAW"
       },
       {
         "netclass": "KELVIN",
@@ -441,7 +533,15 @@
       },
       {
         "netclass": "KELVIN",
+        "pattern": "/*/INA_INN"
+      },
+      {
+        "netclass": "KELVIN",
         "pattern": "INA_INP"
+      },
+      {
+        "netclass": "KELVIN",
+        "pattern": "/*/INA_INP"
       },
       {
         "netclass": "HOST",
@@ -449,7 +549,15 @@
       },
       {
         "netclass": "HOST",
+        "pattern": "/*/3V3_HOST"
+      },
+      {
+        "netclass": "HOST",
         "pattern": "CP_RSTB"
+      },
+      {
+        "netclass": "HOST",
+        "pattern": "/*/CP_RSTB"
       },
       {
         "netclass": "HOST",
@@ -457,7 +565,15 @@
       },
       {
         "netclass": "HOST",
+        "pattern": "/*/CP_VBUS_SENSE"
+      },
+      {
+        "netclass": "HOST",
         "pattern": "GND_HOST"
+      },
+      {
+        "netclass": "HOST",
+        "pattern": "/*/GND_HOST"
       },
       {
         "netclass": "HOST",
@@ -465,7 +581,15 @@
       },
       {
         "netclass": "HOST",
+        "pattern": "/*/UART_RX_HOST"
+      },
+      {
+        "netclass": "HOST",
         "pattern": "UART_TX_HOST"
+      },
+      {
+        "netclass": "HOST",
+        "pattern": "/*/UART_TX_HOST"
       },
       {
         "netclass": "HOST",
@@ -473,7 +597,15 @@
       },
       {
         "netclass": "HOST",
+        "pattern": "/*/USB_CC1"
+      },
+      {
+        "netclass": "HOST",
         "pattern": "USB_CC2"
+      },
+      {
+        "netclass": "HOST",
+        "pattern": "/*/USB_CC2"
       },
       {
         "netclass": "HOST",
@@ -481,7 +613,15 @@
       },
       {
         "netclass": "HOST",
+        "pattern": "/*/USB_DM"
+      },
+      {
+        "netclass": "HOST",
         "pattern": "USB_DM_J"
+      },
+      {
+        "netclass": "HOST",
+        "pattern": "/*/USB_DM_J"
       },
       {
         "netclass": "HOST",
@@ -489,7 +629,15 @@
       },
       {
         "netclass": "HOST",
+        "pattern": "/*/USB_DP"
+      },
+      {
+        "netclass": "HOST",
         "pattern": "USB_DP_J"
+      },
+      {
+        "netclass": "HOST",
+        "pattern": "/*/USB_DP_J"
       },
       {
         "netclass": "HOST",
@@ -497,7 +645,75 @@
       },
       {
         "netclass": "HOST",
+        "pattern": "/*/USB_SHIELD"
+      },
+      {
+        "netclass": "HOST",
         "pattern": "VBUS_USB"
+      },
+      {
+        "netclass": "HOST",
+        "pattern": "/*/VBUS_USB"
+      },
+      {
+        "netclass": "HOST",
+        "pattern": "unconnected-(C19-*"
+      },
+      {
+        "netclass": "HOST",
+        "pattern": "unconnected-(C20-*"
+      },
+      {
+        "netclass": "HOST",
+        "pattern": "unconnected-(C21-*"
+      },
+      {
+        "netclass": "HOST",
+        "pattern": "unconnected-(C22-*"
+      },
+      {
+        "netclass": "HOST",
+        "pattern": "unconnected-(C23-*"
+      },
+      {
+        "netclass": "HOST",
+        "pattern": "unconnected-(C25-*"
+      },
+      {
+        "netclass": "HOST",
+        "pattern": "unconnected-(J8-*"
+      },
+      {
+        "netclass": "HOST",
+        "pattern": "unconnected-(R8-*"
+      },
+      {
+        "netclass": "HOST",
+        "pattern": "unconnected-(R9-*"
+      },
+      {
+        "netclass": "HOST",
+        "pattern": "unconnected-(R10-*"
+      },
+      {
+        "netclass": "HOST",
+        "pattern": "unconnected-(R38-*"
+      },
+      {
+        "netclass": "HOST",
+        "pattern": "unconnected-(R39-*"
+      },
+      {
+        "netclass": "HOST",
+        "pattern": "unconnected-(R40-*"
+      },
+      {
+        "netclass": "HOST",
+        "pattern": "unconnected-(U6-*"
+      },
+      {
+        "netclass": "HOST",
+        "pattern": "unconnected-(U9-*"
       }
     ]
   },

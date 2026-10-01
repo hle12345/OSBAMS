@@ -29,10 +29,21 @@ CLASSES = {
 }
 
 
+HOST_REFS = ("C19", "C20", "C21", "C22", "C23", "C25", "J8", "R8", "R9", "R10", "R38", "R39", "R40", "U6", "U9")   # host-island parts (U7 straddles; none of its pins is unconnected)
+
+
+def is_host_net(name):
+    """HOST domain membership of a PCB net name ('/<sheet>/NAME' or plain; 'unconnected-(REF-...)' nets of host-island parts count as host)."""
+    short = name.split('/')[-1]
+    return short in HOST_NETS or any(short.startswith(f"unconnected-({r}-") for r in HOST_REFS)
+
+
 def pro_net_settings():
     return {"meta": {"version": 4},
             "classes": [dict(name=n, clearance=c, track_width=w, via_diameter=0.6, via_drill=0.3) for n, (c, w, _) in CLASSES.items()],
-            "netclass_patterns": [dict(netclass=n, pattern=net) for n, (_, _, nets) in CLASSES.items() for net in sorted(nets)]}
+            # the board carries the schematic's net names ('/<sheet>/NAME' for sheet-local nets, plain for global ones): match both
+            "netclass_patterns": [dict(netclass=n, pattern=pat) for n, (_, _, nets) in CLASSES.items() for net in sorted(nets) for pat in (net, "/*/" + net)]
+                                 + [dict(netclass="HOST", pattern=f"unconnected-({r}-*") for r in HOST_REFS]}
 
 
 def dru_text():

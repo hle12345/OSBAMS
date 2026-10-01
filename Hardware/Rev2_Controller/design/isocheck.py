@@ -24,21 +24,21 @@ def polys_for(b, layer, host):
     for fp in b.GetFootprints():
         for pad in fp.Pads():
             net = pad.GetNetname()
-            if not net or not pad.IsOnLayer(layer) or ((net in NC.HOST_NETS) != host):
+            if not net or not pad.IsOnLayer(layer) or (NC.is_host_net(net) != host):
                 continue
             sp = pcbnew.SHAPE_POLY_SET()
             pad.TransformShapeToPolygon(sp, layer, 0, ERR, pcbnew.ERROR_OUTSIDE)
             add(sp, f"pad {fp.GetReference()}.{pad.GetNumber()} [{net}]")
     for t in b.GetTracks():
         net = t.GetNetname()
-        if not net or ((net in NC.HOST_NETS) != host) or not t.IsOnLayer(layer):
+        if not net or (NC.is_host_net(net) != host) or not t.IsOnLayer(layer):
             continue
         sp = pcbnew.SHAPE_POLY_SET()
         t.TransformShapeToPolygon(sp, layer, 0, ERR, pcbnew.ERROR_OUTSIDE)
         add(sp, f"{'via' if t.GetClass() == 'PCB_VIA' else 'track'} [{net}]")
     for z in b.Zones():
         net = z.GetNetname()
-        if not net or ((net in NC.HOST_NETS) != host) or not z.IsOnLayer(layer):
+        if not net or (NC.is_host_net(net) != host) or not z.IsOnLayer(layer):
             continue
         add(z.GetFilledPolysList(layer), f"zone fill [{net}]")
     return ps, labels

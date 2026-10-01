@@ -11,8 +11,20 @@ RC = B.RC
 W = B.W
 
 
+def update_pro_patterns():
+    """netclass patterns must match both plain and '/<sheet>/NAME' net names (the board carries the schematic's names)."""
+    from design import netclasses as NC
+    path = os.path.join(RC, "OSBAMS_Rev2_RC1.kicad_pro")
+    d = json.load(open(path))
+    d.setdefault("net_settings", {})["netclass_patterns"] = NC.pro_net_settings()["netclass_patterns"]
+    json.dump(d, open(path, "w"), indent=2)
+
+
 def chroot_steps():
     B.kc(f"cd {W} && python3 -m design.silkfix")
+    B.kc(f"cd {W}/OSBAMS_Rev2_RELEASE_CANDIDATE_1 && {B.CLI} sch export netlist --format kicadsexpr -o {W}/build/rc1.net {B.SCH}")
+    B.kc(f"cd {W} && python3 -m design.parity {W}/build/rc1.net")
+    update_pro_patterns()
     B.kc(f"cd {W} && python3 -m design.route fill")
     B.drc()
     open(os.path.join(RC, 'ISOLATION_CHECK.txt'), 'w').write(B.kc(f"cd {W} && python3 -m design.isocheck"))

@@ -48,7 +48,7 @@ def route():
 
 
 def drc():
-    kc(f"cd {W}/OSBAMS_Rev2_RELEASE_CANDIDATE_1 && {CLI} pcb drc --severity-all --format report --units mm -o {W}/OSBAMS_Rev2_RELEASE_CANDIDATE_1/DRC_REPORT.rpt {PCB}")
+    kc(f"cd {W}/OSBAMS_Rev2_RELEASE_CANDIDATE_1 && {CLI} pcb drc --schematic-parity --severity-all --format report --units mm -o {W}/OSBAMS_Rev2_RELEASE_CANDIDATE_1/DRC_REPORT.rpt {PCB}")
 
 
 def outputs():

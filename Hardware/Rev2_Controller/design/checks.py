@@ -72,7 +72,7 @@ def diode_polarity(boarddata, comps):
     errs, notes = [], []
     for ref, net in EXPECTED_CATHODE.items():
         f = boarddata["footprints"][ref]
-        padnet = {p["num"]: p["net"] for p in f["pads"]}
+        padnet = {p["num"]: p["net"].split("/")[-1] for p in f["pads"]}
         if padnet.get("1") != net:
             errs.append(f"{ref}: pad 1 (cathode by KiCad convention) is on {padnet.get('1')}, expected {net}")
         cp = cathode_pad_from_library(f["fpid"]) if not f["fpid"].startswith("LED") else None
@@ -86,11 +86,8 @@ def pcb_vs_schematic(netlist, boarddata):
     """Compare every (ref, pad) net in the PCB with the KiCad schematic netlist."""
     sch = {}
     for name, nodes in netlist.items():
-        short = name.split('/')[-1]
-        if short.startswith('unconnected-'):
-            short = ''
-        for ref, pin in nodes:
-            sch[(ref, pin)] = short
+        for ref, pin in nodes:                 # exact net names: the board must carry the schematic's names ('/<sheet>/NAME', 'unconnected-(...)')
+            sch[(ref, pin)] = name
     errs, n = [], 0
     for ref, f in boarddata["footprints"].items():
         for p in f["pads"]:
