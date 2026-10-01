@@ -12,7 +12,7 @@ RISK = {
     "EXCEEDED_ABS_MAX": ["ina228_cm", "ina228_diff_max", "lmr_en", "lmr_limits", "stm32_io", "stm32_vrefint_range", "q_vdss", "vo610a_led_vr", "vo610a_ratings", "dg57_pickup",
                          "dg57_vmax", "tvs15", "bat54s_ir", "bat54s_vf"],
     "WRONG_FOOTPRINT": ["conn_footprints", "conn_pitch", "lmr_pkg"],
-    "UNSAFE_PROTECTION": ["tvs48", "tvs48_820", "tvs48_ipp", "dg57_dc1", "ina228_status"],
+    "UNSAFE_PROTECTION": ["tvs48", "tvs48_820", "tvs48_ipp", "rs_pulse_rating", "tvs_leakage", "dg57_dc1", "ina228_status"],
 }
 NOTES = {
     "vo610a_pinout": "DIP-4 opto: wrong pin order would make both status inputs dead; relayed pinout matches the netlist.",
@@ -36,7 +36,9 @@ NOTES = {
     "conn_footprints": "stock KiCad footprints; geometry beyond pitch/pin count not checked against the manufacturer drawings (J5, J6, J7, J8, J9). OPEN until the drawings are compared.",
     "conn_pitch": "pitch and pin count match.",
     "lmr_pkg": "KiCad SOT-23-6 vs the TI DDC land pattern (pitch/pin numbering match; land pattern not compared).",
-    "tvs48": "protection analysis closed in calculations 2b using the relayed clamp points.",
+    "rs_pulse_rating": "OPEN: Panasonic ERJ-P08F pulse-energy/surge rating and exact orderable suffix not read; the pack-sense protection is not fully closed until it is.",
+    "tvs_leakage": "OPEN: Bourns 1.5SMBJ48A leakage maximum vs voltage/temperature not read; sets the Kelvin-line offset error (4 mA per uA) and the PACK_INA error (47 uV per uA).",
+    "tvs48": "protection analysis (model) in calculations 2b uses the relayed clamp points; NOT fully closed (see rs_pulse_rating, tvs_leakage).",
     "tvs48_820": "same (the 8/20 us point exceeds 85 V; the added series resistors keep the credible set within the limit).",
     "tvs48_ipp": "same.",
     "dg57_dc1": "relay DC rating >> the 10 A / 44 V ceiling.",
@@ -117,11 +119,11 @@ def pre_pcbway_checklist():
 
 Baseline: OSBAMS Rev.2 Controller RC1.2 (project `OSBAMS_Rev2_RC1.kicad_pro`). This package contains **no Gerbers**: export them yourself from the final PCB. The design is **not** called final or released for fabrication.
 
-1. **Open the exact project in KiCad 10** (`OSBAMS_Rev2_RC1.kicad_pro` with the `.kicad_sch` sheets, `OSBAMS_Rev2.kicad_sym`, `OSBAMS_Rev2.pretty/`, `sym-lib-table`, `fp-lib-table`, `OSBAMS_Rev2_RC1.kicad_dru`). Keep the `.kicad_dru` next to the `.kicad_pro` (it holds the 1.0 mm isolation rule and the INA228 fine-pitch exemption).
+1. **Open the exact project in KiCad 10** (`OSBAMS_Rev2_RC1.kicad_pro` with the `.kicad_sch` sheets, `OSBAMS_Rev2.kicad_sym`, `OSBAMS_Rev2.pretty/`, `sym-lib-table`, `fp-lib-table`, `OSBAMS_Rev2_RC1.kicad_dru`). Keep the `.kicad_dru` next to the `.kicad_pro` (it holds the 1.0 mm isolation rule and the INA228 fine-pitch exemption). Confirm it is active: Board Setup → Design Rules → Custom Rules must list `isolation_host_to_controller`, `isolation_controller_to_host` and `fine_pitch_ina228` without syntax errors; the DRC must then give 0 violations (`ISOLATION_RULE_CHECK.txt` shows the build container's proof).
 2. **Local ERC** — expected 0 errors, 0 warnings.
 3. **Local DRC** — run with "all violations", re-fill all zones first (Edit → Fill all zones). Expected 0 violations, 0 unconnected, 0 footprint errors. Any difference from `DRC_REPORT.rpt` must be explained before continuing.
 4. **Connector drawings** — compare J5, J6, J7, J8, J9 against the official manufacturer drawings using `CONNECTOR_FOOTPRINT_CHECK.md` (or send me the five PDFs).
-5. **Manufacturer PDFs** for the entries classified as wrong-pinout risk in `EVIDENCE_RISK_CLASSIFICATION.md` (INA228, LMR14006Y, IRLML0060, VO610A, TC74) — send them to move those entries from USER_RELAYED to VERIFIED_LOCAL.
+5. **Manufacturer PDFs:** (a) the five connector drawings; (b) Panasonic ERJ-P08F datasheet (pulse rating, suffix) and Bourns 1.5SMBJ datasheet (leakage vs voltage/temperature) — needed to close the pack-sense protection; (c) the entries classified as wrong-pinout risk in `EVIDENCE_RISK_CLASSIFICATION.md` (INA228, LMR14006Y, IRLML0060, VO610A, TC74) — send them to move those entries from USER_RELAYED to VERIFIED_LOCAL.
 6. **Edit the silkscreen text** `NOT FOR FABRICATION` / revision line to your release wording (silkscreen only; no copper change), then save.
 7. **Export Gerbers and drills from KiCad 10** (File → Fabrication Outputs): copper F.Cu/In1.Cu/In2.Cu/B.Cu, F/B mask, F/B silkscreen, F/B paste, Edge.Cuts; Excellon drill with PTH and NPTH in separate files and a drill map; use the board origin consistently.
 8. **Gerber viewer inspection** (KiCad Gerber viewer or another viewer): check layer count/order, outline, drill vs pad alignment, mask openings on 0.5 mm-pitch parts, silkscreen not over pads, polarity marks, the GND_HOST island and its gap.
@@ -148,14 +150,17 @@ Checked with KiCad 10.0.6 in the build container (`BUILD_ENVIRONMENT.md`):
 - **ERC: {s['erc']} violations.** **DRC: {s['drc_viol']} violations, {s['drc_unconn']} unconnected pads, {s['drc_fp']} footprint errors** (types: {drc_types}). **Netlist vs PCB: {len(net_errs)} mismatches.** Diode/LED polarity: {'PASS' if not pol_errs else 'FAIL'}.
 - **Isolation:** every HOST-net item keeps ≥ 1.0 mm from every controller-net item on all layers (custom DRC rule; 3.0 mm in the ISO7721 area) — `ISOLATION_CHECK.txt`.
 - **Pack-level clearance:** 0.2 mm class (IPC-2221B B4 0.13 mm × 1.5), INA228 courtyard exempt at 0.15 mm — see `FABRICATION_NOTES.md`; PCBWay capability to be confirmed in their tool.
-- **Pack-sense protection:** series surge resistors R41 (47 Ω) and R42/R43 (10 Ω) upstream of the 1.5SMBJ48A diodes; credible-transient analysis (interruption bound ≤ 18.5 A → ≤ 76.5 V, hot-plug simulation ≤ 60 V, limit 85 V) = **PASS** — `REV2_CALCULATIONS.md` §2b.
+- **Pack-sense protection — PASS under model assumptions, NOT fully closed:** series surge resistors R41 (47 Ω) and R42/R43 (10 Ω) upstream of the 1.5SMBJ48A diodes; defined-transient model: ≤ 76.5 V (interruption bound ≤ 18.5 A), hot-plug ≤ 60 V, limit 85 V. Open source values: ERJ-P08F pulse rating/suffix (Panasonic) and 1.5SMBJ48A leakage (Bourns). Surge-capability numbers are model results, not validated limits — `REV2_CALCULATIONS.md` §2b.
+- **CP2102N VBUS divider:** R38 19.1 kΩ / R39 47.5 kΩ — +0.12 V margin to VIH at VBUS 4.40 V / VDD 3.6 V / 1 % resistors (the 22.1 k reference is −16 mV there); pin ≤ 3.77 V at 5.25 V (limit 5.6 V) — §8.
+- **Custom rule check:** `ISOLATION_RULE_CHECK.txt` shows the `.kicad_dru` is applied when the project is opened from a fresh folder (clean 0 violations; tightened rule → 131).
 - **Buck:** XDR 12.0 V ±1 %; maximum continuous controller input 14.4 V; 24.4 V transient treated separately (pulse skipping, millivolt-level rail excursion) — §3.
 - **IRLML0060:** kept; margin ≈ 7× the coil load by estimate; RDS(on) at 3.3 V not claimed as guaranteed; first-article measurements mandatory — §4.
 - **Evidence:** VERIFIED_LOCAL {c['VERIFIED_LOCAL']} · USER_RELAYED_MANUFACTURER {c['USER_RELAYED_MANUFACTURER']} · UNVERIFIED {c['UNVERIFIED']}; classified by consequence in `EVIDENCE_RISK_CLASSIFICATION.md`. Read locally: ISO7721, CP2102N, SRN6045TA-100M, EB21A drawing.
 - **Outputs:** schematic PDF, BOM xlsx/csv (Qty, MPN, suffix status, source, DNP), CPL, assembly drawing, copper-layer PDF, assembly/fabrication notes, test-point map, power-tree/calculation report, DFM/DFA report, supply-chain report, evidence register, reconciliation, connector check, pre-PCBWay checklist, TC74 probe project (`probe/`).
 
 ## BLOCKERS BEFORE PCBWAY ORDER
-1. **Connector footprints (J5 Molex ×2, J7 JST, J8 GCT USB-C, J9 Samtec) not compared with the official drawings** — `CONNECTOR_FOOTPRINT_CHECK.md` (drawings needed).
+1. **Connector footprints (J5 Molex ×2, J7 JST, J8 GCT USB-C, J9 Samtec) not compared with the official drawings** — `CONNECTOR_FOOTPRINT_CHECK.md` (drawings needed; none supplied, manufacturer sites unreachable).
+1a. **Pack-sense protection source values unread:** Panasonic ERJ-P08F pulse rating/suffix and Bourns 1.5SMBJ48A leakage vs voltage/temperature — protection is not fully closed until they are.
 2. **Wrong-pinout-class datasheets still USER_RELAYED** (INA228, LMR14006Y, IRLML0060, VO610A, TC74): they match the netlist but the PDFs have not been read — `EVIDENCE_RISK_CLASSIFICATION.md`.
 3. **Your local actions** in `PRE_PCBWAY_RELEASE_CHECKLIST.md`: KiCad 10 ERC/DRC, Gerber/drill export, Gerber viewer inspection, PCBWay CAM and CPL inspection, stock/substitution review ({len(crit)} critical register entries are not VERIFIED_LOCAL).
 4. Open measured/first-article items are listed in `EVIDENCE_RISK_CLASSIFICATION.md` and are **not** order blockers.

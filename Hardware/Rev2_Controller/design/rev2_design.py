@@ -39,7 +39,7 @@ def _r(val, mpn_val, pkg="0603", note=""):
 
 
 for v, m in (("10", "10R0"), ("100", "100R"), ("220", "220R"), ("1k", "1K00"), ("2.2k", "2K20"), ("3.3k", "3K30"), ("4.7k", "4K70"),
-             ("5.1k", "5K10"), ("5.6k", "5K60"), ("6.2k", "6K20"), ("10k", "10K0"), ("22.1k", "22K1"), ("33.2k", "33K2"), ("47k", "47K0"), ("47.5k", "47K5"), ("100k", "100K"), ("270k", "270K"), ("1M", "1M00")):
+             ("5.1k", "5K10"), ("5.6k", "5K60"), ("6.2k", "6K20"), ("10k", "10K0"), ("19.1k", "19K1"), ("33.2k", "33K2"), ("47k", "47K0"), ("47.5k", "47K5"), ("100k", "100K"), ("270k", "270K"), ("1M", "1M00")):
     _r(v, m)
 _r("4.7k", "4K70", "1206", " (pulse-rated relay-feedback chain)")
 for v, m in (("47", "47R0"), ("10", "10R0")):
@@ -187,8 +187,8 @@ add("R10", "R0603_1M", S4, {1: "USB_SHIELD", 2: "GND_HOST"}, "1M")
 add("C19", "C4n7", S4, {1: "USB_SHIELD", 2: "GND_HOST"}, "4.7nF 100V")
 add("U9", "U_ESD", S4, {1: "USB_DP_J", 6: "USB_DP", 3: "USB_DM_J", 4: "USB_DM", 2: "GND_HOST", 5: "VBUS_USB"}, "USBLC6-2SC6")
 add("U6", "U_CP", S4, {"VBUS": "CP_VBUS_SENSE", "VREGIN": "VBUS_USB", "VDD": "3V3_HOST", "9": "CP_RSTB", "D+": "USB_DP", "D-": "USB_DM", "GND": "GND_HOST", "RXD": "UART_RX_HOST", "TXD": "UART_TX_HOST"}, "CP2102N")
-add("R38", "R0603_22.1k", S4, {1: "VBUS_USB", 2: "CP_VBUS_SENSE"}, "22.1k", note="CP2102N VBUS sense divider (Silicon Labs reference, relayed): 22.1 k upper")
-add("R39", "R0603_47.5k", S4, {1: "CP_VBUS_SENSE", 2: "GND_HOST"}, "47.5k", note="CP2102N VBUS sense divider: 47.5 k lower")
+add("R38", "R0603_19.1k", S4, {1: "VBUS_USB", 2: "CP_VBUS_SENSE"}, "19.1k", note="CP2102N VBUS sense divider upper resistor: Silicon Labs reference uses 22.1 k; 19.1 k gives positive margin to VIH = VDD-0.6 V at VBUS 4.40 V / VDD 3.6 V / 1 % resistors (see calculations 8)")
+add("R39", "R0603_47.5k", S4, {1: "CP_VBUS_SENSE", 2: "GND_HOST"}, "47.5k", note="CP2102N VBUS sense divider lower resistor (Silicon Labs reference value)")
 add("R40", "R0603_1k", S4, {1: "CP_RSTB", 2: "3V3_HOST"}, "1k", note="CP2102N RSTb 1 kOhm pull-up to VDD (Silicon Labs datasheet 2.1, read locally)")
 add("C20", "C4u7", S4, {1: "VBUS_USB", 2: "GND_HOST"}, "4.7uF")
 add("C21", "C100n", S4, {1: "VBUS_USB", 2: "GND_HOST"}, "100nF")

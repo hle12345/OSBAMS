@@ -114,7 +114,7 @@ Worst hot-plug case over all combinations **with the resistors fitted**: TVS cur
 
 With Rs = 0 the clamp at the 18.5 A bound is 76.5 V (margin 8.5 V); with the series resistors the interrupted current is dissipated mainly in Rs (≤ ½·L·I² = 342 µJ for 2 µH at 18.5 A — far inside a 1206 anti-surge resistor) and the TVS current is far below 18.5 A.
 
-**Beyond the credible set — open-circuit surge capability** (8/20 µs, source impedance 2 Ω; TVS current solved against the clamp curve; resistor energy ≈ I²·R·13 µs [UV]; the credible set above is ≤ 100 V-class, i.e. ≤ 1.3 mJ in R42/R43 and ≤ 0.4 mJ in R41):
+**Model results only — NOT validated design limits** (open-circuit surge, 8/20 µs, source impedance 2 Ω; TVS current solved against the clamp curve; resistor energy ≈ I²·R·13 µs [UV]; the credible set above is ≤ 100 V-class, i.e. ≤ 1.3 mJ in R42/R43 and ≤ 0.4 mJ in R41):
 
 | Voc | Rs | TVS current | VC (INA node) | within 85 V? | energy in Rs |
 |---|---|---|---|---|---|
@@ -134,7 +134,7 @@ With Rs = 0 the clamp at the 18.5 A bound is 76.5 V (margin 8.5 V); with the ser
 | 1000 V | 47 Ω | 18.8 A | 76.9 V | yes | 216.9 mJ |
 | 2000 V | 47 Ω | 39.1 A | 83.3 V | yes | 934.9 mJ |
 
-With 10 Ω (Kelvin lines) the INA nodes stay ≤ 85 V up to ≈ 600 V open-circuit; with 47 Ω (VBUS) up to ≈ 2 kV; the 1206 resistor, not the TVS, is then the sacrificial element (its failure is fail-safe: the INA228 reads wrong/zero and the independent PA1 ADC cross-check/INA-error fault drives the safe state).
+These rows are **model results**: the clamp curve is a straight line between two rating points [UV], the waveform is assumed, the 1.5SMBJ48A dynamic impedance and the ERJ-P08F pulse rating have not been read from the datasheets. **No 600 V / 2 kV protection limit is claimed.**
 
 **Measurement-error budget of the new resistors:**
 - INA228 input bias 2.5 nA [UR] × 20 Ω per Kelvin line = 50 nV worst case unmatched (20 µA of shunt-current equivalent); with matched 1 % resistors the common component cancels (< 1 pV difference) — negligible vs the ±1 µV offset.
@@ -144,7 +144,14 @@ With 10 Ω (Kelvin lines) the INA nodes stay ≤ 85 V up to ≈ 600 V open-circu
 - Common mode: both Kelvin lines carry identical series resistance, so the common-mode level (≤ 44 V, limit 85 V) and the bias-current common-mode shift cancel; the TVS pair clamps each line to ground, so a one-sided transient is limited to the TVS clamp (differential absolute maximum of the INA228 inputs was not relayed [UV]).
 - Normal 44 V operation: VRWM 48 V > 44 V and VBR min 53.3 V > 44 V (no conduction); resistor dissipation at DC ≈ 0 (bias/leakage only); 1206 working voltage ≫ 44 V [UV].
 
-**Result: PASS.** Credible worst-case voltage at any INA228 pack-sense pin: hot-plug ≤ 60 V, forced interruption ≤ 76.5 V with Rs = 0 and far lower with the resistors; limit 85 V. Not closed by sign-off: closed by the bound (TVS current ≤ interrupted current ≤ 18.5 A) plus the added series resistance. A lower-voltage TVS is rejected (standoff/leakage vs the 44 V ceiling).
+**Recomputed values for the defined transient (model; source values marked [UV] are unverified):**
+- Resistor pulse energy: forced interruption at 18.5 A / 2 µH: R41 371 µJ, R42/R43 271 µJ (= ½·L·I² = 342 µJ upper bound); hot-plug into the 100 nF on VBUS: R41 ≤ 83 µJ. **The ERJ-P08F pulse-energy/surge rating has not been read from the Panasonic datasheet [UV] — these energies cannot be called safe until it is.**
+- PACK_INA error from TVS leakage × 47 Ω: 47 µV per µA of leakage (1.1 ppm of 44 V per µA); the Bourns leakage maximum at 44 V and temperature has not been read [UV]; even 10 µA would give 0.47 mV (11 ppm).
+- Shunt-offset error from leakage × 10 Ω: 10 µV per µA of mismatch = 4 mA of shunt-current equivalent per µA (0.04 % at 10 A); a leakage-vs-temperature figure ≥ 5 µA would give ≥ 20 mA — decided by the Bourns datasheet [UV] and measured at first article.
+- Continuous dissipation: R41 carries the VBUS input current (≈ 53 µA at 44 V [UV]) plus leakage: (55 µA)² × 47 Ω ≈ 0.14 µW; R42/R43 carry only bias/leakage (≪ 1 µW) — against a 0.5 W class 1206 rating this is irrelevant; the rating itself is unread [UV].
+- Worst-case INA228 node voltage in the defined transient: **76.5 V** (forced-interruption bound, Rs = 0, worst-case clamp knee 58.9 V → 77.4 V at 19.4 A) and ≤ 59.5 V in the hot-plug simulation; limit 85 V.
+
+**Result: PASS under the stated model assumptions — NOT fully closed.** Open source values: (1) ERJ-P08F pulse-energy/surge rating (Panasonic datasheet) and exact orderable suffix; (2) 1.5SMBJ48A leakage maximum vs voltage/temperature and its dynamic impedance (Bourns datasheet). A lower-voltage TVS is rejected (standoff/leakage vs the 44 V ceiling).
 
 ## 3. Buck LMR14006Y: 12 V → 3.3 V
 
@@ -267,18 +274,22 @@ ISO7721 has **no isolated power**: VCC1 = +3V3 (100 nF, controller GND); VCC2 = 
 
 **ISO7721 pin map (TI SLLSEP3G Table 5-1, read locally):** 1 VCC1, 2 OUTA, 3 INB, 4 GND1, 5 GND2, 6 OUTB, 7 INA, 8 VCC2. Channel A runs side 2 → side 1 (INA pin 7 ← CP2102N TXD, OUTA pin 2 → STM32 PA3 RX); channel B runs side 1 → side 2 (INB pin 3 ← STM32 PA2 TX, OUTB pin 6 → CP2102N RXD). The ISO7721 (no suffix) default output is HIGH, matching UART idle; supply 2.25-5.5 V on each side. (The RC1 symbol had followed the ISO7720 table — corrected in RC1.1.)
 
-**CP2102N (Silicon Labs datasheet rev. 1.5, read locally):** the bus-powered reference divides VBUS with 22.1 kΩ (upper) and 47.5 kΩ (lower) → R38/R39. VBUS-pin input-high threshold VIH = VIO − 0.6 V, absolute maximum VIO + 2.5 V (5.8 V when VIO > 3.3 V); VIO = VDD = 3V3_HOST (3.1-3.6 V):
+**CP2102N VBUS sense (Silicon Labs datasheet rev. 1.5, read locally):** a resistor divider (or equivalent) on VBUS is required. Datasheet limits: VBUS-pin input-high VIH = VIO − 0.6 V (VIO = VDD = 3V3_HOST, 3.1-3.3-3.6 V from the 100 mA regulator); VIL ≤ 0.6 V; absolute maximum VIN = VIO + 2.5 V (5.6 V at VDD 3.1 V; 5.8 V for VIO > 3.3 V); the reference connection uses 22.1 kΩ (upper) / 47.5 kΩ (lower).
 
-| VBUS_USB | VBUS pin | divider current | vs VIH (VDD = 3.3 V → 2.7 V; VDD = 3.6 V → 3.0 V) |
-|---|---|---|---|
-| 4.4 V | 3.00 V | 63 µA | OK (margin +0.00 V at the worst VDD) |
-| 4.75 V | 3.24 V | 68 µA | OK (margin +0.24 V at the worst VDD) |
-| 5.0 V | 3.41 V | 72 µA | OK (margin +0.41 V at the worst VDD) |
-| 5.25 V | 3.58 V | 75 µA | OK (margin +0.58 V at the worst VDD) |
+Worst-case margin of the **detection** limit: pin voltage = VBUS × R2(−1 %) / (R1(+1 %) + R2(−1 %)) must be ≥ VIH max = VDD max − 0.6 V = 3.0 V; VBUS minimum = 4.40 V (USB 2.0 low-power minimum) or 4.75 V (standard downstream port; a Raspberry Pi host port supplies ≈ 5 V); **absolute maximum** margin at VBUS 5.25 V with the divider ratio at its maximum, against 5.6 V.
 
-VBUS is detected for VBUS_USB ≥ 3.96 V (VDD 3.3 V) / 4.40 V (VDD 3.6 V worst case — equal to the 4.40 V USB minimum, no margin there; the typical case has ≈ 0.4 V margin); the pin never exceeds 3.58 V (abs max ≥ 5.8 V). Regulator: VREGIN 3.0-5.25 V, VDD 3.1-3.6 V, IREGOUT 100 mA **total including the device** (IDD 9.5-13.7 mA + 0.23 mA USB pull-up + ISO7721 VCC2 ≈ 1-3 mA ≈ 17 mA → ≈ 80 mA margin). Datasheet items added in RC1.1: **1 kΩ RSTb pull-up to VDD (R40)** and **4.7 µF + 0.1 µF at VDD (C22 raised from 1 µF)**. USBLC6-2SC6 ESD protection stays (datasheet recommends USB ESD diodes).
+| R1 (upper) / R2 | ratio min / nom / max (1 %) | pin @ 4.40 V (min ratio) | margin vs VIH 3.0 V (VDD 3.6 V) | margin vs VIH 2.7 V (VDD 3.3 V) | pin @ 4.75 V | pin @ 5.25 V (max ratio) | margin to 5.6 V | VBUS current into the divider if VDD = 0 (5.25 V) |
+|---|---|---|---|---|---|---|---|---|
+| 22.1 k / 47.5 k (reference) | 0.6781 / 0.6825 / 0.6868 | 2.984 V | -0.016 V | +0.284 V | 3.221 V | 3.606 V | +1.99 V | 0.21 mA |
+| 20.0 k / 47.5 k | 0.6995 / 0.7037 / 0.7079 | 3.078 V | +0.078 V | +0.378 V | 3.323 V | 3.716 V | +1.88 V | 0.23 mA |
+| 19.1 k / 47.5 k **← RC1.2** | 0.7091 / 0.7132 / 0.7173 | 3.120 V | +0.120 V | +0.420 V | 3.368 V | 3.766 V | +1.83 V | 0.24 mA |
+| 18.2 k / 47.5 k | 0.7190 / 0.7230 / 0.7270 | 3.163 V | +0.163 V | +0.463 V | 3.415 V | 3.817 V | +1.78 V | 0.26 mA |
+
+**Result:** the reference 22.1 k / 47.5 k network meets the detection limit with margin at VBUS ≥ 4.75 V (+0.22 V at the worst VDD) but is **short by 16 mV** at the coincident worst corner (VBUS 4.40 V, VDD 3.6 V, both resistors 1 % adverse). R1 = 19.1 kΩ (E96, R38) with R2 = 47.5 kΩ gives **+0.12 V** at that corner (+0.42 V at VDD 3.3 V) and a worst-case pin voltage of 3.77 V at VBUS 5.25 V (limit 5.6 V → +1.83 V). The VBUS current with VDD = 0 (device unpowered; the datasheet notes the VIO + 2.5 V limit is then not strictly met and relies on the divider's current limit) rises from 0.21 mA to 0.24 mA (+16 %); the datasheet gives no limit for that current [UV]. The change is a deliberate departure from the reference value based on the datasheet equations, not an arbitrary one. Detection from the typical VDD 3.3 V starts at VBUS = 3.98 V (reference) vs 3.79 V (RC1.2).
+
+Regulator: VREGIN 3.0-5.25 V, VDD 3.1-3.6 V, IREGOUT 100 mA **total including the device** (IDD 9.5-13.7 mA + 0.23 mA USB pull-up + ISO7721 VCC2 ≈ 1-3 mA ≈ 17 mA → ≈ 80 mA margin). Datasheet items: **1 kΩ RSTb pull-up to VDD (R40)** and **4.7 µF + 0.1 µF at VDD (C22)**. USBLC6-2SC6 ESD protection stays (datasheet recommends USB ESD diodes).
 
 ## 9. Evidence summary
 
-VERIFIED_LOCAL 11 · USER_RELAYED_MANUFACTURER 50 · UNVERIFIED 17 (total 78). Critical entries not yet VERIFIED_LOCAL: **29** — these are fabrication gates, not schematic/layout gates.
+VERIFIED_LOCAL 11 · USER_RELAYED_MANUFACTURER 50 · UNVERIFIED 17 (total 78). Critical entries not yet VERIFIED_LOCAL: **31** — these are fabrication gates, not schematic/layout gates.
 

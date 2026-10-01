@@ -16,6 +16,7 @@ def chroot_steps():
     B.kc(f"cd {W} && python3 -m design.route fill")
     B.drc()
     open(os.path.join(RC, 'ISOLATION_CHECK.txt'), 'w').write(B.kc(f"cd {W} && python3 -m design.isocheck"))
+    open(os.path.join(RC, 'ISOLATION_RULE_CHECK.txt'), 'w').write('Custom-rule activity check (design/isorule_test.py, KiCad 10.0.6): the project is copied to a fresh folder and DRC is run.\n' + B.kc(f"cd {W} && python3 -m design.isorule_test"))
     open(os.path.join(ROOT, 'build', 'connfp.txt'), 'w').write(B.kc(f"cd {W} && python3 -m design.connfp"))
     B.outputs()
     B.kc(f"cd {W}/OSBAMS_Rev2_RELEASE_CANDIDATE_1 && {B.CLI} sch export netlist --format kicadsexpr -o {W}/build/rc1.net {B.SCH}")

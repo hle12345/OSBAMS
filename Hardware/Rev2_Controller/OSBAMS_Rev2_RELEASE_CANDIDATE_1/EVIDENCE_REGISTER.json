@@ -514,7 +514,7 @@
    "value": null,
    "unit": "",
    "evidence": "UNVERIFIED",
-   "critical": false,
+   "critical": true,
    "source": "assumption / proposal - needs the manufacturer document",
    "doc": null
   },
@@ -525,7 +525,7 @@
    "value": 1e-06,
    "unit": "A",
    "evidence": "UNVERIFIED",
-   "critical": false,
+   "critical": true,
    "source": "assumption / proposal - needs the manufacturer document",
    "doc": null
   },
@@ -598,8 +598,8 @@
   {
    "id": "cp_vbus_div",
    "part": "CP2102N",
-   "parameter": "VBUS divider 22.1 k / 47.5 k (R38/R39); VBUS VIH = VIO - 0.6 V, abs max VIO + 2.5 V",
-   "value": "22.1 k / 47.5 k",
+   "parameter": "VBUS sense divider required; Silicon Labs reference 22.1 k / 47.5 k (VIH = VIO-0.6 V, abs max VIO+2.5 V); RC1.2 uses R38 19.1 k / R39 47.5 k for positive margin at VBUS 4.40 V (calculations 8)",
+   "value": "19.1 k / 47.5 k",
    "unit": "",
    "evidence": "VERIFIED_LOCAL",
    "critical": true,

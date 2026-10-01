@@ -36,7 +36,7 @@
 | C19 | GRM21BR72A472KA01L | Murata | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | TDK C2012X7R2A472K125AA (UNVERIFIED alternate) |
 | U9, U10 | USBLC6-2SC6 | STMicroelectronics | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Nexperia IP4220CZ6 (UNVERIFIED alternate) |
 | U6 | CP2102N-A02-GQFN20 | Silicon Labs | VERIFIED_LOCAL | UNKNOWN (not checked) | PCBWay source | CP2102N-A02-GQFN24 (needs QFN24 footprint) (UNVERIFIED alternate) |
-| R38 | CRCW060322K1FKEA | Vishay Dale | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Yageo RC0603-FR-07 series (UNVERIFIED alternate) |
+| R38 | CRCW060319K1FKEA | Vishay Dale | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Yageo RC0603-FR-07 series (UNVERIFIED alternate) |
 | R39 | CRCW060347K5FKEA | Vishay Dale | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Yageo RC0603-FR-07 series (UNVERIFIED alternate) |
 | U7 | ISO7721DR | Texas Instruments | VERIFIED_LOCAL | UNKNOWN (not checked) | PCBWay source | ISO7721DWR (wide body) (UNVERIFIED alternate) |
 | J5 | 22-27-2031 | Molex | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Molex 22-23-2031 (UNVERIFIED alternate) |

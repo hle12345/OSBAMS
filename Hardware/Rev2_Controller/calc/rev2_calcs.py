@@ -156,7 +156,7 @@ def tvs_vs_ina():
                 ipk, vnpk, vppk, e = _sim(44.0, 0.3, 2e-6, rs_u, 1e-9, rn, cn, i0=i0, tmax=3e-6)
                 w(f"| {i0} A | 2 µH | {name}, Rs = {rs_u:.0f} Ω | {min(ipk, i0):.1f} A | {max(_tvs_v(min(ipk, i0)), 0):.1f} V | {e * 1e6:.0f} µJ |")
     w(f"\nWith Rs = 0 the clamp at the 18.5 A bound is {_tvs_v(18.5):.1f} V (margin {85 - _tvs_v(18.5):.1f} V); with the series resistors the interrupted current is dissipated mainly in Rs (≤ ½·L·I² = {0.5 * 2e-6 * 18.5 ** 2 * 1e6:.0f} µJ for 2 µH at 18.5 A — far inside a 1206 anti-surge resistor) and the TVS current is far below 18.5 A.\n")
-    w("**Beyond the credible set — open-circuit surge capability** (8/20 µs, source impedance 2 Ω; TVS current solved against the clamp curve; resistor energy ≈ I²·R·13 µs [UV]; the credible set above is ≤ 100 V-class, i.e. ≤ 1.3 mJ in R42/R43 and ≤ 0.4 mJ in R41):\n")
+    w("**Model results only — NOT validated design limits** (open-circuit surge, 8/20 µs, source impedance 2 Ω; TVS current solved against the clamp curve; resistor energy ≈ I²·R·13 µs [UV]; the credible set above is ≤ 100 V-class, i.e. ≤ 1.3 mJ in R42/R43 and ≤ 0.4 mJ in R41):\n")
     w("| Voc | Rs | TVS current | VC (INA node) | within 85 V? | energy in Rs |\n|---|---|---|---|---|---|")
     for rs in (0.0, 10.0, 47.0):
         for voc in (100, 300, 600, 1000, 2000):
@@ -165,7 +165,7 @@ def tvs_vs_ina():
                 i = max(0.0, (voc - _tvs_v(i)) / (rs + 2.0))
             vc = _tvs_v(i)
             w(f"| {voc} V | {rs:.0f} Ω | {i:.1f} A | {vc:.1f} V | {'yes' if vc <= 85 else '**no**'} | {i * i * rs * 13e-6 * 1e3:.1f} mJ |")
-    w("\nWith 10 Ω (Kelvin lines) the INA nodes stay ≤ 85 V up to ≈ 600 V open-circuit; with 47 Ω (VBUS) up to ≈ 2 kV; the 1206 resistor, not the TVS, is then the sacrificial element (its failure is fail-safe: the INA228 reads wrong/zero and the independent PA1 ADC cross-check/INA-error fault drives the safe state).\n")
+    w("\nThese rows are **model results**: the clamp curve is a straight line between two rating points [UV], the waveform is assumed, the 1.5SMBJ48A dynamic impedance and the ERJ-P08F pulse rating have not been read from the datasheets. **No 600 V / 2 kV protection limit is claimed.**\n")
     w("**Measurement-error budget of the new resistors:**")
     w(f"- INA228 input bias {V('ina228_bias') * 1e9:.1f} nA{t('ina228_bias')} × 20 Ω per Kelvin line = {V('ina228_bias') * 20 * 1e9:.0f} nV worst case unmatched ({V('ina228_bias') * 20 / 2.5e-3 * 1e6:.0f} µA of shunt-current equivalent); with matched 1 % resistors the common component cancels (< 1 pV difference) — negligible vs the ±1 µV offset.")
     w("- TVS leakage drops across R42/R43 (10 Ω each): up to 1 µA [UV; leakage not relayed] × 10 Ω = 10 µV worst-case line-to-line mismatch = 4 mA of shunt-current equivalent (0.04 % at 10 A; 0.4 mA for a typical 0.1 µA). This is the price of the Kelvin resistors and is why they are 10 Ω rather than 47 Ω; it is removed by the no-load zero calibration only if leakage is stable — verify at first article (shunt voltage at 0 A, 25 °C and warm).")
@@ -173,7 +173,16 @@ def tvs_vs_ina():
     w("- Filtering: differential Kelvin filter = 2 × 20 Ω with C26 100 nF → fc ≈ 40 kHz (τ 4 µs ≪ the INA228 conversion time ≥ 50 µs → no effect on logging or the ALERT latency); VBUS: 57 Ω with C28 100 nF → fc ≈ 28 kHz.")
     w("- Common mode: both Kelvin lines carry identical series resistance, so the common-mode level (≤ 44 V, limit 85 V) and the bias-current common-mode shift cancel; the TVS pair clamps each line to ground, so a one-sided transient is limited to the TVS clamp (differential absolute maximum of the INA228 inputs was not relayed [UV]).")
     w("- Normal 44 V operation: VRWM 48 V > 44 V and VBR min 53.3 V > 44 V (no conduction); resistor dissipation at DC ≈ 0 (bias/leakage only); 1206 working voltage ≫ 44 V [UV].")
-    w("\n**Result: PASS.** Credible worst-case voltage at any INA228 pack-sense pin: hot-plug ≤ " + f"{wp:.0f} V" + f", forced interruption ≤ {_tvs_v(18.5):.1f} V with Rs = 0 and far lower with the resistors; limit 85 V. Not closed by sign-off: closed by the bound (TVS current ≤ interrupted current ≤ 18.5 A) plus the added series resistance. A lower-voltage TVS is rejected (standoff/leakage vs the 44 V ceiling).\n")
+    e41 = _sim(44.0, 0.3, 2e-6, 47.0, 1e-9, 10.0, 100e-9, i0=18.5, tmax=3e-6)[3]
+    e42 = _sim(44.0, 0.3, 2e-6, 10.0, 1e-9, 10.0, 20e-12, i0=18.5, tmax=3e-6)[3]
+    ehp = max(_sim(44.0, 0.3, lh, 47.0, ct, 10.0, 100e-9, tmax=max(4e-6, 6 * 57 * 100e-9), dt=0.1e-9)[3] for lh in (0.5e-6, 5e-6) for ct in (0.3e-9, 3e-9))
+    w("\n**Recomputed values for the defined transient (model; source values marked [UV] are unverified):**")
+    w(f"- Resistor pulse energy: forced interruption at 18.5 A / 2 µH: R41 {e41 * 1e6:.0f} µJ, R42/R43 {e42 * 1e6:.0f} µJ (= ½·L·I² = {0.5 * 2e-6 * 18.5 ** 2 * 1e6:.0f} µJ upper bound); hot-plug into the 100 nF on VBUS: R41 ≤ {ehp * 1e6:.0f} µJ. **The ERJ-P08F pulse-energy/surge rating has not been read from the Panasonic datasheet [UV] — these energies cannot be called safe until it is.**")
+    w("- PACK_INA error from TVS leakage × 47 Ω: 47 µV per µA of leakage (1.1 ppm of 44 V per µA); the Bourns leakage maximum at 44 V and temperature has not been read [UV]; even 10 µA would give 0.47 mV (11 ppm).")
+    w("- Shunt-offset error from leakage × 10 Ω: 10 µV per µA of mismatch = 4 mA of shunt-current equivalent per µA (0.04 % at 10 A); a leakage-vs-temperature figure ≥ 5 µA would give ≥ 20 mA — decided by the Bourns datasheet [UV] and measured at first article.")
+    w("- Continuous dissipation: R41 carries the VBUS input current (≈ 53 µA at 44 V [UV]) plus leakage: (55 µA)² × 47 Ω ≈ 0.14 µW; R42/R43 carry only bias/leakage (≪ 1 µW) — against a 0.5 W class 1206 rating this is irrelevant; the rating itself is unread [UV].")
+    w(f"- Worst-case INA228 node voltage in the defined transient: **{_tvs_v(18.5):.1f} V** (forced-interruption bound, Rs = 0, worst-case clamp knee 58.9 V → 77.4 V at 19.4 A) and ≤ {wp:.1f} V in the hot-plug simulation; limit 85 V.")
+    w(f"\n**Result: PASS under the stated model assumptions — NOT fully closed.** Open source values: (1) ERJ-P08F pulse-energy/surge rating (Panasonic datasheet) and exact orderable suffix; (2) 1.5SMBJ48A leakage maximum vs voltage/temperature and its dynamic impedance (Bourns datasheet). A lower-voltage TVS is rejected (standoff/leakage vs the 44 V ceiling).\n")
 
 
 # ------------------------------------------------------------------ 3 buck
@@ -293,12 +302,19 @@ def power():
 
 def host_usb():
     w(f"**ISO7721 pin map (TI SLLSEP3G Table 5-1, read locally{t('iso_pinmap')}):** 1 VCC1, 2 OUTA, 3 INB, 4 GND1, 5 GND2, 6 OUTB, 7 INA, 8 VCC2. Channel A runs side 2 → side 1 (INA pin 7 ← CP2102N TXD, OUTA pin 2 → STM32 PA3 RX); channel B runs side 1 → side 2 (INB pin 3 ← STM32 PA2 TX, OUTB pin 6 → CP2102N RXD). The ISO7721 (no suffix) default output is HIGH, matching UART idle; supply 2.25-5.5 V on each side{t('iso_supply')}. (The RC1 symbol had followed the ISO7720 table — corrected in RC1.1.)\n")
-    w(f"**CP2102N (Silicon Labs datasheet rev. 1.5, read locally{t('cp_vbus_div')}):** the bus-powered reference divides VBUS with 22.1 kΩ (upper) and 47.5 kΩ (lower) → R38/R39. VBUS-pin input-high threshold VIH = VIO − 0.6 V, absolute maximum VIO + 2.5 V (5.8 V when VIO > 3.3 V); VIO = VDD = 3V3_HOST (3.1-3.6 V):\n")
-    w("| VBUS_USB | VBUS pin | divider current | vs VIH (VDD = 3.3 V → 2.7 V; VDD = 3.6 V → 3.0 V) |\n|---|---|---|---|")
-    for v in (4.4, 4.75, 5.0, 5.25):
-        pin = v * 47.5 / 69.6
-        w(f"| {v} V | {pin:.2f} V | {v / 69.6e3 * 1e6:.0f} µA | {'OK' if pin >= 3.0 else 'FAIL'} (margin {pin - 3.0:+.2f} V at the worst VDD) |")
-    w(f"\nVBUS is detected for VBUS_USB ≥ {2.7 / 0.6825:.2f} V (VDD 3.3 V) / {3.0 / 0.6825:.2f} V (VDD 3.6 V worst case — equal to the 4.40 V USB minimum, no margin there; the typical case has ≈ 0.4 V margin); the pin never exceeds {5.25 * 47.5 / 69.6:.2f} V (abs max ≥ 5.8 V). Regulator: VREGIN 3.0-5.25 V, VDD 3.1-3.6 V, IREGOUT 100 mA **total including the device** (IDD 9.5-13.7 mA + 0.23 mA USB pull-up + ISO7721 VCC2 ≈ 1-3 mA ≈ 17 mA → ≈ 80 mA margin){t('cp_vdd')}. Datasheet items added in RC1.1: **1 kΩ RSTb pull-up to VDD (R40)** and **4.7 µF + 0.1 µF at VDD (C22 raised from 1 µF)**{t('cp_rstb')}. USBLC6-2SC6 ESD protection stays (datasheet recommends USB ESD diodes).\n")
+    vm = V("cp_vbus_div")
+    w(f"**CP2102N VBUS sense (Silicon Labs datasheet rev. 1.5, read locally{t('cp_vbus_div')}):** a resistor divider (or equivalent) on VBUS is required. Datasheet limits: VBUS-pin input-high VIH = VIO − 0.6 V (VIO = VDD = 3V3_HOST, 3.1-3.3-3.6 V from the 100 mA regulator); VIL ≤ 0.6 V; absolute maximum VIN = VIO + 2.5 V (5.6 V at VDD 3.1 V; 5.8 V for VIO > 3.3 V); the reference connection uses 22.1 kΩ (upper) / 47.5 kΩ (lower).\n")
+    w("Worst-case margin of the **detection** limit: pin voltage = VBUS × R2(−1 %) / (R1(+1 %) + R2(−1 %)) must be ≥ VIH max = VDD max − 0.6 V = 3.0 V; VBUS minimum = 4.40 V (USB 2.0 low-power minimum) or 4.75 V (standard downstream port; a Raspberry Pi host port supplies ≈ 5 V); **absolute maximum** margin at VBUS 5.25 V with the divider ratio at its maximum, against 5.6 V.\n")
+    w("| R1 (upper) / R2 | ratio min / nom / max (1 %) | pin @ 4.40 V (min ratio) | margin vs VIH 3.0 V (VDD 3.6 V) | margin vs VIH 2.7 V (VDD 3.3 V) | pin @ 4.75 V | pin @ 5.25 V (max ratio) | margin to 5.6 V | VBUS current into the divider if VDD = 0 (5.25 V) |\n|---|---|---|---|---|---|---|---|---|")
+    for r1 in (22.1e3, 20.0e3, 19.1e3, 18.2e3):
+        r2 = 47.5e3
+        rmin = r2 * 0.99 / (r1 * 1.01 + r2 * 0.99); rmax = r2 * 1.01 / (r1 * 0.99 + r2 * 1.01); rnom = r2 / (r1 + r2)
+        mark = " **← RC1.2**" if r1 == 19.1e3 else (" (reference)" if r1 == 22.1e3 else "")
+        w(f"| {r1 / 1e3:.1f} k / 47.5 k{mark} | {rmin:.4f} / {rnom:.4f} / {rmax:.4f} | {4.40 * rmin:.3f} V | {4.40 * rmin - 3.0:+.3f} V | {4.40 * rmin - 2.7:+.3f} V | {4.75 * rmin:.3f} V | {5.25 * rmax:.3f} V | {5.6 - 5.25 * rmax:+.2f} V | {(5.25 - 0.6) / r1 * 1e3:.2f} mA |")
+    r1 = 19.1e3; r2 = 47.5e3
+    rmin = r2 * 0.99 / (r1 * 1.01 + r2 * 0.99)
+    w(f"\n**Result:** the reference 22.1 k / 47.5 k network meets the detection limit with margin at VBUS ≥ 4.75 V (+{4.75 * 47.5 * 0.99 / (22.1 * 1.01 + 47.5 * 0.99) - 3.0:.2f} V at the worst VDD) but is **short by 16 mV** at the coincident worst corner (VBUS 4.40 V, VDD 3.6 V, both resistors 1 % adverse). R1 = 19.1 kΩ (E96, R38) with R2 = 47.5 kΩ gives **+{4.40 * rmin - 3.0:.2f} V** at that corner (+{4.40 * rmin - 2.7:.2f} V at VDD 3.3 V) and a worst-case pin voltage of {5.25 * r2 * 1.01 / (r1 * 0.99 + r2 * 1.01):.2f} V at VBUS 5.25 V (limit 5.6 V → +{5.6 - 5.25 * r2 * 1.01 / (r1 * 0.99 + r2 * 1.01):.2f} V). The VBUS current with VDD = 0 (device unpowered; the datasheet notes the VIO + 2.5 V limit is then not strictly met and relies on the divider's current limit) rises from {(5.25 - 0.6) / 22.1e3 * 1e3:.2f} mA to {(5.25 - 0.6) / 19.1e3 * 1e3:.2f} mA (+16 %); the datasheet gives no limit for that current [UV]. The change is a deliberate departure from the reference value based on the datasheet equations, not an arbitrary one. Detection from the typical VDD 3.3 V starts at VBUS = {2.7 / 0.6780:.2f} V (reference) vs {2.7 / ((r2) / (r1 + r2)):.2f} V (RC1.2).\n")
+    w(f"Regulator: VREGIN 3.0-5.25 V, VDD 3.1-3.6 V, IREGOUT 100 mA **total including the device** (IDD 9.5-13.7 mA + 0.23 mA USB pull-up + ISO7721 VCC2 ≈ 1-3 mA ≈ 17 mA → ≈ 80 mA margin){t('cp_vdd')}. Datasheet items: **1 kΩ RSTb pull-up to VDD (R40)** and **4.7 µF + 0.1 µF at VDD (C22)**{t('cp_rstb')}. USBLC6-2SC6 ESD protection stays (datasheet recommends USB ESD diodes).\n")
 
 
 def register():
