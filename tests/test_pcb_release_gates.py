@@ -49,13 +49,50 @@ class TestReleaseGates(unittest.TestCase):
     def test_rev2_architecture_doc_is_the_design_phase_deliverable(self):
         d = os.path.join(ROOT, "Hardware", "Rev2_Controller")
         t = open(os.path.join(d, "REV2_CONTROLLER_ARCHITECTURE.md")).read()
-        for kw in ("Block diagram", "MCU decision", "schematic section list", "Pin assignment", "Power tree",
-                   "INA228 / shunt calculation", "Independent ADC", "Relay driver calculation",
-                   "E-stop / ARM / relay-feedback", "Connector / interface table", "Preliminary BOM", "Open questions"):
+        for kw in ("Block diagram", "MCU: direct STM32", "Pin assignment", "Power tree", "Measurement",
+                   "E-stop / ARM / relay-feedback", "Connectors and test points", "Preliminary BOM", "Open items",
+                   "Locked decisions", "Relay driver"):
             self.assertIn(kw.lower(), t.lower(), kw)
-        self.assertEqual([f for f in os.listdir(d) if f.endswith((".kicad_sch", ".kicad_pcb"))], [],
-                         "no Rev.2 KiCad files before the architecture is approved")
+        for must in ("I²C2", "no 5 V rail", "GND only", "not frozen", "SHUNT_CAL 1250"):
+            self.assertIn(must.lower(), t.lower(), must)
+        for f in ("REV2_CALCULATIONS.md", "REV2_PRELIM_BOM.csv", "REV2_BLOCK_DIAGRAM.png", "REV2_BLOCK_DIAGRAM.svg",
+                  "DATASHEET_VERIFICATION.md"):
+            self.assertTrue(os.path.getsize(os.path.join(d, f)) > 0, f)
         self.assertTrue(os.path.isdir(os.path.join(ROOT, "legacy", "reference", "rev1_kicad")))
+
+    def _inputs(self):
+        return json.load(open(os.path.join(ROOT, "Hardware", "Rev2_Controller", "calc", "datasheet_inputs.json")))["inputs"]
+
+    def test_no_rev2_schematic_while_critical_datasheet_inputs_are_unverified(self):
+        d = os.path.join(ROOT, "Hardware", "Rev2_Controller")
+        crit = [k for k, v in self._inputs().items() if v.get("critical") and not v["verified"]]
+        kicad = []
+        for r, _, fs in os.walk(d):
+            kicad += [f for f in fs if f.endswith((".kicad_sch", ".kicad_pcb", ".kicad_pro"))]
+        if crit:
+            self.assertEqual(kicad, [], f"KiCad files exist while critical datasheet inputs are unverified: {crit}")
+        for k, v in self._inputs().items():
+            if v["verified"]:
+                self.assertTrue(v["doc"], f"{k} marked verified without a document reference")
+
+    def test_calculations_are_current_and_say_blocked_while_unverified(self):
+        d = os.path.join(ROOT, "Hardware", "Rev2_Controller")
+        before = open(os.path.join(d, "REV2_CALCULATIONS.md")).read()
+        subprocess.run([sys.executable, os.path.join(d, "calc", "rev2_calcs.py")], check=True, capture_output=True)
+        after = open(os.path.join(d, "REV2_CALCULATIONS.md")).read()
+        self.assertEqual(before, after, "REV2_CALCULATIONS.md is stale: re-run calc/rev2_calcs.py")
+        if any(not v["verified"] for v in self._inputs().values()):
+            self.assertIn("BLOCKED", after)
+
+    def test_prelim_bom_columns_and_no_unverified_part_is_marked_verified(self):
+        import csv
+        rows = list(csv.DictReader(open(os.path.join(ROOT, "Hardware", "Rev2_Controller", "REV2_PRELIM_BOM.csv"))))
+        for c in ("Ref", "Qty", "Manufacturer", "MPN", "KiCad footprint", "Status", "Datasheet verified"):
+            self.assertIn(c, rows[0])
+        verified = [r["Ref"] for r in rows if r["Datasheet verified"].upper() == "YES"]
+        if any(not v["verified"] for v in self._inputs().values()):
+            self.assertEqual(verified, [], "BOM claims datasheet verification that the input register does not support")
+        self.assertNotIn("IRLZ44", " ".join(r["MPN"] for r in rows if r["Ref"] == "Q1"))
 
     def test_plan_covers_all_mandatory_items_and_is_not_applied(self):
         plan = open(os.path.join(PCB, "REV2_SCHEMATIC_PCB_PLAN.md")).read()

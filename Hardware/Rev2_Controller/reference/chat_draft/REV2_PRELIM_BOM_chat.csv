@@ -1,0 +1,73 @@
+Ref,Qty,Description,Manufacturer,MPN,KiCad footprint (stock lib unless noted),Status,Assembly,Notes
+"J1,J2,J3,J4",4,"2-pos screw terminal 5.00 mm 8 A/300 V 16-26 AWG (12V_IN, ESTOP, ARM, COIL)",Adam Tech,EB21A-02-C,custom: draw from Adam Tech EB21A drawing (pitch 5.00 mm; verify drill/keep-out),PURCHASED,THT,Mouser 91854909 L6 (qty 5 owned). Side-interlocking. Not keyed: polarity by silkscreen
+F1,1,"Fuse 1 A fast, 1206, >=32 VDC",Littelfuse,0453001.MR,Fuse:Fuse_1206_3216Metric,SELECTED,SMT,12 V control input; ~2.5x the 0.22 A load
+D1,1,TVS 15 V standoff 600 W unidirectional (12 V rail),Littelfuse,SMBJ15A,Diode_SMD:D_SMB,PURCHASED,SMT,"Mouser 91854909 L7. Standard Device:D_TVS symbol, K = pin 1"
+D2,1,"Schottky 5 A 60 V, series reverse-polarity",Vishay,SB560-E3/73,Diode_THT:D_DO-201AD_P15.24mm_Horizontal,PURCHASED,THT,Mouser 91854909 L2. Oversized for 0.22 A; SMT alt (SS34/SS36 class) open question Q11
+C1,1,10 uF 25 V Al electrolytic (12 V bulk),Panasonic,ECA-1EM100I,Capacitor_THT:CP_Radial_D5.0mm_P2.00mm,PURCHASED,THT,Mouser 91665418 L10 (qty 5 owned)
+C2,1,10 uF 50 V X7R 1210 (buck input),Murata,GRM32ER71H106KA12L,Capacitor_SMD:C_1210_3225Metric,SELECTED,SMT,verify DC-bias derating
+U2,1,"Step-down converter 4.5-28 V in, 2 A, 5 V out",Texas Instruments,TPS54202DDCR,Package_TO_SOT_SMD:SOT-23-6,SELECTED,SMT,Vref 0.596 V [verify]; 12 -> 5 V only as the intermediate rail
+L1,1,"Inductor 10 uH shielded, Isat >= 2.5 A",Bourns,SRN6045TA-100M,Inductor_SMD:L_Bourns_SRN6045TA,SELECTED,SMT,verify Isat / DCR
+R1,1,73.2 kohm 1 % 0.125 W thick film,Vishay Dale,CRCW080573K2FKEA,Resistor_SMD:R_0805_2012Metric,SELECTED,SMT,5 V feedback top (-> 4.96 V)
+C3,1,100 nF 25 V 5 % X7R,Vishay,VJ0805Y104JXXAT,Capacitor_SMD:C_0805_2012Metric,PURCHASED,SMT,Mouser 91939009 L2 (qty 2 owned). buck bootstrap
+"C4,C5",2,22 uF 10 V X5R 0805 (5 V output),Murata,GRM21BR61A226ME44L,Capacitor_SMD:C_0805_2012Metric,SELECTED,SMT,derated ~50 % at 5 V
+U3,1,"LDO 3.3 V 600 mA, SOT-25",Diodes Inc.,AP2112K-3.3TRG1,Package_TO_SOT_SMD:SOT-23-5,SELECTED,SMT,5 V -> 3V3; dissipation 0.26 W at 150 mA
+"C6,C7",2,10 uF 10 V X5R 0805 (LDO in/out),Murata,GRM21BR61A106KE19L,Capacitor_SMD:C_0805_2012Metric,SELECTED,SMT,
+FB1,1,Ferrite bead 600 ohm @100 MHz (3V3A),Murata,BLM18PG601SN1D,Inductor_SMD:L_0603_1608Metric,SELECTED,SMT,VDDA / INA228 supply filter; verify current rating
+U1,1,"STM32L476RGT6 MCU, LQFP-64",STMicroelectronics,STM32L476RGT6,Package_QFP:LQFP-64_10x10mm_P0.5mm,SELECTED,SMT,"same silicon as the Rev.1 Nucleo; HSI16 -> PLL 80 MHz, no crystal"
+C8-C14,7,100 nF 25 V 5 % X7R,Vishay,VJ0805Y104JXXAT,Capacitor_SMD:C_0805_2012Metric,PURCHASED,SMT,"Mouser 91939009 L2 (qty 2 owned). STM32 VDD x4, VDDA, VBAT, INA228 VS"
+C15,1,4.7 uF 10 V X5R 0805 (MCU bulk),Murata,GRM21BR61A475KA73L,Capacitor_SMD:C_0805_2012Metric,SELECTED,SMT,
+C16,1,1 uF 16 V X7R 0805 (VDDA),Murata,GRM21BR71C105KA01L,Capacitor_SMD:C_0805_2012Metric,SELECTED,SMT,
+SW1,1,"Tactile switch, reset",C&K,PTS810SJM250SMTRLFS,Button_Switch_SMD:SW_SPST_PTS810,SELECTED,SMT,
+J9,1,SWD header 2x5 1.27 mm shrouded keyed (Cortex Debug),Samtec,FTSH-105-01-L-DV-K,Connector_PinHeader_1.27mm:PinHeader_2x05_P1.27mm_Vertical_SMD,SELECTED,SMT,Nucleo ST-LINK can drive it with jumper wires
+JP1,1,BOOT0 2-pin header + jumper,Samtec,TSW-102-07-G-S,Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical,SELECTED,THT,BOOT0 default low via 10 k
+"D3,D4",2,"LED green 0805 (3V3 power, PA5 heartbeat)",Wurth Elektronik,150080GS75000,LED_SMD:LED_0805_2012Metric,SELECTED,SMT,
+D5,1,LED amber 0805 (coil energized),Wurth Elektronik,150080AS75000,LED_SMD:LED_0805_2012Metric,SELECTED,SMT,COIL_V -> 2.2 k -> LED -> COIL_SW: lights only while Q1 conducts
+J8,1,"USB-C receptacle USB 2.0, 16-pin",GCT,USB4105-GF-A,Connector_USB:USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal,SELECTED,SMT+THT,sink device: 2 x 5.1 k on CC
+U6,1,USB-to-UART bridge QFN24,Silicon Labs,CP2102N-A02-GQFN24,Package_DFN_QFN:QFN-24-1EP_4x4mm_P0.5mm_EP2.6x2.6mm,SELECTED,SMT,host side; VDD 3.3 V from internal regulator [verify]
+U7,1,"Dual-channel digital isolator 5 kV, 1 fwd / 1 rev",Texas Instruments,ISO7721DR,Package_SO:SOIC-8_3.9x4.9mm_P1.27mm,SELECTED,SMT,breaks the host ground path
+U8,1,USB ESD protection,STMicroelectronics,USBLC6-2SC6,Package_TO_SOT_SMD:SOT-23-6,SELECTED,SMT,
+U4,1,"INA228 power monitor, VSSOP-10",Texas Instruments,INA228AIDGSR,Package_SO:VSSOP-10_3x3mm_P0.5mm,SELECTED,SMT,address 0x40 (A0 = A1 = GND)
+J5,1,"3-pos KK 254 header vertical (SHUNT_KELVIN: IN+, IN-, SHIELD)",Molex,22-27-2031,Connector_Molex:Molex_KK-254_AE-6410-03A_1x03_P2.54mm_Vertical,SELECTED,THT,mate: 22-01-3037 housing + 08-50-0114 crimps
+J6,1,"4-pos KK 254 header vertical (PACK_SENSE: PACK_INA, PACK_ADC, RELAY_OUT, GND_SENSE)",Molex,22-27-2041,Connector_Molex:Molex_KK-254_AE-6410-04A_1x04_P2.54mm_Vertical,SELECTED,THT,mate: 22-01-3047 + 08-50-0114
+"TVS1,TVS2",2,"TVS 48 V standoff 1500 W unidirectional (PACK_INA, IN+)",Bourns,1.5SMBJ48A,Diode_SMD:D_SMB,PURCHASED,SMT,Mouser 91665418 L2 (qty 2 owned)
+"R3,R4",2,10 ohm 1 % 0.125 W thick film,Vishay Dale,CRCW080510R0FKEA,Resistor_SMD:R_0805_2012Metric,SELECTED,SMT,Kelvin input filter
+C17,1,"100 nF X7R 0805, differential across IN+/IN-",Vishay,VJ0805Y104JXXAT,Capacitor_SMD:C_0805_2012Metric,PURCHASED,SMT,fc 80 kHz with 2 x 10 ohm
+"R6,R7",2,75 kohm 0.1 % 25 ppm 0.125 W thin film,Vishay Dale,TNPW080575K0BEEA,Resistor_SMD:R_0805_2012Metric,SELECTED,SMT,divider top (150 k total)
+R8,1,10 kohm 0.1 % 25 ppm 0.125 W thin film,Vishay Dale,TNPW080510K0BEEA,Resistor_SMD:R_0805_2012Metric,SELECTED,SMT,divider bottom
+"R9,R19",2,1 kohm 1 % 0.125 W thick film,Vishay Dale,CRCW08051K00FKEA,Resistor_SMD:R_0805_2012Metric,SELECTED,SMT,"series: ADC_SENSE, ARM_SENSE"
+"R29,R30",2,1 kohm 1 % 0.125 W thick film,Vishay Dale,CRCW08051K00FKEA,Resistor_SMD:R_0805_2012Metric,SELECTED,SMT,"LED current (3V3 power, heartbeat)"
+"R31,R32",2,10 kohm 1 % 0.125 W thick film,Vishay Dale,CRCW080510K0FKEA,Resistor_SMD:R_0805_2012Metric,SELECTED,SMT,BOOT0 pull-down; INA228 ALERT pull-up
+"R33,R34",2,5.1 kohm 1 % 0.125 W thick film,Vishay Dale,CRCW08055K10FKEA,Resistor_SMD:R_0805_2012Metric,SELECTED,SMT,USB-C CC1/CC2 (sink)
+R35,1,100 kohm 1 % 0.125 W thick film,Vishay Dale,CRCW0805100KFKEA,Resistor_SMD:R_0805_2012Metric,SELECTED,SMT,TPS54202 EN pull-up to 12 V rail
+C23-C26,4,100 nF 25 V 5 % X7R,Vishay,VJ0805Y104JXXAT,Capacitor_SMD:C_0805_2012Metric,PURCHASED,SMT,Mouser 91939009 L2 (qty 2 owned). ISO7721 VCC1/VCC2 x2 decoupling
+"C27,C28",2,1 uF 16 V X7R 0805 (CP2102N VREGIN / VDD),Murata,GRM21BR71C105KA01L,Capacitor_SMD:C_0805_2012Metric,SELECTED,SMT,verify against CP2102N reference design
+"C18,C21",2,100 nF 25 V 5 % X7R,Vishay,VJ0805Y104JXXAT,Capacitor_SMD:C_0805_2012Metric,PURCHASED,SMT,"Mouser 91939009 L2 (qty 2 owned). ADC pin filter, ARM filter"
+"D6,D7",2,Dual series Schottky SOT-23 (clamp to 3V3/GND),Nexperia,"BAT54S,215",Package_TO_SOT_SMD:SOT-23,SELECTED,SMT,"ADC_SENSE, ARM_SENSE"
+Q1,1,"N-MOSFET 55 V 47 A logic level, TO-220 (relay low-side)",Infineon,IRLZ44NPBF,Package_TO_SOT_THT:TO-220-3_Vertical,PURCHASED,THT,Mouser 91665418 L8 (qty 2 owned). Oversized; kept for parity with Rev.1
+R10,1,220 ohm 1 % 0.125 W thick film,Vishay Dale,CRCW0805220RFKEA,Resistor_SMD:R_0805_2012Metric,SELECTED,SMT,gate series
+R11,1,10 kohm 1 % 0.125 W thick film,Vishay Dale,CRCW080510K0FKEA,Resistor_SMD:R_0805_2012Metric,SELECTED,SMT,gate pull-down (safety: Q1 default OFF)
+D8,1,Rectifier 3 A 1000 V (coil flyback),onsemi,1N5408G,Diode_THT:D_DO-201AD_P15.24mm_Horizontal,PURCHASED,THT,Mouser 91665418 L9 (qty 2 owned). Cathode on COIL_V
+R12,1,0 ohm 1 % 0.125 W thick film,Vishay Dale,CRCW08050000Z0EA,Resistor_SMD:R_0805_2012Metric,SELECTED,SMT,link in series with D8: replace by a 27 V TVS for fast release if approved (Q5)
+R13,1,2.2 kohm 1 % 0.125 W thick film,Vishay Dale,CRCW08052K20FKEA,Resistor_SMD:R_0805_2012Metric,SELECTED,SMT,coil LED
+"U9,U10",2,"Optocoupler transistor output DIP-4 CTR 40-80 % (RELAY_FB, ESTOP_SENSE)",Vishay,VO610A-1,Package_DIP:DIP-4_W7.62mm,PURCHASED,THT,Mouser 91939009 L1 (qty 2 owned = exactly the 2 needed; buy spares)
+"D9,D10",2,Small-signal diode (LED reverse clamp),onsemi,1N4148,Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal,PURCHASED,THT,Mouser 91939009 L3 (qty 2 owned)
+R14-R17,4,3.6 kohm 1 % 0.125 W thick film,Vishay Dale,CRCW08053K60FKEA,Resistor_SMD:R_0805_2012Metric,SELECTED,SMT,RELAY_FB LED series (14.4 k total)
+R18,1,5.6 kohm 1 % 0.125 W thick film,Vishay Dale,CRCW08055K60FKEA,Resistor_SMD:R_0805_2012Metric,SELECTED,SMT,ESTOP_SENSE LED series
+"R20,R21",2,22 kohm 1 % 0.125 W thick film,Vishay Dale,CRCW080522K0FKEA,Resistor_SMD:R_0805_2012Metric,SELECTED,SMT,RELAY_FB / ESTOP_SENSE pull-ups to 3V3
+"C19,C20",2,10 nF 50 V X7R 0805,Murata,GRM216R71H103KA01D,Capacitor_SMD:C_0805_2012Metric,SELECTED,SMT,input filters PC9 / PA0
+R22,1,270 kohm 1 % 0.125 W thick film,Vishay Dale,CRCW0805270KFKEA,Resistor_SMD:R_0805_2012Metric,SELECTED,SMT,ARM divider top
+R23,1,100 kohm 1 % 0.125 W thick film,Vishay Dale,CRCW0805100KFKEA,Resistor_SMD:R_0805_2012Metric,SELECTED,SMT,ARM divider bottom
+J7,1,"4-pos JST PH 2.0 mm header vertical (TEMP_PROBE: 3V3, SDA, SCL, GND)",JST,B4B-PH-K-S,Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical,SELECTED,THT,different family from J5/J6 on purpose; mate: PHR-4 + SPH-002T-P0.5S
+"R24,R26",2,100 ohm 1 % 0.125 W thick film,Vishay Dale,CRCW0805100RFKEA,Resistor_SMD:R_0805_2012Metric,SELECTED,SMT,SDA/SCL series at the connector
+"R27,R28",2,4.7 kohm 1 % 0.125 W thick film,Vishay Dale,CRCW08054K70FKEA,Resistor_SMD:R_0805_2012Metric,SELECTED,SMT,I2C pull-ups (2.2 k alternative for long cable)
+U5,1,2-ch ESD protection for I2C/probe lines,Texas Instruments,TPD2E001DRLR,Package_TO_SOT_SMD:SOT-553,SELECTED,SMT,verify footprint (SOT-553 / DRL)
+C22,1,100 nF 25 V 5 % X7R,Vishay,VJ0805Y104JXXAT,Capacitor_SMD:C_0805_2012Metric,PURCHASED,SMT,Mouser 91939009 L2 (qty 2 owned). 3V3 at the probe connector
+TEMP PROBE,1,TC74A5-3.3VAT in TO-220-5 + 100 nF 0805 at VDD (on a separate probe board),Microchip,TC74A5-3.3VAT,Package_TO_SOT_THT:TO-220-5_Vertical,PURCHASED,Customer-fit,Mouser 91854909 L1 (qty 2 owned). VJ0805Y104JXXAT at the sensor VDD
+TP1-TP24,24,Test point pad 1.5 mm (labelled),-,(PCB feature),TestPoint:TestPoint_Pad_D1.5mm,n/a,PCB,list in architecture doc 13
+MH1-MH4,4,Mounting hole M3 (3.2 mm),-,(PCB feature),MountingHole:MountingHole_3.2mm_M3_Pad,n/a,PCB,
+FID1-FID3,3,Fiducial 1 mm,-,(PCB feature),Fiducial:Fiducial_1mm_Mask2mm,n/a,PCB,
+ACC-1,4,Mating housing KK 254 4-pos,Molex,22-01-3047,-,SELECTED,Accessory,J6
+ACC-2,1,Mating housing KK 254 3-pos,Molex,22-01-3037,-,SELECTED,Accessory,J5
+ACC-3,1,Mating housing PH 4-pos,JST,PHR-4,-,SELECTED,Accessory,J7
+ACC-4,12,Crimp terminals,Molex,08-50-0114,-,SELECTED,Accessory,KK 254
+ACC-5,4,Crimp terminals,JST,SPH-002T-P0.5S,-,SELECTED,Accessory,PH

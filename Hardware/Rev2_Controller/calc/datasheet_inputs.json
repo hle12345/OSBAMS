@@ -1,0 +1,275 @@
+{
+ "_comment": "Every number a schematic value depends on that comes from a manufacturer datasheet. verified=false means it is a placeholder/assumption (from memory, a distributor listing or the Chat draft) and MUST NOT be frozen into the schematic. Set verified=true only after reading the manufacturer PDF and filling doc (document id + table/figure/page). The offline sandbox could not reach any manufacturer site (HTTP 403 policy denial), so nothing below is verified yet.",
+ "inputs": {
+  "vo610a_ctr_min_10mA": {
+   "value": 0.4,
+   "unit": "ratio",
+   "part": "VO610A-1",
+   "need": "CTR min at IF=10 mA, VCE=5 V, 25 C (guaranteed table)",
+   "verified": false,
+   "doc": null,
+   "critical": true
+  },
+  "vo610a_ctr_min_IF_curve": {
+   "value": 0.2,
+   "unit": "ratio",
+   "part": "VO610A-1",
+   "need": "guaranteed/typical CTR vs IF curve at the actual IF (1-3 mA), min-line, or a guaranteed spec at low IF",
+   "verified": false,
+   "doc": null,
+   "critical": true
+  },
+  "vo610a_ctr_temp_derate": {
+   "value": 0.75,
+   "unit": "ratio",
+   "part": "VO610A-1",
+   "need": "CTR vs temperature over the enclosure range (-10..+60 C assumed)",
+   "verified": false,
+   "doc": null,
+   "critical": true
+  },
+  "vo610a_ctr_aging_derate": {
+   "value": 0.8,
+   "unit": "ratio",
+   "part": "VO610A-1",
+   "need": "CTR degradation allowance over life at the chosen IF (Vishay application note / datasheet)",
+   "verified": false,
+   "doc": null,
+   "critical": true
+  },
+  "vo610a_vf_at_IF": {
+   "value": 1.2,
+   "unit": "V",
+   "part": "VO610A-1",
+   "need": "LED VF max at the actual IF",
+   "verified": false,
+   "doc": null,
+   "critical": true
+  },
+  "vo610a_vcesat": {
+   "value": 0.4,
+   "unit": "V",
+   "part": "VO610A-1",
+   "need": "VCE(sat) max at the actual IC/IF",
+   "verified": false,
+   "doc": null,
+   "critical": true
+  },
+  "vo610a_led_vr_max": {
+   "value": 6.0,
+   "unit": "V",
+   "part": "VO610A-1",
+   "need": "LED reverse voltage absolute max",
+   "verified": false,
+   "doc": null,
+   "critical": false
+  },
+  "stm32_vih_frac": {
+   "value": 0.7,
+   "unit": "xVDD",
+   "part": "STM32L476RG",
+   "need": "VIH min (FT/FTf pin) as fraction of VDD",
+   "verified": false,
+   "doc": null,
+   "critical": true
+  },
+  "stm32_vil_frac": {
+   "value": 0.3,
+   "unit": "xVDD",
+   "part": "STM32L476RG",
+   "need": "VIL max as fraction of VDD",
+   "verified": false,
+   "doc": null,
+   "critical": false
+  },
+  "stm32_pa1_io_type": {
+   "value": "FT_a?",
+   "unit": "",
+   "part": "STM32L476RG",
+   "need": "I/O structure of PA1 and PC10 (5 V tolerance, presence of a diode to VDD/VDDA, behaviour in analog mode, abs-max with VDD=0)",
+   "verified": false,
+   "doc": null,
+   "critical": true
+  },
+  "stm32_vrefint_tol": {
+   "value": 0.003,
+   "unit": "ratio",
+   "part": "STM32L476RG",
+   "need": "VREFINT factory-calibrated accuracy (VREFINT_CAL at 3.0 V, temperature coefficient, 'VDDA correction' formula)",
+   "verified": false,
+   "doc": null,
+   "critical": true
+  },
+  "stm32_adc_tue_lsb": {
+   "value": 4.0,
+   "unit": "LSB",
+   "part": "STM32L476RG",
+   "need": "ADC total unadjusted error / offset+gain after calibration, 12-bit, source impedance limit for SMPR=92.5",
+   "verified": false,
+   "doc": null,
+   "critical": false
+  },
+  "stm32_por_min": {
+   "value": 1.6,
+   "unit": "V",
+   "part": "STM32L476RG",
+   "need": "power-on-reset / brown-out release threshold (min)",
+   "verified": false,
+   "doc": null,
+   "critical": true
+  },
+  "ina228_vos_max": {
+   "value": 1e-06,
+   "unit": "V",
+   "part": "INA228",
+   "need": "shunt input offset max (ADCRANGE=0)",
+   "verified": false,
+   "doc": null,
+   "critical": false
+  },
+  "ina228_abs_max_in": {
+   "value": 85.0,
+   "unit": "V",
+   "part": "INA228",
+   "need": "IN+/IN-/VBUS absolute maximum",
+   "verified": false,
+   "doc": null,
+   "critical": true
+  },
+  "ina228_shunt_cal_eq": {
+   "value": "SHUNT_CAL = 13107.2e6 * CURRENT_LSB * RSHUNT (x4 if ADCRANGE=1)",
+   "unit": "",
+   "part": "INA228",
+   "need": "equation and register limits (SHUNT_CAL max 32767)",
+   "verified": false,
+   "doc": null,
+   "critical": true
+  },
+  "ina228_lsb": {
+   "value": "VSHUNT 312.5 nV (range 0) / 78.125 nV (range 1); VBUS 195.3125 uV",
+   "unit": "",
+   "part": "INA228",
+   "need": "LSB sizes",
+   "verified": false,
+   "doc": null,
+   "critical": false
+  },
+  "ina228_bias_current": {
+   "value": 2e-09,
+   "unit": "A",
+   "part": "INA228",
+   "need": "input bias current (IN+/IN-)",
+   "verified": false,
+   "doc": null,
+   "critical": false
+  },
+  "ina228_pinout_vssop10": {
+   "value": null,
+   "unit": "",
+   "part": "INA228",
+   "need": "VSSOP-10 pin table (not in the KiCad 7 library: custom symbol needed)",
+   "verified": false,
+   "doc": null,
+   "critical": true
+  },
+  "tvs_smbj15a_vc": {
+   "value": 24.4,
+   "unit": "V",
+   "part": "SMBJ15A",
+   "need": "VRWM, VBR, VC at IPP, leakage at VRWM",
+   "verified": false,
+   "doc": null,
+   "critical": false
+  },
+  "tvs_1p5smbj48a_vc": {
+   "value": 77.4,
+   "unit": "V",
+   "part": "1.5SMBJ48A",
+   "need": "VRWM, VBR, VC at IPP, leakage at VRWM, IPP",
+   "verified": false,
+   "doc": null,
+   "critical": true
+  },
+  "relay_coil_ohm": {
+   "value": 90.0,
+   "unit": "ohm",
+   "part": "DG57CM-5021-76-1012-R",
+   "need": "coil resistance, rated coil voltage/current, pick-up/drop-out voltage, operate/release time, coil inductance, DC make/break rating at 44 V/10 A and 15 A fault",
+   "verified": false,
+   "doc": null,
+   "critical": true
+  },
+  "relay_coil_L": {
+   "value": 0.2,
+   "unit": "H",
+   "part": "DG57CM-5021-76-1012-R",
+   "need": "coil inductance (or release time with diode / diode+TVS)",
+   "verified": false,
+   "doc": null,
+   "critical": false
+  },
+  "mosfet_candidate": {
+   "value": null,
+   "unit": "",
+   "part": "SMD logic-level N-FET, >=60 V",
+   "need": "chosen part: VDSS, RDS(on) specified at VGS=2.5 V and 3.3 V, VGS(th) max, ID, Ciss, SOA, footprint",
+   "verified": false,
+   "doc": null,
+   "critical": true
+  },
+  "buck_candidate": {
+   "value": null,
+   "unit": "",
+   "part": "LMR14006 family or TPS54202",
+   "need": "VIN abs max, VREF, FB equation, fsw, Isat/inductor recommendation, minimum on-time vs 12->3.3 V, EN thresholds",
+   "verified": false,
+   "doc": null,
+   "critical": true
+  },
+  "isolator_iso7721": {
+   "value": null,
+   "unit": "",
+   "part": "ISO7721",
+   "need": "supply range both sides, default output state, pinout, creepage",
+   "verified": false,
+   "doc": null,
+   "critical": true
+  },
+  "cp2102n_package": {
+   "value": null,
+   "unit": "",
+   "part": "CP2102N",
+   "need": "choose package (KiCad 7 library holds QFN20 only; BOM candidate was QFN24), reference schematic, VREGIN/VDD behaviour, regulator output current",
+   "verified": false,
+   "doc": null,
+   "critical": true
+  },
+  "rsa_20_50": {
+   "value": null,
+   "unit": "",
+   "part": "Bourns RSA-20-50",
+   "need": "tolerance, TCR, Kelvin terminal geometry, derating",
+   "verified": false,
+   "doc": null,
+   "critical": false
+  },
+  "connectors": {
+   "value": null,
+   "unit": "",
+   "part": "Adam Tech EB21A-02-C, Molex 22-27-2031/2041, JST B4B-PH-K-S, GCT USB4105-GF-A, Samtec FTSH-105-01-L-DV-K",
+   "need": "mechanical drawings (drill, pitch, keep-out), current/voltage ratings",
+   "verified": false,
+   "doc": null,
+   "critical": true
+  },
+  "led_resistors_misc": {
+   "value": null,
+   "unit": "",
+   "part": "Wurth 150080GS75000/AS75000",
+   "need": "VF/IF for the status LEDs",
+   "verified": false,
+   "doc": null,
+   "critical": false
+  }
+ }
+}
