@@ -12,4 +12,5 @@ python3 voltage_budget.py $D
 I=../../OSBAMS_Pi_Power_Interposer_RevA_RC1
 /usr/bin/python3 build_interposer.py $I
 /usr/bin/python3 make_interposer_outputs.py $I
+python3 check_pi5_keying.py $I || true
 python3 rc2_gate.py || true

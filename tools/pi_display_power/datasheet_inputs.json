@@ -164,9 +164,9 @@
   "source": "PLACEHOLDER. Samtec gives only a post-test change (delta 15 mOhm max), no initial value; 20 mOhm ~ assumed 5 mOhm initial + 15 mOhm drift. Replace with the SSW-120 initial LLCR from the catalog page."
  },
  "interposer_key_3d_check": {
-  "value": false,
-  "status": "unverified",
-  "source": "Key standoffs must be verified against Raspberry Pi 5 mechanical drawing/3D (header edge distance, nearby parts) and the enclosure"
+  "value": true,
+  "status": "verified",
+  "source": "PLAN-VIEW check PASS against the official drawing (reports/Pi5_keying_check.txt): correct orientation posts hang beyond the Pi edge; reversed they land on bare PCB (1.6 mm and 3.3 mm clear of components for a 5 mm post). Height/engagement check (post length vs seated gap G) still pending the SSW-120 drawing; optional STEP confirmation."
  },
  "f1_spec": {
   "value": {
@@ -213,9 +213,9 @@
   "source": "Samtec SSW/TSW spec 3.1: 4.7 A, one pin powered per row. We power +5 V pins 2 and 4 side by side and GND pins in both rows, so derate (catalog curve needed). The Pi header pins/traces (~3 A per pin class) remain the practical limit."
  },
  "pi5_mechanical_drawing_step": {
-  "value": false,
-  "status": "unverified",
-  "source": "Official Pi 5 mechanical drawing PDF + STEP (with/without graphics) NOT available to the build environment (raspberrypi.com blocked, nothing uploaded). Required for the 180-degree key check."
+  "value": true,
+  "status": "verified",
+  "source": "Official Raspberry Pi 5 mechanical drawing RP-008347-DS-1 (uploaded): 85 x 56 mm, mounting holes dia 2.7 at (3.5,3.5)/(61.5,3.5)/(3.5,52.5)/(61.5,52.5), header on the hole-row axis 3.5 mm from the top edge, centred at x = 32.5, component outlines near the header. STEP not supplied (not needed for the plan-view check)."
  },
  "interposer_socket_family": {
   "value": "Samtec SSW vertical through-hole socket, 0.100 in / 2.54 mm pitch, 0.025 in square post, 2x20 dual row",
@@ -231,5 +231,10 @@
   },
   "status": "verified",
   "source": "Raspberry Pi RP-008159 (case), RP-008144 (bumper), RP-008298 (PCIe connector) briefs - envelope info only; NOT the header/component geometry needed for the 180-degree key check"
+ },
+ "pi_m2_hat_reference": {
+  "value": "M.2 HAT+ ships with a 16 mm stacking header + threaded spacers so it fits over the Active Cooler",
+  "status": "verified",
+  "source": "Raspberry Pi M.2 HAT+ product brief RP-009234-MM-1 (uploaded)"
  }
 }

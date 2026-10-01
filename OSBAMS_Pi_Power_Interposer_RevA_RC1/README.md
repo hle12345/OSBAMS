@@ -11,8 +11,8 @@
 | J2 | **2×20** gold stacking female header: all 40 positions socketed → cannot be offset along or across the header; long tails keep the Pi pins reachable for the Waveshare 5 V/GND leads. **MPN not yet chosen** |
 | Power pins | +5 V: pins 2 and 4 (2 contacts); GND: pins 6, 9, 14, 20 (4 contacts); all other pins NC (no-connects) |
 | Mounting | M1/M2: M2.5 holes at the Pi's header-end mounting holes (spacers = socket seated height) |
-| Key | two M2.5 holes (K1, K2) on the *outward* side — see `docs/Keying_analysis.md` |
+| Key | two M2.5 holes (K1 x=18.5, K2 x=43.25) 14.5 mm outward of the header axis — plan-view check vs the official Pi 5 drawing PASSES (`reports/Pi5_keying_check.txt`); see `docs/Keying_analysis.md` |
 | Isolation | `PI_GND` here is the isolated Pi-side ground only; it never touches the controller ground. No Y-capacitor |
 
 Files: `kicad/` (project, schematic, PCB), `gerbers/` + `drill/`, `bom/`, `reports/` (DRC; custom connectivity check — KiCad ERC not run here), `docs/`.
-Open: J2 MPN with published ratings, key-standoff 3D check, KiCad 10 ERC. Regenerate with `tools/pi_display_power/build_interposer.py`.
+Open: exact SSW-120 ordering code (height, post length), KiCad 10 ERC. Regenerate with `tools/pi_display_power/build_interposer.py`.

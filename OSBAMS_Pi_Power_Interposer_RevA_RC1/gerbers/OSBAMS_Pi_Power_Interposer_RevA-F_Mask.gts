@@ -1,12 +1,12 @@
 %TF.GenerationSoftware,KiCad,Pcbnew,7.0.11+dfsg-1build4*%
-%TF.CreationDate,2026-10-01T15:13:50+00:00*%
+%TF.CreationDate,2026-10-01T17:36:48+00:00*%
 %TF.ProjectId,OSBAMS_Pi_Power_Interposer_RevA,4f534241-4d53-45f5-9069-5f506f776572,rev?*%
 %TF.SameCoordinates,Original*%
 %TF.FileFunction,Soldermask,Top*%
 %TF.FilePolarity,Negative*%
 %FSLAX46Y46*%
 G04 Gerber Fmt 4.6, Leading zero omitted, Abs format (unit mm)*
-G04 Created by KiCad (PCBNEW 7.0.11+dfsg-1build4) date 2026-10-01 15:13:50*
+G04 Created by KiCad (PCBNEW 7.0.11+dfsg-1build4) date 2026-10-01 17:36:48*
 %MOMM*%
 %LPD*%
 G01*
@@ -37,17 +37,14 @@ G04 Aperture macros list end*
 %ADD15C,1.500000*%
 G04 APERTURE END LIST*
 D10*
-%TO.C,M2*%
-X61500000Y-20000000D03*
-%TD*%
 %TO.C,K1*%
-X38370000Y-5500000D03*
+X18500000Y-5500000D03*
 %TD*%
 %TO.C,K2*%
-X56370000Y-5500000D03*
+X43250000Y-5500000D03*
 %TD*%
-%TO.C,M1*%
-X3500000Y-20000000D03*
+%TO.C,M2*%
+X61500000Y-20000000D03*
 %TD*%
 D11*
 %TO.C,J2*%
@@ -102,5 +99,9 @@ D15*
 X27370000Y-11100000D03*
 X24370000Y-14100000D03*
 X27370000Y-14100000D03*
+%TD*%
+D10*
+%TO.C,M1*%
+X3500000Y-20000000D03*
 %TD*%
 M02*

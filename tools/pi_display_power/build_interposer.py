@@ -52,7 +52,7 @@ for i, x in enumerate((3.5, 61.5), 1):
     pd.SetLayerSet(pd.UnplatedHoleMask()); pd.SetShape(pcbnew.PAD_SHAPE_CIRCLE); pd.SetDrillSize(P(2.7, 2.7)); k.Add(pd)
     k.Reference().SetLayer(pcbnew.F_Fab); k.Value().SetVisible(False); b.Add(k)
 # Key standoff holes (M2.5 NPTH 2.7 mm) on the OUTWARD side: reversed (180 deg) fitting would put them over the Pi PCB
-for i, (x, y) in enumerate([(34.0 + DX, 5.5), (52.0 + DX, 5.5)], 1):
+for i, (x, y) in enumerate([(18.5, 5.5), (43.25, 5.5)], 1):
     k = pcbnew.FOOTPRINT(b); k.SetReference(f"K{i}"); k.SetValue("KEY M2.5"); k.SetPosition(P(x, y)); k.SetFPID(pcbnew.LIB_ID("OSBAMS_PiPwr", "KeyStandoff_M2.5"))
     pd = pcbnew.PAD(k); pd.SetNumber(""); pd.SetPosition(P(x, y)); pd.SetPos0(P(0, 0)); pd.SetSize(P(2.7, 2.7)); pd.SetAttribute(pcbnew.PAD_ATTRIB_NPTH)
     pd.SetLayerSet(pd.UnplatedHoleMask()); pd.SetShape(pcbnew.PAD_SHAPE_CIRCLE); pd.SetDrillSize(P(2.7, 2.7)); k.Add(pd)
@@ -68,7 +68,7 @@ for a in ((0, Y_TOP, BW, Y_TOP), (BW, Y_TOP, BW, Y_BOT), (BW, Y_BOT, 0, Y_BOT), 
     s = pcbnew.PCB_SHAPE(b); s.SetShape(pcbnew.SHAPE_T_SEGMENT); s.SetStart(P(a[0], a[1])); s.SetEnd(P(a[2], a[3])); s.SetLayer(pcbnew.Edge_Cuts); s.SetWidth(mm(0.1)); b.Add(s)
 def text(s, x, y, h=1.0, layer=pcbnew.F_SilkS):
     t = pcbnew.PCB_TEXT(b); t.SetText(s); t.SetPosition(P(x, y)); t.SetLayer(layer); t.SetTextSize(P(h, h)); t.SetTextThickness(mm(0.18)); t.SetHorizJustify(pcbnew.GR_TEXT_H_ALIGN_LEFT); b.Add(t)
-text("OSBAMS Pi Power Interposer Rev.A", 29.0 + DX, 3.4, 0.9); text("KEY", 33.0 + DX, 7.6, 0.8); text("KEY", 51.0 + DX, 7.6, 0.8)
+text("OSBAMS Pi Power Interposer Rev.A", 29.0 + DX, 3.4, 0.9); text("KEY", 17.5, 7.6, 0.8); text("KEY", 42.25, 7.6, 0.8)
 text("FIT KEY STANDOFFS", 29.0 + DX, 9.6, 0.8); text("5V / 8A MAX  1,2=+5V 3,4=GND", 29.0 + DX, 12.6, 0.8); text("ISOLATED 5V IN", 29.0 + DX, 14.6, 0.8)
 text("PI SIDE - ISOLATED", 29.0 + DX, 16.4, 0.8); text("PI PIN 1", 6.0, 22.9, 0.7); text("RC1 - NOT FOR FAB", 29.0 + DX, 22.7, 0.8)
 text("Rev.A  2oz Cu  1.6mm", 30.0 + DX, 21.2, 0.8, pcbnew.B_SilkS)
