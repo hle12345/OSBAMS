@@ -59,6 +59,7 @@ def main():
     smt, allp = reports.write_cpl(os.path.join(RC, "OSBAMS_Rev2_RC1_CPL.csv"), os.path.join(RC, "OSBAMS_Rev2_RC1_CPL_ALL.csv"))
     ntp = reports.write_tp_map(os.path.join(RC, "OSBAMS_Rev2_RC1_Test_Point_Map.pdf"))
     shutil.copy(os.path.join(ROOT, "DATASHEET_VERIFICATION.md"), os.path.join(RC, "EVIDENCE_REGISTER.md"))
+    shutil.copy(os.path.join(ROOT, "MANUFACTURER_DATA_RECONCILIATION.md"), os.path.join(RC, "MANUFACTURER_DATA_RECONCILIATION.md"))
     shutil.copy(os.path.join(ROOT, "calc", "datasheet_inputs.json"), os.path.join(RC, "EVIDENCE_REGISTER.json"))
     shutil.copy(os.path.join(ROOT, "REV2_CALCULATIONS.md"), os.path.join(RC, "POWER_TREE_AND_CALCULATIONS.md"))
     shutil.copy(os.path.join(ROOT, "REV2_BLOCK_DIAGRAM.png"), os.path.join(RC, "OSBAMS_Rev2_RC1_Block_Diagram.png"))

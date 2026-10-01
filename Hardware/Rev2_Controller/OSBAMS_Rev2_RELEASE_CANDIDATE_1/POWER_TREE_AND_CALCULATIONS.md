@@ -38,7 +38,7 @@ Circuit: **D8 (BAT54S)** lower diode ADC_SENSE→GND; upper diode ADC_SENSE→**
 |---|---|
 | Controller powered, pack powered (44 V) | tap 2.750 V; VCLAMP ≈ 3V3 − D14 drop ≈ 3.1 V → upper diode reverse-biased by ≈ 0.35 V, leakage ≈ 100 nA × 9.4 kΩ = 0.94 mV (0.034 %). PA1 max = 2.75 V (48 V: 3.00 V) |
 | **Controller unpowered, pack powered** | tap would be 2.75 V; clamp short-circuit current ≤ 0.21 mA flows ADC_SENSE→D8→VCLAMP→R37 (VCLAMP ≈ 2.1 V). D14 is reverse-biased, so **3V3 receives only D14 leakage (nA)**; with R4 on 3V3_A the 3V3 rail stays at ≈ 0 V. |
-| Controller unpowered, MCU pin has an internal diode to VDDA (unknown: I/O structure of PA1 / PC10 (5 V tolerance, diode to VDD, behaviour with VDD=0) [UV]) | worst case ≤ 0.21 mA into 3V3_A; R4 3.3 kΩ limits the rail to 0.68 V < POR min 1.6 V [UV] → the MCU cannot partially power up. Cost: 1 mA permanent load. |
+| Controller unpowered, MCU pin has an internal diode to VDDA (unknown: PA1 (pin 15) FT_la, ADC12_IN6 - NOT 5 V tolerant while the analog switch is connected (diode to VDDA/VREF+); PC10 (pin 51) FT_l [UR]) | worst case ≤ 0.21 mA into 3V3_A; R4 3.3 kΩ limits the rail to 0.68 V < POR min 1.6 V [UV] → the MCU cannot partially power up. Cost: 1 mA permanent load. |
 | Reversed pack (−44 V) | tap −2.75 V; D8 lower diode clamps ADC_SENSE at ≈ −0.25 V [UV] (≥ −0.3 V abs min); clamp current 0.27 mA |
 | Transient on PACK_ADC to 77.4 V (TVS clamp level) | unclamped tap 4.84 V; upper diode → VCLAMP limits ADC_SENSE to ≈ VCLAMP + 0.25 V ≈ 3.35 V; clamp current ≈ (4.84−3.35)/1 kΩ... limited to 1.49 mA through R20 |
 
@@ -59,31 +59,65 @@ RSA-20-50: ±0.25 % tolerance, ±15 ppm/°C, continuous ≤ 13.3 A (2/3 rated) [
 | 20 A | 50.00 mV | 1.000 W |
 
 **ADCRANGE = 0 (±163.84 mV)**: range 1 (±40.96 mV = ±16.38 A) would saturate before the 18.5 A firmware trip (46.25 mV).
-- IMAX = 20 A: CURRENT_LSB = 38.147 µA, **SHUNT_CAL = 1250** (limit 32767; equation [UV]). Current firmware header still uses 30 A / 1875 → firmware change.
+- IMAX = 20 A: CURRENT_LSB = 38.147 µA, **SHUNT_CAL = 1250** (limit 32767; equation [UR]). Current firmware header still uses 30 A / 1875 → firmware change.
 - Offset ±1 µV [UR] → 0.40 mA = 0.0040 % of 10 A. Native current LSB 125 µA (range 0).
-- Input filter 2 × 10 Ω + 100 nF: fc = 80 kHz; bias 2 nA [UV] × 10 Ω = 20 nV.
-- VBUS: own lead PACK_INA through 10 Ω (error 10 Ω / ~830 kΩ ≈ 0.001 %, UV) + TVS; common-mode range -0.3 to +85 V [UR]; TVS 1.5SMBJ48A clamp 77.4 V [UR] → margin to 85 V = 7.6 V (thin).
-- **INA228 pin map is an INA226-family analogy (UNVERIFIED, critical): confirm against the TI datasheet before any order.**
+- Input filter 2 × 10 Ω + 100 nF: fc = 80 kHz; bias 2 nA [UR] × 10 Ω = 25 nV.
+- VBUS: own lead PACK_INA through 10 Ω (error 10 Ω / ~830 kΩ ≈ 0.001 %, UV) + TVS; common-mode / VBUS range -0.3 to +85 V [UR]. **TVS clamp vs the 85 V limit is NOT a single-number comparison — see §2b.**
+- INA228 DGS-10 pin map [UR]: symbol compared pin-for-pin with the relayed TI table → **PASS** (1 A1, 2 A0, 3 ALERT, 4 SDA, 5 SCL, 6 VS, 7 GND, 8 VBUS, 9 IN−, 10 IN+). Firmware: IMAX 20 A / SHUNT_CAL 1250 (`app_config.h`; the Rev.1 30 A / 1875 setting is retired).
+
+### 2b. 1.5SMBJ48A (D5/D6/D7) vs INA228 85 V absolute maximum
+
+Manufacturer points [UR] [UR]: VRWM 48 V, VBR 53.3-58.9 V; **VC ≤ 77.4 V at 19.4 A (10/1000 µs)** and **VC ≤ 100.6 V at 97 A (8/20 µs)**. INA228 IN+/IN−/VBUS absolute maximum -0.3 to +85 V [UR]. '77.4 V < 85 V' therefore holds only up to the 19.4 A rating point; at the 8/20 µs rating point the clamp (100.6 V) is **15.6 V above** the INA228 limit.
+
+Estimate of the clamp curve (straight line through the two rating points — different waveforms, so an engineering estimate, NOT a datasheet curve [UV]): dynamic resistance ≈ 299 mΩ → VC = 85 V at **I ≈ 45 A**. Below ≈ 45 A the clamp stays under 85 V; above it the INA228 pin rating is exceeded.
+
+| TVS current | VC (estimate; ≤ 77.4 V up to 19.4 A is a rating) | margin to 85 V |
+|---|---|---|
+| 1 A | ≤ 77.4 V | +7.6 V |
+| 5 A | ≤ 77.4 V | +7.6 V |
+| 10 A | ≤ 77.4 V | +7.6 V |
+| 15 A | ≤ 77.4 V | +7.6 V |
+| 19.4 A | ≤ 77.4 V | +7.6 V |
+| 30 A | ≈ 80.6 V | +4.4 V |
+| 44.8 A | ≈ 85.0 V | +0.0 V |
+| 60 A | ≈ 89.5 V | -4.5 V |
+| 97 A | ≈ 100.6 V | -15.6 V |
+
+**Credible-transient bound (assumptions [UV], to be signed off by the project owner):**
+1. *Steady state / pack ≤ 44 V:* VRWM 48 V > 44 V and VBR min 53.3 V > 44 V → no conduction, leakage only. PASS.
+2. *Interrupting load current with the pack-side wiring inductance (K1 opening, 15 A fuse clearing at its rating):* the TVS can be asked to carry at most the interrupted current, ≤ 10 A operating ceiling (≤ 18.5 A firmware hard trip, ≤ 15 A fuse rating) < 19.4 A → VC ≤ 77.4 V → margin ≥ 7.6 V. PASS under this bound.
+3. *Sense-harness hot-plug onto a live 44 V pack:* the VBUS path (10 Ω + 100 nF with 2 µH of harness inductance, ζ ≈ 1.1) is overdamped. The IN± Kelvin paths have only 10 Ω in front of the pins and a differential (not common-mode) 100 nF, so they are **underdamped** (TVS capacitance not read [UV]); ringing up to ≈ 2 × 44 V is possible and is clipped by D5/D6 (VC ≤ 77.4 V for the few-ampere ring currents). PASS as an estimate; not simulated — confirm on the bench with a scope on IN+/IN− during harness hot-plug.
+4. *Fast high-current surges (ESD/lightning class, hard shorts interrupted by the fuse, ≥ 45 A into the TVS):* the clamp can reach ≈ 100.6 V and the INA228 pins exceed 85 V → **NOT protected.** This is outside the intended bench environment; if the owner wants it covered, add a series resistor (e.g. 47-100 Ω, pulse-rated 1206) *upstream of the TVS* on PACK_INA (DC error ≈ 100 Ω / 830 kΩ ≈ 0.012 %) and a higher-rated/two-stage clamp on the Kelvin lines — **not applied in RC1** (no electrical change made; decision recorded as an open sign-off item).
+Do not substitute a lower-voltage TVS without re-checking standoff/leakage against the 44 V ceiling (a 40 V-class part would conduct near a charged 10S pack).
 
 ## 3. Buck LMR14006Y: 12 V → 3.3 V
 
 Feedback: VREF 0.765 V [UR], R1 33.2 kΩ / R2 10 kΩ → Vout = 0.765 × (1 + R1/R2) = **3.305 V** (1 % resistors: +0.031 V, ±VREF tolerance UV). fsw 2.1 MHz [UR].
 
-| Vin | duty | on-time | ΔIL (L = 10 µH) | Ipk @ 150 mA |
-|---|---|---|---|---|
-| 11.0 V | 30.0 % | 143 ns | 110 mA | 205 mA |
-| 12.0 V | 27.5 % | 131 ns | 114 mA | 207 mA |
-| 15.0 V | 22.0 % | 105 ns | 123 mA | 211 mA |
-| 24.4 V | 13.5 % | 64 ns | 136 mA | 218 mA |
+Output range with VFB 0.747-0.782 V [UR] and 1 % resistors: **3.178 - 3.431 V** (nominal 3.305 V); the 3V3 rail therefore may sit up to +0.13 V / -0.12 V from 3.30 V (STM32/INA228/ISO7721 supply limits 3.6 V / 5.5 V: within, but the STM32 VDD max is [UV]).
 
-Minimum on-time [UV] must be below the 24.4 V (TVS-clamp) case 65 ns, otherwise the regulator skips pulses during surges (output stays regulated; ripple rises). Inductor: Bourns SRN6045TA-100M (10 µH; Isat/DCR [UV] to be checked ≥ the buck current limit). Output 2 × 22 µF 10 V 0805 (≈ 50 % DC-bias derating → ≈ 26 µF): ripple ≈ ΔIL/(8 f C) = 0.26 mV + ESR term. Input C1+C2 2 × 10 µF 50 V 1210 + 100 nF at the VIN pin: ripple ≈ I·D(1−D)/(f C) = 2.4 mV at 6 µF effective.
+Minimum on-time: **TON_MIN = 95 ns** [UR]; fsw 1.785 / 2.100 / 2.415 MHz (min/typ/max) [UR]. On-time = Vout / (Vin · fsw) (on-time is shortest at the **highest** fsw).
+
+| Vin | duty (typ) | on-time @ typ fsw | on-time @ max fsw | vs 95 ns | ΔIL (L = 10 µH) | Ipk @ 150 mA |
+|---|---|---|---|---|---|---|
+| 11.0 V | 30.0 % | 143 ns | 124 ns | PASS | 110 mA | 205 mA |
+| 12.0 V | 27.5 % | 131 ns | 114 ns | PASS | 114 mA | 207 mA |
+| 12.5 V | 26.4 % | 126 ns | 109 ns | PASS | 116 mA | 208 mA |
+| 15.0 V | 22.0 % | 105 ns | 91 ns | MARGINAL (typ ok, max-fsw corner below) | 123 mA | 211 mA |
+| 24.4 V | 13.5 % | 64 ns | 56 ns | **BELOW TON_MIN: pulse skipping** | 136 mA | 218 mA |
+
+**Corrected statement:** 12 V (normal XDR operation) PASSES (114 ns at the fastest fsw corner). The 15 V corner is only ≈ 10 ns above TON_MIN at typical fsw and is **91 ns (below 95 ns) at the maximum-fsw corner** — not guaranteed fixed-frequency. The **24.4 V SMBJ15A-clamp transient (64 ns) is below TON_MIN: fixed-frequency regulation is NOT claimed there.** Expected behaviour is pulse skipping (fewer, minimum-width pulses; output ripple/frequency change); the datasheet behaviour in this region is not characterised in the data I hold [UV], so no regulation guarantee is made during the transient. The normal source is the XDR at 12.0 V, so this does not invalidate the part; it limits the claim to ≤ ≈ 14.4 V (max-fsw corner) / ≈ 16.6 V (typical fsw) steady-state input. Verify by measurement at first article.
+
+VIN rating: recommended 4-40 V, absolute max 45 V [UR]; SMBJ15A clamp 24.4 V (+ a 12 V XDR) → margin to 45 V ≈ 20.6 V. 
+Inductor/limits (TI): current limit ≈ 1.2 A typ, max duty ≈ 97 %. 
+Inductor: Bourns SRN6045TA-100M (10 µH; Isat/DCR [UV] to be checked ≥ the buck current limit). Output 2 × 22 µF 10 V 0805 (≈ 50 % DC-bias derating → ≈ 26 µF): ripple ≈ ΔIL/(8 f C) = 0.26 mV + ESR term. Input C1+C2 2 × 10 µF 50 V 1210 + 100 nF at the VIN pin: ripple ≈ I·D(1−D)/(f C) = 2.4 mV at 6 µF effective.
 Surge: SMBJ15A clamp 24.4 V [UR] vs LMR14006Y 40 V rating (margin ≈ 15.6 V; abs-max UV). EN: 100 kΩ to +12V (method [UV]).
 
 3V3 load ≈ 40 mA typical (STM32 ~20, INA228 ~1, ISO ~3, pull-ups/LEDs ~15) + 1 mA bleeder; design 150 mA → 12 V input ≈ 45 mA (85 %). 3V3_A: ferrite 600 Ω@100 MHz + 4.7 µF + 100 nF. **Ripple on 3V3 and 3V3_A is measured at first-article bring-up, not computed.**
 
 ## 4. Relay driver (Durakool DG57CM-5021-76-1012-R + IRLML0060TRPBF)
 
-Relay (reported): SPST-NO, 12 V coil, ≈1.6 W, DC1 80 A@12 V / 60 A@36 V / 50 A@48 V, max switching 145 VDC, operate ≈ 7 ms [UR]. OSBAMS stays ≤ 44 V / ≤ 10 A: margin ≥ 5× at 48 V (50 A) vs 10 A. Coil 90 Ω [UV].
+Relay (reported): SPST-NO, 12 V coil, ≈1.6 W, DC1 80 A@12 V / 60 A@36 V / 50 A@48 V, max switching 145 VDC, operate ≈ 7 ms [UR]. OSBAMS stays ≤ 44 V / ≤ 10 A: margin ≥ 5× at 48 V (50 A) vs 10 A. Coil 90 Ω [UR].
 
 | Coil V | I | P |
 |---|---|---|
@@ -92,18 +126,21 @@ Relay (reported): SPST-NO, 12 V coil, ≈1.6 W, DC1 80 A@12 V / 60 A@36 V / 50 A
 | 12.0 V | 133 mA | 1.60 W |
 | 15.0 V | 167 mA | 2.50 W |
 
-**Q1 = IRLML0060TRPBF (60 V SOT-23 logic-level)** — RDS(on) is not specified at 3.3 V in the data I hold; using a pessimistic placeholder 0.5 Ω [UV]: VDS = 85 mV and P = 14.5 mW at 170 mA. Gate overdrive at 3.3 V × 0.97 with VGS(th) max 2.5 V [UV] is 0.7 V — adequate for a 0.17 A load but **the datasheet output curve at VGS = 3 V must confirm ID ≥ 0.5 A (fabrication gate)**. VDSS 60 V [UV] vs the 24.4 V TVS clamp → margin 35.6 V. Alternates: Diodes DMN6140L-7 (60 V), AOS AO3400A (30 V, 2.5 V-specified).
+Coil data [UR] [UR]: 90 Ω ±10 % at 23 °C → 121-148 mA at 12.0 V; must-operate ≤ 7.2 V, must-release ≥ 1.2 V (23 °C); **maximum allowable coil voltage 17.4 V at 23 °C but only 12.5 V at 85 °C** → the XDR is set to 12.0 V and must never be run at 15 V (the 15 V row above is shown only to document the exclusion). Coil node after D2 (SS14 drop ≈ 0.4 V) with a 12.0 V ± 1 % XDR ≈ 11.7 V: operate margin 7.2 V → 4.5 V, max-allowable margin 12.5 V → 0.8 V at 85 °C [UV: XDR tolerance not read].
+
+
+**Q1 = IRLML0060TRPBF (60 V SOT-23 logic-level)** — RDS(on) is not specified at 3.3 V (manufacturer: ≤ 116 mΩ at 4.5 V, ≤ 92 mΩ at 10 V [UR]; typical output/transfer curves include 2.8-3.5 V but were not available to this build); using a pessimistic placeholder 0.5 Ω [UV]: VDS = 85 mV and P = 14.5 mW at 170 mA. Gate overdrive at 3.3 V × 0.97 with VGS(th) max 2.5 V [UR] is 0.7 V — adequate for a 0.17 A load but **the datasheet output curve at VGS = 3 V must confirm ID ≥ 0.5 A (fabrication gate)**. VDSS 60 V [UR] vs the 24.4 V TVS clamp → margin 35.6 V. Alternates: Diodes DMN6140L-7 (60 V), AOS AO3400A (30 V, 2.5 V-specified).
 Gate network: 220 Ω in series, 10 kΩ pull-down → default OFF in reset/unpowered/Hi-Z. Flyback: S1M-13-F (1 A 1000 V), cathode on COIL_V; **no fast-release TVS in RC1** (a 27 V TVS would put 12+27 V on the MOSFET).
 Flyback energy ½LI² = 1.78 mJ (L = 0.2 H [UV]); diode-only decay τ = L/R = 2.2 ms (release time to be taken from the relay datasheet).
 
 ## 5. VO610A-1 stages (status inputs, active-low)
 
-**Guaranteed data (user-relayed [UR]):** CTR min 13 % / typ 30 % at IF = 1 mA, VCE = 5 V; CTR min 40 % / max 80 % at IF = 10 mA. **The arbitrary 20 % CTR has been deleted.**
+**Guaranteed data (user-relayed [UR]):** CTR min 13 % / typ 30 % at IF = 1 mA, VCE = 5 V; CTR min 40 % / max 80 % at IF = 10 mA. **The arbitrary 20 % CTR has been deleted.** VF max 1.6 V is the manufacturer's value at IF = 50 mA, used as a conservative bound at the low IF here; VCE(sat) max 0.3 V (IF = 10 mA, IC = 1 mA) [UR] — the design keeps the more conservative 0.4 V at 0.07 mA. The 0.8 temperature and 0.8 aging factors are **DESIGN_MARGIN** (project assumptions, not manufacturer data).
 
 Method (design-to-guaranteed):
 1. CTR_eff = CTR_min(1 mA) × temp derate × aging derate = 0.13 × 0.80 [UV] × 0.80 [UV] = **0.0832**; valid for every IF ≥ 1 mA by the monotonic-curve assumption [UV] (CTR rises from 1 mA to 10 mA).
 2. Pull-up demand I_pu = (3.3 V − VCE(sat) 0.4 V [UV]) / R_pu. Require IF × CTR_eff ≥ 2 × I_pu (saturation margin 2).
-3. IF = (Vsupply − VF_max 1.6 V [UV]) / R_led (R_led +1 % tolerance); evaluate at the minimum supply.
+3. IF = (Vsupply − VF_max 1.6 V [UR]) / R_led (R_led +1 % tolerance); evaluate at the minimum supply.
 
 R_pu = 47 kΩ → I_pu = 61.7 µA → IF_min = 2 I_pu / CTR_eff = **1.48 mA**.
 
@@ -133,7 +170,7 @@ Voltage for 2× margin: **10.0 V** ≤ 10.5 V → **PASS**.
 
 Voltage for 2× margin: **22.7 V** ≤ 24 V → **PASS**.
 
-Relay-feedback supported pack range 30–44 V is covered down to 24 V (20 % below the 30 V minimum, allowing pack sag under load). At the 77.4 V surge level each 4.7 kΩ resistor dissipates 136 mW (1206 = 250 mW). At 44 V: 43 mW each. The 1N4148 across each LED limits reverse voltage to ≈ 0.7 V (LED VR max 6.0 V [UV]). Relay open: the load side floats at ≈ 0 V → LED dark → PC9 HIGH (fail-safe: 'not closed'); E-stop open or wire broken → no current → PA0 HIGH (fault).
+Relay-feedback supported pack range 30–44 V is covered down to 24 V (20 % below the 30 V minimum, allowing pack sag under load). At the 77.4 V TVS level (10/1000 µs rating) each 4.7 kΩ resistor dissipates 136 mW and at the 100.6 V (8/20 µs) level 232 mW (1206 = 250 mW; short transients only). At 44 V: 43 mW each. The 1N4148 across each LED limits reverse voltage to ≈ 0.7 V (LED VR max 6.0 V [UR]). Relay open: the load side floats at ≈ 0 V → LED dark → PC9 HIGH (fail-safe: 'not closed'); E-stop open or wire broken → no current → PA0 HIGH (fault).
 
 ## 6. ARM_SENSE divider (status only)
 
@@ -168,5 +205,5 @@ ISO7721 has **no isolated power**: VCC1 = +3V3 (100 nF, controller GND); VCC2 = 
 
 ## 9. Evidence summary
 
-VERIFIED_LOCAL 4 · USER_RELAYED_MANUFACTURER 23 · UNVERIFIED 33 (total 60). Critical entries not yet VERIFIED_LOCAL: **31** — these are fabrication gates, not schematic/layout gates.
+VERIFIED_LOCAL 4 · USER_RELAYED_MANUFACTURER 51 · UNVERIFIED 19 (total 74). Critical entries not yet VERIFIED_LOCAL: **35** — these are fabrication gates, not schematic/layout gates.
 

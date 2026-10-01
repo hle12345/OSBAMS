@@ -12,7 +12,7 @@
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
-    (property "ki_description" "INA228 (pin map UNVERIFIED: INA226-family assumption)"
+    (property "ki_description" "INA228 (DGS VSSOP-10 pin map compared with the TI table relayed by the user: PASS)"
       (at 0 0 0)
       (effects (font (size 1.27 1.27)) hide)
     )
@@ -98,7 +98,7 @@
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
-    (property "ki_description" "LMR14006Y buck (pin map UNVERIFIED: LMR16006 library analogy)"
+    (property "ki_description" "LMR14006Y buck, DDC TSOT-6 (pin map compared with the TI table relayed by the user: PASS; pin 4 is /SHDN)"
       (at 0 0 0)
       (effects (font (size 1.27 1.27)) hide)
     )
@@ -160,7 +160,7 @@
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
-    (property "ki_description" "ISO7721 1 fwd / 1 rev (pin map from memory, UNVERIFIED)"
+    (property "ki_description" "ISO7721 1 fwd / 1 rev (pin map CONFLICT: relayed table says 2 OUTA/3 INB/6 OUTB/7 INA; this symbol follows 2 INA/3 OUTB/6 INB/7 OUTA - settle from the TI pin diagram before ordering)"
       (at 0 0 0)
       (effects (font (size 1.27 1.27)) hide)
     )

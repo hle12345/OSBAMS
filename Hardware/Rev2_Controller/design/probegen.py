@@ -77,5 +77,7 @@ def stitch(path):
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "stitch":
         stitch(os.path.join(OUT, PD.PROJECT + ".kicad_pcb"))
+    elif len(sys.argv) > 1 and sys.argv[1] == "pcb":
+        print(build_pcb())             # rebuilds the UNROUTED probe PCB: re-run the probe routing steps afterwards
     else:
-        build_sch(); print(build_pcb())
+        build_sch()                    # schematic only: never clobbers the routed probe PCB

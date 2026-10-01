@@ -63,8 +63,8 @@
    "value": 0.8,
    "unit": "",
    "evidence": "UNVERIFIED",
-   "critical": true,
-   "source": "assumption / proposal - needs the manufacturer document",
+   "critical": false,
+   "source": "DESIGN_MARGIN: project engineering assumption, NOT manufacturer data (Vishay shows CTR-vs-temperature curves; the 0.8 factor is ours)",
    "doc": null
   },
   {
@@ -74,19 +74,19 @@
    "value": 0.8,
    "unit": "",
    "evidence": "UNVERIFIED",
-   "critical": true,
-   "source": "assumption / proposal - needs the manufacturer document",
+   "critical": false,
+   "source": "DESIGN_MARGIN: project engineering assumption, NOT manufacturer data (Vishay shows CTR-vs-temperature curves; the 0.8 factor is ours)",
    "doc": null
   },
   {
    "id": "vo610a_vf_max",
    "part": "VO610A-1",
-   "parameter": "LED forward voltage max at IF ~1.5-3 mA",
+   "parameter": "LED forward voltage max: 1.6 V at IF = 50 mA (used as a conservative bound at the low IF of this design; VF at 1-3 mA is lower)",
    "value": 1.6,
    "unit": "V",
-   "evidence": "UNVERIFIED",
+   "evidence": "USER_RELAYED_MANUFACTURER",
    "critical": true,
-   "source": "assumption / proposal - needs the manufacturer document",
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
    "doc": null
   },
   {
@@ -101,25 +101,47 @@
    "doc": null
   },
   {
+   "id": "vo610a_vcesat_rel",
+   "part": "VO610A-1",
+   "parameter": "VCE(sat) max 0.3 V at IF = 10 mA, IC = 1 mA (design uses 0.4 V at IC ~ 0.07 mA as the conservative figure)",
+   "value": 0.3,
+   "unit": "V",
+   "evidence": "USER_RELAYED_MANUFACTURER",
+   "critical": false,
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
+   "doc": null
+  },
+  {
+   "id": "vo610a_ratings",
+   "part": "VO610A-1",
+   "parameter": "VCEO 70 V, IC max 50 mA, IF max 60 mA, operating -55..+110 C",
+   "value": null,
+   "unit": "",
+   "evidence": "USER_RELAYED_MANUFACTURER",
+   "critical": false,
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
+   "doc": null
+  },
+  {
    "id": "vo610a_led_vr",
    "part": "VO610A-1",
    "parameter": "LED reverse voltage absolute max",
    "value": 6.0,
    "unit": "V",
-   "evidence": "UNVERIFIED",
+   "evidence": "USER_RELAYED_MANUFACTURER",
    "critical": false,
-   "source": "assumption / proposal - needs the manufacturer document",
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
    "doc": null
   },
   {
    "id": "vo610a_pinout",
    "part": "VO610A-1",
-   "parameter": "DIP-4 pinout 1 anode, 2 cathode, 3 emitter, 4 collector",
-   "value": "standard 4-pin opto",
+   "parameter": "DIP-4 pinout: 1 LED anode, 2 LED cathode, 3 emitter, 4 collector",
+   "value": "1 A, 2 K, 3 E, 4 C",
    "unit": "",
-   "evidence": "UNVERIFIED",
+   "evidence": "USER_RELAYED_MANUFACTURER",
    "critical": true,
-   "source": "assumption / proposal - needs the manufacturer document",
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
    "doc": null
   },
   {
@@ -174,40 +196,40 @@
    "unit": "V",
    "evidence": "USER_RELAYED_MANUFACTURER",
    "critical": false,
-   "source": "user message 2026-10-01 (manufacturer information relayed by the user; PDF not opened in this build environment)",
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
    "doc": null
   },
   {
    "id": "ina228_pinmap",
    "part": "INA228",
-   "parameter": "VSSOP-10 pin map (INA226-family analogy used in the symbol)",
+   "parameter": "DGS VSSOP-10 pin map (TI table; symbol compared pin-for-pin: PASS)",
    "value": "1 A1, 2 A0, 3 ALERT, 4 SDA, 5 SCL, 6 VS, 7 GND, 8 VBUS, 9 IN-, 10 IN+",
    "unit": "",
-   "evidence": "UNVERIFIED",
+   "evidence": "USER_RELAYED_MANUFACTURER",
    "critical": true,
-   "source": "assumption / proposal - needs the manufacturer document",
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
    "doc": null
   },
   {
    "id": "ina228_shunt_cal",
    "part": "INA228",
-   "parameter": "SHUNT_CAL equation and limits",
+   "parameter": "SHUNT_CAL = 13107.2e6 x CURRENT_LSB x RSHUNT (ADCRANGE 0); RSA-20-50, IMAX 20 A -> 1250",
    "value": "13107.2e6 x CURRENT_LSB x RSHUNT (x4 for ADCRANGE=1); max 32767",
    "unit": "",
-   "evidence": "UNVERIFIED",
+   "evidence": "USER_RELAYED_MANUFACTURER",
    "critical": true,
-   "source": "assumption / proposal - needs the manufacturer document",
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
    "doc": null
   },
   {
    "id": "ina228_bias",
    "part": "INA228",
    "parameter": "input bias current",
-   "value": 2e-09,
+   "value": 2.5e-09,
    "unit": "A",
-   "evidence": "UNVERIFIED",
+   "evidence": "USER_RELAYED_MANUFACTURER",
    "critical": false,
-   "source": "assumption / proposal - needs the manufacturer document",
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
    "doc": null
   },
   {
@@ -244,6 +266,17 @@
    "doc": null
   },
   {
+   "id": "lmr_fsw_range",
+   "part": "LMR14006Y",
+   "parameter": "switching frequency Y version: min 1.785 / typ 2.100 / max 2.415 MHz",
+   "value": null,
+   "unit": "",
+   "evidence": "USER_RELAYED_MANUFACTURER",
+   "critical": false,
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
+   "doc": null
+  },
+  {
    "id": "lmr_vref",
    "part": "LMR14006Y",
    "parameter": "feedback reference",
@@ -255,9 +288,20 @@
    "doc": null
   },
   {
+   "id": "lmr_vfb_range",
+   "part": "LMR14006Y",
+   "parameter": "FB reference: min 0.747 / typ 0.765 / max 0.782 V",
+   "value": null,
+   "unit": "",
+   "evidence": "USER_RELAYED_MANUFACTURER",
+   "critical": true,
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
+   "doc": null
+  },
+  {
    "id": "lmr_pkg",
    "part": "LMR14006Y",
-   "parameter": "package",
+   "parameter": "package DDC (TSOT-6); KiCad SOT-23-6 (0.95 mm pitch) used - TI land pattern not compared",
    "value": "SOT-23-6 (DDC)",
    "unit": "",
    "evidence": "USER_RELAYED_MANUFACTURER",
@@ -268,23 +312,34 @@
   {
    "id": "lmr_pinmap",
    "part": "LMR14006Y",
-   "parameter": "pin map (LMR16006YQ library analogy)",
-   "value": "1 CB, 2 GND, 3 FB, 4 EN, 5 VIN, 6 SW",
+   "parameter": "DDC TSOT-6 pin map: 1 CB, 2 GND, 3 FB, 4 /SHDN, 5 VIN, 6 SW (symbol compared: PASS)",
+   "value": "1 CB, 2 GND, 3 FB, 4 /SHDN, 5 VIN, 6 SW",
    "unit": "",
-   "evidence": "UNVERIFIED",
+   "evidence": "USER_RELAYED_MANUFACTURER",
    "critical": true,
-   "source": "assumption / proposal - needs the manufacturer document",
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
    "doc": null
   },
   {
    "id": "lmr_ton_min",
    "part": "LMR14006Y",
-   "parameter": "minimum controllable on-time",
+   "parameter": "minimum turn-on time",
+   "value": 9.5e-08,
+   "unit": "s",
+   "evidence": "USER_RELAYED_MANUFACTURER",
+   "critical": true,
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
+   "doc": null
+  },
+  {
+   "id": "lmr_limits",
+   "part": "LMR14006Y",
+   "parameter": "VIN recommended 4-40 V, absolute max 45 V; IOUT 600 mA; current limit ~1.2 A typ; max duty (Y) ~97 %",
    "value": null,
    "unit": "",
-   "evidence": "UNVERIFIED",
-   "critical": true,
-   "source": "assumption / proposal - needs the manufacturer document",
+   "evidence": "USER_RELAYED_MANUFACTURER",
+   "critical": false,
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
    "doc": null
   },
   {
@@ -356,12 +411,12 @@
   {
    "id": "dg57_coil_ohm",
    "part": "DG57CM-5021-76-1012-R",
-   "parameter": "coil resistance (1.6 W at 12 V implies 90 ohm)",
+   "parameter": "coil resistance 90 ohm +/-10 % at 23 C (code 1012)",
    "value": 90.0,
    "unit": "ohm",
-   "evidence": "UNVERIFIED",
+   "evidence": "USER_RELAYED_MANUFACTURER",
    "critical": true,
-   "source": "assumption / proposal - needs the manufacturer document",
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
    "doc": null
   },
   {
@@ -378,12 +433,12 @@
   {
    "id": "dg57_pickup",
    "part": "DG57CM-5021-76-1012-R",
-   "parameter": "pick-up / drop-out voltage",
-   "value": null,
-   "unit": "",
-   "evidence": "UNVERIFIED",
+   "parameter": "must-operate 7.2 V max @23 C; must-release 1.2 V min @23 C; max allowable coil 17.4 V @23 C / 12.5 V @85 C",
+   "value": 7.2,
+   "unit": "V",
+   "evidence": "USER_RELAYED_MANUFACTURER",
    "critical": true,
-   "source": "assumption / proposal - needs the manufacturer document",
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
    "doc": null
   },
   {
@@ -422,12 +477,34 @@
   {
    "id": "tvs48",
    "part": "1.5SMBJ48A",
-   "parameter": "standoff 48 V, max clamp 77.4 V",
+   "parameter": "1.5SMBJ48A: VRWM 48 V, VBR 53.3-58.9 V; VC max 77.4 V @ IPP 19.4 A (10/1000 us)",
    "value": 77.4,
    "unit": "V",
    "evidence": "USER_RELAYED_MANUFACTURER",
    "critical": true,
    "source": "user message 2026-10-01 (manufacturer information relayed by the user; PDF not opened in this build environment)",
+   "doc": null
+  },
+  {
+   "id": "tvs48_820",
+   "part": "1.5SMBJ48A",
+   "parameter": "VC max 100.6 V @ IPP 97.0 A (8/20 us) - EXCEEDS the INA228 85 V absolute maximum; see the protection analysis",
+   "value": 100.6,
+   "unit": "V",
+   "evidence": "USER_RELAYED_MANUFACTURER",
+   "critical": true,
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
+   "doc": null
+  },
+  {
+   "id": "tvs48_ipp",
+   "part": "1.5SMBJ48A",
+   "parameter": "IPP 19.4 A (10/1000 us), 97.0 A (8/20 us)",
+   "value": 19.4,
+   "unit": "A",
+   "evidence": "USER_RELAYED_MANUFACTURER",
+   "critical": false,
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
    "doc": null
   },
   {
@@ -455,23 +532,23 @@
   {
    "id": "iso_pinmap",
    "part": "ISO7721",
-   "parameter": "SOIC-8 pin map",
-   "value": "1 VCC1, 2 INA, 3 OUTB, 4 GND1, 5 GND2, 6 INB, 7 OUTA, 8 VCC2",
+   "parameter": "SOIC-8 pin map - CONFLICT: relayed table (1 VCC1, 2 OUTA, 3 INB, 4 GND1, 5 GND2, 6 OUTB, 7 INA, 8 VCC2) differs from the symbol/reviewer memory (2 INA, 3 OUTB, 6 INB, 7 OUTA); pin direction at pins 2/3/6/7 decides the UART wiring - must be settled from the TI pin-diagram figure before any order",
+   "value": "UNRESOLVED",
    "unit": "",
    "evidence": "UNVERIFIED",
    "critical": true,
-   "source": "assumption / proposal - needs the manufacturer document",
+   "source": "relayed table vs. build memory disagree; neither is read from a document",
    "doc": null
   },
   {
    "id": "iso_supply",
    "part": "ISO7721",
-   "parameter": "supply range both sides, ICC, default output state",
-   "value": null,
+   "parameter": "supply 2.25-5.5 V on each side; no integrated isolated power; standard ISO7721 default output HIGH (ISO7721F = default low) -> idle-high UART",
+   "value": "2.25-5.5 V",
    "unit": "",
-   "evidence": "UNVERIFIED",
+   "evidence": "USER_RELAYED_MANUFACTURER",
    "critical": true,
-   "source": "assumption / proposal - needs the manufacturer document",
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
    "doc": null
   },
   {
@@ -486,9 +563,20 @@
    "doc": null
   },
   {
+   "id": "cp_pinmap",
+   "part": "CP2102N",
+   "parameter": "QFN20 pin map: 1 GPIO.1/RS485, 2 GPIO.0/CLK, 3 GND, 4 D+, 5 D-, 6 VDD, 7 VREGIN, 8 VBUS, 9 RSTb, 10 NC, 11 SUSPENDb, 12 GND, 13 WAKEUP, 14 SUSPEND, 15 CTS, 16 RTS, 17 RXD, 18 TXD, 19 GPIO.3, 20 GPIO.2, EP GND (compared with the library symbol: PASS)",
+   "value": null,
+   "unit": "",
+   "evidence": "USER_RELAYED_MANUFACTURER",
+   "critical": true,
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
+   "doc": null
+  },
+  {
    "id": "cp_vdd",
    "part": "CP2102N",
-   "parameter": "VDD regulator output current capability, VBUS pin connection method, reference design",
+   "parameter": "VBUS pin connection (Silicon Labs documents a VBUS divider in some configurations - the exact resistor values/configuration are NOT in the relayed data; the board currently ties VBUS directly), regulator current capability for CP2102N + ISO7721 VCC2",
    "value": null,
    "unit": "",
    "evidence": "UNVERIFIED",
@@ -499,23 +587,23 @@
   {
    "id": "stm32_pins",
    "part": "STM32L476RGT6",
-   "parameter": "LQFP-64 pin numbers for every signal",
+   "parameter": "LQFP-64 (standard, not SMPS) pin numbers for every signal: compared with the relayed list: PASS",
    "value": "from KiCad 10 symbol",
    "unit": "",
    "evidence": "VERIFIED_LOCAL",
    "critical": false,
-   "source": "KiCad 10.0.6 stock library read in this build",
+   "source": "KiCad 10.0.6 stock library read in this build; additionally consistent with the user-relayed ST standard-LQFP64 table (PA0 14, PA1 15, PA2 16, PA3 17, PC8 39, PC9 40, PC10 51, PA13 46, PA14 49, PB3 55, BOOT0 60, PB8 61, PB9 62)",
    "doc": null
   },
   {
    "id": "stm32_io",
    "part": "STM32L476RGT6",
-   "parameter": "I/O structure of PA1 / PC10 (5 V tolerance, diode to VDD, behaviour with VDD=0)",
-   "value": null,
+   "parameter": "PA1 (pin 15) FT_la, ADC12_IN6 - NOT 5 V tolerant while the analog switch is connected (diode to VDDA/VREF+); PC10 (pin 51) FT_l",
+   "value": "PA1 FT_la, PC10 FT_l",
    "unit": "",
-   "evidence": "UNVERIFIED",
+   "evidence": "USER_RELAYED_MANUFACTURER",
    "critical": true,
-   "source": "assumption / proposal - needs the manufacturer document",
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
    "doc": null
   },
   {
@@ -530,6 +618,17 @@
    "doc": null
   },
   {
+   "id": "stm32_vih_ttl",
+   "part": "STM32L476RGT6",
+   "parameter": "TTL input levels: VIH min 2.0 V, VIL max 0.8 V; CMOS VIL max 0.3 VDD (CMOS VIH min not relayed)",
+   "value": 2.0,
+   "unit": "V",
+   "evidence": "USER_RELAYED_MANUFACTURER",
+   "critical": false,
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
+   "doc": null
+  },
+  {
    "id": "stm32_vrefint",
    "part": "STM32L476RGT6",
    "parameter": "VREFINT calibration accuracy",
@@ -538,6 +637,17 @@
    "evidence": "UNVERIFIED",
    "critical": true,
    "source": "assumption / proposal - needs the manufacturer document",
+   "doc": null
+  },
+  {
+   "id": "stm32_vrefint_range",
+   "part": "STM32L476RGT6",
+   "parameter": "VREFINT typ 1.212 V, 1.182-1.232 V over temperature; per-device factory calibration constant in system memory",
+   "value": null,
+   "unit": "",
+   "evidence": "USER_RELAYED_MANUFACTURER",
+   "critical": true,
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
    "doc": null
   },
   {
@@ -568,20 +678,20 @@
    "parameter": "VDSS",
    "value": 60.0,
    "unit": "V",
-   "evidence": "UNVERIFIED",
+   "evidence": "USER_RELAYED_MANUFACTURER",
    "critical": true,
-   "source": "assumption / proposal - needs the manufacturer document",
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
    "doc": null
   },
   {
    "id": "q_vth",
    "part": "IRLML0060TRPBF",
-   "parameter": "VGS(th) max",
+   "parameter": "VGS(th) 1.0-2.5 V (max used)",
    "value": 2.5,
    "unit": "V",
-   "evidence": "UNVERIFIED",
+   "evidence": "USER_RELAYED_MANUFACTURER",
    "critical": true,
-   "source": "assumption / proposal - needs the manufacturer document",
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
    "doc": null
   },
   {
@@ -596,14 +706,36 @@
    "doc": null
   },
   {
-   "id": "q_pinout",
+   "id": "q_rds_4v5",
    "part": "IRLML0060TRPBF",
-   "parameter": "SOT-23 pinout 1 G, 2 S, 3 D",
-   "value": "as KiCad Transistor_FET:IRLML0030 symbol",
+   "parameter": "RDS(on) max 116 mohm @ VGS 4.5 V, 92 mohm @ 10 V; ID 2.7 A @10 V; VGS +/-16 V; RthJA ~100 C/W (NOT guaranteed at 3.3 V)",
+   "value": 0.116,
+   "unit": "ohm",
+   "evidence": "USER_RELAYED_MANUFACTURER",
+   "critical": false,
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
+   "doc": null
+  },
+  {
+   "id": "q_curves",
+   "part": "IRLML0060TRPBF",
+   "parameter": "typical output/transfer curves include VGS 2.8/3.0/3.3/3.5 V; ID >= 0.5 A at VGS 3.0-3.3 V over temperature NOT checked (curves unavailable to the build) -> bench check V-gate",
+   "value": null,
    "unit": "",
    "evidence": "UNVERIFIED",
    "critical": true,
-   "source": "assumption / proposal - needs the manufacturer document",
+   "source": "curves not read",
+   "doc": null
+  },
+  {
+   "id": "q_pinout",
+   "part": "IRLML0060TRPBF",
+   "parameter": "SOT-23 (Micro3) pinout 1 G, 2 S, 3 D (netlist compared: PASS)",
+   "value": "1 G, 2 S, 3 D",
+   "unit": "",
+   "evidence": "USER_RELAYED_MANUFACTURER",
+   "critical": true,
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
    "doc": null
   },
   {
@@ -651,14 +783,36 @@
    "doc": "docs/rev2/pcb/evidence/EB21A-XX-C_drawing_revB.pdf"
   },
   {
+   "id": "conn_pitch",
+   "part": "Molex 22-27-2031/2041, JST B4B-PH-K-S, Samtec FTSH-105-01-L-DV-K, GCT USB4105-GF-A",
+   "parameter": "pitch/pin count vs KiCad stock footprints: KK 2.54 mm x3/x4, PH 2.00 mm x4 (A = 6.0 mm), FTSH 1.27 mm 2x5, USB4105 16P horizontal: PASS (pitch and pin count only)",
+   "value": null,
+   "unit": "",
+   "evidence": "USER_RELAYED_MANUFACTURER",
+   "critical": false,
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
+   "doc": null
+  },
+  {
    "id": "conn_footprints",
    "part": "Molex KK/JST PH/GCT USB4105/Samtec FTSH",
-   "parameter": "footprint = KiCad stock; MPN-to-footprint match not checked against drawings",
+   "parameter": "connector footprints are KiCad stock; pad/drill/shield/CC/pin-1/tail geometry NOT compared with the manufacturer drawings (only pitch and pin count)",
    "value": "KiCad 10 library",
    "unit": "",
    "evidence": "UNVERIFIED",
    "critical": true,
    "source": "assumption / proposal - needs the manufacturer document",
+   "doc": null
+  },
+  {
+   "id": "tc74_pinmap",
+   "part": "TC74A5-3.3VAT",
+   "parameter": "TO-220-5 pin map: 1 NC, 2 SDA, 3 GND, 4 SCLK, 5 VDD; tab = pin 3 (GND); supply 2.7-5.5 V; +/-2 C (25-85 C); symbol compared: PASS",
+   "value": null,
+   "unit": "",
+   "evidence": "USER_RELAYED_MANUFACTURER",
+   "critical": true,
+   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
    "doc": null
   }
  ]

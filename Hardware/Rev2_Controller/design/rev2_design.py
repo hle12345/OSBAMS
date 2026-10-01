@@ -84,7 +84,7 @@ part("LED_G", lib="Device:LED", fp="LED_SMD:LED_0805_2012Metric", mfr="Wurth Ele
 part("LED_A", lib="Device:LED", fp="LED_SMD:LED_0805_2012Metric", mfr="Wurth Elektronik", mpn="150080AS75000", desc="LED amber 0805",
      evid=UV, life="UNKNOWN (not checked)", alt="Kingbright APT2012SYC", src="PCBWay source")
 part("Q_RELAY", lib="Transistor_FET:IRLML0030", fp="Package_TO_SOT_SMD:SOT-23", mfr="Infineon", mpn="IRLML0060TRPBF", desc="N-MOSFET 60 V SOT-23 logic-level (relay low side). RDS(on) not specified at 3.3 V: gate-drive check required",
-     evid=UV, life="UNKNOWN (not checked)", alt="Diodes DMN6140L-7 / AOS AO3400A (30 V)", src="PCBWay source")
+     evid=UR, life="UNKNOWN (not checked)", alt="Diodes DMN6140L-7 / AOS AO3400A (30 V)", src="PCBWay source")
 part("SW_RST", lib="Switch:SW_Push", fp="Button_Switch_SMD:SW_SPST_PTS810", mfr="C&K", mpn="PTS810SJM250SMTRLFS", desc="Tactile switch (reset)",
      evid=UV, life="UNKNOWN (not checked)", alt="Wurth 434121025816", src="PCBWay source")
 part("HDR2", lib="Connector_Generic:Conn_01x02", fp="Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical", mfr="Samtec", mpn="TSW-102-07-G-S", desc="2-pin header + jumper (BOOT0)",
@@ -93,15 +93,15 @@ part("TP", lib="Connector:TestPoint", fp="TestPoint:TestPoint_Pad_D1.5mm", mfr="
 part("MH", lib="Mechanical:MountingHole", fp="MountingHole:MountingHole_3.2mm_M3", mfr="-", mpn="(PCB feature)", desc="M3 mounting hole (NPTH)", evid=UV, life="n/a", alt="", src="PCB feature")
 part("FID", lib="Mechanical:Fiducial", fp="Fiducial:Fiducial_1mm_Mask2mm", mfr="-", mpn="(PCB feature)", desc="Fiducial 1 mm", evid=UV, life="n/a", alt="", src="PCB feature")
 part("U_MCU", lib="MCU_ST_STM32L4:STM32L476RGTx", fp="Package_QFP:LQFP-64_10x10mm_P0.5mm", mfr="STMicroelectronics", mpn="STM32L476RGT6", desc="STM32L476RG MCU LQFP-64",
-     evid=UV, life="UNKNOWN (not checked)", alt="STM32L476RGT6TR (reel)", src="PCBWay source")
+     evid=UR, life="UNKNOWN (not checked)", alt="STM32L476RGT6TR (reel)", src="PCBWay source")
 part("U_INA", lib="OSBAMS_Rev2:INA228", fp="Package_SO:MSOP-10_3x3mm_P0.5mm", mfr="Texas Instruments", mpn="INA228AIDGSR", desc="INA228 85 V 20-bit I2C power monitor VSSOP-10 (PIN MAP UNVERIFIED)",
      evid=UR, life="ACTIVE (user-confirmed)", alt="INA228AIDGST (small reel)", src="PCBWay source")
 part("U_BUCK", lib="OSBAMS_Rev2:LMR14006Y", fp="Package_TO_SOT_SMD:SOT-23-6", mfr="Texas Instruments", mpn="LMR14006YDDCR", desc="LMR14006Y 4-40 V 0.6 A 2.1 MHz buck SOT-23-6 (PIN MAP UNVERIFIED)",
      evid=UR, life="ACTIVE (user-confirmed)", alt="LMR14006XDDCR (700 kHz variant: inductor change)", src="PCBWay source")
 part("U_ISO", lib="OSBAMS_Rev2:ISO7721", fp="Package_SO:SOIC-8_3.9x4.9mm_P1.27mm", mfr="Texas Instruments", mpn="ISO7721DR", desc="ISO7721 dual-channel digital isolator 1 fwd / 1 rev SOIC-8 (no isolated power)",
-     evid=UR, life="UNKNOWN (not checked)", alt="ISO7721DWR (wide body)", src="PCBWay source")
+     evid=UV, life="UNKNOWN (not checked)", alt="ISO7721DWR (wide body)", src="PCBWay source")
 part("U_CP", lib="Interface_USB:CP2102N-Axx-xQFN20", fp="Package_DFN_QFN:SiliconLabs_QFN-20-1EP_3x3mm_P0.5mm_EP1.8x1.8mm", mfr="Silicon Labs", mpn="CP2102N-A02-GQFN20", desc="CP2102N USB-UART bridge QFN-20 3x3",
-     evid=UV, life="UNKNOWN (not checked)", alt="CP2102N-A02-GQFN24 (needs QFN24 footprint)", src="PCBWay source")
+     evid=UR, life="UNKNOWN (not checked)", alt="CP2102N-A02-GQFN24 (needs QFN24 footprint)", src="PCBWay source")
 part("U_ESD", lib="Power_Protection:USBLC6-2SC6", fp="Package_TO_SOT_SMD:SOT-23-6", mfr="STMicroelectronics", mpn="USBLC6-2SC6", desc="2-line ESD protection SOT-23-6",
      evid=UV, life="UNKNOWN (not checked)", alt="Nexperia IP4220CZ6", src="PCBWay source")
 part("OPTO", lib="Isolator:PC817", fp="Package_DIP:DIP-4_W7.62mm", mfr="Vishay", mpn="VO610A-1", desc="Optocoupler transistor output DIP-4, CTR bin -1 (13 % min @ 1 mA, 40 % min @ 10 mA: user-relayed)",
@@ -278,14 +278,14 @@ POWER_SYMS = {"GND": "power:GND", "+3V3": "power:+3V3", "+12V": "power:+12V"}
 
 # hand-written custom symbols (library OSBAMS_Rev2); type strings are KiCad pin electrical types
 CUSTOM = {
-    "INA228": dict(ref="U", value="INA228", fp="Package_SO:MSOP-10_3x3mm_P0.5mm", desc="INA228 (pin map UNVERIFIED: INA226-family assumption)",
+    "INA228": dict(ref="U", value="INA228", fp="Package_SO:MSOP-10_3x3mm_P0.5mm", desc="INA228 (DGS VSSOP-10 pin map compared with the TI table relayed by the user: PASS)",
                    pins=[("1", "A1", "input", "L", 0), ("2", "A0", "input", "L", 1), ("3", "ALERT", "open_collector", "L", 2), ("4", "SDA", "bidirectional", "L", 3),
                          ("5", "SCL", "input", "L", 4), ("6", "VS", "power_in", "R", 0), ("7", "GND", "power_in", "R", 1), ("8", "VBUS", "input", "R", 2),
                          ("9", "IN-", "input", "R", 3), ("10", "IN+", "input", "R", 4)]),
-    "LMR14006Y": dict(ref="U", value="LMR14006Y", fp="Package_TO_SOT_SMD:SOT-23-6", desc="LMR14006Y buck (pin map UNVERIFIED: LMR16006 library analogy)",
+    "LMR14006Y": dict(ref="U", value="LMR14006Y", fp="Package_TO_SOT_SMD:SOT-23-6", desc="LMR14006Y buck, DDC TSOT-6 (pin map compared with the TI table relayed by the user: PASS; pin 4 is /SHDN)",
                       pins=[("1", "CB", "passive", "L", 0), ("2", "GND", "power_in", "L", 1), ("3", "FB", "input", "L", 2), ("4", "EN", "input", "R", 0),
                             ("5", "VIN", "power_in", "R", 1), ("6", "SW", "output", "R", 2)]),
-    "ISO7721": dict(ref="U", value="ISO7721", fp="Package_SO:SOIC-8_3.9x4.9mm_P1.27mm", desc="ISO7721 1 fwd / 1 rev (pin map from memory, UNVERIFIED)",
+    "ISO7721": dict(ref="U", value="ISO7721", fp="Package_SO:SOIC-8_3.9x4.9mm_P1.27mm", desc="ISO7721 1 fwd / 1 rev (pin map CONFLICT: relayed table says 2 OUTA/3 INB/6 OUTB/7 INA; this symbol follows 2 INA/3 OUTB/6 INB/7 OUTA - settle from the TI pin diagram before ordering)",
                     pins=[("1", "VCC1", "power_in", "L", 0), ("2", "INA", "input", "L", 1), ("3", "OUTB", "output", "L", 2), ("4", "GND1", "power_in", "L", 3),
                           ("5", "GND2", "power_in", "R", 3), ("6", "INB", "input", "R", 2), ("7", "OUTA", "output", "R", 1), ("8", "VCC2", "power_in", "R", 0)]),
 }
