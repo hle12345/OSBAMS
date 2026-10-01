@@ -15,6 +15,7 @@ rows = [
  ["J1", 1, "Micro-Fit 3.0 header, right-angle, dual row, 4 circuits (keyed)", "Molex", "430450400", "Connector_Molex:Molex_Micro-Fit_3.0_43045-0400_2x02_P3.00mm_Horizontal", "Locked part; library footprint (pegs included); not cross-checked vs Molex PDF"],
  ["J2", 1, "2x20 2.54 mm gold STACKING female header (Pi GPIO), >=3 A/contact, long tails so Pi pins stay reachable for the Waveshare leads", "TBD", "TBD", "OSBAMS_PiPwr:PinSocket_2x20_P2.54mm_RPi_TopView (pad pattern by Pi pin number)", "OPEN - exact MPN with published per-contact current/resistance must be chosen from a datasheet"],
  ["K1, K2", 2, "M2.5 key standoffs/posts (outward side) - length set by the 3D check so a 180-degree fitting cannot seat", "TBD", "TBD", "NPTH 2.7 mm", "OPEN - 3D check vs Pi 5 drawing + enclosure"],
+ ["M1, M2", 2, "M2.5 standoff/spacer + screw to the Pi header-end mounting holes; spacer length = seated height of the chosen stacking socket", "TBD", "TBD", "NPTH 2.7 mm", "OPEN - depends on socket MPN"],
  ["Harness", 1, "Micro-Fit receptacle housing 43025-0400 at both ends (candidate), 4x 16 AWG, <=150 mm, crimped, 43030-family terminals", "Molex", "43025-0400 + 43030 (candidate)", "", "OPEN - confirm terminal for 16 AWG; strain relief (cable tie / clip)"],
 ]
 for r in rows: ws.append(r)

@@ -43,9 +43,9 @@ wb = Workbook(); ws = wb.active; ws.title = "BOM"
 hdr = ["Designator", "Qty", "Value", "Description", "Manufacturer", "MPN", "Footprint (KiCad)", "Mount", "Sourcing / notes", "Verification status"]
 ws.append(hdr)
 special = {"U1": "Verify PCBWay stock; if not sourceable mark CONSIGNED / customer-supplied (do not substitute without approval)",
-           "F1": "CANDIDATE - confirm exact 8 A time-delay MPN and stock", "F2": "Active; DigiKey-stocked per design brief"}
+           "F1": "Confirm PCBWay/DigiKey stock for 0407008.WR (reel 3000; ask for cut tape/qty)", "F2": "Active; DigiKey-stocked per design brief"}
 LIBNOTE = "Footprint: official KiCad library (generated from manufacturer datasheet); NOT cross-checked against the manufacturer PDF"
-status = {"U1": "Footprint from Mean Well RSDW40/RDDW40 spec drawing (2022-05-24); verify mirror/rotation in KiCad", "F1": LIBNOTE + "; MPN is a CANDIDATE (8 A time-delay): verify DC R, DC voltage rating, interrupt rating, I2t", "F2": LIBNOTE, "TVS1": LIBNOTE,
+status = {"U1": "Footprint from Mean Well RSDW40/RDDW40 spec drawing (2022-05-24); verify mirror/rotation in KiCad", "F1": "Datasheet-verified (Littelfuse 407, rev 09/14/20): 8 A time-lag, 24 V, 60 A@24VDC, 9 mOhm, I2t 24.12; land pattern = datasheet recommended pads", "F2": "Datasheet-verified (451/453 rev): 8 A very fast-acting, 125 V, 7.7 mOhm cold, I2t 20.23; pads 1.96x3.15, span 6.86 match the library footprint", "TVS1": LIBNOTE,
           "J_IN": LIBNOTE + "; mating parts unverified", "J_OUT": LIBNOTE + " (pegs + drills included); mating parts unverified",
           "C2": LIBNOTE + "; verify body D8/pitch 3.5 vs EEU-FM1H101", "C4": LIBNOTE + "; verify body D10/pitch 5.0 vs EEU-FR1C681",
           "R2": "DNP - do not fit", "R3": "DNP - do not fit"}

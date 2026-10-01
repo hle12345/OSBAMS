@@ -1,5 +1,5 @@
 ** Drc report for ../../OSBAMS_Pi_Display_Power_RevA_RC1/kicad/OSBAMS_Pi_Display_Power_RevA.kicad_pcb **
-** Created on 2026-10-01 15:01:01 **
+** Created on 2026-10-01 15:13:44 **
 
 ** Found 37 DRC violations **
 [silk_overlap]: Silkscreen overlap
@@ -12,24 +12,24 @@
     @(50.0000 mm, 38.5000 mm): PCB Text 'ISOLATION BARRIER' on F.Silkscreen
 [silk_overlap]: Silkscreen overlap
     Rule: board setup constraints silk; Severity: warning
-    @(75.4000 mm, 43.7000 mm): Line on F.Silkscreen
-    @(29.8400 mm, 41.8500 mm): Line on F.Silkscreen
-[silk_overlap]: Silkscreen overlap
-    Rule: board setup constraints silk; Severity: warning
-    @(56.0000 mm, 52.0000 mm): PCB Text 'R2/R3 DNP - TRIM OPTION' on F.Silkscreen
-    @(76.0000 mm, 55.5000 mm): Circle on F.Silkscreen
-[silk_overlap]: Silkscreen overlap
-    Rule: board setup constraints silk; Severity: warning
-    @(50.0000 mm, 69.0000 mm): PCB Text 'RC1.1 - NOT FOR FAB' on F.Silkscreen
-    @(56.0000 mm, 68.4000 mm): PCB Text '1,2=+5V 3,4=GND' on F.Silkscreen
-[silk_overlap]: Silkscreen overlap
-    Rule: board setup constraints silk; Severity: warning
     @(6.5000 mm, 51.5000 mm): PCB Text '+12V   GND' on F.Silkscreen
     @(10.2000 mm, 51.6850 mm): Line on F.Silkscreen
 [silk_overlap]: Silkscreen overlap
     Rule: board setup constraints silk; Severity: warning
-    @(10.2000 mm, 44.3150 mm): Line on F.Silkscreen
     @(6.5000 mm, 51.5000 mm): PCB Text '+12V   GND' on F.Silkscreen
+    @(10.2000 mm, 44.3150 mm): Line on F.Silkscreen
+[silk_overlap]: Silkscreen overlap
+    Rule: board setup constraints silk; Severity: warning
+    @(75.4000 mm, 43.7000 mm): Line on F.Silkscreen
+    @(29.8400 mm, 41.8500 mm): Line on F.Silkscreen
+[silk_overlap]: Silkscreen overlap
+    Rule: board setup constraints silk; Severity: warning
+    @(56.0000 mm, 68.4000 mm): PCB Text '1,2=+5V 3,4=GND' on F.Silkscreen
+    @(50.0000 mm, 69.0000 mm): PCB Text 'RC1.1 - NOT FOR FAB' on F.Silkscreen
+[silk_overlap]: Silkscreen overlap
+    Rule: board setup constraints silk; Severity: warning
+    @(56.0000 mm, 52.0000 mm): PCB Text 'R2/R3 DNP - TRIM OPTION' on F.Silkscreen
+    @(76.0000 mm, 55.5000 mm): Circle on F.Silkscreen
 [silk_over_copper]: Silkscreen clipped by solder mask
     Local override; Severity: warning
     @(26.0000 mm, 22.5000 mm): Line on F.Silkscreen
@@ -39,87 +39,87 @@
 [silk_over_copper]: Silkscreen clipped by solder mask
     Local override; Severity: warning
     @(75.4000 mm, 43.7000 mm): Line on F.Silkscreen
+[lib_footprint_issues]: The current configuration does not include the library 'LED_SMD'.
+    Local override; Severity: warning
+    @(91.0000 mm, 45.0000 mm): Footprint D1
+[lib_footprint_issues]: The current configuration does not include the library 'MountingHole'.
+    Local override; Severity: warning
+    @(96.0000 mm, 66.0000 mm): Footprint H4
 [lib_footprint_issues]: The current configuration does not include the library 'Connector_Molex'.
     Local override; Severity: warning
     @(88.0000 mm, 60.9000 mm): Footprint J_OUT
+[lib_footprint_issues]: The current configuration does not include the library 'OSBAMS_PiPwr'.
+    Local override; Severity: warning
+    @(19.5000 mm, 44.5000 mm): Footprint F1
+[lib_footprint_issues]: The current configuration does not include the library 'Capacitor_SMD'.
+    Local override; Severity: warning
+    @(86.5000 mm, 55.0000 mm): Footprint C6
+[lib_footprint_issues]: The current configuration does not include the library 'MountingHole'.
+    Local override; Severity: warning
+    @(4.0000 mm, 66.0000 mm): Footprint H3
+[lib_footprint_issues]: The current configuration does not include the library 'Fiducial'.
+    Local override; Severity: warning
+    @(88.0000 mm, 5.0000 mm): Footprint FID2
 [lib_footprint_issues]: The current configuration does not include the library 'Connector_Molex'.
     Local override; Severity: warning
     @(9.1000 mm, 48.0000 mm): Footprint J_IN
-[lib_footprint_issues]: The current configuration does not include the library 'Diode_SMD'.
+[lib_footprint_issues]: The current configuration does not include the library 'MountingHole'.
     Local override; Severity: warning
-    @(33.5000 mm, 44.0000 mm): Footprint TVS1
-[lib_footprint_issues]: The current configuration does not include the library 'Fuse'.
-    Local override; Severity: warning
-    @(19.5000 mm, 44.5000 mm): Footprint F1
+    @(96.0000 mm, 4.0000 mm): Footprint H2
 [lib_footprint_issues]: The current configuration does not include the library 'Capacitor_THT'.
     Local override; Severity: warning
     @(76.0000 mm, 53.0000 mm): Footprint C4
 [lib_footprint_issues]: The current configuration does not include the library 'Resistor_SMD'.
     Local override; Severity: warning
-    @(91.0000 mm, 41.5000 mm): Footprint R1
-[lib_footprint_issues]: The current configuration does not include the library 'Fiducial'.
-    Local override; Severity: warning
-    @(88.0000 mm, 5.0000 mm): Footprint FID2
-[lib_footprint_issues]: The current configuration does not include the library 'MountingHole'.
-    Local override; Severity: warning
-    @(96.0000 mm, 66.0000 mm): Footprint H4
-[lib_footprint_issues]: The current configuration does not include the library 'TestPoint'.
-    Local override; Severity: warning
-    @(18.0000 mm, 53.0000 mm): Footprint TP2
-[lib_footprint_issues]: The current configuration does not include the library 'Fuse'.
-    Local override; Severity: warning
-    @(80.7000 mm, 46.0000 mm): Footprint F2
-[lib_footprint_issues]: The current configuration does not include the library 'TestPoint'.
-    Local override; Severity: warning
-    @(80.0000 mm, 38.0000 mm): Footprint TP3
-[lib_footprint_issues]: The current configuration does not include the library 'Resistor_SMD'.
-    Local override; Severity: warning
     @(76.5000 mm, 20.8400 mm): Footprint R3
-[lib_footprint_issues]: The current configuration does not include the library 'OSBAMS_PiPwr'.
-    Local override; Severity: warning
-    @(50.0000 mm, 31.0000 mm): Footprint U1
-[lib_footprint_issues]: The current configuration does not include the library 'Resistor_SMD'.
-    Local override; Severity: warning
-    @(76.5000 mm, 25.5000 mm): Footprint R2
-[lib_footprint_issues]: The current configuration does not include the library 'TestPoint'.
-    Local override; Severity: warning
-    @(87.5000 mm, 47.8000 mm): Footprint TP4
-[lib_footprint_issues]: The current configuration does not include the library 'Fiducial'.
-    Local override; Severity: warning
-    @(95.0000 mm, 40.0000 mm): Footprint FID3
-[lib_footprint_issues]: The current configuration does not include the library 'MountingHole'.
-    Local override; Severity: warning
-    @(4.0000 mm, 4.0000 mm): Footprint H1
-[lib_footprint_issues]: The current configuration does not include the library 'Capacitor_THT'.
-    Local override; Severity: warning
-    @(28.7500 mm, 52.0000 mm): Footprint C2
-[lib_footprint_issues]: The current configuration does not include the library 'MountingHole'.
-    Local override; Severity: warning
-    @(4.0000 mm, 66.0000 mm): Footprint H3
-[lib_footprint_issues]: The current configuration does not include the library 'MountingHole'.
-    Local override; Severity: warning
-    @(96.0000 mm, 4.0000 mm): Footprint H2
 [lib_footprint_issues]: The current configuration does not include the library 'TestPoint'.
     Local override; Severity: warning
     @(94.0000 mm, 50.0000 mm): Footprint TP5
-[lib_footprint_issues]: The current configuration does not include the library 'Capacitor_SMD'.
+[lib_footprint_issues]: The current configuration does not include the library 'Resistor_SMD'.
     Local override; Severity: warning
-    @(86.5000 mm, 52.0000 mm): Footprint C5
+    @(91.0000 mm, 41.5000 mm): Footprint R1
 [lib_footprint_issues]: The current configuration does not include the library 'TestPoint'.
     Local override; Severity: warning
-    @(10.0000 mm, 38.5000 mm): Footprint TP1
-[lib_footprint_issues]: The current configuration does not include the library 'LED_SMD'.
-    Local override; Severity: warning
-    @(91.0000 mm, 45.0000 mm): Footprint D1
+    @(18.0000 mm, 53.0000 mm): Footprint TP2
 [lib_footprint_issues]: The current configuration does not include the library 'Fiducial'.
     Local override; Severity: warning
     @(12.0000 mm, 66.0000 mm): Footprint FID1
+[lib_footprint_issues]: The current configuration does not include the library 'Resistor_SMD'.
+    Local override; Severity: warning
+    @(76.5000 mm, 25.5000 mm): Footprint R2
+[lib_footprint_issues]: The current configuration does not include the library 'Capacitor_SMD'.
+    Local override; Severity: warning
+    @(86.5000 mm, 52.0000 mm): Footprint C5
+[lib_footprint_issues]: The current configuration does not include the library 'Diode_SMD'.
+    Local override; Severity: warning
+    @(33.5000 mm, 44.0000 mm): Footprint TVS1
+[lib_footprint_issues]: The current configuration does not include the library 'TestPoint'.
+    Local override; Severity: warning
+    @(10.0000 mm, 38.5000 mm): Footprint TP1
+[lib_footprint_issues]: The current configuration does not include the library 'TestPoint'.
+    Local override; Severity: warning
+    @(80.0000 mm, 38.0000 mm): Footprint TP3
+[lib_footprint_issues]: The current configuration does not include the library 'OSBAMS_PiPwr'.
+    Local override; Severity: warning
+    @(50.0000 mm, 31.0000 mm): Footprint U1
+[lib_footprint_issues]: The current configuration does not include the library 'Fiducial'.
+    Local override; Severity: warning
+    @(95.0000 mm, 40.0000 mm): Footprint FID3
+[lib_footprint_issues]: The current configuration does not include the library 'Capacitor_THT'.
+    Local override; Severity: warning
+    @(28.7500 mm, 52.0000 mm): Footprint C2
 [lib_footprint_issues]: The current configuration does not include the library 'Capacitor_SMD'.
     Local override; Severity: warning
     @(31.0000 mm, 58.0000 mm): Footprint C1
-[lib_footprint_issues]: The current configuration does not include the library 'Capacitor_SMD'.
+[lib_footprint_issues]: The current configuration does not include the library 'MountingHole'.
     Local override; Severity: warning
-    @(86.5000 mm, 55.0000 mm): Footprint C6
+    @(4.0000 mm, 4.0000 mm): Footprint H1
+[lib_footprint_issues]: The current configuration does not include the library 'TestPoint'.
+    Local override; Severity: warning
+    @(87.5000 mm, 47.8000 mm): Footprint TP4
+[lib_footprint_issues]: The current configuration does not include the library 'Fuse'.
+    Local override; Severity: warning
+    @(80.7000 mm, 46.0000 mm): Footprint F2
 
 ** Found 0 unconnected pads **
 

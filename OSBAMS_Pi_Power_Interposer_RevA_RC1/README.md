@@ -6,10 +6,11 @@
 
 | Item | Detail |
 |---|---|
-| Size | 57 × 22 mm, 2-layer, 1.6 mm, 2 oz Cu (stackup in PCB file) |
+| Size | 65 × 22 mm (HAT+ width, header centred), 2-layer, 1.6 mm, 2 oz Cu (stackup in PCB file) |
 | J1 | Molex 430450400, right-angle, mating face off the board edge; pins 1,2 = +5 V, 3,4 = GND (same as the power board J_OUT) |
 | J2 | **2×20** gold stacking female header: all 40 positions socketed → cannot be offset along or across the header; long tails keep the Pi pins reachable for the Waveshare 5 V/GND leads. **MPN not yet chosen** |
 | Power pins | +5 V: pins 2 and 4 (2 contacts); GND: pins 6, 9, 14, 20 (4 contacts); all other pins NC (no-connects) |
+| Mounting | M1/M2: M2.5 holes at the Pi's header-end mounting holes (spacers = socket seated height) |
 | Key | two M2.5 holes (K1, K2) on the *outward* side — see `docs/Keying_analysis.md` |
 | Isolation | `PI_GND` here is the isolated Pi-side ground only; it never touches the controller ground. No Y-capacitor |
 

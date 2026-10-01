@@ -7,7 +7,7 @@ Target: **>= 4.85 V at the Pi header at 5 A, worst case**; **<= 5.25 V no-load /
 
 | Input | Value | Status | Source |
 |---|---|---|---|
-| f2_resistance_cold_mohm | 7.7 | owner_cited | Littelfuse 0451008.MRL, 7.7 mOhm DC cold resistance (owner-cited; DigiKey lists active) |
+| f2_resistance_cold_mohm | 7.7 | verified | Littelfuse 451/453 datasheet (uploaded): 0451008 nominal cold resistance 0.0077 ohm |
 | f2_hot_factor | 1.0 | unverified | Fuse resistance rises when loaded; main table uses cold value as instructed, sensitivity row applies 1.3x (ASSUMED) |
 | j_out_contact_max_mohm | 10.0 | owner_cited | Molex Micro-Fit 3.0 family: 10 mOhm max contact resistance (owner-cited) |
 | j_out_contact_typ_mohm | 5.24 | owner_cited | Molex wire-to-board test data, ~5.24 mOhm initial in one configuration (owner-cited; includes wire) |
@@ -32,11 +32,14 @@ Target: **>= 4.85 V at the Pi header at 5 A, worst case**; **<= 5.25 V no-load /
 | rsdw_remote_onoff | open = ON | verified | spec: Power ON: R.C ~ -Vin >3~12 Vdc or open circuit; OFF < 1.2 V or short. Pin 3 left open = enabled. |
 | rsdw_input_fuse_recommendation | 24Vin models: 8 A delay (time-lag) type | verified | spec INPUT PROTECTION: 'Fuse recommended. 24Vin models: 8A delay time Type'. F1 is 5 A fast-acting - see docs/Datasheet_findings.md |
 | rsdw_ripple_mvpp | 100 | verified | spec: single output 3.3-15 Vo: 100 mVp-p (20 MHz, 0.1 uF + 47 uF) |
-| f1_mpn | 0453008.MRL | unverified | Owner decision: follow Mean Well (8 A time-delay). CANDIDATE from Littelfuse Nano2 453 (time-lag) family, same footprint as 451 - must confirm: 8 A time-lag exists with this exact MPN, DC cold R, >=24 VDC rating, interrupt rating, I2t vs module inrush. Datasheet not reachable from build env: please upload. |
-| f1_resistance_mohm | 10.0 | unverified | ASSUMED 10 mOhm for heating/drop estimate (input side only) |
+| f1_mpn | 0407008.WR | verified | Littelfuse 407 Series datasheet (rev 09/14/20, uploaded): 1206 time-lag, amp code 008., part number 0407 008. W R (W = 3000 pcs, R = reel). Replaces 0453008.MRL, which is very fast-acting (451/453 datasheet). |
+| f1_resistance_mohm | 9.0 | verified | 407 datasheet nominal resistance 0.009 ohm (measured <10 % rated current); hot value from 0.097 V drop at 8 A = 12.1 mOhm |
 | interposer_socket_mpn | None | unverified | 2x20 2.54 mm gold stacking female header, >=3 A/contact, published contact resistance - exact MPN still to be chosen from a datasheet |
 | interposer_socket_contact_mohm | 20.0 | unverified | PLACEHOLDER until socket MPN chosen |
 | interposer_key_3d_check | False | unverified | Key standoffs must be verified against Raspberry Pi 5 mechanical drawing/3D (header edge distance, nearby parts) and the enclosure |
+| f1_spec | {'rating_a': 8, 'max_voltage_v': 24, 'interrupt': '60 A @ 24 VDC', 'nominal_resistance_mohm': 9.0, 'melting_i2t_a2s': 24.12, 'vdrop_at_rated_v': 0.097, 'power_at_rated_w': 0.8, 'continuous_derate': '<=80 % of rating (6.4 A), plus temperature re-rating curve', 'time_lag': '100 %: 4 h min; 200 %: 1-120 s; 300 %: 0.1-3 s; 800 %: 2-50 ms', 'land_pattern_mm': 'pad 1.0 x 1.8, gap 1.5, span 3.5; body 3.2 x 1.6'} | verified | 407 datasheet electrical specs by item |
+| f2_spec | {'mpn': '0451008.MRL', 'rating_a': 8, 'max_voltage_v': 125, 'nominal_cold_resistance_mohm': 7.7, 'melting_i2t_a2s': 20.23, 'interrupt': 'PSE: 100 A @ 100 VAC', 'land_pattern': 'pad 1.96 x 3.15, outer span 6.86 mm - matches the KiCad library footprint used', 'class': 'very fast-acting'} | verified | Littelfuse 451/453 datasheet (uploaded) - confirms owner's 7.7 mOhm |
+| pi_hat_plus_guidance | {'power_hat_min': '3 A @ 5.1 V (strongly recommend 5 A @ 5.1 V)', 'standby': '5 V rail powered, 3.3 V unpowered', 'mech': '65 x 56.5 board, holes 3.5 mm from edges (58 x 49 pattern), header centred between the end holes on the hole-row axis; at least one hole aligned; stacking header + spacers; >=15 mm (16 ideal) board-to-board over an Active Cooler; do not foul PoE header or camera/display/PCIe flex connectors'} | verified | Raspberry Pi HAT+ specification RP-008281-DS-1 (uploaded), ch. 6-7, Fig. 2 |
 
 `owner_cited` = supplied by the project owner with a source; the build environment cannot reach Mean Well, Molex, Littelfuse or Harwin, so re-check against the PDFs. Assumptions: stacking-socket contact resistance is a PLACEHOLDER (socket MPN not chosen), interposer copper 2 mOhm/rail, hot-fuse 1.3x sensitivity.
 
@@ -87,7 +90,7 @@ Vref = 1.24 V, R1 = 15.47 k, R2 = 5.1 k, R3 = 33.0 k; nominal Vout = 5.001 V. `a
 
 ## F1 (input fuse)
 
-F1 (input, time-delay 8 A, candidate 0453008.MRL, R assumed 10 mOhm): at the 5 A design load (2.3 A in) drop 23 mV, 0.05 W; at module full load (3.9 A in) drop 39 mV, 0.16 W, 49 % of the 8 A rating (was 79 % of 5 A). Input-side drop does not enter the 5 V budget (UVLO 8 V; bus 12 V). DC resistance, DC voltage rating and interrupt rating are UNVERIFIED.
+F1 = 0407008.WR (Littelfuse 407, 1206 time-lag, 8 A, 24 V max, interrupt 60 A @ 24 VDC; datasheet-verified). Nominal resistance 9 mOhm (cold), 12.1 mOhm hot at 8 A (0.097 V drop). At the 5 A design load (2.3 A in): 28 mV drop, 0.07 W; at the module's full 8 A load (3.9 A in): 48 mV, 0.19 W, 49 % of rating (datasheet: run continuously <= 80 % = 6.4 A, plus temperature re-rating). Inrush check (ASSUMED 122 uF, 10 mOhm loop, 14.4 V): I2t ~ 1.26 A2s vs fuse melting I2t 24.12 A2s = 5 % - comfortable; confirm by scope. Input-side drop does not enter the 5 V budget (module UVLO 8 V). Note: 24 V max rating is ample for the 12 V bus (<=14.4 V); the SMBJ15A clamps ~24 V only in a surge.
 
 ## Remaining RC2 gates
 

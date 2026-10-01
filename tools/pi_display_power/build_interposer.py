@@ -8,13 +8,15 @@ D = sys.argv[1]; NAME = "OSBAMS_Pi_Power_Interposer_RevA"; LIB = "/usr/share/kic
 for sub in ("kicad", "gerbers", "drill", "bom", "docs", "reports"): os.makedirs(f"{D}/{sub}", exist_ok=True)
 P = lambda x, y: V(mm(x), mm(y))
 # ---------- geometry (mm, board top-left origin, +y down; header axis along x; outward (beyond Pi edge) = -y)
-X0, YH = 4.0, 20.0            # Pi pin 1 column x, header centre-line y
-BW, Y_TOP, Y_BOT = 57.0, 2.0, 24.0
+# HAT+ spec Fig.2: 65 mm wide, Pi mounting holes 3.5 mm from the edge on a 58 mm pitch, header centred between them on the hole-row axis.
+BW = 65.0; XC = 32.5; X0 = XC - 19 * 2.54 / 2   # pin-1 column x (8.37)
+YH, Y_TOP, Y_BOT = 20.0, 2.0, 24.0
+DX = X0 - 4.0
 PIN_NETS = {2: "5V_PI", 4: "5V_PI", 6: "PI_GND", 9: "PI_GND", 14: "PI_GND", 20: "PI_GND"}
 def pin_xy(n):                 # Pi header, top view: odd pins inner row (y+1.27), even pins outer row (y-1.27)
     col = (n + 1) // 2
     return X0 + (col - 1) * 2.54, YH + (1.27 if n % 2 else -1.27)
-J1 = (20.0, 11.1)              # Micro-Fit pin 1, rotation 0 -> body toward -y (off the board edge side)
+J1 = (20.0 + DX, 11.1)              # Micro-Fit pin 1, rotation 0 -> body toward -y (off the board edge side)
 b = pcbnew.BOARD(); nets = {}
 def net(n):
     if n not in nets:
@@ -43,8 +45,14 @@ for n in range(1, 41):
     fp2.Add(pd)
 seg(fp2, pcbnew.F_SilkS, -1.5, -2.8, 50.5, -2.8); seg(fp2, pcbnew.F_SilkS, 50.5, -2.8, 50.5, 2.8); seg(fp2, pcbnew.F_SilkS, 50.5, 2.8, -1.5, 2.8); seg(fp2, pcbnew.F_SilkS, -1.5, 2.8, -1.5, -2.8)
 b.Add(fp2)
+# Pi mounting-hole positions (M2.5 spacers to the Pi, per HAT+ guidance: attach to at least one Pi hole; also strain relief)
+for i, x in enumerate((3.5, 61.5), 1):
+    k = pcbnew.FOOTPRINT(b); k.SetReference(f"M{i}"); k.SetValue("M2.5 to Pi"); k.SetPosition(P(x, YH)); k.SetFPID(pcbnew.LIB_ID("OSBAMS_PiPwr", "MountingHole_2.7mm_M2.5"))
+    pd = pcbnew.PAD(k); pd.SetNumber(""); pd.SetPosition(P(x, YH)); pd.SetPos0(P(0, 0)); pd.SetSize(P(2.7, 2.7)); pd.SetAttribute(pcbnew.PAD_ATTRIB_NPTH)
+    pd.SetLayerSet(pd.UnplatedHoleMask()); pd.SetShape(pcbnew.PAD_SHAPE_CIRCLE); pd.SetDrillSize(P(2.7, 2.7)); k.Add(pd)
+    k.Reference().SetLayer(pcbnew.F_Fab); k.Value().SetVisible(False); b.Add(k)
 # Key standoff holes (M2.5 NPTH 2.7 mm) on the OUTWARD side: reversed (180 deg) fitting would put them over the Pi PCB
-for i, (x, y) in enumerate([(34.0, 5.5), (52.0, 5.5)], 1):
+for i, (x, y) in enumerate([(34.0 + DX, 5.5), (52.0 + DX, 5.5)], 1):
     k = pcbnew.FOOTPRINT(b); k.SetReference(f"K{i}"); k.SetValue("KEY M2.5"); k.SetPosition(P(x, y)); k.SetFPID(pcbnew.LIB_ID("OSBAMS_PiPwr", "KeyStandoff_M2.5"))
     pd = pcbnew.PAD(k); pd.SetNumber(""); pd.SetPosition(P(x, y)); pd.SetPos0(P(0, 0)); pd.SetSize(P(2.7, 2.7)); pd.SetAttribute(pcbnew.PAD_ATTRIB_NPTH)
     pd.SetLayerSet(pd.UnplatedHoleMask()); pd.SetShape(pcbnew.PAD_SHAPE_CIRCLE); pd.SetDrillSize(P(2.7, 2.7)); k.Add(pd)
@@ -54,16 +62,16 @@ def zone(nn, layer, pts, clr=0.5):
     o = z.Outline(); o.NewOutline()
     for x, y in pts: o.Append(mm(x), mm(y))
     b.Add(z)
-zone("5V_PI", pcbnew.F_Cu, [(2.7, 9.0), (24.5, 9.0), (24.5, 12.7), (7.5, 12.7), (7.5, 19.8), (2.7, 19.8)])
+zone("5V_PI", pcbnew.F_Cu, [(2.7 + DX, 9.0), (24.5 + DX, 9.0), (24.5 + DX, 12.7), (7.5 + DX, 12.7), (7.5 + DX, 19.8), (2.7 + DX, 19.8)])
 zone("PI_GND", pcbnew.B_Cu, [(0.8, 2.8), (BW - 0.8, 2.8), (BW - 0.8, Y_BOT - 0.8), (0.8, Y_BOT - 0.8)], 0.4)
 for a in ((0, Y_TOP, BW, Y_TOP), (BW, Y_TOP, BW, Y_BOT), (BW, Y_BOT, 0, Y_BOT), (0, Y_BOT, 0, Y_TOP)):
     s = pcbnew.PCB_SHAPE(b); s.SetShape(pcbnew.SHAPE_T_SEGMENT); s.SetStart(P(a[0], a[1])); s.SetEnd(P(a[2], a[3])); s.SetLayer(pcbnew.Edge_Cuts); s.SetWidth(mm(0.1)); b.Add(s)
 def text(s, x, y, h=1.0, layer=pcbnew.F_SilkS):
     t = pcbnew.PCB_TEXT(b); t.SetText(s); t.SetPosition(P(x, y)); t.SetLayer(layer); t.SetTextSize(P(h, h)); t.SetTextThickness(mm(0.18)); t.SetHorizJustify(pcbnew.GR_TEXT_H_ALIGN_LEFT); b.Add(t)
-text("OSBAMS Pi Power Interposer Rev.A", 29.0, 3.4, 0.9); text("KEY", 33.0, 7.6, 0.8); text("KEY", 51.0, 7.6, 0.8)
-text("FIT KEY STANDOFFS", 29.0, 9.6, 0.8); text("5V / 8A MAX  1,2=+5V 3,4=GND", 29.0, 12.6, 0.8); text("ISOLATED 5V IN", 29.0, 14.6, 0.8)
-text("PI SIDE - ISOLATED", 29.0, 16.4, 0.8); text("PI PIN 1", 0.9, 22.7, 0.7); text("RC1 - NOT FOR FAB", 29.0, 22.7, 0.8)
-text("Rev.A  2oz Cu  1.6mm", 30.0, 21.2, 0.8, pcbnew.B_SilkS)
+text("OSBAMS Pi Power Interposer Rev.A", 29.0 + DX, 3.4, 0.9); text("KEY", 33.0 + DX, 7.6, 0.8); text("KEY", 51.0 + DX, 7.6, 0.8)
+text("FIT KEY STANDOFFS", 29.0 + DX, 9.6, 0.8); text("5V / 8A MAX  1,2=+5V 3,4=GND", 29.0 + DX, 12.6, 0.8); text("ISOLATED 5V IN", 29.0 + DX, 14.6, 0.8)
+text("PI SIDE - ISOLATED", 29.0 + DX, 16.4, 0.8); text("PI PIN 1", 6.0, 22.9, 0.7); text("RC1 - NOT FOR FAB", 29.0 + DX, 22.7, 0.8)
+text("Rev.A  2oz Cu  1.6mm", 30.0 + DX, 21.2, 0.8, pcbnew.B_SilkS)
 b.GetDesignSettings().SetBoardThickness(mm(1.6))
 out = f"{D}/kicad/{NAME}.kicad_pcb"; b.Save(out); b = pcbnew.LoadBoard(out); b.BuildConnectivity(); pcbnew.ZONE_FILLER(b).Fill(b.Zones()); b.Save(out)
 stack = ('(stackup (layer "F.SilkS" (type "Top Silk Screen")) (layer "F.Paste" (type "Top Solder Paste")) (layer "F.Mask" (type "Top Solder Mask") (thickness 0.01)) '

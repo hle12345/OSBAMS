@@ -59,9 +59,15 @@ tt = ["| Tolerance scenario | low / high corner | setpoint needed | max setpoint
 for nme, a_, b_ in scen:
     need_ = (TARGET + 5 * rm_ / 1e3) / (1 - a_); mx_ = PI_MAX / (1 + b_)
     tt.append(f"| {nme} | -{a_*100:.2f} % / +{b_*100:.2f} % | {need_:.3f} V | {mx_:.3f} V | {(mx_-need_)*1000:+.0f} mV | {'yes' if mx_ >= need_ else 'NO'} |")
-F1R = V("f1_resistance_mohm"); I_F1 = 40.0 / (0.89 * 12.0 * 0.95)   # full 8 A load, 12 V bus -0.5 V
-I_F1_5A = 25.0 / (0.89 * 12.0)
-f1txt = f"F1 (input, time-delay 8 A, candidate {V('f1_mpn')}, R assumed {F1R:.0f} mOhm): at the 5 A design load ({I_F1_5A:.1f} A in) drop {I_F1_5A*F1R:.0f} mV, {I_F1_5A**2*F1R/1e3:.2f} W; at module full load ({I_F1:.1f} A in) drop {I_F1*F1R:.0f} mV, {I_F1**2*F1R/1e3:.2f} W, {I_F1/8*100:.0f} % of the 8 A rating (was {I_F1/5*100:.0f} % of 5 A). Input-side drop does not enter the 5 V budget (UVLO 8 V; bus 12 V). DC resistance, DC voltage rating and interrupt rating are UNVERIFIED."
+F1S = V("f1_spec"); F1R = F1S["nominal_resistance_mohm"]; F1H = F1S["vdrop_at_rated_v"] / F1S["rating_a"] * 1e3     # nominal and "hot at rated current" resistances
+I_F1 = 40.0 / (0.89 * 12.0 * 0.95); I_F1_5A = 25.0 / (0.89 * 12.0)                                                  # input current at full 8 A load / at 5 A (12 V bus)
+C_IN, R_IN, V_IN = 122e-6, 10e-3, 14.4                                                                           # 100 uF + ~22 uF assumed module filter; 10 mOhm loop; worst bus 14.4 V
+I2T_INRUSH = V_IN ** 2 * C_IN / (2 * R_IN)                                                                       # integral of i^2 for an RC charge
+f1txt = (f"F1 = {V('f1_mpn')} (Littelfuse 407, 1206 time-lag, 8 A, {F1S['max_voltage_v']} V max, interrupt {F1S['interrupt']}; datasheet-verified). "
+         f"Nominal resistance {F1R:.0f} mOhm (cold), {F1H:.1f} mOhm hot at 8 A (0.097 V drop). At the 5 A design load ({I_F1_5A:.1f} A in): {I_F1_5A*F1H:.0f} mV drop, {I_F1_5A**2*F1H/1e3:.2f} W; "
+         f"at the module's full 8 A load ({I_F1:.1f} A in): {I_F1*F1H:.0f} mV, {I_F1**2*F1H/1e3:.2f} W, {I_F1/8*100:.0f} % of rating (datasheet: run continuously <= 80 % = {0.8*8:.1f} A, plus temperature re-rating). "
+         f"Inrush check (ASSUMED 122 uF, 10 mOhm loop, 14.4 V): I2t ~ {I2T_INRUSH:.2f} A2s vs fuse melting I2t {F1S['melting_i2t_a2s']} A2s = {I2T_INRUSH/F1S['melting_i2t_a2s']*100:.0f} % - comfortable; confirm by scope. "
+         "Input-side drop does not enter the 5 V budget (module UVLO 8 V). Note: 24 V max rating is ample for the 12 V bus (<=14.4 V); the SMBJ15A clamps ~24 V only in a surge.")
 lines = [
 "# 5 V distribution voltage-drop budget (RC1.1)", "",
 "Path: `RSDW40F-05 +VOUT -> PCB copper -> F2 -> J_OUT (2 contacts/rail) -> 16 AWG harness (<=150 mm) -> keyed interposer Micro-Fit J1 (2 contacts/rail) -> interposer copper -> 2x20 stacking socket -> Pi pins (+5 V: 2 and 4; GND: 6, 9, 14, 20)` and the matching return. The Harwin M20 fan-out is no longer in the path.",

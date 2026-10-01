@@ -7,8 +7,8 @@ UNVERIFIED = "NOT VERIFIED (no datasheet access in build env)"
 
 # ref, value, description, manufacturer, mpn, footprint key, mount type
 PARTS = [
- ("U1", "RSDW40F-05", "DC-DC isolated 9-36V in, 5V/8A/40W, 2x1in through-hole", "Mean Well", "RSDW40F-05", "OSBAMS_PiPwr:RSDW40F-05_PLACEHOLDER_UNVERIFIED", "THT", "Consign if PCBWay cannot source"),
- ("F1", "8A 125V TD", "Nano2 SMD fuse, TIME-DELAY (Slo-Blo class), 8 A (input) - per Mean Well input-fuse recommendation", "Littelfuse", "0453008.MRL", "Fuse:Fuse_Littelfuse-NANO2-451_453", "SMD", "CANDIDATE - datasheet (DC cold R, DC voltage, interrupt rating, I2t) not yet verified"),
+ ("U1", "RSDW40F-05", "DC-DC isolated 9-36V in, 5V/8A/40W, 2x1in through-hole", "Mean Well", "RSDW40F-05", "OSBAMS_PiPwr:RSDW40F-05_MeanWell_2x1in", "THT", "Consign if PCBWay cannot source"),
+  ("F1", "8A TIME-LAG 24V", "407 Series 1206 time-lag SMD fuse, 8 A, 24 V max, 60 A@24VDC interrupt (input; Mean Well recommends 8 A delay type)", "Littelfuse", "0407008.WR", "OSBAMS_PiPwr:Fuse_1206_Littelfuse407", "SMD", "Datasheet-verified: 9 mOhm nominal, I2t 24.12 A2s, 0.097 V drop @8 A"),
  ("F2", "8A 125V", "Nano2 SMD fuse, fast-acting, 8 A, 125 VAC/VDC (output)", "Littelfuse", "0451008.MRL", "Fuse:Fuse_Littelfuse-NANO2-451_453", "SMD", ""),
  ("TVS1", "SMBJ15A", "TVS unidirectional 15 V standoff, 600 W, DO-214AA", "Littelfuse", "SMBJ15A", "Diode_SMD:D_SMB", "SMD", "Cathode to +12V_F"),
  ("J_IN", "12V IN", "Micro-Fit 3.0 header, right-angle, 2 circuits", "Molex", "430450200", "Connector_Molex:Molex_Micro-Fit_3.0_43045-0200_2x01_P3.00mm_Horizontal", "THT", "Mate: 43025-0200 + 43030 terminals"),

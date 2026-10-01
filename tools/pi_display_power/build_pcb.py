@@ -38,7 +38,16 @@ def libfp(ref, key, x, y, angle, padnets, hide_val=True):
 N = lambda **k: {str(i): v for i, v in k.items()}
 def two(ref, a, c): return {"1": a, "2": c}
 # --- parts from official libraries
-libfp("F1", meta["F1"][5], *POS["F1"], 0, two("F1", "+12V_IN", "+12V_F"))
+# F1: Littelfuse 407-series 1206, recommended land pattern from the datasheet: pad 1.0 x 1.8 mm, gap 1.5 mm, overall 3.5 mm
+f1 = pcbnew.FOOTPRINT(b); f1.SetReference("F1"); f1.SetValue("0407008.WR"); f1.SetPosition(P(*POS["F1"])); f1.SetFPID(pcbnew.LIB_ID("OSBAMS_PiPwr", "Fuse_1206_Littelfuse407"))
+f1.Reference().SetLayer(pcbnew.F_Fab); f1.Value().SetVisible(False); b.Add(f1); fps["F1"] = f1
+for n_, dx_, nn_ in ((1, -1.25, "+12V_IN"), (2, 1.25, "+12V_F")):
+    pd = pcbnew.PAD(f1); pd.SetNumber(str(n_)); o_ = f1.GetPosition(); pd.SetPosition(V(o_.x + mm(dx_), o_.y)); pd.SetPos0(P(dx_, 0)); pd.SetSize(P(1.0, 1.8))
+    pd.SetAttribute(pcbnew.PAD_ATTRIB_SMD); pd.SetLayerSet(pd.SMDMask()); pd.SetShape(pcbnew.PAD_SHAPE_RECT); pd.SetNet(net(nn_)); f1.Add(pd)
+for a_ in ((-1.6, -0.8, 1.6, -0.8), (1.6, -0.8, 1.6, 0.8), (1.6, 0.8, -1.6, 0.8), (-1.6, 0.8, -1.6, -0.8)):
+    sh = pcbnew.FP_SHAPE(f1); sh.SetShape(pcbnew.SHAPE_T_SEGMENT); o_ = f1.GetPosition()
+    sh.SetStart0(P(a_[0], a_[1])); sh.SetEnd0(P(a_[2], a_[3])); sh.SetStart(V(o_.x + mm(a_[0]), o_.y + mm(a_[1]))); sh.SetEnd(V(o_.x + mm(a_[2]), o_.y + mm(a_[3])))
+    sh.SetLayer(pcbnew.F_Fab); sh.SetWidth(mm(0.1)); f1.Add(sh)
 libfp("F2", meta["F2"][5], *POS["F2"], 270, two("F2", "5V_ISO_RAW", "5V_PI"))
 libfp("TVS1", meta["TVS1"][5], *POS["TVS1"], 0, two("T", "+12V_F", "12V_GND"))          # pad1 = cathode
 libfp("J_IN", meta["J_IN"][5], *POS["J_IN"], 90, two("J", "+12V_IN", "12V_GND"))
@@ -120,7 +129,7 @@ def zone(nn, layer, pts, prio=0, clr=0.5):
     o = z.Outline(); o.NewOutline()
     for x, y in pts: o.Append(mm(x), mm(y))
     b.Add(z)
-zone("+12V_F", pcbnew.F_Cu, [(21.5, 35.3), (38.5, 35.3), (38.5, 62.5), (21.5, 62.5)], 1)
+zone("+12V_F", pcbnew.F_Cu, [(20.0, 35.3), (38.5, 35.3), (38.5, 62.5), (20.0, 62.5)], 1)
 zone("5V_ISO_RAW", pcbnew.F_Cu, [(70, 36), (83, 36), (83, 44.6), (70, 44.6)], 1)
 zone("5V_PI", pcbnew.F_Cu, [(78.2, 47.4), (83, 47.4), (83, 59.4), (89.7, 59.4), (89.7, 62.9), (78.2, 62.9)], 1)
 zone("12V_GND", pcbnew.B_Cu, [(1.5, 1.5), (45, 1.5), (45, 68.5), (1.5, 68.5)], 0, 0.4)
