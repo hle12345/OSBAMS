@@ -13,12 +13,12 @@ Checked with KiCad 10.0.6 in the build container (`BUILD_ENVIRONMENT.md`):
 - **Custom rule check:** `ISOLATION_RULE_CHECK.txt` shows the `.kicad_dru` is applied when the project is opened from a fresh folder (clean 0 violations; tightened rule → 131).
 - **Buck:** XDR 12.0 V ±1 %; maximum continuous controller input 14.4 V; 24.4 V transient treated separately (pulse skipping, millivolt-level rail excursion) — §3.
 - **IRLML0060:** kept; margin ≈ 7× the coil load by estimate; RDS(on) at 3.3 V not claimed as guaranteed; first-article measurements mandatory — §4.
-- **Evidence:** VERIFIED_LOCAL 11 · USER_RELAYED_MANUFACTURER 50 · UNVERIFIED 17; classified by consequence in `EVIDENCE_RISK_CLASSIFICATION.md`. Read locally: ISO7721, CP2102N, SRN6045TA-100M, EB21A drawing.
+- **Evidence:** VERIFIED_LOCAL 20 · USER_RELAYED_MANUFACTURER 47 · UNVERIFIED 19; classified by consequence in `EVIDENCE_RISK_CLASSIFICATION.md`. Read locally: ISO7721, CP2102N, SRN6045TA-100M, EB21A drawing.
 - **Outputs:** schematic PDF, BOM xlsx/csv (Qty, MPN, suffix status, source, DNP), CPL, assembly drawing, copper-layer PDF, assembly/fabrication notes, test-point map, power-tree/calculation report, DFM/DFA report, supply-chain report, evidence register, reconciliation, connector check, pre-PCBWay checklist, TC74 probe project (`probe/`).
 
 ## BLOCKERS BEFORE PCBWAY ORDER
-1. **Connector footprints (J5 Molex ×2, J7 JST, J8 GCT USB-C, J9 Samtec) not compared with the official drawings** — `CONNECTOR_FOOTPRINT_CHECK.md` (drawings needed; none supplied, manufacturer sites unreachable).
-1a. **Pack-sense protection source values unread:** Panasonic ERJ-P08F pulse rating/suffix and Bourns 1.5SMBJ48A leakage vs voltage/temperature — protection is not fully closed until they are.
+1. **Connector footprints J5/J6 (Molex 22-27-2031/-2041) and J9 (Samtec FTSH-105-01-L-DV-K) not compared with dimensioned drawings** (Molex: product pages only, sales drawings `022272031_sd.pdf`/`022272041_sd.pdf` needed; Samtec: specification only, no print) — `CONNECTOR_FOOTPRINT_CHECK.md`. J7 (JST) and J8 (GCT) are verified; J8 was moved 0.275 mm to match the PCB-edge drawing.
+1a. **Pack-sense protection not fully closed:** the Panasonic datasheet supplied is the ERJP6W 0805 family (not recommended for new design), not the BOM's ERJ-P08F — pulse rating/suffix still open; Bourns gives IR ≤ 1.0 µA at 48 V/25 °C only (no leakage vs temperature).
 2. **Wrong-pinout-class datasheets still USER_RELAYED** (INA228, LMR14006Y, IRLML0060, VO610A, TC74): they match the netlist but the PDFs have not been read — `EVIDENCE_RISK_CLASSIFICATION.md`.
 3. **Your local actions** in `PRE_PCBWAY_RELEASE_CHECKLIST.md`: KiCad 10 ERC/DRC, Gerber/drill export, Gerber viewer inspection, PCBWay CAM and CPL inspection, stock/substitution review (31 critical register entries are not VERIFIED_LOCAL).
 4. Open measured/first-article items are listed in `EVIDENCE_RISK_CLASSIFICATION.md` and are **not** order blockers.

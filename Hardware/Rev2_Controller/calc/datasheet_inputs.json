@@ -480,10 +480,10 @@
    "parameter": "1.5SMBJ48A: VRWM 48 V, VBR 53.3-58.9 V; VC max 77.4 V @ IPP 19.4 A (10/1000 us)",
    "value": 77.4,
    "unit": "V",
-   "evidence": "USER_RELAYED_MANUFACTURER",
+   "evidence": "VERIFIED_LOCAL",
    "critical": true,
-   "source": "user message 2026-10-01 (manufacturer information relayed by the user; PDF not opened in this build environment)",
-   "doc": null
+   "source": "Bourns 1.5SMBJ datasheet, read locally from the user-supplied PDF: 1.5SMBJ48A row: VBR 53.3-58.9 V @ 1 mA, VRWM 48.0 V, IR 1.0 uA max @ VRWM (25 C), VC 77.4 V @ IPP 19.4 A (10/1000 us)",
+   "doc": "docs/rev2/pcb/evidence/Bourns_1.5SMBJ_datasheet.pdf"
   },
   {
    "id": "tvs48_820",
@@ -491,10 +491,10 @@
    "parameter": "VC max 100.6 V @ IPP 97.0 A (8/20 us) - EXCEEDS the INA228 85 V absolute maximum; see the protection analysis",
    "value": 100.6,
    "unit": "V",
-   "evidence": "USER_RELAYED_MANUFACTURER",
+   "evidence": "VERIFIED_LOCAL",
    "critical": true,
-   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
-   "doc": null
+   "source": "Bourns 1.5SMBJ datasheet, read locally from the user-supplied PDF: 1.5SMBJ48A row: VC 100.6 V @ IPP 97.0 A (8/20 us)",
+   "doc": "docs/rev2/pcb/evidence/Bourns_1.5SMBJ_datasheet.pdf"
   },
   {
    "id": "tvs48_ipp",
@@ -502,15 +502,15 @@
    "parameter": "IPP 19.4 A (10/1000 us), 97.0 A (8/20 us)",
    "value": 19.4,
    "unit": "A",
-   "evidence": "USER_RELAYED_MANUFACTURER",
+   "evidence": "VERIFIED_LOCAL",
    "critical": false,
-   "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
-   "doc": null
+   "source": "Bourns 1.5SMBJ datasheet, read locally from the user-supplied PDF: IPP 19.4 A (10/1000 us), 97.0 A (8/20 us)",
+   "doc": "docs/rev2/pcb/evidence/Bourns_1.5SMBJ_datasheet.pdf"
   },
   {
    "id": "rs_pulse_rating",
    "part": "Panasonic ERJ-P08F47R0V / ERJ-P08F10R0V",
-   "parameter": "anti-surge 1206 pulse withstand (energy for 8/20 us) - selection criterion >= 50 mJ credible-set margin; datasheet not read; failure mode is fail-safe (open)",
+   "parameter": "resistor R41-R43 pulse/surge rating: the supplied Panasonic document is ERJP6W (0805, 0.5 W, limiting element voltage 150 V, overload 200 V, marked 'not recommended for new design') - it is NOT the ERJ-P08F 1206 part in the BOM and contains no pulse-energy curve; ERJ-P08F datasheet/suffix still needed (or a replacement part with a documented pulse rating)",
    "value": null,
    "unit": "",
    "evidence": "UNVERIFIED",
@@ -519,15 +519,48 @@
    "doc": null
   },
   {
+   "id": "erjp6w_ref",
+   "part": "Panasonic ERJP6W (reference only)",
+   "parameter": "ERJP6W 0805 anti-surge: 0.5 W @ 70 C, limiting element voltage 150 V, max overload voltage 200 V, R 10 ohm-1 Mohm (1 %), -55..+155 C; NOT RECOMMENDED FOR NEW DESIGN; not the BOM part",
+   "value": null,
+   "unit": "",
+   "evidence": "VERIFIED_LOCAL",
+   "critical": false,
+   "source": "Panasonic ERJP6W datasheet RDO0000C337 (1-Feb-14), read locally",
+   "doc": "docs/rev2/pcb/evidence/Panasonic_ERJP6W_0805_NRND_RDO0000C337.pdf"
+  },
+  {
    "id": "tvs_leakage",
    "part": "1.5SMBJ48A",
-   "parameter": "reverse leakage at 44 V (assumed <= 1 uA max, ~0.1 uA typ) - enters the Kelvin-line offset budget (first-article: 0 A shunt voltage cold/warm)",
+   "parameter": "1.5SMBJ48A reverse leakage: IR <= 1.0 uA at VRWM = 48 V, TA = 25 C (datasheet; lower at 44 V but no curve given) - enters the Kelvin-line offset budget (4 mA per uA) and the PACK_INA error (47 uV per uA)",
    "value": 1e-06,
    "unit": "A",
+   "evidence": "VERIFIED_LOCAL",
+   "critical": false,
+   "source": "Bourns 1.5SMBJ datasheet, read locally from the user-supplied PDF: electrical table, IR (uA) = 1.0 at VRWM, TA = 25 C",
+   "doc": "docs/rev2/pcb/evidence/Bourns_1.5SMBJ_datasheet.pdf"
+  },
+  {
+   "id": "tvs_leakage_temp",
+   "part": "1.5SMBJ48A",
+   "parameter": "reverse leakage vs temperature and vs voltage below VRWM: NOT specified in the datasheet (only the 25 C maximum at VRWM and the typical VBR temperature coefficient dVBR = 0.1 % x VBR(25 C) x dT); hot leakage enters the Kelvin offset -> measure at first article",
+   "value": null,
+   "unit": "",
    "evidence": "UNVERIFIED",
    "critical": true,
-   "source": "assumption / proposal - needs the manufacturer document",
+   "source": "datasheet gives no leakage-vs-temperature data",
    "doc": null
+  },
+  {
+   "id": "tvs_tempco",
+   "part": "1.5SMBJ48A",
+   "parameter": "typical VBR temperature coefficient: dVBR = 0.1 % x VBR(25 C) x dT (VBR 53.3 V min -> 49.8 V at -40 C, 56.5 V at +85 C); clamp voltage assumed to scale with it [UV]; peak pulse power derates linearly from 100 % at 25 C to 0 % at 150 C",
+   "value": 0.001,
+   "unit": "1/K",
+   "evidence": "VERIFIED_LOCAL",
+   "critical": false,
+   "source": "Bourns 1.5SMBJ datasheet, read locally from the user-supplied PDF: Features list and Pulse Derating Curve",
+   "doc": "docs/rev2/pcb/evidence/Bourns_1.5SMBJ_datasheet.pdf"
   },
   {
    "id": "tvs15",
@@ -838,9 +871,64 @@
    "doc": null
   },
   {
+   "id": "conn_jst",
+   "part": "JST B4B-PH-K-S (J7)",
+   "parameter": "top-entry through-hole PH header: pitch 2.0+/-0.05, recommended hole phi0.7 +0.1/0 (KiCad drill 0.75 within), A = 6.0, B = 9.9 (2 x 1.95 outline margin), outline depth 4.5 with pin row 1.7 mm from one edge, height 6, tail 3.4, No.1 circuit at the left viewed from the mounting surface; KiCad JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical matches (outline x -1.95..7.95, y -1.7..2.8, pin 1 at left)",
+   "value": null,
+   "unit": "",
+   "evidence": "VERIFIED_LOCAL",
+   "critical": false,
+   "source": "JST PH catalog ePH, page 1 PC board layout (through-hole, top entry) and page 3 header table, read locally",
+   "doc": "docs/rev2/pcb/evidence/JST_PH_ePH_catalog.pdf"
+  },
+  {
+   "id": "conn_gct",
+   "part": "GCT USB4105-GF-A (J8)",
+   "parameter": "USB4105 recommended PCB layout: signal pads 0.30 wide at +/-0.25/0.75/1.25/1.75, power pads 0.60 wide at +/-2.40/+/-3.20, pad length 1.15, shell slots 1.0 x 2.1 (hole 0.6 x 1.7) and 1.0 x 1.8 (hole 0.6 x 1.4) at +/-4.32, slot spacing 4.18, 2 NPTH phi0.65 at +/-2.89, rear slot centre 2.60 from the PCB edge; KiCad footprint pads/slots/NPTH match; PLACEMENT was 0.275 mm too close to the edge reference (RC1.2b: J8 moved to x = 96.325)",
+   "value": null,
+   "unit": "",
+   "evidence": "VERIFIED_LOCAL",
+   "critical": false,
+   "source": "GCT USB4105 drawing rev B (18/12/23), read locally",
+   "doc": "docs/rev2/pcb/evidence/GCT_USB4105_drawing.pdf"
+  },
+  {
+   "id": "conn_samtec",
+   "part": "Samtec FTSH-105-01-L-DV-K (J9)",
+   "parameter": "the supplied Samtec document is the CLP/FTSH/FTS/FW product specification (ratings, processing); it contains NO print, footprint or dimensions and refers to samtec.com for them -> geometry still unverified (footprint is the generic KiCad PinHeader_2x05_P1.27mm_Vertical_SMD)",
+   "value": null,
+   "unit": "",
+   "evidence": "UNVERIFIED",
+   "critical": true,
+   "source": "document read locally; no dimensional data in it",
+   "doc": "docs/rev2/pcb/evidence/Samtec_CLP_FTSH_FTS_FW_product_specification.pdf"
+  },
+  {
+   "id": "conn_molex",
+   "part": "Molex 22-27-2031 / 22-27-2041 (J5, J6)",
+   "parameter": "Molex pad/drill/outline/pin-1 geometry: the supplied product pages give circuits, pitch (2.54), tail (3.56), PCB thickness (1.60) and 'partially shrouded, polarized to mating part' (match the KiCad KK-254 footprints) but NO dimensioned drawing -> pad 1.74 x 2.19 / drill 1.19 / outline unverified; sales drawings 022272031_sd.pdf and 022272041_sd.pdf (or the Molex footprint zip) needed",
+   "value": null,
+   "unit": "",
+   "evidence": "UNVERIFIED",
+   "critical": true,
+   "source": "product pages read; drawings not supplied",
+   "doc": null
+  },
+  {
+   "id": "molex_facts",
+   "part": "Molex 22-27-2031 / 22-27-2041 (J5, J6)",
+   "parameter": "Molex product pages: KK 254 header series 6410, vertical, through-hole, 3 circuits (AE-6410-03A) / 4 circuits (AE-6410-04A), pitch 2.54 mm, 3.56 mm tail, recommended PCB thickness 1.60 mm, partially shrouded, polarized to the mating part (no polarization to the PCB, no PCB locator/retention), friction lock, 4.0 A per contact, 500 V AC, status Active, mates with KK 2695 crimp housings",
+   "value": "as stated",
+   "unit": "",
+   "evidence": "VERIFIED_LOCAL",
+   "critical": false,
+   "source": "Molex part-detail pages 22272031 / 22272041 (generated 1 Oct 2026), read locally from the user-supplied PDFs; they list the sales drawing 022272031_sd.pdf / 022272041_sd.pdf and the footprint zip, which were NOT supplied",
+   "doc": "docs/rev2/pcb/evidence/Molex_22272031_product_page.pdf"
+  },
+  {
    "id": "conn_footprints",
    "part": "Molex KK/JST PH/GCT USB4105/Samtec FTSH",
-   "parameter": "connector footprints are KiCad stock; pad/drill/shield/CC/pin-1/tail geometry NOT compared with the manufacturer drawings (only pitch and pin count)",
+   "parameter": "connector footprints: J7 (JST) and J8 (GCT) VERIFIED against the drawings; J5/J6 (Molex) and J9 (Samtec) still OPEN (no drawing/print supplied)",
    "value": "KiCad 10 library",
    "unit": "",
    "evidence": "UNVERIFIED",

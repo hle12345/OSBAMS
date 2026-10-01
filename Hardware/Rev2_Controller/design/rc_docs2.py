@@ -88,28 +88,26 @@ def connector_check():
     fp = open(os.path.join(ROOT, "build", "connfp.txt")).read() if os.path.exists(os.path.join(ROOT, "build", "connfp.txt")) else "(run design connector extraction)"
     t = f"""# Connector footprint check — RC1.2 ({TODAY})
 
-**Status: OPEN.** The manufacturer drawings for these five parts were not available to the build (manufacturer sites are blocked; none were supplied). Only the numbers relayed by the user (pitch, circuits, A/B dimensions, tail length) could be compared, and those match; pad/drill/shield/courtyard/pin-1/orientation geometry could **not** be compared with an official drawing, so `conn_footprints` stays UNVERIFIED and critical. The EB21A footprint is verified and not part of this item.
+**Status: PARTLY CLOSED.** J7 (JST) and J8 (GCT USB-C) are verified against the manufacturer drawings supplied (committed in `docs/rev2/pcb/evidence/`). **J5/J6 (Molex 22-27-2031/-2041) and J9 (Samtec FTSH-105-01-L-DV-K) remain OPEN:** the Molex files supplied are the product-detail web pages (they confirm circuits, 2.54 mm pitch, 3.56 mm tail, 1.60 mm PCB, partially shrouded/polarized to the mating part — all consistent with the footprints — but contain no dimensioned drawing; the sales drawings `022272031_sd.pdf` / `022272041_sd.pdf` they list are still needed), and the Samtec document supplied (CLP/FTSH/FTS/FW product specification) contains no print or footprint — it refers to samtec.com for them. The EB21A footprint is verified separately.
 
-## What was compared (relayed numbers vs the KiCad stock footprints)
-| Part | Footprint | Relayed manufacturer data | Result |
+## Results
+| Part | Footprint | Source | Result |
 |---|---|---|---|
-| Molex 22-27-2031 (J5) | `Molex_KK-254_AE-6410-03A_1x03_P2.54mm_Vertical` | 3 circuits, 2.54 mm, PCB 1.60 mm, tail 3.56 mm, shrouded/polarized | pitch / circuits match |
-| Molex 22-27-2041 (J6) | `Molex_KK-254_AE-6410-04A_1x04_P2.54mm_Vertical` | 4 circuits, same family | pitch / circuits match |
-| JST B4B-PH-K-S (J7) | `JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical` | 4 circuits, 2.0 mm, A = 6.0 mm (= 3 × 2.0), B = 9.9 mm | pitch and A match; B not checkable from the footprint |
-| GCT USB4105-GF-A (J8) | `USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal` | USB-C, horizontal, VBUS 5 A, GND 6.25 A | named for the family; geometry not compared |
-| Samtec FTSH-105-01-L-DV-K (J9) | `PinHeader_2x05_P1.27mm_Vertical_SMD` | 10 pins, 1.27 mm, vertical SMT, keyed | generic SMD 2×5 footprint; keying/row spacing not compared |
+| JST B4B-PH-K-S (J7) | `JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical` | JST PH catalog ePH (p.1 through-hole layout, p.3 header table) | **PASS** — pitch 2.0 ±0.05 (pads at 0/2/4/6), recommended hole φ0.7 +0.1/0 (footprint drill 0.75 is inside that range; JST notes larger holes may be needed for hard PCB material), A = 6.0, B = 9.9 (outline x −1.95…7.95), body depth 4.5 with the pin row 1.7 mm from one edge (outline y −1.7…2.8), No. 1 circuit at the left viewed from the mounting surface (pin 1 at left, as placed), top-entry mating (cable/mating part comes from +Z; keep ≥ 8 mm above the board). Pad size 1.2 × 1.75 is a design choice (not on the drawing). |
+| GCT USB4105-GF-A (J8) | `USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal` | GCT drawing rev B | **PASS (footprint) + placement corrected.** Pad x positions ±0.25/0.75/1.25/1.75 (0.30 wide) and ±2.40/±3.20 (0.60 wide), pad length 1.15, A1…A12/B1…B12 order with A1 at the left viewed from the component side, shell slots 1.0 × 2.1 (hole 0.6 × 1.7) and 1.0 × 1.8 (hole 0.6 × 1.4) at ±4.32 (spacing 4.18), two NPTH φ0.65 at ±2.89 (5.78 apart), rear slot centre 2.60 from the PCB edge — all identical in the KiCad footprint. **Mismatch found and fixed:** the connector sat 0.275 mm too close to the board edge (the footprint's PCB-edge reference line was 0.275 mm outside the real edge); J8 moved from x = 96.600 to 96.325 mm so the shell slots are 2.60 mm from the edge and the front overhang is 0.6 mm as drawn. Signals: CC1/CC2 on A5/B5 with 5.1 kΩ, D± tied A6/B6 and A7/B7, SBU unused, all VBUS/GND pads and the four shell slots connected. |
+| Samtec FTSH-105-01-L-DV-K (J9) | `PinHeader_2x05_P1.27mm_Vertical_SMD` | Samtec CLP/FTSH/FTS/FW product specification (no print) | **OPEN** — document has ratings only (4.2 A, 280 VAC); print/footprint still needed (1.27 mm pitch, 2×5, keying, row spacing, pad size). The generic KiCad footprint is not keyed. |
+| Molex 22-27-2031 (J5), 22-27-2041 (J6) | `Molex_KK-254_AE-6410-03A/04A_1x0N_P2.54mm_Vertical` | Molex product pages (no drawing) | **OPEN (partly consistent)** — circuits 3/4, vertical, through-hole, pitch 2.54, tail 3.56, PCB 1.60, partially shrouded, polarized to the mating part match; pad 1.74 × 2.19 / drill 1.19 / outline / pin-1 side need the sales drawing. |
 
-## Extracted geometry of the footprints as placed (for the drawing comparison)
+## Extracted geometry of the footprints as placed
 ```
 {fp}
 ```
 
-## Checks to perform against each official drawing (drawings needed: Molex 22-27-2031 and 22-27-2041, JST B4B-PH-K-S, GCT USB4105-GF-A, Samtec FTSH-105-01-L-DV-K)
-- pad size and recommended hole/drill diameter; hole-to-pad annular ring; pad pitch and row spacing;
-- body outline and courtyard vs the manufacturer's keep-out; connector overhang past the board edge (J8 overhangs ~0.8 mm by design);
-- pin 1 location and the numbering direction; polarization/key orientation vs the silkscreen;
-- mating direction vs the board edge and neighbours (J5/J6/J7 mate vertically; J8 mates horizontally to the right edge; J9 needs the shroud notch toward the keyed side);
-- shield/NPTH holes and tail length vs the 1.6 mm board.
+## Still to compare once the drawings arrive (J5, J6, J9)
+- pad size, recommended hole/drill, annular ring, pad pitch and row spacing;
+- body outline/courtyard against the manufacturer keep-out; pin 1 and numbering direction; polarization/key orientation vs the silkscreen;
+- mating direction vs the board edge and neighbours (J5/J6 mate vertically; J9 needs the shroud notch toward the keyed side);
+- tail length vs the 1.6 mm board.
 """
     return write("CONNECTOR_FOOTPRINT_CHECK.md", t)
 
@@ -122,8 +120,8 @@ Baseline: OSBAMS Rev.2 Controller RC1.2 (project `OSBAMS_Rev2_RC1.kicad_pro`). T
 1. **Open the exact project in KiCad 10** (`OSBAMS_Rev2_RC1.kicad_pro` with the `.kicad_sch` sheets, `OSBAMS_Rev2.kicad_sym`, `OSBAMS_Rev2.pretty/`, `sym-lib-table`, `fp-lib-table`, `OSBAMS_Rev2_RC1.kicad_dru`). Keep the `.kicad_dru` next to the `.kicad_pro` (it holds the 1.0 mm isolation rule and the INA228 fine-pitch exemption). Confirm it is active: Board Setup → Design Rules → Custom Rules must list `isolation_host_to_controller`, `isolation_controller_to_host` and `fine_pitch_ina228` without syntax errors; the DRC must then give 0 violations (`ISOLATION_RULE_CHECK.txt` shows the build container's proof).
 2. **Local ERC** — expected 0 errors, 0 warnings.
 3. **Local DRC** — run with "all violations", re-fill all zones first (Edit → Fill all zones). Expected 0 violations, 0 unconnected, 0 footprint errors. Any difference from `DRC_REPORT.rpt` must be explained before continuing.
-4. **Connector drawings** — compare J5, J6, J7, J8, J9 against the official manufacturer drawings using `CONNECTOR_FOOTPRINT_CHECK.md` (or send me the five PDFs).
-5. **Manufacturer PDFs:** (a) the five connector drawings; (b) Panasonic ERJ-P08F datasheet (pulse rating, suffix) and Bourns 1.5SMBJ datasheet (leakage vs voltage/temperature) — needed to close the pack-sense protection; (c) the entries classified as wrong-pinout risk in `EVIDENCE_RISK_CLASSIFICATION.md` (INA228, LMR14006Y, IRLML0060, VO610A, TC74) — send them to move those entries from USER_RELAYED to VERIFIED_LOCAL.
+4. **Connector drawings** — J7 and J8 are verified; send `022272031_sd.pdf` and `022272041_sd.pdf` (the Molex product pages have no dimensions) and the Samtec FTSH-105-01-L-DV-K print (the CLP/FTSH specification has none) or compare J5, J6, J9 yourself using `CONNECTOR_FOOTPRINT_CHECK.md`.
+5. **Manufacturer PDFs:** (a) `022272031_sd.pdf`, `022272041_sd.pdf` and the Samtec FTSH-105-01-L-DV-K print; (b) the Panasonic **ERJ-P08F** (1206) datasheet — the file supplied is the ERJP6W 0805 family — or a replacement resistor with a documented pulse rating; the TVS leakage vs temperature is not in the Bourns datasheet and is a first-article measurement; (c) the entries classified as wrong-pinout risk in `EVIDENCE_RISK_CLASSIFICATION.md` (INA228, LMR14006Y, IRLML0060, VO610A, TC74) — send them to move those entries from USER_RELAYED to VERIFIED_LOCAL.
 6. **Edit the silkscreen text** `NOT FOR FABRICATION` / revision line to your release wording (silkscreen only; no copper change), then save.
 7. **Export Gerbers and drills from KiCad 10** (File → Fabrication Outputs): copper F.Cu/In1.Cu/In2.Cu/B.Cu, F/B mask, F/B silkscreen, F/B paste, Edge.Cuts; Excellon drill with PTH and NPTH in separate files and a drill map; use the board origin consistently.
 8. **Gerber viewer inspection** (KiCad Gerber viewer or another viewer): check layer count/order, outline, drill vs pad alignment, mask openings on 0.5 mm-pitch parts, silkscreen not over pads, polarity marks, the GND_HOST island and its gap.
@@ -159,8 +157,8 @@ Checked with KiCad 10.0.6 in the build container (`BUILD_ENVIRONMENT.md`):
 - **Outputs:** schematic PDF, BOM xlsx/csv (Qty, MPN, suffix status, source, DNP), CPL, assembly drawing, copper-layer PDF, assembly/fabrication notes, test-point map, power-tree/calculation report, DFM/DFA report, supply-chain report, evidence register, reconciliation, connector check, pre-PCBWay checklist, TC74 probe project (`probe/`).
 
 ## BLOCKERS BEFORE PCBWAY ORDER
-1. **Connector footprints (J5 Molex ×2, J7 JST, J8 GCT USB-C, J9 Samtec) not compared with the official drawings** — `CONNECTOR_FOOTPRINT_CHECK.md` (drawings needed; none supplied, manufacturer sites unreachable).
-1a. **Pack-sense protection source values unread:** Panasonic ERJ-P08F pulse rating/suffix and Bourns 1.5SMBJ48A leakage vs voltage/temperature — protection is not fully closed until they are.
+1. **Connector footprints J5/J6 (Molex 22-27-2031/-2041) and J9 (Samtec FTSH-105-01-L-DV-K) not compared with dimensioned drawings** (Molex: product pages only, sales drawings `022272031_sd.pdf`/`022272041_sd.pdf` needed; Samtec: specification only, no print) — `CONNECTOR_FOOTPRINT_CHECK.md`. J7 (JST) and J8 (GCT) are verified; J8 was moved 0.275 mm to match the PCB-edge drawing.
+1a. **Pack-sense protection not fully closed:** the Panasonic datasheet supplied is the ERJP6W 0805 family (not recommended for new design), not the BOM's ERJ-P08F — pulse rating/suffix still open; Bourns gives IR ≤ 1.0 µA at 48 V/25 °C only (no leakage vs temperature).
 2. **Wrong-pinout-class datasheets still USER_RELAYED** (INA228, LMR14006Y, IRLML0060, VO610A, TC74): they match the netlist but the PDFs have not been read — `EVIDENCE_RISK_CLASSIFICATION.md`.
 3. **Your local actions** in `PRE_PCBWAY_RELEASE_CHECKLIST.md`: KiCad 10 ERC/DRC, Gerber/drill export, Gerber viewer inspection, PCBWay CAM and CPL inspection, stock/substitution review ({len(crit)} critical register entries are not VERIFIED_LOCAL).
 4. Open measured/first-article items are listed in `EVIDENCE_RISK_CLASSIFICATION.md` and are **not** order blockers.

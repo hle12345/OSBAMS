@@ -67,7 +67,7 @@ RSA-20-50: ±0.25 % tolerance, ±15 ppm/°C, continuous ≤ 13.3 A (2/3 rated) [
 
 ### 2b. Pack-sense protection: 1.5SMBJ48A + surge-limiting series resistors vs the INA228 85 V absolute maximum
 
-**Manufacturer points [UR] [UR]:** VRWM 48 V, VBR 53.3-58.9 V; VC ≤ 77.4 V at 19.4 A (10/1000 µs) and ≤ 100.6 V at 97 A (8/20 µs). INA228 IN+/IN−/VBUS absolute maximum -0.3 to +85 V [UR]. '77.4 V < 85 V' is **not** used as a blanket pass: the clamp exceeds 85 V above ≈ 45 A (straight line between the two rating points = engineering estimate [UV], not a datasheet curve).
+**Manufacturer points:** VRWM 48 V, VBR 53.3-58.9 V; VC ≤ 77.4 V at 19.4 A (10/1000 µs) and ≤ 100.6 V at 97 A (8/20 µs). INA228 IN+/IN−/VBUS absolute maximum -0.3 to +85 V [UR]. '77.4 V < 85 V' is **not** used as a blanket pass: the clamp exceeds 85 V above ≈ 45 A (straight line between the two rating points = engineering estimate [UV], not a datasheet curve).
 
 **RC1.2 hardware change:** series surge-limiting resistors **upstream of the TVS**: R41 47 Ω on PACK_INA (J6.1 → R41 → D7/R13) and R42/R43 10 Ω on each Kelvin line (J5 → R42/R43 → D5/D6 + the existing 10 Ω R11/R12 → INA228). 1206 anti-surge parts (Panasonic ERJ-P08F series, pulse rating to be confirmed from the datasheet [UV]).
 
@@ -146,12 +146,14 @@ These rows are **model results**: the clamp curve is a straight line between two
 
 **Recomputed values for the defined transient (model; source values marked [UV] are unverified):**
 - Resistor pulse energy: forced interruption at 18.5 A / 2 µH: R41 371 µJ, R42/R43 271 µJ (= ½·L·I² = 342 µJ upper bound); hot-plug into the 100 nF on VBUS: R41 ≤ 83 µJ. **The ERJ-P08F pulse-energy/surge rating has not been read from the Panasonic datasheet [UV] — these energies cannot be called safe until it is.**
-- PACK_INA error from TVS leakage × 47 Ω: 47 µV per µA of leakage (1.1 ppm of 44 V per µA); the Bourns leakage maximum at 44 V and temperature has not been read [UV]; even 10 µA would give 0.47 mV (11 ppm).
-- Shunt-offset error from leakage × 10 Ω: 10 µV per µA of mismatch = 4 mA of shunt-current equivalent per µA (0.04 % at 10 A); a leakage-vs-temperature figure ≥ 5 µA would give ≥ 20 mA — decided by the Bourns datasheet [UV] and measured at first article.
+- PACK_INA error from TVS leakage × 47 Ω: 47 µV per µA of leakage (1.1 ppm of 44 V per µA). **Bourns datasheet (read locally): IR ≤ 1.0 µA at VRWM = 48 V, 25 °C → ≤ 47 µV (1.1 ppm) at 25 °C.** Leakage at 44 V is lower but no curve is given, and leakage vs temperature is **not specified** [UV]; even 10 µA hot would give only 0.47 mV (11 ppm).
+- Shunt-offset error from leakage × 10 Ω: 10 µV per µA of mismatch = 4 mA of shunt-current equivalent per µA. **At 25 °C the datasheet bound (IR ≤ 1.0 µA each, so mismatch ≤ 1 µA) gives ≤ 10 µV = ≤ 4 mA (0.04 % at 10 A).** Hot leakage is not specified [UV]: a figure ≥ 5 µA would give ≥ 20 mA — measured at first article (shunt voltage at 0 A, cold and warm).
 - Continuous dissipation: R41 carries the VBUS input current (≈ 53 µA at 44 V [UV]) plus leakage: (55 µA)² × 47 Ω ≈ 0.14 µW; R42/R43 carry only bias/leakage (≪ 1 µW) — against a 0.5 W class 1206 rating this is irrelevant; the rating itself is unread [UV].
+- Resistor voltage: in the credible set (open-circuit surge ≤ 100 V, 2 Ω source) R41 sees ≈ 39 V and R42/R43 ≈ 32 V for microseconds; the forced-interruption rows above are a gross over-estimate (a thin sense harness cannot carry 18.5 A) and their instantaneous R·I (> 800 V on 47 Ω) must not be read as a resistor stress. For orientation only: the 0805 ERJP6W family has a 150 V limiting element voltage and 200 V overload voltage; the ERJ-P08F (1206) values have not been read.
+- Temperature: the Bourns typical VBR temperature coefficient is 0.1 %/K; VBR(min) = 53.3 V → 49.8 V at −40 °C (still > 44 V, no conduction) and 56.5 V at +85 °C. If the clamp voltage scales with VBR [UV], the 18.5 A bound rises to ≈ 81.1 V at TA = 85 °C (margin 3.9 V) and ≈ 77.7 V at 40 °C — the margin shrinks with temperature but stays positive for the defined transient; the 19.4 A rating point itself would reach ≈ 82.0 V at 85 °C.
 - Worst-case INA228 node voltage in the defined transient: **76.5 V** (forced-interruption bound, Rs = 0, worst-case clamp knee 58.9 V → 77.4 V at 19.4 A) and ≤ 59.5 V in the hot-plug simulation; limit 85 V.
 
-**Result: PASS under the stated model assumptions — NOT fully closed.** Open source values: (1) ERJ-P08F pulse-energy/surge rating (Panasonic datasheet) and exact orderable suffix; (2) 1.5SMBJ48A leakage maximum vs voltage/temperature and its dynamic impedance (Bourns datasheet). A lower-voltage TVS is rejected (standoff/leakage vs the 44 V ceiling).
+**Result: PASS under the stated model assumptions — NOT fully closed.** Verified from the Bourns datasheet: clamp points, IR ≤ 1.0 µA at 48 V/25 °C, VBR temperature coefficient (no dynamic-impedance figure is published; the clamp curve between the two rating points remains an estimate). Still open: (1) the ERJ-P08F pulse-energy/surge rating and orderable suffix — the Panasonic document supplied is the ERJP6W 0805 family (150 V limiting element voltage, 200 V overload, *not recommended for new design*), not the BOM part, and has no pulse-energy curve; (2) TVS leakage vs temperature and below 48 V (not specified by Bourns). A lower-voltage TVS is rejected (standoff/leakage vs the 44 V ceiling).
 
 ## 3. Buck LMR14006Y: 12 V → 3.3 V
 
@@ -291,5 +293,5 @@ Regulator: VREGIN 3.0-5.25 V, VDD 3.1-3.6 V, IREGOUT 100 mA **total including th
 
 ## 9. Evidence summary
 
-VERIFIED_LOCAL 11 · USER_RELAYED_MANUFACTURER 50 · UNVERIFIED 17 (total 78). Critical entries not yet VERIFIED_LOCAL: **31** — these are fabrication gates, not schematic/layout gates.
+VERIFIED_LOCAL 20 · USER_RELAYED_MANUFACTURER 47 · UNVERIFIED 19 (total 86). Critical entries not yet VERIFIED_LOCAL: **31** — these are fabrication gates, not schematic/layout gates.
 
