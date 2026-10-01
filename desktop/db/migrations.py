@@ -127,6 +127,27 @@ def migrate():
         )
     """)
 
+    # ── calibration_records table (Rev.2: reference-instrument comparisons) ──
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS calibration_records (
+            record_id       INTEGER PRIMARY KEY AUTOINCREMENT,
+            recorded_at     TEXT    NOT NULL,
+            quantity        TEXT    NOT NULL,   -- voltage / current / power / resistance / temperature
+            channel         TEXT,
+            reference_model TEXT    NOT NULL,   -- e.g. Keysight EDU34450A
+            reference_asset_id    TEXT,
+            reference_cal_status  TEXT,
+            reference_reading     REAL NOT NULL,
+            osbams_reading        REAL NOT NULL,
+            load_readback         REAL,         -- 6060B readback when available
+            abs_error             REAL NOT NULL,
+            pct_error             REAL,
+            software_commit       TEXT,
+            operator              TEXT,
+            notes                 TEXT
+        )
+    """)
+
     # ── Log migration itself ──────────────────────────────────────────
     if added:
         c.execute("""

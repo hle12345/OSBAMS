@@ -1,5 +1,8 @@
 # OSBAMS Hardware Design
 
+> **Rev.2 note:** the Rev.1 design below is retained for history. Rev.2 power-path limits and the redesign needed to use more of the 6060B envelope are in `docs/rev2/LV_POWER_PATH_CAPABILITY.md`; targets above 60 V are out of scope.
+
+
 **Build:** 0.9.0-dev1 — Engineering Prototype
 **Status:** The architecture is defined and captured in a block schematic. The
 design is **not frozen**: the contactor, E-stop, sensor front end, and power

@@ -1,5 +1,8 @@
 # OSBAMS Validation Report
 
+> **Rev.2 note:** Rev.2 validation is planned in `docs/rev2/PHYSICAL_VALIDATION_PLAN.md` (all rows NOT RUN). This Rev.1 report lists the Rev.1 electronic load as 'to be recorded'; the Rev.2 primary load is the 6060B.
+
+
 **Build:** 0.9.0-dev1 — Engineering Prototype
 **Date of this revision:** 2026-07-22
 **Status:** Interim. Host-side verification is recorded below. Hardware

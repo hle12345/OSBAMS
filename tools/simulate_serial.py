@@ -36,14 +36,14 @@ import time
 import argparse
 import signal
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from services.electronic_load import SimulatorLoad
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "desktop"))
+from equipment.drivers import Simulator6060B
 
 
 def list_profiles():
     print("Available simulator profiles:")
-    for name, p in SimulatorLoad.PROFILES.items():
-        print(f"  {name:<12}  SOH={p['soh']:.0%}  "
+    for name, p in Simulator6060B.PROFILES.items():
+        print(f"  {name:<28}  SOH={p['soh']:.0%}  "
               f"start={p['start_v']}V  "
               f"temp_rise=+{p['temp_rise']}°C  "
               f"sag={p['sag_v']}V")
@@ -51,7 +51,7 @@ def list_profiles():
 
 def run_stdout(profile: str, rate_ms: int, speed: float):
     """Stream simulated frames to stdout at real-time (or scaled) speed."""
-    sim   = SimulatorLoad(profile=profile, sample_rate_ms=rate_ms)
+    sim   = Simulator6060B(profile=profile, sample_rate_ms=rate_ms)
     lines = sim.generate_lines()
 
     print(f"# OSBAMS Simulator — profile={profile}  "
@@ -71,7 +71,7 @@ def run_stdout(profile: str, rate_ms: int, speed: float):
 def run_port(profile: str, rate_ms: int, speed: float, port: str):
     """Write simulated frames to a serial port (works with socat virtual ports)."""
     import serial
-    sim   = SimulatorLoad(profile=profile, sample_rate_ms=rate_ms)
+    sim   = Simulator6060B(profile=profile, sample_rate_ms=rate_ms)
     lines = sim.generate_lines()
 
     with serial.Serial(port, 115200, timeout=1) as ser:
@@ -91,7 +91,7 @@ def main():
     parser = argparse.ArgumentParser(
         description="OSBAMS serial discharge simulator")
     parser.add_argument("--profile", default="normal",
-                        choices=list(SimulatorLoad.PROFILES.keys()),
+                        choices=list(Simulator6060B.PROFILES.keys()),
                         help="Battery profile to simulate")
     parser.add_argument("--rate", type=int, default=500,
                         help="Sample rate in ms (default: 500)")

@@ -1,5 +1,8 @@
 # OSBAMS Hardware — Connection Table
 
+> **Rev.2 note:** `LOAD1` is now the Keysight/Agilent 6060B (manual until GPIB is confirmed). The pack-voltage entries here describe Rev.1 10S packs; see `docs/rev2/`.
+
+
 **Doc OSBAMS-HW-001 Rev A · companion to `OSBAMS_schematic.svg`**
 
 **DRAFT — not yet built or bench-verified.** Pin assignments match the
