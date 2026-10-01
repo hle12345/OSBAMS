@@ -84,25 +84,97 @@ def ina():
 
 
 
+def _tvs_v(i):
+    """worst-case (highest) clamp voltage of one 1.5SMBJ48A at current i (A): knee at VBR max 58.9 V, 77.4 V at 19.4 A (10/1000 us), 100.6 V at 97 A (8/20 us)."""
+    i = max(i, 0.0)
+    if i <= 19.4:
+        return 58.9 + (77.4 - 58.9) * i / 19.4
+    return 77.4 + (100.6 - 77.4) * (i - 19.4) / (97.0 - 19.4)
+
+
+def _sim(vsrc, rsrc, lh, rs, ctvs, rnext, cnext, i0=0.0, tmax=4e-6, dt=0.05e-9):
+    """explicit integration: source(vsrc, rsrc) - L(lh, initial current i0) - Rs - node(C_tvs || TVS) - rnext - cnext. -> peak TVS current, node V, pin V, energy in Rs (J)"""
+    il, vn, vp = i0, 0.0, 0.0
+    ipk = vnpk = vppk = e_rs = 0.0
+    n = int(tmax / dt)
+    for _ in range(n):
+        itvs = 0.0
+        # TVS conducts when the node is above the knee: invert V(i) piecewise
+        if vn > 58.9:
+            itvs = (vn - 58.9) / (77.4 - 58.9) * 19.4 if vn <= 77.4 else 19.4 + (vn - 77.4) / (100.6 - 77.4) * 77.6
+        inext = (vn - vp) / rnext
+        dvn = (il - itvs - inext) / ctvs
+        dil = (vsrc - rsrc * il - rs * il - vn) / lh
+        il += dil * dt; vn += dvn * dt
+        vp += (vn - vp) * (1.0 - math.exp(-dt / (rnext * cnext)))     # exact RC update (stable for the 20 pF pin node)
+        if il < 0 and vsrc == 0:
+            il = 0.0
+        e_rs += il * il * rs * dt
+        ipk = max(ipk, itvs); vnpk = max(vnpk, vn); vppk = max(vppk, vp)
+    return ipk, vnpk, vppk, e_rs
+
+
 def tvs_vs_ina():
-    """1.5SMBJ48A clamp voltage depends on the surge current; INA228 IN+/IN-/VBUS abs max is 85 V."""
-    v1, i1 = V("tvs48"), V("tvs48_ipp")                 # 10/1000 us rating point
-    v2, i2 = V("tvs48_820"), 97.0                        # 8/20 us rating point
+    """Protection of the INA228 pack-sense inputs (85 V absolute maximum) against the credible bench transients."""
+    v1, i1 = V("tvs48"), V("tvs48_ipp")
+    v2, i2 = V("tvs48_820"), 97.0
     rd = (v2 - v1) / (i2 - i1)
     i85 = i1 + (85.0 - v1) / rd
-    w("### 2b. 1.5SMBJ48A (D5/D6/D7) vs INA228 85 V absolute maximum\n")
-    w(f"Manufacturer points{t('tvs48')}{t('tvs48_820')}: VRWM 48 V, VBR 53.3-58.9 V; **VC ≤ {v1} V at {i1} A (10/1000 µs)** and **VC ≤ {v2} V at {i2:.0f} A (8/20 µs)**. INA228 IN+/IN−/VBUS absolute maximum {V('ina228_cm')}{t('ina228_cm')}. '77.4 V < 85 V' therefore holds only up to the 19.4 A rating point; at the 8/20 µs rating point the clamp ({v2} V) is **{v2 - 85:.1f} V above** the INA228 limit.\n")
-    w(f"Estimate of the clamp curve (straight line through the two rating points — different waveforms, so an engineering estimate, NOT a datasheet curve [UV]): dynamic resistance ≈ {rd * 1e3:.0f} mΩ → VC = 85 V at **I ≈ {i85:.0f} A**. Below ≈ {i85:.0f} A the clamp stays under 85 V; above it the INA228 pin rating is exceeded.\n")
-    w("| TVS current | VC (estimate; ≤ 77.4 V up to 19.4 A is a rating) | margin to 85 V |\n|---|---|---|")
-    for i in (1, 5, 10, 15, 19.4, 30, 44.8, 60, 97):
-        vc = min(v1, v1 - 0.0) if i <= i1 else v1 + rd * (i - i1)
-        w(f"| {i} A | {'≤ ' if i <= i1 else '≈ '}{vc:.1f} V | {85 - vc:+.1f} V |")
-    w("\n**Credible-transient bound (assumptions [UV], to be signed off by the project owner):**")
-    w("1. *Steady state / pack ≤ 44 V:* VRWM 48 V > 44 V and VBR min 53.3 V > 44 V → no conduction, leakage only. PASS.")
-    w("2. *Interrupting load current with the pack-side wiring inductance (K1 opening, 15 A fuse clearing at its rating):* the TVS can be asked to carry at most the interrupted current, ≤ 10 A operating ceiling (≤ 18.5 A firmware hard trip, ≤ 15 A fuse rating) < 19.4 A → VC ≤ 77.4 V → margin ≥ 7.6 V. PASS under this bound.")
-    w("3. *Sense-harness hot-plug onto a live 44 V pack:* the VBUS path (10 Ω + 100 nF with 2 µH of harness inductance, ζ ≈ 1.1) is overdamped. The IN± Kelvin paths have only 10 Ω in front of the pins and a differential (not common-mode) 100 nF, so they are **underdamped** (TVS capacitance not read [UV]); ringing up to ≈ 2 × 44 V is possible and is clipped by D5/D6 (VC ≤ 77.4 V for the few-ampere ring currents). PASS as an estimate; not simulated — confirm on the bench with a scope on IN+/IN− during harness hot-plug.")
-    w(f"4. *Fast high-current surges (ESD/lightning class, hard shorts interrupted by the fuse, ≥ {i85:.0f} A into the TVS):* the clamp can reach ≈ {v2} V and the INA228 pins exceed 85 V → **NOT protected.** This is outside the intended bench environment; if the owner wants it covered, add a series resistor (e.g. 47-100 Ω, pulse-rated 1206) *upstream of the TVS* on PACK_INA (DC error ≈ 100 Ω / 830 kΩ ≈ 0.012 %) and a higher-rated/two-stage clamp on the Kelvin lines — **not applied in RC1** (no electrical change made; decision recorded as an open sign-off item).")
-    w("Do not substitute a lower-voltage TVS without re-checking standoff/leakage against the 44 V ceiling (a 40 V-class part would conduct near a charged 10S pack).\n")
+    w("### 2b. Pack-sense protection: 1.5SMBJ48A + surge-limiting series resistors vs the INA228 85 V absolute maximum\n")
+    w(f"**Manufacturer points{t('tvs48')}{t('tvs48_820')}:** VRWM 48 V, VBR 53.3-58.9 V; VC ≤ {v1} V at {i1} A (10/1000 µs) and ≤ {v2} V at {i2:.0f} A (8/20 µs). INA228 IN+/IN−/VBUS absolute maximum {V('ina228_cm')}{t('ina228_cm')}. '77.4 V < 85 V' is **not** used as a blanket pass: the clamp exceeds 85 V above ≈ {i85:.0f} A (straight line between the two rating points = engineering estimate [UV], not a datasheet curve).\n")
+    w("**RC1.2 hardware change:** series surge-limiting resistors **upstream of the TVS**: R41 47 Ω on PACK_INA (J6.1 → R41 → D7/R13) and R42/R43 10 Ω on each Kelvin line (J5 → R42/R43 → D5/D6 + the existing 10 Ω R11/R12 → INA228). 1206 anti-surge parts (Panasonic ERJ-P08F series, pulse rating to be confirmed from the datasheet [UV]).\n")
+    w("**Credible transient definition for this bench system** (30-42 V pack, 44 V ceiling, ≤ 10 A operating, 18.5 A firmware trip, 15 A fuse, short harness, K1 = Durakool DG57CM):")
+    w("1. *Interruption of load current (K1 opening, fuse clearing, 6060B turn-off):* the only energy that can force a current into the sense TVS is the inductance of the wiring carrying the interrupted current, ≤ the 18.5 A firmware trip (15 A fuse rating, 10 A operating). The pack cannot push current into a TVS that is clamping above the pack voltage (clamp ≥ 53 V > 44 V). **Bound: TVS current ≤ 18.5 A → VC ≤ ≈76.5 V (rating: ≤ 77.4 V at 19.4 A).** The contact arc appears as a *drop* between the contacts, not as an overvoltage on the sense nodes; a hard downstream short that clears the fuse collapses the sense nodes toward 0 V.")
+    w("2. *Hot-plug of the sense harness onto a live 44 V pack:* LC ringing, simulated below.")
+    w("3. *Electrostatic/handling events and mains-borne surges are not part of this bench's credible set;* the series resistors extend the margin toward them (table below) but protection against them is not claimed.\n")
+    cases = (("VBUS path", 47.0, 10.0, 100e-9), ("Kelvin line", 10.0, 10.0, 20e-12))
+    w("**Hot-plug simulation** (44 V step; source ESR + harness 0.3 Ω; harness L 0.5/2/5 µH; TVS junction C 0.3/1/3 nF [UV]; peak INA-pin voltage is the pin side of the 10 Ω):\n")
+    w("| path | Rs upstream | L | C_tvs | TVS peak current | node peak V | INA pin peak V | energy in Rs |\n|---|---|---|---|---|---|---|---|")
+    worst_pin = 0.0
+    for name, rs, rn, cn in cases:
+        for rs_u in (0.0, rs):
+            for lh in (0.5e-6, 2e-6, 5e-6):
+                for ct in (0.3e-9, 1e-9, 3e-9):
+                    ipk, vnpk, vppk, e = _sim(44.0, 0.3, lh, rs_u, ct, rn, cn, tmax=max(4e-6, 6 * (rs_u + rn) * cn), dt=0.1e-9 if ct > 0.5e-9 else 0.05e-9)
+                    worst_pin = max(worst_pin, vppk) if rs_u else worst_pin
+                    if ct == 1e-9:
+                        w(f"| {name} | {rs_u:.0f} Ω | {lh * 1e6:.1f} µH | {ct * 1e9:.1f} nF | {ipk:.2f} A | {vnpk:.1f} V | {vppk:.1f} V | {e * 1e6:.2f} µJ |")
+    # worst over every combination, with the resistors fitted
+    wp = wn = wi = 0.0
+    for name, rs, rn, cn in cases:
+        for lh in (0.5e-6, 2e-6, 5e-6):
+            for ct in (0.3e-9, 1e-9, 3e-9):
+                ipk, vnpk, vppk, e = _sim(44.0, 0.3, lh, rs, ct, rn, cn, tmax=max(4e-6, 6 * (rs + rn) * cn), dt=0.1e-9 if ct > 0.5e-9 else 0.05e-9)
+                wp, wn, wi = max(wp, vppk), max(wn, vnpk), max(wi, ipk)
+    w(f"\nWorst hot-plug case over all combinations **with the resistors fitted**: TVS current {wi:.2f} A, node {wn:.1f} V, INA pin {wp:.1f} V (limit 85 V).\n")
+    # forced interruption bound
+    w("**Forced-interruption bound** (the whole interrupted current is assumed to be forced through the sense branch — a gross over-estimate, since the sense harness is a thin wire):\n")
+    w("| interrupted current | L | path | TVS peak current | node peak V | energy in Rs |\n|---|---|---|---|---|---|")
+    for i0 in (10.0, 15.0, 18.5):
+        for name, rs, rn, cn in cases:
+            for rs_u in (0.0, rs):
+                ipk, vnpk, vppk, e = _sim(44.0, 0.3, 2e-6, rs_u, 1e-9, rn, cn, i0=i0, tmax=3e-6)
+                w(f"| {i0} A | 2 µH | {name}, Rs = {rs_u:.0f} Ω | {min(ipk, i0):.1f} A | {max(_tvs_v(min(ipk, i0)), 0):.1f} V | {e * 1e6:.0f} µJ |")
+    w(f"\nWith Rs = 0 the clamp at the 18.5 A bound is {_tvs_v(18.5):.1f} V (margin {85 - _tvs_v(18.5):.1f} V); with the series resistors the interrupted current is dissipated mainly in Rs (≤ ½·L·I² = {0.5 * 2e-6 * 18.5 ** 2 * 1e6:.0f} µJ for 2 µH at 18.5 A — far inside a 1206 anti-surge resistor) and the TVS current is far below 18.5 A.\n")
+    w("**Beyond the credible set — open-circuit surge capability** (8/20 µs, source impedance 2 Ω; TVS current solved against the clamp curve; resistor energy ≈ I²·R·13 µs [UV]; the credible set above is ≤ 100 V-class, i.e. ≤ 1.3 mJ in R42/R43 and ≤ 0.4 mJ in R41):\n")
+    w("| Voc | Rs | TVS current | VC (INA node) | within 85 V? | energy in Rs |\n|---|---|---|---|---|---|")
+    for rs in (0.0, 10.0, 47.0):
+        for voc in (100, 300, 600, 1000, 2000):
+            i = 0.0
+            for _ in range(200):
+                i = max(0.0, (voc - _tvs_v(i)) / (rs + 2.0))
+            vc = _tvs_v(i)
+            w(f"| {voc} V | {rs:.0f} Ω | {i:.1f} A | {vc:.1f} V | {'yes' if vc <= 85 else '**no**'} | {i * i * rs * 13e-6 * 1e3:.1f} mJ |")
+    w("\nWith 10 Ω (Kelvin lines) the INA nodes stay ≤ 85 V up to ≈ 600 V open-circuit; with 47 Ω (VBUS) up to ≈ 2 kV; the 1206 resistor, not the TVS, is then the sacrificial element (its failure is fail-safe: the INA228 reads wrong/zero and the independent PA1 ADC cross-check/INA-error fault drives the safe state).\n")
+    w("**Measurement-error budget of the new resistors:**")
+    w(f"- INA228 input bias {V('ina228_bias') * 1e9:.1f} nA{t('ina228_bias')} × 20 Ω per Kelvin line = {V('ina228_bias') * 20 * 1e9:.0f} nV worst case unmatched ({V('ina228_bias') * 20 / 2.5e-3 * 1e6:.0f} µA of shunt-current equivalent); with matched 1 % resistors the common component cancels (< 1 pV difference) — negligible vs the ±1 µV offset.")
+    w("- TVS leakage drops across R42/R43 (10 Ω each): up to 1 µA [UV; leakage not relayed] × 10 Ω = 10 µV worst-case line-to-line mismatch = 4 mA of shunt-current equivalent (0.04 % at 10 A; 0.4 mA for a typical 0.1 µA). This is the price of the Kelvin resistors and is why they are 10 Ω rather than 47 Ω; it is removed by the no-load zero calibration only if leakage is stable — verify at first article (shunt voltage at 0 A, 25 °C and warm).")
+    w("- VBUS: 47 Ω + 10 Ω = 57 Ω into the INA228 VBUS input (assumed ≥ 830 kΩ [UV]) → ≤ 0.007 % gain error (3 mV at 44 V), a fixed ratio that the VBUS calibration against the EDU34450A removes; TVS leakage 1 µA × 57 Ω = 57 µV (1.3 ppm).")
+    w("- Filtering: differential Kelvin filter = 2 × 20 Ω with C26 100 nF → fc ≈ 40 kHz (τ 4 µs ≪ the INA228 conversion time ≥ 50 µs → no effect on logging or the ALERT latency); VBUS: 57 Ω with C28 100 nF → fc ≈ 28 kHz.")
+    w("- Common mode: both Kelvin lines carry identical series resistance, so the common-mode level (≤ 44 V, limit 85 V) and the bias-current common-mode shift cancel; the TVS pair clamps each line to ground, so a one-sided transient is limited to the TVS clamp (differential absolute maximum of the INA228 inputs was not relayed [UV]).")
+    w("- Normal 44 V operation: VRWM 48 V > 44 V and VBR min 53.3 V > 44 V (no conduction); resistor dissipation at DC ≈ 0 (bias/leakage only); 1206 working voltage ≫ 44 V [UV].")
+    w("\n**Result: PASS.** Credible worst-case voltage at any INA228 pack-sense pin: hot-plug ≤ " + f"{wp:.0f} V" + f", forced interruption ≤ {_tvs_v(18.5):.1f} V with Rs = 0 and far lower with the resistors; limit 85 V. Not closed by sign-off: closed by the bound (TVS current ≤ interrupted current ≤ 18.5 A) plus the added series resistance. A lower-voltage TVS is rejected (standoff/leakage vs the 44 V ceiling).\n")
+
 
 # ------------------------------------------------------------------ 3 buck
 def buck():
@@ -123,6 +195,12 @@ def buck():
         st = "PASS" if tm >= ton_min * 1e9 else ("MARGINAL (typ ok, max-fsw corner below)" if tt >= ton_min * 1e9 else "**BELOW TON_MIN: pulse skipping**")
         w(f"| {vin} V | {d * 100:.1f} % | {tt:.0f} ns | {tm:.0f} ns | {st} | {dil * 1e3:.0f} mA | {(0.15 + dil / 2) * 1e3:.0f} mA |")
     w(f"\n**Corrected statement:** 12 V (normal XDR operation) PASSES ({vout / (12 * fmax) * 1e9:.0f} ns at the fastest fsw corner). The 15 V corner is only ≈ {vout / (15 * f) * 1e9 - ton_min * 1e9:.0f} ns above TON_MIN at typical fsw and is **{vout / (15 * fmax) * 1e9:.0f} ns (below 95 ns) at the maximum-fsw corner** — not guaranteed fixed-frequency. The **24.4 V SMBJ15A-clamp transient ({vout / (24.4 * f) * 1e9:.0f} ns) is below TON_MIN: fixed-frequency regulation is NOT claimed there.** Expected behaviour is pulse skipping (fewer, minimum-width pulses; output ripple/frequency change); the datasheet behaviour in this region is not characterised in the data I hold [UV], so no regulation guarantee is made during the transient. The normal source is the XDR at 12.0 V, so this does not invalidate the part; it limits the claim to ≤ ≈ {vout / (ton_min * fmax) :.1f} V (max-fsw corner) / ≈ {vout / (ton_min * f):.1f} V (typical fsw) steady-state input. Verify by measurement at first article.\n")
+    vmax_cont = vout / (ton_min * fmax)
+    w(f"**Design requirement (RC1.2):** XDR-75-12 nominal output = **12.0 V ±1 %** (11.88-12.12 V at the J1 connector; ≈ 11.5-11.7 V at the buck after F1 and D2). **Maximum allowed *continuous* controller input = {vmax_cont:.1f} V** (fixed-frequency regulation guaranteed with TON_MIN {ton_min * 1e9:.0f} ns at the fastest fsw corner); the 12 V supply therefore has {vmax_cont - 12.12:.1f} V of headroom. Operation above {vmax_cont:.1f} V is not claimed to be fixed-frequency; the SMBJ15A transient (24.4 V clamp) is treated separately below, not as continuous operation.\n")
+    dil_min = (24.4 - vout) * ton_min / L
+    e_pulse = 0.5 * L * dil_min ** 2
+    cout = 26e-6
+    w(f"**3V3 during the 24.4 V transient (TON_MIN-limited pulse skipping):** one minimum-width pulse raises the inductor current by ΔI = (24.4 − {vout:.2f}) V × {ton_min * 1e9:.0f} ns / 10 µH = {dil_min * 1e3:.0f} mA, i.e. at most ½LΔI² = {e_pulse * 1e9:.0f} nJ per pulse; into ≈ {cout * 1e6:.0f} µF of derated output capacitance that is ≤ {e_pulse / (cout * vout) * 1e3:.1f} mV per pulse if the load took nothing, and the feedback comparator skips the following pulses, so the rail is regulated by pulse skipping rather than rising. Rail excursion during the transient is therefore millivolts, ≪ the 3.6 V class limit of the loads (STM32/INA228/ISO7721 VDD maximum values are [UV] — confirm 3.6 V-class or higher). A fault in the feedback divider (R1 short / R2 open) is a separate single-fault case that no buck design here protects against.\n")
     w(f"VIN rating: recommended 4-40 V, absolute max 45 V{t('lmr_limits')}; SMBJ15A clamp {V('tvs15')} V (+ a 12 V XDR) → margin to 45 V ≈ {45 - V('tvs15'):.1f} V. ")
     w(f"Inductor/limits (TI): current limit ≈ 1.2 A typ, max duty ≈ 97 %. ")
     w(f"Inductor: Bourns SRN6045TA-100M (10 µH ±20 %, DCR 52 mΩ typ, Irms 3.20 A typ, Isat 4.60 A typ{t('lmr_l_c')}): Isat is ≈ 3.8× the 1.2 A typical current limit and ≈ 20× the ≈ 0.22 A peak load current → closed (typical values). Output 2 × 22 µF 10 V 0805 (≈ 50 % DC-bias derating → ≈ 26 µF): ripple ≈ ΔIL/(8 f C) = {0.114 / (8 * f * 26e-6) * 1e3:.2f} mV + ESR term. Input C1+C2 2 × 10 µF 50 V 1210 + 100 nF at the VIN pin: ripple ≈ I·D(1−D)/(f C) = {0.15 * 0.275 * 0.725 / (f * 6e-6) * 1e3:.1f} mV at 6 µF effective.")
@@ -140,6 +218,11 @@ def relay():
         w(f"| {v} V | {v / R * 1e3:.0f} mA | {v * v / R:.2f} W |")
     w(f"\nCoil data{t('dg57_coil_ohm')}{t('dg57_pickup')}: 90 Ω ±10 % at 23 °C → {12.0 / (R * 1.1) * 1e3:.0f}-{12.0 / (R * 0.9) * 1e3:.0f} mA at 12.0 V; must-operate ≤ 7.2 V, must-release ≥ 1.2 V (23 °C); **maximum allowable coil voltage 17.4 V at 23 °C but only 12.5 V at 85 °C** → the XDR is set to 12.0 V and must never be run at 15 V (the 15 V row above is shown only to document the exclusion). Coil node after D2 (SS14 drop ≈ 0.4 V) with a 12.0 V ± 1 % XDR ≈ 11.7 V: operate margin 7.2 V → 4.5 V, max-allowable margin 12.5 V → 0.8 V at 85 °C [UV: XDR tolerance not read].\n")
     w(f"\n**Q1 = IRLML0060TRPBF (60 V SOT-23 logic-level)** — RDS(on) is not specified at 3.3 V (manufacturer: ≤ 116 mΩ at 4.5 V, ≤ 92 mΩ at 10 V [UR]; typical output/transfer curves include 2.8-3.5 V but were not available to this build); using a pessimistic placeholder {V('q_rds')} Ω{t('q_rds')}: VDS = {0.17 * V('q_rds') * 1e3:.0f} mV and P = {0.17 ** 2 * V('q_rds') * 1e3:.1f} mW at 170 mA. Gate overdrive at 3.3 V × 0.97 with VGS(th) max {V('q_vth')} V{t('q_vth')} is {3.2 - V('q_vth'):.1f} V — adequate for a 0.17 A load but **Infineon's typical curves at VGS 3.0/3.3 V make the load plausible, but RDS(on) is not guaranteed at 3.3 V → first-article VDS / coil-current measurement is the validation item**. VDSS {V('q_vdss'):.0f} V{t('q_vdss')} vs the {V('tvs15')} V TVS clamp → margin {V('q_vdss') - V('tvs15'):.1f} V. Alternates: Diodes DMN6140L-7 (60 V), AOS AO3400A (30 V, 2.5 V-specified).")
+    vth, rds45, vgs = V("q_vth"), V("q_rds_4v5"), 3.2
+    k_est = 1.0 / (rds45 * (4.5 - vth))
+    rds_est = 1.0 / (k_est * (vgs - vth))
+    id_sat = 0.5 * k_est * (vgs - vth) ** 2
+    w(f"**Margin estimate at VGS = {vgs} V (3.3 V × 0.97), worst-case VGS(th) {vth} V and the 4.5 V RDS(on) max {rds45 * 1e3:.0f} mΩ{t('q_rds_4v5')}:** transconductance parameter k ≈ 1/(RDS(on)·(4.5 − VGS(th))) = {k_est:.1f} A/V² → RDS(on) ≈ {rds_est * 1e3:.0f} mΩ (the 0.5 Ω placeholder is {0.5 / rds_est:.1f}× that), saturation current ≈ ½k(VGS − VGS(th))² = **{id_sat:.1f} A = {id_sat / 0.15:.0f}× the 0.15 A coil load** (square-law extrapolation near threshold = estimate [UV], not a guarantee). **Classification: keep IRLML0060 — comfortably inside the transfer-characteristic region by this estimate; RDS(on) at 3.3 V is not guaranteed, so the first-article measurements are mandatory (VGS, VDS while energized, coil current, MOSFET temperature) — a first-article item, not a PCBWay blocker.**\n")
     w("Gate network: 220 Ω in series, 10 kΩ pull-down → default OFF in reset/unpowered/Hi-Z. Flyback: S1M-13-F (1 A 1000 V), cathode on COIL_V; **no fast-release TVS in RC1** (a 27 V TVS would put 12+27 V on the MOSFET).")
     L = V("dg57_coil_l"); I = 12.0 / R
     w(f"Flyback energy ½LI² = {0.5 * L * I * I * 1e3:.2f} mJ (L = {L} H{t('dg57_coil_l')}); diode-only decay τ = L/R = {L / R * 1e3:.1f} ms (release time to be taken from the relay datasheet).\n")

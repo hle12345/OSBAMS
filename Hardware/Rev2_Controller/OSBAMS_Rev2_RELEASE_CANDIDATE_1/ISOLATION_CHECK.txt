@@ -1,11 +1,14 @@
-OSBAMS Rev.2 RC1.1 - GND vs GND_HOST copper separation (KiCad zone fills, mm)
-  B.Cu    U7 area  min distance 3.0 mm at board (74.5, 31.9)
-  B.Cu    corner   min distance 0.25 mm at board (74.5, 47.5)
-  F.Cu    U7 area  min distance 3.0 mm at board (74.5, 30.2)
-  F.Cu    corner   min distance 0.25 mm at board (74.5, 47.5)
-  In1.Cu  U7 area  min distance 3.0 mm at board (74.5, 31.9)
-  In1.Cu  corner   min distance 0.25 mm at board (74.5, 47.5)
-  In2.Cu  U7 area  min distance 3.0 mm at board (74.5, 31.9)
-  In2.Cu  corner   min distance 0.25 mm at board (74.5, 47.5)
-(ISO7721 area is the isolation boundary: >= 3.0 mm required here; the rest of the island edge only has the 0.25 mm zone clearance)
-nets present on tracks/vias: ['GND', 'GND_HOST'] - DRC checks that no GND item touches a GND_HOST item
+OSBAMS Rev.2 RC1.2 - isolation audit: HOST domain vs CONTROLLER domain copper (KiCad zone fills, pads, tracks, vias)
+HOST nets: 3V3_HOST, CP_RSTB, CP_VBUS_SENSE, GND_HOST, UART_RX_HOST, UART_TX_HOST, USB_CC1, USB_CC2, USB_DM, USB_DM_J, USB_DP, USB_DP_J, USB_SHIELD, VBUS_USB
+Required by the custom DRC rule: >= 1.0 mm between any HOST-net item and any controller-net item (every layer, everywhere);
+the ISO7721 area is wider by geometry (zone gap 3.0 mm). Un-netted pads are not part of either domain.
+
+layer     min distance   at board (x, y) mm         HOST item -> CONTROLLER item
+F.Cu        0.998 mm    (  78.4,   48.3)   (controller vertex) via [GND]
+In1.Cu      0.998 mm    (  78.4,   48.3)   (controller vertex) via [GND]
+In2.Cu      0.998 mm    (  78.4,   48.3)   (controller vertex) via [GND]
+B.Cu        0.998 mm    (  78.4,   48.3)   (controller vertex) via [GND]
+
+Minimum over all layers: 0.998 mm  ->  PASS against 1.0 mm (0.01 mm polygon-approximation tolerance of this audit; KiCad DRC enforces the exact rule).
+Classification: the whole perimeter of the host island is a controller/host boundary (the only copper that crosses it is the ISO7721 package).
+There is no alternate copper path: no track, via or pad of a HOST net lies within the controller domain and vice versa (DRC clearance + this audit).

@@ -8,7 +8,7 @@ from design import rev2_design as D
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 RC = os.path.join(ROOT, "OSBAMS_Rev2_RELEASE_CANDIDATE_1")
 BOARD = json.load(open(os.environ.get("BOARDDATA", os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "build", "boarddata.json"))))
-NOTFAB = "RC1 - REVIEW CANDIDATE - NOT FOR FABRICATION"
+NOTFAB = "RC1.2 - REVIEW CANDIDATE - NOT RELEASED FOR FABRICATION"
 
 
 def pkg(fp):
@@ -32,14 +32,18 @@ def natkey(r):
     return (m.group(1), int(m.group(2))) if m else (r, 0)
 
 
+SUFFIX_OK = {"ISO7721DR": "confirmed (TI datasheet ordering table, read locally)", "CP2102N-A02-GQFN20": "confirmed (Silicon Labs datasheet ordering table, read locally)",
+             "SRN6045TA-100M": "confirmed (Bourns datasheet table, read locally)", "EB21A-02-C": "confirmed (Adam Tech drawing EB21A-XX-C, read locally; owned part)"}
+
+
 def bom_rows():
     rows = []
     for i, (k, refs) in enumerate(groups().items(), 1):
         c = D.COMPS[refs[0]]
         refs = sorted(refs, key=natkey)
         notes = "; ".join(sorted({D.COMPS[r].get("note", "") for r in refs if D.COMPS[r].get("note")}))[:240]
-        rows.append(OrderedDict([("Item", i), ("Reference(s)", ", ".join(refs)), ("Qty", len(refs)), ("Value", c["value"]), ("Description", c["desc"]),
-                                 ("Manufacturer", c["mfr"]), ("MPN", c["mpn"]), ("Package", pkg(c["fp"])), ("Footprint", c["fp"]),
+        rows.append(OrderedDict([("Item", i), ("Reference(s)", ", ".join(refs)), ("Qty / board", len(refs)), ("Qty for 5 boards", 5 * len(refs)), ("Value", c["value"]), ("Description", c["desc"]),
+                                 ("Manufacturer", c["mfr"]), ("MPN", c["mpn"]), ("MPN suffix status", SUFFIX_OK.get(c["mpn"], "orderable suffix NOT yet confirmed against a distributor/manufacturer listing")), ("Package", pkg(c["fp"])), ("Footprint", c["fp"]),
                                  ("Evidence Status", c["evid"]), ("Lifecycle", c["life"]), ("Primary Supplier", "Mouser / Digi-Key (authorized) - NOT QUERIED"),
                                  ("Supplier SKU", "NOT CHECKED (distributor sites unreachable from the build environment)"), ("Stock Check Date", "NOT CHECKED"),
                                  ("Approved Alternate", c["alt"] + (" (UNVERIFIED alternate)" if c["alt"] else "")), ("PCBWay Source / Consign", c["src"]),
@@ -78,8 +82,8 @@ def write_bom(path):
     for row in ws.iter_rows(min_row=3):
         for c in row:
             c.alignment = Alignment(wrap_text=True, vertical="top")
-        ev = row[9].value
-        row[9].fill = PatternFill("solid", fgColor={"VERIFIED_LOCAL": "C6EFCE", "USER_RELAYED_MANUFACTURER": "FFEB9C", "UNVERIFIED": "FFC7CE"}.get(ev, "FFFFFF"))
+        ev = row[11].value
+        row[11].fill = PatternFill("solid", fgColor={"VERIFIED_LOCAL": "C6EFCE", "USER_RELAYED_MANUFACTURER": "FFEB9C", "UNVERIFIED": "FFC7CE"}.get(ev, "FFFFFF"))
     ws.freeze_panes = "C3"
     w2 = wb.create_sheet("PCB features (not parts)")
     w2.append(["Ref", "What", "Notes"])

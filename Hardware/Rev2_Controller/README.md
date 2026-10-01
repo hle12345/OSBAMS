@@ -1,7 +1,7 @@
 # OSBAMS Rev.2 Controller (new integrated design)
 
-Status: **RELEASE CANDIDATE 1 — complete design package for REVIEW. NOT authorized for fabrication.**
-- `OSBAMS_Rev2_RELEASE_CANDIDATE_1/` — KiCad 10 project (schematic, 4-layer PCB, TC74 probe board), Gerber/drill export (marked NOT FOR FABRICATION), BOM/CPL, PDFs, ERC/DRC reports, evidence register, supply-chain/DFM/assembly/fab notes, `PCBWAY_RELEASE_CANDIDATE_REPORT.md` (READY FOR REVIEW / BLOCKERS BEFORE PCBWAY ORDER).
+Status: **RELEASE CANDIDATE 1.2 — design package for REVIEW. NOT final, NOT released for fabrication.**
+- `OSBAMS_Rev2_RELEASE_CANDIDATE_1/` — KiCad 10 project (schematic, 4-layer PCB, TC74 probe board), BOM/CPL (no Gerbers: export them from the final PCB in KiCad 10), PDFs, ERC/DRC reports, evidence register, supply-chain/DFM/assembly/fab notes, `PCBWAY_RELEASE_CANDIDATE_REPORT.md` (READY FOR REVIEW / BLOCKERS BEFORE PCBWAY ORDER).
 - `REV2_CONTROLLER_ARCHITECTURE.md` — architecture (rev D, matches RC1)
 - `REV2_CALCULATIONS.md` — generated: `python3 Hardware/Rev2_Controller/calc/rev2_calcs.py` (inputs: `calc/datasheet_inputs.json`, evidence states VERIFIED_LOCAL / USER_RELAYED_MANUFACTURER / UNVERIFIED)
 - `REV2_BLOCK_DIAGRAM.png/.svg` (`calc/make_block_diagram.py`), `DATASHEET_VERIFICATION.md` (evidence register)

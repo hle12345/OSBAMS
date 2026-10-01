@@ -52,16 +52,16 @@ def fabrication_notes(s):
 **{reports.NOTFAB}.** These are working notes for the RC1 review package, not an order specification.
 
 ## Board
-- Name `OSBAMS Rev.2 Controller`, revision RC1, size 100 x 90 mm, single piece (no panelization specified yet), 4 copper layers, 1.6 mm FR-4 (TG >= 150 C suggested), outer copper 1 oz, inner copper 0.5 oz or 1 oz.
-- Layer use: L1 components + signals, L2 solid GND plane, L3 routing + GND fill, L4 components/signals + GND fill. A separate **GND_HOST island** (isolated USB side) occupies x 74.5-97.5 mm, y 2.5-47.5 mm on all layers with a 3 mm gap to GND under the ISO7721.
+- Name `OSBAMS Rev.2 Controller`, revision RC1.2, size 100 x 90 mm, single piece (no panelization specified yet), 4 copper layers, 1.6 mm FR-4 (TG >= 150 C suggested), outer copper 1 oz, inner copper 0.5 oz or 1 oz.
+- Layer use: L1 components + signals, L2 solid GND plane, L3 routing + GND fill, L4 components/signals + GND fill. A separate **GND_HOST island** (isolated USB side) occupies x 74.5-97.5 mm, y 2.5-47.5 mm on all layers; **every host-net copper item keeps >= 1.0 mm from every controller-net copper item on every layer** (custom DRC rule in `OSBAMS_Rev2_RC1.kicad_dru`; 3.0 mm gap in the ISO7721 area). See `ISOLATION_CHECK.txt`.
 - Finish: ENIG recommended (0.5 mm pitch LQFP-64, QFN-20). Soldermask green or black, white silkscreen. Lead-free.
 - Edge: plain rectangle, no V-cut, 4 x M3 NPTH (3.2 mm) at (4,4), (96,4), (4,86), (96,86). 3 fiducials 1 mm / 2 mm mask opening.
-- Design rules used (netclasses in the .kicad_pro): default track 0.2 mm / clearance 0.15 mm, POWER 0.3 mm / 0.2 mm, RAIL 0.3 mm / 0.15 mm, pack-level and Kelvin nets 0.2 mm / 0.15 mm (IPC-2221B B4 coated limit for 77 V is ~0.13 mm; the pack-level nets are not at 0.4 mm), via 0.6/0.3 mm (a few 0.5/0.3 mm vias in congested spots), copper-to-edge 0.3 mm. Measured in this layout: min track {s['min_track']:.2f} mm, min via {s['min_via']:.2f}/{s['min_via_drill']:.2f} mm. Check against PCBWay's current 4-layer capability before ordering.
+- Design rules (netclasses in the .kicad_pro + custom rules in the .kicad_dru): default track 0.2 mm / clearance 0.15 mm; POWER 0.3 mm / 0.2 mm; RAIL 0.3 mm / 0.15 mm; **pack-level and Kelvin nets 0.2 mm clearance (an intentional choice: IPC-2221B Table 6-1, 31-100 V, B4 = external conductors under permanent polymer coating/solder mask = 0.13 mm, internal B1 = 0.1 mm; 0.2 mm is 1.5x B4 — exposed pads/terminations (A6 0.6 mm) cannot be met on 0.5 mm-pitch parts, so the INA228 courtyard is exempt at 0.15 mm)**; host-to-controller 1.0 mm; via 0.6/0.3 mm (0.5/0.3 mm in a few congested spots), min track {s['min_track']:.2f} mm, copper-to-edge 0.3 mm. **PCBWay's current 4-layer minimum track/space/drill/annular-ring capability must be confirmed in their quote/DFM tool** (this build could not reach their site); the values above are well above the usual 0.1 mm / 0.2 mm drill minimums.
 - Controlled impedance: none required (no high-speed nets; USB 2.0 full-speed D+/D- are short, 90 ohm not controlled in RC1 - review).
-- Silkscreen: connector names, pin numbers, polarity, `OSBAMS Rev.2 Controller`, `RC1 2026-10-01`, `44 V / 10 A MAX`, `NOT FOR FABRICATION` (remove at release).
+- Silkscreen: connector names, pin numbers, polarity, `OSBAMS Rev.2 Controller`, `RC1.2 2026-10-01`, `44 V / 10 A MAX`, `NOT FOR FABRICATION` (remove at release by editing the text in KiCad before the final export).
 
 ## Files
-Gerber/drill files in this folder are a **KiCad 10.0.6 export of a script-generated design**. They are for review and DFM discussion only. **Regenerate them from the .kicad_pcb on your own KiCad installation (and re-run ERC/DRC) before any order.** Do not fabricate from the files in this package.
+This package contains **no Gerber or drill files**: the earlier script-generated candidate Gerbers were removed so they cannot be used by mistake. Export Gerbers/drills from the final `.kicad_pcb` in your own KiCad 10 after your local ERC/DRC (see `PRE_PCBWAY_RELEASE_CHECKLIST.md`).
 
 ## Open fabrication gates
 See `PCBWAY_RELEASE_CANDIDATE_REPORT.md` (BLOCKERS BEFORE PCBWAY ORDER).
@@ -124,11 +124,11 @@ Result: {'**PASS**' if not pol_errs else '**FAIL: ' + '; '.join(pol_errs) + '**'
 - THT connectors (EB21A-02-C) use a footprint drawn from the Adam Tech drawing EB21A-XX-C rev B (hole 1.30 mm, pad 2.6 mm [design choice], body 10.6 x 8.5 mm).
 - Mounting holes are NPTH 3.2 mm; fiducials 1 mm / 2 mm opening at three corners.
 - USB-C GCT USB4105-GF-A: confirm the shield tab/NPTH holes against the connector drawing; overhang 0.8 mm beyond the board edge is intentional.
-- Isolation: GND and GND_HOST are separate copper islands. **Measured (script, KiCad zone fills): 3.0 mm between the GND and GND_HOST copper in the ISO7721 area on every layer; along the rest of the island edge only the 0.25 mm zone clearance** (functional separation, DRC-checked between nets; not a creepage design away from the isolator). No track crosses the gap except through the ISO7721. The ISO7721 D-8 package creepage/clearance rating must be confirmed against the datasheet insulation tables.
-- Kelvin pair (INA_INP/INA_INN) uses a dedicated 0.25 mm / 0.4 mm class; see the layout review notes in the RC report.
+- Isolation: the whole perimeter of the GND_HOST island is the controller/host boundary. A custom DRC rule enforces >= 1.0 mm between any host-net item and any controller-net item on every layer (3.0 mm in the ISO7721 area); `ISOLATION_CHECK.txt` lists the minimum per layer with coordinates. No track, via or pad of either domain lies in the other; the ISO7721 is the only crossing. The working voltage across the barrier is at most the 44 V ceiling (functional isolation; IPC-2221B coated 0.13 mm); the ISO7721 D-8 package ratings must be confirmed against the datasheet insulation tables.
+- Kelvin pair (INA_INP/INA_INN) and the other pack-level nets use the 0.2 mm clearance class (see FABRICATION_NOTES for the IPC-2221B basis); routed as a pair, with 10 Ω surge resistors R42/R43 at the connector and 10 Ω R11/R12 at the INA228.
 
 ## DFA items for review
-- Mixed SMT + THT; THT is hand/selective-solder. 142 footprints total including features.
+- Mixed SMT + THT; THT is hand/selective-solder.
 - Reflow/wave: one-pass reflow plus manual THT is assumed.
 - Fiducials present; no components under connectors; clearance between SMT parts >= 0.35 mm courtyard margin.
 """

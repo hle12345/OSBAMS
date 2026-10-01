@@ -5,7 +5,7 @@ import json, os, shutil, subprocess, sys, zipfile
 ROOT = os.path.abspath(os.path.dirname(__file__))
 sys.path.insert(0, ROOT)
 import build_rc1 as B
-from design import checks, reports, rc_docs, rev2_design as D
+from design import checks, reports, rc_docs, rc_docs2, rev2_design as D
 
 RC = B.RC
 W = B.W
@@ -16,24 +16,9 @@ def chroot_steps():
     B.kc(f"cd {W} && python3 -m design.route fill")
     B.drc()
     open(os.path.join(RC, 'ISOLATION_CHECK.txt'), 'w').write(B.kc(f"cd {W} && python3 -m design.isocheck"))
+    open(os.path.join(ROOT, 'build', 'connfp.txt'), 'w').write(B.kc(f"cd {W} && python3 -m design.connfp"))
     B.outputs()
     B.kc(f"cd {W}/OSBAMS_Rev2_RELEASE_CANDIDATE_1 && {B.CLI} sch export netlist --format kicadsexpr -o {W}/build/rc1.net {B.SCH}")
-
-
-def zip_gerbers():
-    z = os.path.join(RC, "OSBAMS_Rev2_RC1_Gerbers_NOT_FOR_FABRICATION.zip")
-    with zipfile.ZipFile(z, "w", zipfile.ZIP_DEFLATED) as zf:
-        zf.writestr("README_NOT_FOR_FABRICATION.txt",
-                    "OSBAMS Rev.2 Controller RC1 - REVIEW CANDIDATE - NOT FOR FABRICATION.\n"
-                    "These Gerber/drill files are a KiCad 10.0.6 export of a script-generated design. Regenerate them from the .kicad_pcb on your own KiCad installation,\n"
-                    "re-run ERC/DRC, and clear every item in PCBWAY_RELEASE_CANDIDATE_REPORT.md (BLOCKERS BEFORE PCBWAY ORDER) before ordering.\n")
-        for sub in ("gerber", "drill"):
-            d = os.path.join(RC, sub)
-            for f in sorted(os.listdir(d)):
-                if f.endswith((".pdf", ".rpt")) and sub == "drill":
-                    continue
-                zf.write(os.path.join(d, f), f"{sub}/{f}")
-    return z
 
 
 def main():
@@ -43,6 +28,7 @@ def main():
     import importlib
     importlib.reload(reports)
     importlib.reload(rc_docs)
+    importlib.reload(rc_docs2)
     # netlist check
     net = checks.read_netlist(os.path.join(ROOT, "build", "rc1.net"))
     n, errs = checks.pcb_vs_schematic(net, reports.BOARD)
@@ -64,14 +50,12 @@ def main():
     shutil.copy(os.path.join(ROOT, "calc", "datasheet_inputs.json"), os.path.join(RC, "EVIDENCE_REGISTER.json"))
     shutil.copy(os.path.join(ROOT, "REV2_CALCULATIONS.md"), os.path.join(RC, "POWER_TREE_AND_CALCULATIONS.md"))
     shutil.copy(os.path.join(ROOT, "REV2_BLOCK_DIAGRAM.png"), os.path.join(RC, "OSBAMS_Rev2_RC1_Block_Diagram.png"))
-    for src in ("OSBAMS_Rev2_RC1_Gerbers_NOT_FOR_FABRICATION.zip",):
-        pass
     # documents
     s = rc_docs.stats()
     rc_docs.fabrication_notes(s); rc_docs.assembly_notes(s); rc_docs.dfm_report(s, pol_notes, pol_errs); rc_docs.supply_chain()
+    rc_docs2.evidence_risk(); rc_docs2.connector_check(); rc_docs2.pre_pcbway_checklist(); rc_docs2.rc_report(s, errs, pol_errs)
     for md, title in (("FABRICATION_NOTES.md", "Fabrication notes"), ("ASSEMBLY_NOTES.md", "Assembly notes")):
         reports.md_to_pdf(os.path.join(RC, md), os.path.join(RC, md.replace(".md", ".pdf")), "OSBAMS Rev.2 Controller RC1 - " + title)
-    zip_gerbers()
     print("smt", smt, "all", allp, "tp", ntp, "stats", {k: v for k, v in s.items() if k != "drc_types"}, dict(s["drc_types"]))
     return s, errs, pol_errs
 

@@ -53,9 +53,8 @@ def drc():
 
 def outputs():
     o = f"{W}/OSBAMS_Rev2_RELEASE_CANDIDATE_1"
-    kc(f"cd {o} && rm -rf gerber drill && mkdir -p gerber drill && "
-       f"{CLI} pcb export gerbers --layers F.Cu,In1.Cu,In2.Cu,B.Cu,F.Paste,B.Paste,F.Silkscreen,B.Silkscreen,F.Mask,B.Mask,Edge.Cuts -o gerber/ {PCB} && "
-       f"{CLI} pcb export drill --format excellon --excellon-units mm --excellon-separate-th --generate-map --map-format pdf -o drill/ {PCB} && "
+    # NOTE: no Gerber/drill export here on purpose - final Gerbers are exported by the project owner from the final PCB in KiCad 10.
+    kc(f"cd {o} && rm -rf gerber drill && "
        f"{CLI} sch export pdf -o OSBAMS_Rev2_RC1_Schematic.pdf {SCH} && "
        f"{CLI} pcb export pdf --layers F.Fab,F.Silkscreen,Edge.Cuts,F.Courtyard -o OSBAMS_Rev2_RC1_Assembly_Drawing_Top.pdf {PCB} && "
        f"{CLI} pcb export pdf --layers F.Cu,In1.Cu,In2.Cu,B.Cu,Edge.Cuts -o OSBAMS_Rev2_RC1_Copper_Layers.pdf {PCB} && "

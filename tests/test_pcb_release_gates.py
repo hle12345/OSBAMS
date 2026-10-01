@@ -66,12 +66,14 @@ class TestReleaseGates(unittest.TestCase):
 
     def test_rc1_package_files_exist(self):
         need = ["OSBAMS_Rev2_RC1.kicad_pro", "OSBAMS_Rev2_RC1.kicad_sch", "OSBAMS_Rev2_RC1.kicad_pcb", "OSBAMS_Rev2_RC1_Schematic.pdf",
-                "OSBAMS_Rev2_RC1_Gerbers_NOT_FOR_FABRICATION.zip", "OSBAMS_Rev2_RC1_BOM.xlsx", "OSBAMS_Rev2_RC1_CPL.csv", "OSBAMS_Rev2_RC1_Assembly_Drawing_Top.pdf",
-                "ASSEMBLY_NOTES.md", "FABRICATION_NOTES.md", "OSBAMS_Rev2_RC1_Test_Point_Map.pdf", "POWER_TREE_AND_CALCULATIONS.md", "DFM_DFA_REPORT.md",
+                "OSBAMS_Rev2_RC1_BOM.xlsx", "OSBAMS_Rev2_RC1_CPL.csv", "OSBAMS_Rev2_RC1_Assembly_Drawing_Top.pdf",
+                "ASSEMBLY_NOTES.md", "FABRICATION_NOTES.md", "ISOLATION_CHECK.txt", "OSBAMS_Rev2_RC1.kicad_dru", "PRE_PCBWAY_RELEASE_CHECKLIST.md", "EVIDENCE_RISK_CLASSIFICATION.md", "CONNECTOR_FOOTPRINT_CHECK.md", "OSBAMS_Rev2_RC1_Test_Point_Map.pdf", "POWER_TREE_AND_CALCULATIONS.md", "DFM_DFA_REPORT.md",
                 "EVIDENCE_REGISTER.md", "SUPPLY_CHAIN_REPORT.md", "ERC_REPORT.rpt", "DRC_REPORT.rpt", "PCBWAY_RELEASE_CANDIDATE_REPORT.md", "NETLIST_CHECK.txt"]
         for f in need:
             self.assertTrue(os.path.getsize(os.path.join(self.RC, f)) > 0, f)
-        self.assertEqual(len([f for f in os.listdir(os.path.join(self.RC, "drill")) if f.endswith(".drl")]), 2)
+        # the script-generated candidate Gerbers/drills must not ship: the owner exports them from the final PCB in KiCad 10
+        self.assertFalse(os.path.exists(os.path.join(self.RC, "gerber")) or os.path.exists(os.path.join(self.RC, "drill")))
+        self.assertEqual([f for f in os.listdir(self.RC) if f.lower().endswith((".gbr", ".drl", ".gtl", ".gbl")) or "gerber" in f.lower()], [])
 
     def test_erc_clean_and_drc_has_no_unrouted_nets(self):
         erc = open(os.path.join(self.RC, "ERC_REPORT.rpt")).read()
@@ -79,8 +81,9 @@ class TestReleaseGates(unittest.TestCase):
         drc = open(os.path.join(self.RC, "DRC_REPORT.rpt")).read()
         self.assertIn("** Found 0 unconnected pads **", drc)
         self.assertIn("** Found 0 Footprint errors **", drc)
-        bad = set(re.findall(r"^\[(\w+)\]", drc, re.M)) - {"silk_over_copper", "silk_overlap", "text_height"}
-        self.assertEqual(bad, set(), f"DRC error classes beyond cosmetic silkscreen warnings: {bad}")
+        self.assertIn("** Found 0 DRC violations **", drc)
+        dru = open(os.path.join(self.RC, "OSBAMS_Rev2_RC1.kicad_dru")).read()
+        self.assertIn("isolation_host_to_controller", dru)
 
     def test_netlist_and_polarity_checks_pass(self):
         t = open(os.path.join(self.RC, "NETLIST_CHECK.txt")).read()
@@ -99,7 +102,7 @@ class TestReleaseGates(unittest.TestCase):
                             if phrase in ln.upper():
                                 self.assertRegex(ln, r"(?i)\bnot\b|never|does not|no ", f"{f}: {ln[:100]}")
         for f in ("ASSEMBLY_NOTES.md", "FABRICATION_NOTES.md", "DFM_DFA_REPORT.md", "SUPPLY_CHAIN_REPORT.md"):
-            self.assertIn("NOT FOR FABRICATION", open(os.path.join(self.RC, f)).read())
+            self.assertIn("NOT RELEASED FOR FABRICATION", open(os.path.join(self.RC, f)).read())
 
     def test_bom_has_required_columns_and_every_part_has_mfr_and_mpn(self):
         from openpyxl import load_workbook

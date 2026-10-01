@@ -2,7 +2,7 @@
 	(version 20260306)
 	(generator "eeschema")
 	(generator_version "10.0")
-	(uuid "b931b267-d699-4af2-82d6-2d708e471b92")
+	(uuid "a471be25-c589-4da5-a359-5c51b9a84ae2")
 	(paper "A3")
 	(title_block
 		(title "OSBAMS Rev.2 Controller")
@@ -12,17 +12,6 @@
 		(comment 1 "RELEASE CANDIDATE 1 - NOT FOR FABRICATION")
 	)
 	(lib_symbols)
-	(text "Battery discharge current never enters this PCB. 44 V / 10 A MAX. Hierarchical sheets use global labels for cross-sheet nets."
-		(exclude_from_sim no)
-		(at 30 23 0)
-		(effects
-			(font
-				(size 2 2)
-			)
-			(justify left)
-		)
-		(uuid "5840c788-8353-4266-abd2-f848d70ad311")
-	)
 	(text "OSBAMS Rev.2 Controller - RELEASE CANDIDATE 1 (review only; NOT FOR FABRICATION)"
 		(exclude_from_sim no)
 		(at 30 15 0)
@@ -33,421 +22,18 @@
 			)
 			(justify left)
 		)
-		(uuid "cf2e3f0f-cf15-44c5-98ce-eca1458c319e")
+		(uuid "42847cea-96a1-4b3a-b230-165086629c5c")
 	)
-	(sheet
-		(at 160 100)
-		(size 90 15)
+	(text "Battery discharge current never enters this PCB. 44 V / 10 A MAX. Hierarchical sheets use global labels for cross-sheet nets."
 		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(stroke
-			(width 0.1524)
-			(type solid)
-		)
-		(fill
-			(color 0 0 0 0)
-		)
-		(uuid "0938a16c-6bf0-4818-8872-ecbc656a15ca")
-		(property "Sheetname" "06_ADC_PackSense"
-			(at 160 99.3 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left bottom)
+		(at 30 23 0)
+		(effects
+			(font
+				(size 2 2)
 			)
+			(justify left)
 		)
-		(property "Sheetfile" "06_ADC_PackSense.kicad_sch"
-			(at 160 115.7 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(instances
-			(project "OSBAMS_Rev2_RC1"
-				(path "/b931b267-d699-4af2-82d6-2d708e471b92"
-					(page "7")
-				)
-			)
-		)
-	)
-	(sheet
-		(at 30 100)
-		(size 90 15)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(stroke
-			(width 0.1524)
-			(type solid)
-		)
-		(fill
-			(color 0 0 0 0)
-		)
-		(uuid "3257ae0a-2876-4ba3-adaf-a9d2c0d3e71e")
-		(property "Sheetname" "05_INA228_Shunt"
-			(at 30 99.3 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Sheetfile" "05_INA228_Shunt.kicad_sch"
-			(at 30 115.7 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(instances
-			(project "OSBAMS_Rev2_RC1"
-				(path "/b931b267-d699-4af2-82d6-2d708e471b92"
-					(page "6")
-				)
-			)
-		)
-	)
-	(sheet
-		(at 160 70)
-		(size 90 15)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(stroke
-			(width 0.1524)
-			(type solid)
-		)
-		(fill
-			(color 0 0 0 0)
-		)
-		(uuid "3500a834-5bd4-41cb-880f-801de52f3b0f")
-		(property "Sheetname" "04_Host_Isolated"
-			(at 160 69.3 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Sheetfile" "04_Host_Isolated.kicad_sch"
-			(at 160 85.7 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(instances
-			(project "OSBAMS_Rev2_RC1"
-				(path "/b931b267-d699-4af2-82d6-2d708e471b92"
-					(page "5")
-				)
-			)
-		)
-	)
-	(sheet
-		(at 160 160)
-		(size 90 15)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(stroke
-			(width 0.1524)
-			(type solid)
-		)
-		(fill
-			(color 0 0 0 0)
-		)
-		(uuid "352635cb-f6c9-4014-8f23-b808e7f76013")
-		(property "Sheetname" "10_TestPoints_Mech"
-			(at 160 159.3 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Sheetfile" "10_TestPoints_Mech.kicad_sch"
-			(at 160 175.7 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(instances
-			(project "OSBAMS_Rev2_RC1"
-				(path "/b931b267-d699-4af2-82d6-2d708e471b92"
-					(page "11")
-				)
-			)
-		)
-	)
-	(sheet
-		(at 160 130)
-		(size 90 15)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(stroke
-			(width 0.1524)
-			(type solid)
-		)
-		(fill
-			(color 0 0 0 0)
-		)
-		(uuid "9e1768c0-5184-4c9b-aeb8-a67aac7fe17f")
-		(property "Sheetname" "08_Status_Sense"
-			(at 160 129.3 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Sheetfile" "08_Status_Sense.kicad_sch"
-			(at 160 145.7 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(instances
-			(project "OSBAMS_Rev2_RC1"
-				(path "/b931b267-d699-4af2-82d6-2d708e471b92"
-					(page "9")
-				)
-			)
-		)
-	)
-	(sheet
-		(at 30 130)
-		(size 90 15)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(stroke
-			(width 0.1524)
-			(type solid)
-		)
-		(fill
-			(color 0 0 0 0)
-		)
-		(uuid "a7662d80-152e-495a-adea-c23ac5d254ae")
-		(property "Sheetname" "07_Coil_Driver"
-			(at 30 129.3 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Sheetfile" "07_Coil_Driver.kicad_sch"
-			(at 30 145.7 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(instances
-			(project "OSBAMS_Rev2_RC1"
-				(path "/b931b267-d699-4af2-82d6-2d708e471b92"
-					(page "8")
-				)
-			)
-		)
-	)
-	(sheet
-		(at 30 40)
-		(size 90 15)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(stroke
-			(width 0.1524)
-			(type solid)
-		)
-		(fill
-			(color 0 0 0 0)
-		)
-		(uuid "bf33dbeb-3d08-40d1-bcb3-d602c18a6085")
-		(property "Sheetname" "01_Power_Input"
-			(at 30 39.3 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Sheetfile" "01_Power_Input.kicad_sch"
-			(at 30 55.7 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(instances
-			(project "OSBAMS_Rev2_RC1"
-				(path "/b931b267-d699-4af2-82d6-2d708e471b92"
-					(page "2")
-				)
-			)
-		)
-	)
-	(sheet
-		(at 160 40)
-		(size 90 15)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(stroke
-			(width 0.1524)
-			(type solid)
-		)
-		(fill
-			(color 0 0 0 0)
-		)
-		(uuid "c4c3dc2e-3543-4acc-9ce0-940d407b9996")
-		(property "Sheetname" "02_Buck_3V3"
-			(at 160 39.3 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Sheetfile" "02_Buck_3V3.kicad_sch"
-			(at 160 55.7 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(instances
-			(project "OSBAMS_Rev2_RC1"
-				(path "/b931b267-d699-4af2-82d6-2d708e471b92"
-					(page "3")
-				)
-			)
-		)
-	)
-	(sheet
-		(at 30 160)
-		(size 90 15)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(stroke
-			(width 0.1524)
-			(type solid)
-		)
-		(fill
-			(color 0 0 0 0)
-		)
-		(uuid "ebb03626-3e17-4c37-ba0b-3752f0d1ee91")
-		(property "Sheetname" "09_Temp_Probe"
-			(at 30 159.3 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Sheetfile" "09_Temp_Probe.kicad_sch"
-			(at 30 175.7 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(instances
-			(project "OSBAMS_Rev2_RC1"
-				(path "/b931b267-d699-4af2-82d6-2d708e471b92"
-					(page "10")
-				)
-			)
-		)
+		(uuid "71a4178a-65fd-45cc-8e12-8da4c7ddb487")
 	)
 	(sheet
 		(at 30 70)
@@ -464,7 +50,7 @@
 		(fill
 			(color 0 0 0 0)
 		)
-		(uuid "fe9839a4-a4f2-47dc-b346-3a7d6dc9ae14")
+		(uuid "02f11692-7d2d-4025-8139-eac996b228bb")
 		(property "Sheetname" "03_MCU"
 			(at 30 69.3 0)
 			(show_name no)
@@ -489,8 +75,422 @@
 		)
 		(instances
 			(project "OSBAMS_Rev2_RC1"
-				(path "/b931b267-d699-4af2-82d6-2d708e471b92"
+				(path "/a471be25-c589-4da5-a359-5c51b9a84ae2"
 					(page "4")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 160 100)
+		(size 90 15)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "0421d4d2-e812-41e1-a988-e86b347a8674")
+		(property "Sheetname" "06_ADC_PackSense"
+			(at 160 99.3 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "06_ADC_PackSense.kicad_sch"
+			(at 160 115.7 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "OSBAMS_Rev2_RC1"
+				(path "/a471be25-c589-4da5-a359-5c51b9a84ae2"
+					(page "7")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 30 130)
+		(size 90 15)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "33c886e2-9a9a-423f-b7a9-82ff52213376")
+		(property "Sheetname" "07_Coil_Driver"
+			(at 30 129.3 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "07_Coil_Driver.kicad_sch"
+			(at 30 145.7 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "OSBAMS_Rev2_RC1"
+				(path "/a471be25-c589-4da5-a359-5c51b9a84ae2"
+					(page "8")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 30 160)
+		(size 90 15)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "35ec85dd-f334-4de5-be92-cc3d6579863a")
+		(property "Sheetname" "09_Temp_Probe"
+			(at 30 159.3 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "09_Temp_Probe.kicad_sch"
+			(at 30 175.7 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "OSBAMS_Rev2_RC1"
+				(path "/a471be25-c589-4da5-a359-5c51b9a84ae2"
+					(page "10")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 160 130)
+		(size 90 15)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "68340c47-fb00-4b47-86df-2fafa8d9c81d")
+		(property "Sheetname" "08_Status_Sense"
+			(at 160 129.3 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "08_Status_Sense.kicad_sch"
+			(at 160 145.7 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "OSBAMS_Rev2_RC1"
+				(path "/a471be25-c589-4da5-a359-5c51b9a84ae2"
+					(page "9")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 30 40)
+		(size 90 15)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "ab4e79c3-9b26-4a79-ba7b-321eb04e2e4d")
+		(property "Sheetname" "01_Power_Input"
+			(at 30 39.3 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "01_Power_Input.kicad_sch"
+			(at 30 55.7 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "OSBAMS_Rev2_RC1"
+				(path "/a471be25-c589-4da5-a359-5c51b9a84ae2"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 30 100)
+		(size 90 15)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "b7303d29-8036-43fe-8369-96794ec37714")
+		(property "Sheetname" "05_INA228_Shunt"
+			(at 30 99.3 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "05_INA228_Shunt.kicad_sch"
+			(at 30 115.7 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "OSBAMS_Rev2_RC1"
+				(path "/a471be25-c589-4da5-a359-5c51b9a84ae2"
+					(page "6")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 160 160)
+		(size 90 15)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "c75b778a-55a3-4ebc-8138-36cd9fa91c4a")
+		(property "Sheetname" "10_TestPoints_Mech"
+			(at 160 159.3 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "10_TestPoints_Mech.kicad_sch"
+			(at 160 175.7 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "OSBAMS_Rev2_RC1"
+				(path "/a471be25-c589-4da5-a359-5c51b9a84ae2"
+					(page "11")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 160 70)
+		(size 90 15)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "f1ac2bda-3e0d-4288-a526-016f144f7496")
+		(property "Sheetname" "04_Host_Isolated"
+			(at 160 69.3 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "04_Host_Isolated.kicad_sch"
+			(at 160 85.7 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "OSBAMS_Rev2_RC1"
+				(path "/a471be25-c589-4da5-a359-5c51b9a84ae2"
+					(page "5")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 160 40)
+		(size 90 15)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "fe24c5f4-3866-4d61-990b-8041610a5526")
+		(property "Sheetname" "02_Buck_3V3"
+			(at 160 39.3 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "02_Buck_3V3.kicad_sch"
+			(at 160 55.7 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "OSBAMS_Rev2_RC1"
+				(path "/a471be25-c589-4da5-a359-5c51b9a84ae2"
+					(page "3")
 				)
 			)
 		)

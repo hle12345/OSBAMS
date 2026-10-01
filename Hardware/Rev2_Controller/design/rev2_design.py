@@ -42,6 +42,9 @@ for v, m in (("10", "10R0"), ("100", "100R"), ("220", "220R"), ("1k", "1K00"), (
              ("5.1k", "5K10"), ("5.6k", "5K60"), ("6.2k", "6K20"), ("10k", "10K0"), ("22.1k", "22K1"), ("33.2k", "33K2"), ("47k", "47K0"), ("47.5k", "47K5"), ("100k", "100K"), ("270k", "270K"), ("1M", "1M00")):
     _r(v, m)
 _r("4.7k", "4K70", "1206", " (pulse-rated relay-feedback chain)")
+for v, m in (("47", "47R0"), ("10", "10R0")):
+    part(f"R1206_{v}p", lib="Device:R", fp="Resistor_SMD:R_1206_3216Metric", mfr="Panasonic", mpn=f"ERJ-P08F{m}V", desc=f"{v} ohm 1 % 1206 anti-surge (pulse-withstanding) thick film: pack-sense surge limiting",
+         evid=UV, life="UNKNOWN (not checked)", alt="Vishay CRCW1206 pulse-rated series / Bourns CR1206-FX-pulse series (pulse rating to be confirmed)", src="PCBWay source (orderable suffix to be confirmed)")
 for v, m in (("75k", "75K0"), ("10k", "10K0")):
     part(f"RTF_{v}", lib="Device:R", fp="Resistor_SMD:R_0805_2012Metric", mfr="Vishay Dale", mpn=f"TNPW0805{m}BEEA", desc=f"{v} 0.1 % 25 ppm thin film 0805 (ADC divider)",
          evid=UR, life="UNKNOWN (not checked)", alt="Susumu RG2012P-series 0.1 %/25 ppm", src="PCBWay source")
@@ -197,7 +200,9 @@ add("C24", "C100n", S4, {1: "+3V3", 2: "GND"}, "100nF", note="ISO7721 VCC1")
 add("C25", "C100n", S4, {1: "3V3_HOST", 2: "GND_HOST"}, "100nF", note="ISO7721 VCC2")
 
 # ---- 05 INA228
-add("J5", "J_KK3", S5, {1: "SHUNT_INP_RAW", 2: "SHUNT_INN_RAW", 3: "GND"}, "SHUNT_KELVIN", note="1 IN+, 2 IN-, 3 cable shield (shield joined to GND at this end only)")
+add("J5", "J_KK3", S5, {1: "SHUNT_INP_CON", 2: "SHUNT_INN_CON", 3: "GND"}, "SHUNT_KELVIN", note="1 IN+, 2 IN-, 3 cable shield (shield joined to GND at this end only)")
+add("R42", "R1206_10p", S5, {1: "SHUNT_INP_CON", 2: "SHUNT_INP_RAW"}, "10", note="Surge-limiting series resistor UPSTREAM of the TVS (Rev.1.2): limits TVS current; 10 ohm + existing 10 ohm = 20 ohm per Kelvin line")
+add("R43", "R1206_10p", S5, {1: "SHUNT_INN_CON", 2: "SHUNT_INN_RAW"}, "10", note="Surge-limiting series resistor UPSTREAM of the TVS (matched to R42)")
 add("D5", "TVS48", S5, {"K": "SHUNT_INP_RAW", "A": "GND"}, "1.5SMBJ48A")
 add("D6", "TVS48", S5, {"K": "SHUNT_INN_RAW", "A": "GND"}, "1.5SMBJ48A")
 add("R11", "R0603_10", S5, {1: "SHUNT_INP_RAW", 2: "INA_INP"}, "10")
@@ -207,13 +212,14 @@ add("U2", "U_INA", S5, {"IN+": "INA_INP", "IN-": "INA_INN", "VBUS": "INA_VBUS", 
 add("C27", "C100n", S5, {1: "3V3_A", 2: "GND"}, "100nF", note="INA228 VS")
 add("D7", "TVS48", S5, {"K": "PACK_INA", "A": "GND"}, "1.5SMBJ48A")
 add("R13", "R0603_10", S5, {1: "PACK_INA", 2: "INA_VBUS"}, "10")
+add("R41", "R1206_47p", S5, {1: "PACK_INA_CON", 2: "PACK_INA"}, "47", note="Surge-limiting series resistor UPSTREAM of D7 (Rev.1.2): VBUS input draws ~50 uA so the DC error is negligible")
 add("C28", "C100n", S5, {1: "INA_VBUS", 2: "GND"}, "100nF 50V")
 add("R14", "R0603_4.7k", S5, {1: "+3V3", 2: "SDA1"}, "4.7k")
 add("R15", "R0603_4.7k", S5, {1: "+3V3", 2: "SCL1"}, "4.7k")
 add("R16", "R0603_10k", S5, {1: "+3V3", 2: "INA_ALERT"}, "10k")
 
 # ---- 06 ADC / pack sense
-add("J6", "J_KK4", S6, {1: "PACK_INA", 2: "PACK_ADC", 3: "RELAY_OUT", 4: "GND"}, "PACK_SENSE", note="1 PACK_INA (upstream of K1), 2 PACK_ADC (separate lead), 3 RELAY_OUT (K1 load side), 4 GND_SENSE = the single logic-GND / pack-negative bond")
+add("J6", "J_KK4", S6, {1: "PACK_INA_CON", 2: "PACK_ADC", 3: "RELAY_OUT", 4: "GND"}, "PACK_SENSE", note="1 PACK_INA (upstream of K1), 2 PACK_ADC (separate lead), 3 RELAY_OUT (K1 load side), 4 GND_SENSE = the single logic-GND / pack-negative bond")
 add("R17", "RTF_75k", S6, {1: "PACK_ADC", 2: "ADC_MID"}, "75k 0.1%")
 add("R18", "RTF_75k", S6, {1: "ADC_MID", 2: "ADC_TAP"}, "75k 0.1%")
 add("R19", "RTF_10k", S6, {1: "ADC_TAP", 2: "GND"}, "10k 0.1%")

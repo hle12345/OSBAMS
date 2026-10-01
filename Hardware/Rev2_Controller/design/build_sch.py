@@ -47,15 +47,10 @@ def write_tables():
 
 def write_pro():
     pro = {"meta": {"filename": D.PROJECT + ".kicad_pro", "version": 1}, "board": {"design_settings": {"rules": {"min_clearance": 0.1, "min_track_width": 0.15, "min_via_diameter": 0.5, "min_through_hole_diameter": 0.3, "min_copper_edge_clearance": 0.3, "min_hole_clearance": 0.19, "min_resolved_spacing": 0.0, "min_silk_clearance": 0.0, "min_text_height": 0.8, "min_text_thickness": 0.08, "solder_mask_to_copper_clearance": 0.0}}}, "libraries": {"pinned_footprint_libs": [], "pinned_symbol_libs": []},
-           "sheets": [], "text_variables": {"REV": "RC1.1"}}
-    # netclasses must match design/pcbgen.py (the .kicad_pro is the only place KiCad stores them)
-    pro["net_settings"] = {"meta": {"version": 4}, "classes": [dict(name=n, clearance=c, track_width=w, via_diameter=0.6, via_drill=0.3) for n, c, w in
-                           (("Default", 0.15, 0.2), ("POWER", 0.2, 0.3), ("RAIL", 0.15, 0.3), ("PACKLEVEL", 0.15, 0.2), ("KELVIN", 0.15, 0.2))],
-                           "netclass_patterns": [dict(netclass=cls, pattern=n) for cls, nets in (
-                               ("POWER", ["12V_RAW", "12V_F", "+12V", "COIL_V", "COIL_SW", "ESTOP_OUT", "3V3_HOST", "VBUS_USB", "BUCK_SW"]),
-                               ("RAIL", ["+3V3", "3V3_A"]),
-                               ("PACKLEVEL", ["PACK_INA", "PACK_ADC", "ADC_MID", "RELAY_OUT", "FB_R1", "FB_R2", "SHUNT_INP_RAW", "SHUNT_INN_RAW", "INA_VBUS"]),
-                               ("KELVIN", ["INA_INP", "INA_INN"])) for n in nets]}
+           "sheets": [], "text_variables": {"REV": "RC1.2"}}
+    from design import netclasses
+    pro["net_settings"] = netclasses.pro_net_settings()
+    open(os.path.join(OUT, D.PROJECT + ".kicad_dru"), "w").write(netclasses.dru_text())
     open(os.path.join(OUT, D.PROJECT + ".kicad_pro"), "w").write(json.dumps(pro, indent=2))
 
 

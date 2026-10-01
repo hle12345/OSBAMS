@@ -1,6 +1,6 @@
 # OSBAMS Rev.2 Controller — Supply-chain report (2026-10-01)
 
-**RC1 - REVIEW CANDIDATE - NOT FOR FABRICATION.**
+**RC1.2 - REVIEW CANDIDATE - NOT RELEASED FOR FABRICATION.**
 
 **Stock and lifecycle were NOT checked.** The build environment cannot reach distributor or manufacturer sites (HTTP 403). Every row below therefore shows `Stock Check Date: NOT CHECKED`. Lifecycle is `ACTIVE (user-confirmed)` only for INA228 and LMR14006; all other parts are `UNKNOWN (not checked)`. Approved alternates are proposals and are themselves UNVERIFIED.
 
@@ -40,10 +40,12 @@
 | R39 | CRCW060347K5FKEA | Vishay Dale | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Yageo RC0603-FR-07 series (UNVERIFIED alternate) |
 | U7 | ISO7721DR | Texas Instruments | VERIFIED_LOCAL | UNKNOWN (not checked) | PCBWay source | ISO7721DWR (wide body) (UNVERIFIED alternate) |
 | J5 | 22-27-2031 | Molex | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Molex 22-23-2031 (UNVERIFIED alternate) |
+| R42, R43 | ERJ-P08F10R0V | Panasonic | UNVERIFIED | UNKNOWN (not checked) | PCBWay source (orderable suffix to be confirmed) | Vishay CRCW1206 pulse-rated series / Bourns CR1206-FX-pulse series (pulse rating to be confirmed) (UNVERIFIED alternate) |
 | D5, D6, D7 | 1.5SMBJ48A | Bourns | USER_RELAYED_MANUFACTURER | UNKNOWN (not checked) | CONSIGN (owned: 2; 3 needed) or PCBWay source | Littelfuse 1.5SMC / SMBJ48A (UNVERIFIED alternate) |
 | R11, R12, R13 | CRCW060310R0FKEA | Vishay Dale | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Yageo RC0603-FR-07 series (UNVERIFIED alternate) |
 | C26, C28 | GRM188R71H104KA93D | Murata | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Samsung CL10B104KB8NNNC (UNVERIFIED alternate) |
 | U2 | INA228AIDGSR | Texas Instruments | USER_RELAYED_MANUFACTURER | ACTIVE (user-confirmed) | PCBWay source | INA228AIDGST (small reel) (UNVERIFIED alternate) |
+| R41 | ERJ-P08F47R0V | Panasonic | UNVERIFIED | UNKNOWN (not checked) | PCBWay source (orderable suffix to be confirmed) | Vishay CRCW1206 pulse-rated series / Bourns CR1206-FX-pulse series (pulse rating to be confirmed) (UNVERIFIED alternate) |
 | R14, R15, R35, R36 | CRCW06034K70FKEA | Vishay Dale | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Yageo RC0603-FR-07 series (UNVERIFIED alternate) |
 | J6 | 22-27-2041 | Molex | UNVERIFIED | UNKNOWN (not checked) | PCBWay source | Molex 22-23-2041 (UNVERIFIED alternate) |
 | R17, R18 | TNPW080575K0BEEA | Vishay Dale | USER_RELAYED_MANUFACTURER | UNKNOWN (not checked) | PCBWay source | Susumu RG2012P-series 0.1 %/25 ppm (UNVERIFIED alternate) |

@@ -52,7 +52,7 @@ ANCHOR = {
     "C16": ("U1", "13"), "C17": ("U1", "13"), "C18": ("U1", "7"), "R6": ("U1", "60"), "R7": ("U1", "21"), "D4": ("R7", "2"),
     "R38": ("U6", "8"), "R40": ("U6", "9"), "R39": ("R38", "2"), "R8": ("J8", "A5"), "R9": ("J8", "B5"), "R10": ("J8", "SH"), "C19": ("J8", "SH"), "C20": ("U6", "8"), "C21": ("U6", "8"), "C22": ("U6", "6"), "C23": ("U6", "6"),
     "C24": ("U7", "1"), "C25": ("U7", "8"),
-    "D5": ("J5", "1"), "D6": ("J5", "2"), "R11": ("U2", "10"), "R12": ("U2", "9"), "C26": ("U2", "10"), "C27": ("U2", "6"), "D7": ("J6", "1"), "R13": ("U2", "8"), "C28": ("U2", "8"),
+    "R41": ("J6", "1"), "R42": ("J5", "1"), "R43": ("J5", "2"), "D5": ("R42", "2"), "D6": ("R43", "2"), "R11": ("U2", "10"), "R12": ("U2", "9"), "C26": ("U2", "10"), "C27": ("U2", "6"), "D7": ("R41", "2"), "R13": ("U2", "8"), "C28": ("U2", "8"),
     "R14": ("U2", "4"), "R15": ("U2", "5"), "R16": ("U2", "3"),
     "R17": ("J6", "2"), "R18": ("R17", "2"), "R19": ("R18", "2"), "R20": ("U1", "15"), "C29": ("U1", "15"), "D8": ("U1", "15"), "D14": ("D8", "2"), "R37": ("D8", "2"), "C34": ("D8", "2"),
     "R21": ("Q1", "1"), "R22": ("Q1", "1"), "D9": ("J4", "1"), "R23": ("J4", "1"), "D10": ("R23", "2"),
@@ -70,10 +70,7 @@ MINRAD = {"C10": 3.0, "C11": 3.0, "C12": 3.0, "C13": 3.0, "C14": 3.0, "C15": 3.5
 MH_POS = {"MH1": (4, 4), "MH2": (96, 4), "MH3": (4, 86), "MH4": (96, 86)}
 FID_POS = {"FID1": (10, 2.5), "FID2": (90, 2.5), "FID3": (60, 88.0)}
 
-PK_NETS = {"PACK_INA", "PACK_ADC", "ADC_MID", "RELAY_OUT", "FB_R1", "FB_R2", "SHUNT_INP_RAW", "SHUNT_INN_RAW", "INA_INP", "INA_INN", "INA_VBUS"}
-PWR_NETS = {"12V_RAW", "12V_F", "+12V", "COIL_V", "COIL_SW", "ESTOP_OUT", "3V3_HOST", "VBUS_USB", "BUCK_SW"}
-RAIL_NETS = {"+3V3", "3V3_A"}
-KELVIN_NETS = {"INA_INP", "INA_INN"}
+from .netclasses import PK_NETS, PWR_NETS, RAIL_NETS, KELVIN_NETS, CLASSES
 
 
 class PCB:
@@ -102,12 +99,7 @@ class PCB:
         ns = ds.m_NetSettings
         dflt = ns.GetDefaultNetclass()
         dflt.SetClearance(mm(0.15)); dflt.SetTrackWidth(mm(0.2)); dflt.SetViaDiameter(mm(0.6)); dflt.SetViaDrill(mm(0.3))
-        classes = {
-            "POWER": dict(w=0.3, c=0.2, nets=PWR_NETS),
-            "RAIL": dict(w=0.3, c=0.15, nets=RAIL_NETS),
-            "PACKLEVEL": dict(w=0.2, c=0.15, nets=PK_NETS - KELVIN_NETS),
-            "KELVIN": dict(w=0.2, c=0.15, nets=KELVIN_NETS),
-        }
+        classes = {n: dict(w=w, c=c, nets=nets) for n, (c, w, nets) in CLASSES.items() if n != "Default"}
         for name, c in classes.items():
             nc = pcbnew.NETCLASS(name)
             nc.SetClearance(mm(c["c"])); nc.SetTrackWidth(mm(c["w"])); nc.SetViaDiameter(mm(0.6)); nc.SetViaDrill(mm(0.3))
@@ -353,7 +345,7 @@ class PCB:
 
     def silk(self):
         self.text("OSBAMS Rev.2 Controller", 50, 2.2, 1.6, bold=True)
-        self.text("RC1.1 2026-10-01  44 V / 10 A MAX  NOT FOR FABRICATION", 50, 4.6, 1.0)
+        self.text("RC1.2 2026-10-01  44 V / 10 A MAX  NOT FOR FABRICATION", 50, 4.6, 1.0)
         labels = {"J1": "12V IN  +/-", "J2": "E-STOP", "J3": "ARM", "J4": "K1 COIL", "J5": "SHUNT KELVIN", "J6": "PACK SENSE", "J7": "TEMP PROBE", "J8": "USB HOST", "J9": "SWD", "JP1": "BOOT0"}
         for ref, s in labels.items():
             x, y = self.pad_pos(ref, "1" if ref != "J8" else "A5")
@@ -374,7 +366,7 @@ class PCB:
             if c['key'] == 'TP':
                 x, y = ToMM(self.fps[ref].GetPosition().x) - OX, ToMM(self.fps[ref].GetPosition().y) - OY
                 self.text(c['value'], x, y + 1.7, 0.7)
-        self.text("ISOLATION BOUNDARY: GND | GND_HOST", 73, 29.5, 0.8)
+        self.text("ISOLATION BOUNDARY: GND | GND_HOST", 73.0, 14.0, 0.8, rot=90)
 
     def zones(self):
         b = self.b

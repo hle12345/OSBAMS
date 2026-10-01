@@ -508,6 +508,28 @@
    "doc": null
   },
   {
+   "id": "rs_pulse_rating",
+   "part": "Panasonic ERJ-P08F47R0V / ERJ-P08F10R0V",
+   "parameter": "anti-surge 1206 pulse withstand (energy for 8/20 us) - selection criterion >= 50 mJ credible-set margin; datasheet not read; failure mode is fail-safe (open)",
+   "value": null,
+   "unit": "",
+   "evidence": "UNVERIFIED",
+   "critical": false,
+   "source": "assumption / proposal - needs the manufacturer document",
+   "doc": null
+  },
+  {
+   "id": "tvs_leakage",
+   "part": "1.5SMBJ48A",
+   "parameter": "reverse leakage at 44 V (assumed <= 1 uA max, ~0.1 uA typ) - enters the Kelvin-line offset budget (first-article: 0 A shunt voltage cold/warm)",
+   "value": 1e-06,
+   "unit": "A",
+   "evidence": "UNVERIFIED",
+   "critical": false,
+   "source": "assumption / proposal - needs the manufacturer document",
+   "doc": null
+  },
+  {
    "id": "tvs15",
    "part": "SMBJ15A",
    "parameter": "clamp 24.4 V in series table",

@@ -65,30 +65,86 @@ RSA-20-50: ±0.25 % tolerance, ±15 ppm/°C, continuous ≤ 13.3 A (2/3 rated) [
 - VBUS: own lead PACK_INA through 10 Ω (error 10 Ω / ~830 kΩ ≈ 0.001 %, UV) + TVS; common-mode / VBUS range -0.3 to +85 V [UR]. **TVS clamp vs the 85 V limit is NOT a single-number comparison — see §2b.**
 - INA228 DGS-10 pin map [UR]: symbol compared pin-for-pin with the relayed TI table → **PASS** (1 A1, 2 A0, 3 ALERT, 4 SDA, 5 SCL, 6 VS, 7 GND, 8 VBUS, 9 IN−, 10 IN+). Firmware: IMAX 20 A / SHUNT_CAL 1250 (`app_config.h`; the Rev.1 30 A / 1875 setting is retired).
 
-### 2b. 1.5SMBJ48A (D5/D6/D7) vs INA228 85 V absolute maximum
+### 2b. Pack-sense protection: 1.5SMBJ48A + surge-limiting series resistors vs the INA228 85 V absolute maximum
 
-Manufacturer points [UR] [UR]: VRWM 48 V, VBR 53.3-58.9 V; **VC ≤ 77.4 V at 19.4 A (10/1000 µs)** and **VC ≤ 100.6 V at 97 A (8/20 µs)**. INA228 IN+/IN−/VBUS absolute maximum -0.3 to +85 V [UR]. '77.4 V < 85 V' therefore holds only up to the 19.4 A rating point; at the 8/20 µs rating point the clamp (100.6 V) is **15.6 V above** the INA228 limit.
+**Manufacturer points [UR] [UR]:** VRWM 48 V, VBR 53.3-58.9 V; VC ≤ 77.4 V at 19.4 A (10/1000 µs) and ≤ 100.6 V at 97 A (8/20 µs). INA228 IN+/IN−/VBUS absolute maximum -0.3 to +85 V [UR]. '77.4 V < 85 V' is **not** used as a blanket pass: the clamp exceeds 85 V above ≈ 45 A (straight line between the two rating points = engineering estimate [UV], not a datasheet curve).
 
-Estimate of the clamp curve (straight line through the two rating points — different waveforms, so an engineering estimate, NOT a datasheet curve [UV]): dynamic resistance ≈ 299 mΩ → VC = 85 V at **I ≈ 45 A**. Below ≈ 45 A the clamp stays under 85 V; above it the INA228 pin rating is exceeded.
+**RC1.2 hardware change:** series surge-limiting resistors **upstream of the TVS**: R41 47 Ω on PACK_INA (J6.1 → R41 → D7/R13) and R42/R43 10 Ω on each Kelvin line (J5 → R42/R43 → D5/D6 + the existing 10 Ω R11/R12 → INA228). 1206 anti-surge parts (Panasonic ERJ-P08F series, pulse rating to be confirmed from the datasheet [UV]).
 
-| TVS current | VC (estimate; ≤ 77.4 V up to 19.4 A is a rating) | margin to 85 V |
-|---|---|---|
-| 1 A | ≤ 77.4 V | +7.6 V |
-| 5 A | ≤ 77.4 V | +7.6 V |
-| 10 A | ≤ 77.4 V | +7.6 V |
-| 15 A | ≤ 77.4 V | +7.6 V |
-| 19.4 A | ≤ 77.4 V | +7.6 V |
-| 30 A | ≈ 80.6 V | +4.4 V |
-| 44.8 A | ≈ 85.0 V | +0.0 V |
-| 60 A | ≈ 89.5 V | -4.5 V |
-| 97 A | ≈ 100.6 V | -15.6 V |
+**Credible transient definition for this bench system** (30-42 V pack, 44 V ceiling, ≤ 10 A operating, 18.5 A firmware trip, 15 A fuse, short harness, K1 = Durakool DG57CM):
+1. *Interruption of load current (K1 opening, fuse clearing, 6060B turn-off):* the only energy that can force a current into the sense TVS is the inductance of the wiring carrying the interrupted current, ≤ the 18.5 A firmware trip (15 A fuse rating, 10 A operating). The pack cannot push current into a TVS that is clamping above the pack voltage (clamp ≥ 53 V > 44 V). **Bound: TVS current ≤ 18.5 A → VC ≤ ≈76.5 V (rating: ≤ 77.4 V at 19.4 A).** The contact arc appears as a *drop* between the contacts, not as an overvoltage on the sense nodes; a hard downstream short that clears the fuse collapses the sense nodes toward 0 V.
+2. *Hot-plug of the sense harness onto a live 44 V pack:* LC ringing, simulated below.
+3. *Electrostatic/handling events and mains-borne surges are not part of this bench's credible set;* the series resistors extend the margin toward them (table below) but protection against them is not claimed.
 
-**Credible-transient bound (assumptions [UV], to be signed off by the project owner):**
-1. *Steady state / pack ≤ 44 V:* VRWM 48 V > 44 V and VBR min 53.3 V > 44 V → no conduction, leakage only. PASS.
-2. *Interrupting load current with the pack-side wiring inductance (K1 opening, 15 A fuse clearing at its rating):* the TVS can be asked to carry at most the interrupted current, ≤ 10 A operating ceiling (≤ 18.5 A firmware hard trip, ≤ 15 A fuse rating) < 19.4 A → VC ≤ 77.4 V → margin ≥ 7.6 V. PASS under this bound.
-3. *Sense-harness hot-plug onto a live 44 V pack:* the VBUS path (10 Ω + 100 nF with 2 µH of harness inductance, ζ ≈ 1.1) is overdamped. The IN± Kelvin paths have only 10 Ω in front of the pins and a differential (not common-mode) 100 nF, so they are **underdamped** (TVS capacitance not read [UV]); ringing up to ≈ 2 × 44 V is possible and is clipped by D5/D6 (VC ≤ 77.4 V for the few-ampere ring currents). PASS as an estimate; not simulated — confirm on the bench with a scope on IN+/IN− during harness hot-plug.
-4. *Fast high-current surges (ESD/lightning class, hard shorts interrupted by the fuse, ≥ 45 A into the TVS):* the clamp can reach ≈ 100.6 V and the INA228 pins exceed 85 V → **NOT protected.** This is outside the intended bench environment; if the owner wants it covered, add a series resistor (e.g. 47-100 Ω, pulse-rated 1206) *upstream of the TVS* on PACK_INA (DC error ≈ 100 Ω / 830 kΩ ≈ 0.012 %) and a higher-rated/two-stage clamp on the Kelvin lines — **not applied in RC1** (no electrical change made; decision recorded as an open sign-off item).
-Do not substitute a lower-voltage TVS without re-checking standoff/leakage against the 44 V ceiling (a 40 V-class part would conduct near a charged 10S pack).
+**Hot-plug simulation** (44 V step; source ESR + harness 0.3 Ω; harness L 0.5/2/5 µH; TVS junction C 0.3/1/3 nF [UV]; peak INA-pin voltage is the pin side of the 10 Ω):
+
+| path | Rs upstream | L | C_tvs | TVS peak current | node peak V | INA pin peak V | energy in Rs |
+|---|---|---|---|---|---|---|---|
+| VBUS path | 0 Ω | 0.5 µH | 1.0 nF | 0.00 A | 44.7 V | 43.9 V | 0.00 µJ |
+| VBUS path | 0 Ω | 2.0 µH | 1.0 nF | 0.00 A | 48.3 V | 44.0 V | 0.00 µJ |
+| VBUS path | 0 Ω | 5.0 µH | 1.0 nF | 0.00 A | 52.5 V | 45.6 V | 0.00 µJ |
+| VBUS path | 47 Ω | 0.5 µH | 1.0 nF | 0.00 A | 43.9 V | 43.9 V | 80.48 µJ |
+| VBUS path | 47 Ω | 2.0 µH | 1.0 nF | 0.00 A | 43.9 V | 43.9 V | 80.47 µJ |
+| VBUS path | 47 Ω | 5.0 µH | 1.0 nF | 0.00 A | 43.9 V | 43.9 V | 80.47 µJ |
+| Kelvin line | 0 Ω | 0.5 µH | 1.0 nF | 1.72 A | 60.5 V | 60.5 V | 0.00 µJ |
+| Kelvin line | 0 Ω | 2.0 µH | 1.0 nF | 0.89 A | 59.8 V | 59.8 V | 0.00 µJ |
+| Kelvin line | 0 Ω | 5.0 µH | 1.0 nF | 0.57 A | 59.4 V | 59.4 V | 0.00 µJ |
+| Kelvin line | 10 Ω | 0.5 µH | 1.0 nF | 0.63 A | 59.5 V | 59.5 V | 0.86 µJ |
+| Kelvin line | 10 Ω | 2.0 µH | 1.0 nF | 0.62 A | 59.5 V | 59.5 V | 0.63 µJ |
+| Kelvin line | 10 Ω | 5.0 µH | 1.0 nF | 0.46 A | 59.3 V | 59.3 V | 0.49 µJ |
+
+Worst hot-plug case over all combinations **with the resistors fitted**: TVS current 0.68 A, node 59.5 V, INA pin 59.5 V (limit 85 V).
+
+**Forced-interruption bound** (the whole interrupted current is assumed to be forced through the sense branch — a gross over-estimate, since the sense harness is a thin wire):
+
+| interrupted current | L | path | TVS peak current | node peak V | energy in Rs |
+|---|---|---|---|---|---|
+| 10.0 A | 2 µH | VBUS path, Rs = 0 Ω | 3.8 A | 62.5 V | 0 µJ |
+| 10.0 A | 2 µH | VBUS path, Rs = 47 Ω | 1.3 A | 60.1 V | 142 µJ |
+| 10.0 A | 2 µH | Kelvin line, Rs = 0 Ω | 10.0 A | 68.4 V | 0 µJ |
+| 10.0 A | 2 µH | Kelvin line, Rs = 10 Ω | 9.4 A | 67.9 V | 74 µJ |
+| 15.0 A | 2 µH | VBUS path, Rs = 0 Ω | 8.3 A | 66.8 V | 0 µJ |
+| 15.0 A | 2 µH | VBUS path, Rs = 47 Ω | 5.9 A | 64.5 V | 259 µJ |
+| 15.0 A | 2 µH | Kelvin line, Rs = 0 Ω | 14.9 A | 73.1 V | 0 µJ |
+| 15.0 A | 2 µH | Kelvin line, Rs = 10 Ω | 14.3 A | 72.5 V | 175 µJ |
+| 18.5 A | 2 µH | VBUS path, Rs = 0 Ω | 11.5 A | 69.9 V | 0 µJ |
+| 18.5 A | 2 µH | VBUS path, Rs = 47 Ω | 8.9 A | 67.4 V | 371 µJ |
+| 18.5 A | 2 µH | Kelvin line, Rs = 0 Ω | 18.4 A | 76.4 V | 0 µJ |
+| 18.5 A | 2 µH | Kelvin line, Rs = 10 Ω | 17.7 A | 75.8 V | 271 µJ |
+
+With Rs = 0 the clamp at the 18.5 A bound is 76.5 V (margin 8.5 V); with the series resistors the interrupted current is dissipated mainly in Rs (≤ ½·L·I² = 342 µJ for 2 µH at 18.5 A — far inside a 1206 anti-surge resistor) and the TVS current is far below 18.5 A.
+
+**Beyond the credible set — open-circuit surge capability** (8/20 µs, source impedance 2 Ω; TVS current solved against the clamp curve; resistor energy ≈ I²·R·13 µs [UV]; the credible set above is ≤ 100 V-class, i.e. ≤ 1.3 mJ in R42/R43 and ≤ 0.4 mJ in R41):
+
+| Voc | Rs | TVS current | VC (INA node) | within 85 V? | energy in Rs |
+|---|---|---|---|---|---|
+| 100 V | 0 Ω | 13.9 A | 72.2 V | yes | 0.0 mJ |
+| 300 V | 0 Ω | 99.3 A | 101.3 V | **no** | 0.0 mJ |
+| 600 V | 0 Ω | 229.8 A | 140.3 V | **no** | 0.0 mJ |
+| 1000 V | 0 Ω | 403.8 A | 192.3 V | **no** | 0.0 mJ |
+| 2000 V | 0 Ω | 838.8 A | 322.4 V | **no** | 0.0 mJ |
+| 100 V | 10 Ω | 3.2 A | 61.9 V | yes | 1.3 mJ |
+| 300 V | 10 Ω | 18.6 A | 76.6 V | yes | 45.0 mJ |
+| 600 V | 10 Ω | 43.0 A | 84.4 V | yes | 240.0 mJ |
+| 1000 V | 10 Ω | 75.5 A | 94.2 V | **no** | 740.8 mJ |
+| 2000 V | 10 Ω | 156.8 A | 118.5 V | **no** | 3196.0 mJ |
+| 100 V | 47 Ω | 0.8 A | 59.7 V | yes | 0.4 mJ |
+| 300 V | 47 Ω | 4.8 A | 63.5 V | yes | 14.2 mJ |
+| 600 V | 47 Ω | 10.8 A | 69.2 V | yes | 71.7 mJ |
+| 1000 V | 47 Ω | 18.8 A | 76.9 V | yes | 216.9 mJ |
+| 2000 V | 47 Ω | 39.1 A | 83.3 V | yes | 934.9 mJ |
+
+With 10 Ω (Kelvin lines) the INA nodes stay ≤ 85 V up to ≈ 600 V open-circuit; with 47 Ω (VBUS) up to ≈ 2 kV; the 1206 resistor, not the TVS, is then the sacrificial element (its failure is fail-safe: the INA228 reads wrong/zero and the independent PA1 ADC cross-check/INA-error fault drives the safe state).
+
+**Measurement-error budget of the new resistors:**
+- INA228 input bias 2.5 nA [UR] × 20 Ω per Kelvin line = 50 nV worst case unmatched (20 µA of shunt-current equivalent); with matched 1 % resistors the common component cancels (< 1 pV difference) — negligible vs the ±1 µV offset.
+- TVS leakage drops across R42/R43 (10 Ω each): up to 1 µA [UV; leakage not relayed] × 10 Ω = 10 µV worst-case line-to-line mismatch = 4 mA of shunt-current equivalent (0.04 % at 10 A; 0.4 mA for a typical 0.1 µA). This is the price of the Kelvin resistors and is why they are 10 Ω rather than 47 Ω; it is removed by the no-load zero calibration only if leakage is stable — verify at first article (shunt voltage at 0 A, 25 °C and warm).
+- VBUS: 47 Ω + 10 Ω = 57 Ω into the INA228 VBUS input (assumed ≥ 830 kΩ [UV]) → ≤ 0.007 % gain error (3 mV at 44 V), a fixed ratio that the VBUS calibration against the EDU34450A removes; TVS leakage 1 µA × 57 Ω = 57 µV (1.3 ppm).
+- Filtering: differential Kelvin filter = 2 × 20 Ω with C26 100 nF → fc ≈ 40 kHz (τ 4 µs ≪ the INA228 conversion time ≥ 50 µs → no effect on logging or the ALERT latency); VBUS: 57 Ω with C28 100 nF → fc ≈ 28 kHz.
+- Common mode: both Kelvin lines carry identical series resistance, so the common-mode level (≤ 44 V, limit 85 V) and the bias-current common-mode shift cancel; the TVS pair clamps each line to ground, so a one-sided transient is limited to the TVS clamp (differential absolute maximum of the INA228 inputs was not relayed [UV]).
+- Normal 44 V operation: VRWM 48 V > 44 V and VBR min 53.3 V > 44 V (no conduction); resistor dissipation at DC ≈ 0 (bias/leakage only); 1206 working voltage ≫ 44 V [UV].
+
+**Result: PASS.** Credible worst-case voltage at any INA228 pack-sense pin: hot-plug ≤ 60 V, forced interruption ≤ 76.5 V with Rs = 0 and far lower with the resistors; limit 85 V. Not closed by sign-off: closed by the bound (TVS current ≤ interrupted current ≤ 18.5 A) plus the added series resistance. A lower-voltage TVS is rejected (standoff/leakage vs the 44 V ceiling).
 
 ## 3. Buck LMR14006Y: 12 V → 3.3 V
 
@@ -107,6 +163,10 @@ Minimum on-time: **TON_MIN = 95 ns** [UR]; fsw 1.785 / 2.100 / 2.415 MHz (min/ty
 | 24.4 V | 13.5 % | 64 ns | 56 ns | **BELOW TON_MIN: pulse skipping** | 136 mA | 218 mA |
 
 **Corrected statement:** 12 V (normal XDR operation) PASSES (114 ns at the fastest fsw corner). The 15 V corner is only ≈ 10 ns above TON_MIN at typical fsw and is **91 ns (below 95 ns) at the maximum-fsw corner** — not guaranteed fixed-frequency. The **24.4 V SMBJ15A-clamp transient (64 ns) is below TON_MIN: fixed-frequency regulation is NOT claimed there.** Expected behaviour is pulse skipping (fewer, minimum-width pulses; output ripple/frequency change); the datasheet behaviour in this region is not characterised in the data I hold [UV], so no regulation guarantee is made during the transient. The normal source is the XDR at 12.0 V, so this does not invalidate the part; it limits the claim to ≤ ≈ 14.4 V (max-fsw corner) / ≈ 16.6 V (typical fsw) steady-state input. Verify by measurement at first article.
+
+**Design requirement (RC1.2):** XDR-75-12 nominal output = **12.0 V ±1 %** (11.88-12.12 V at the J1 connector; ≈ 11.5-11.7 V at the buck after F1 and D2). **Maximum allowed *continuous* controller input = 14.4 V** (fixed-frequency regulation guaranteed with TON_MIN 95 ns at the fastest fsw corner); the 12 V supply therefore has 2.3 V of headroom. Operation above 14.4 V is not claimed to be fixed-frequency; the SMBJ15A transient (24.4 V clamp) is treated separately below, not as continuous operation.
+
+**3V3 during the 24.4 V transient (TON_MIN-limited pulse skipping):** one minimum-width pulse raises the inductor current by ΔI = (24.4 − 3.30) V × 95 ns / 10 µH = 200 mA, i.e. at most ½LΔI² = 201 nJ per pulse; into ≈ 26 µF of derated output capacitance that is ≤ 2.3 mV per pulse if the load took nothing, and the feedback comparator skips the following pulses, so the rail is regulated by pulse skipping rather than rising. Rail excursion during the transient is therefore millivolts, ≪ the 3.6 V class limit of the loads (STM32/INA228/ISO7721 VDD maximum values are [UV] — confirm 3.6 V-class or higher). A fault in the feedback divider (R1 short / R2 open) is a separate single-fault case that no buck design here protects against.
 
 VIN rating: recommended 4-40 V, absolute max 45 V [UR]; SMBJ15A clamp 24.4 V (+ a 12 V XDR) → margin to 45 V ≈ 20.6 V. 
 Inductor/limits (TI): current limit ≈ 1.2 A typ, max duty ≈ 97 %. 
@@ -130,6 +190,8 @@ Coil data [UR] [UR]: 90 Ω ±10 % at 23 °C → 121-148 mA at 12.0 V; must-opera
 
 
 **Q1 = IRLML0060TRPBF (60 V SOT-23 logic-level)** — RDS(on) is not specified at 3.3 V (manufacturer: ≤ 116 mΩ at 4.5 V, ≤ 92 mΩ at 10 V [UR]; typical output/transfer curves include 2.8-3.5 V but were not available to this build); using a pessimistic placeholder 0.5 Ω [UV]: VDS = 85 mV and P = 14.5 mW at 170 mA. Gate overdrive at 3.3 V × 0.97 with VGS(th) max 2.5 V [UR] is 0.7 V — adequate for a 0.17 A load but **Infineon's typical curves at VGS 3.0/3.3 V make the load plausible, but RDS(on) is not guaranteed at 3.3 V → first-article VDS / coil-current measurement is the validation item**. VDSS 60 V [UR] vs the 24.4 V TVS clamp → margin 35.6 V. Alternates: Diodes DMN6140L-7 (60 V), AOS AO3400A (30 V, 2.5 V-specified).
+**Margin estimate at VGS = 3.2 V (3.3 V × 0.97), worst-case VGS(th) 2.5 V and the 4.5 V RDS(on) max 116 mΩ [UR]:** transconductance parameter k ≈ 1/(RDS(on)·(4.5 − VGS(th))) = 4.3 A/V² → RDS(on) ≈ 331 mΩ (the 0.5 Ω placeholder is 1.5× that), saturation current ≈ ½k(VGS − VGS(th))² = **1.1 A = 7× the 0.15 A coil load** (square-law extrapolation near threshold = estimate [UV], not a guarantee). **Classification: keep IRLML0060 — comfortably inside the transfer-characteristic region by this estimate; RDS(on) at 3.3 V is not guaranteed, so the first-article measurements are mandatory (VGS, VDS while energized, coil current, MOSFET temperature) — a first-article item, not a PCBWay blocker.**
+
 Gate network: 220 Ω in series, 10 kΩ pull-down → default OFF in reset/unpowered/Hi-Z. Flyback: S1M-13-F (1 A 1000 V), cathode on COIL_V; **no fast-release TVS in RC1** (a 27 V TVS would put 12+27 V on the MOSFET).
 Flyback energy ½LI² = 1.78 mJ (L = 0.2 H [UV]); diode-only decay τ = L/R = 2.2 ms (release time to be taken from the relay datasheet).
 
@@ -218,5 +280,5 @@ VBUS is detected for VBUS_USB ≥ 3.96 V (VDD 3.3 V) / 4.40 V (VDD 3.6 V worst c
 
 ## 9. Evidence summary
 
-VERIFIED_LOCAL 11 · USER_RELAYED_MANUFACTURER 50 · UNVERIFIED 15 (total 76). Critical entries not yet VERIFIED_LOCAL: **29** — these are fabrication gates, not schematic/layout gates.
+VERIFIED_LOCAL 11 · USER_RELAYED_MANUFACTURER 50 · UNVERIFIED 17 (total 78). Critical entries not yet VERIFIED_LOCAL: **29** — these are fabrication gates, not schematic/layout gates.
 
