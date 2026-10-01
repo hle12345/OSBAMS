@@ -43,9 +43,9 @@ wb = Workbook(); ws = wb.active; ws.title = "BOM"
 hdr = ["Designator", "Qty", "Value", "Description", "Manufacturer", "MPN", "Footprint (KiCad)", "Mount", "Sourcing / notes", "Verification status"]
 ws.append(hdr)
 special = {"U1": "Verify PCBWay stock; if not sourceable mark CONSIGNED / customer-supplied (do not substitute without approval)",
-           "F1": "Active; DigiKey-stocked per design brief", "F2": "Active; DigiKey-stocked per design brief"}
+           "F1": "CANDIDATE - confirm exact 8 A time-delay MPN and stock", "F2": "Active; DigiKey-stocked per design brief"}
 LIBNOTE = "Footprint: official KiCad library (generated from manufacturer datasheet); NOT cross-checked against the manufacturer PDF"
-status = {"U1": "Footprint from Mean Well RSDW40/RDDW40 spec drawing (2022-05-24); verify mirror/rotation in KiCad", "F1": LIBNOTE, "F2": LIBNOTE, "TVS1": LIBNOTE,
+status = {"U1": "Footprint from Mean Well RSDW40/RDDW40 spec drawing (2022-05-24); verify mirror/rotation in KiCad", "F1": LIBNOTE + "; MPN is a CANDIDATE (8 A time-delay): verify DC R, DC voltage rating, interrupt rating, I2t", "F2": LIBNOTE, "TVS1": LIBNOTE,
           "J_IN": LIBNOTE + "; mating parts unverified", "J_OUT": LIBNOTE + " (pegs + drills included); mating parts unverified",
           "C2": LIBNOTE + "; verify body D8/pitch 3.5 vs EEU-FM1H101", "C4": LIBNOTE + "; verify body D10/pitch 5.0 vs EEU-FR1C681",
           "R2": "DNP - do not fit", "R3": "DNP - do not fit"}
@@ -59,10 +59,8 @@ ws.append([]); ws.append(["MATING HARNESS PARTS (not on PCB) - all candidates, v
 ws.append(["J_OUT mate", 1, "", "Micro-Fit 3.0 receptacle housing, 4 circuits, dual row", "Molex", "43025-0400", "", "Harness", "Keyed; mates J_OUT 430450400", "Verify"])
 ws.append(["J_IN mate", 1, "", "Micro-Fit 3.0 receptacle housing, 2 circuits", "Molex", "43025-0200", "", "Harness", "Keyed; mates J_IN 430450200", "Verify"])
 ws.append(["Terminals", 6, "", "Micro-Fit 3.0 crimp terminals (43030 family) - 4 out + 2 in, wire 18 AWG", "Molex", "43030-0007 (candidate)", "", "Harness", "Select exact terminal for 18 AWG insulation OD; confirm current rating", "Verify - candidate only"])
-ws.append(["Pi-side housing", 1, "", "Harwin M20 2x5 cable housing, populate cavities 2,4,6,9 only (UNPOLARISED - needs anti-reversal key)", "Harwin", "M20-1070500", "", "Harness", "Owner-cited; confirm layout on Harwin drawing", "Owner-cited"])
-ws.append(["Pi-side contacts", 4, "", "Harwin M20 gold crimp contact, 22-30 AWG, 3 A, 20 mOhm max", "Harwin", "M20-1160042", "", "Harness", "22 AWG branch leads; 2x +5V, 2x GND", "Owner-cited"])
-ws.append(["Anti-reversal key / interposer", 1, "", "Mechanical key or keyed interposer for Pi end", "TBD", "TBD", "", "Harness", "Reversed housing swaps +5V and GND - decision required", "OPEN"])
-ws.append(["Wire", 1, "", "16 AWG trunk (<=150 mm) + 22 AWG branch leads (~50 mm), red/black", "TBD", "TBD", "", "Harness", "", "OPEN"])
+ws.append(["Pi-end interposer", 1, "", "OSBAMS_Pi_Power_Interposer_RevA (keyed Micro-Fit to Pi GPIO) - see its own BOM", "OSBAMS", "Interposer RevA RC1", "", "Harness", "Replaces Harwin M20 housing", "Designed; socket MPN + key 3D check open"])
+ws.append(["Wire", 1, "", "16 AWG, <=150 mm, red/black, 4 wires, 1:1 to the interposer", "TBD", "TBD", "", "Harness", "", "OPEN"])
 for c in ws[1]: c.font = Font(bold=True, color="FFFFFF"); c.fill = PatternFill("solid", fgColor="1F3864")
 for i, wd in enumerate([16, 6, 14, 52, 18, 24, 26, 8, 52, 46], 1): ws.column_dimensions[get_column_letter(i)].width = wd
 for row in ws.iter_rows(min_row=2):

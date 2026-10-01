@@ -1,33 +1,15 @@
-# Pi-end connector — Harwin M20 crimp system (owner-selected; pin map + keying still OPEN)
+# Pi-end connection — keyed interposer (decision)
 
-## Selection (contact verified from the uploaded M20-1160042 datasheet; housing + 20 mΩ still owner-cited)
-Uploaded datasheet: 3 A ("signal") rating, 22–30 AWG, 0.64 mm square mating pin, gold, brass — **no contact-resistance value in that file**.
-- Housing: Harwin **M20-1070500** (2×N 2.54 mm cable housing; confirm pin count/layout on the drawing). Contacts: Harwin **M20-1160042** gold crimp, 22–30 AWG, **3 A per contact, 20 mΩ max initial**. Wire: **22 AWG** per contact. Harwin M20 housings are **not polarised**.
-- Two contacts in parallel for +5 V (Pi pins 2, 4) and at least two for GND (e.g. pins 6, 9). 16 AWG trunk (≤150 mm) from J_OUT splits/splices to 22 AWG branch leads (~50 mm) near the Pi. No 16 AWG into the Pi-end contacts.
+**Superseded:** the unpolarised Harwin M20 housing is no longer the Pi connection. The Pi end is the keyed interposer `OSBAMS_Pi_Power_Interposer_RevA_RC1/`:
 
-## Pin map (proposal) — Pi GPIO pins 1–10, 2×5 housing
-| Pi pin | Role | Harness |
-|---|---|---|
-| 2, 4 | +5 V | populated (22 AWG red) |
-| 6, 9 | GND | populated (22 AWG black); pins 14/20 can add GND contacts with a larger housing |
-| 1,3,5,7,8,10 | 3V3 / GPIO | cavities left **empty** |
+`Power PCB J_OUT (Micro-Fit 430450400) → ≤150 mm 16 AWG crimped harness (43025-0400 at both ends) → interposer J1 (430450400) → 2×20 gold stacking socket → Pi pins`
 
-Loading at 5 A: **2.5 A per 5 V contact vs the 3 A rating (83 %)** — no derating headroom, and the Pi has only two 5 V pins. Keep real load ≤ ~5 A; do not use this for 8 A. (3 GND contacts help only the return.) Check the Waveshare power leads: they also need Pi 5 V/GND pins; if they use pins 2/4/6/9 they must share this housing, not a second Dupont plug.
-
-## Hazard found: reversed insertion is destructive
-The housing is unpolarised and the Pi header is unkeyed. Inserting the 2×5 housing rotated 180° maps pin *n* → 11−*n*:
-
-| Harness contact | Intended pin | Reversed lands on |
-|---|---|---|
-| +5 V | 2 | pin 9 = **GND** |
-| +5 V | 4 | pin 7 = GPIO4 (5 V into a 3.3 V pin) |
-| GND | 6 | pin 5 = GPIO3 |
-| GND | 9 | pin 2 = **+5 V** |
-
-No population pattern is safe against reversal (any 5 V contact lands on a GPIO or GND pin). Anti-reversal must be **mechanical**. Options (your decision):
-1. **Keyed interposer (recommended):** small board with a female 2×5 socket for the Pi pins and a keyed Micro-Fit receptacle/header toward the harness, so the whole path stays polarised and high-current. Adds one part.
-2. A moulded/printed polarising shroud or clip that collides with the Pi/board features if reversed — needs 3D verification on the Pi 5 + Waveshare mounting, not just labeling.
-3. Colour/label only — **not acceptable** for a permanent harness.
+- +5 V on Pi pins **2 and 4** (two contacts in parallel); GND on **6, 9, 14, 20** (four contacts); no Dupont wires, no splices.
+- Keying: Micro-Fit keys harness↔interposer; the full 2×20 socket prevents offset; **key standoffs** prevent the 180° fitting that would otherwise swap +5 V and GND (see the interposer's `docs/Keying_analysis.md`; 3D check still to do).
+- Harwin M20-1160042 (3 A, 22–30 AWG, 0.64 mm pin) is verified from the uploaded datasheet but is not in the power path any more.
+- Strain relief: harness tie/clip at the interposer and the power board; Micro-Fit latch provides retention.
 
 ## Still open
-Confirm housing pin count/orientation and keying choice; then update `datasheet_inputs.json` (`pi_end_pin_map_confirmed`). A bench temperature-rise and pull-out test of the assembled harness at 5 A remains a release gate.
+1. Stacking-socket **exact MPN** with a published per-contact current and contact resistance (the budget needs ≤ ~14 mΩ per contact for an uncalibrated fixed setpoint, ≤ ~21 mΩ for calibrated units; 3 A per contact rating is a floor — 2.5 A per 5 V contact at 5 A).
+2. Key-standoff 3D check against the Raspberry Pi 5 drawing, active cooler and enclosure; physical reversed-fit test.
+3. Waveshare 5 V/GND leads: confirm which Pi pins they use and keep them reachable above the stacking socket.

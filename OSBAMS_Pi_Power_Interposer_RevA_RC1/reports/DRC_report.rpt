@@ -1,0 +1,36 @@
+** Drc report for ../../OSBAMS_Pi_Power_Interposer_RevA_RC1/kicad/OSBAMS_Pi_Power_Interposer_RevA.kicad_pcb **
+** Created on 2026-10-01 15:01:07 **
+
+** Found 8 DRC violations **
+[silk_overlap]: Silkscreen overlap
+    Rule: board setup constraints silk; Severity: warning
+    @(29.0000 mm, 22.7000 mm): PCB Text 'RC1 - NOT FOR FAB' on F.Silkscreen
+    @(54.5000 mm, 22.8000 mm): Line on F.Silkscreen
+[silk_overlap]: Silkscreen overlap
+    Rule: board setup constraints silk; Severity: warning
+    @(0.9000 mm, 22.7000 mm): PCB Text 'PI PIN 1' on F.Silkscreen
+    @(54.5000 mm, 22.8000 mm): Line on F.Silkscreen
+[silk_over_copper]: Silkscreen clipped by solder mask
+    Local override; Severity: warning
+    @(30.0000 mm, 21.2000 mm): PCB Text 'Rev.A  2oz Cu  1.6mm' on B.Silkscreen
+[text_height]: Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)
+    Rule: board setup constraints silk text height; Severity: warning
+    @(0.9000 mm, 22.7000 mm): PCB Text 'PI PIN 1' on F.Silkscreen
+[lib_footprint_issues]: The current configuration does not include the library 'OSBAMS_PiPwr'.
+    Local override; Severity: warning
+    @(52.0000 mm, 5.5000 mm): Footprint K2
+[lib_footprint_issues]: The current configuration does not include the library 'OSBAMS_PiPwr'.
+    Local override; Severity: warning
+    @(4.0000 mm, 20.0000 mm): Footprint J2
+[lib_footprint_issues]: The current configuration does not include the library 'OSBAMS_PiPwr'.
+    Local override; Severity: warning
+    @(34.0000 mm, 5.5000 mm): Footprint K1
+[lib_footprint_issues]: The current configuration does not include the library 'Connector_Molex'.
+    Local override; Severity: warning
+    @(20.0000 mm, 11.1000 mm): Footprint J1
+
+** Found 0 unconnected pads **
+
+** Found 0 Footprint errors **
+
+** End of Report **

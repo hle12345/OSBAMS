@@ -52,9 +52,9 @@
   "source": "spec p.5 mechanical drawing (Bottom View): pins 4/5/6 at 2.54/12.7/22.86 mm across, 2.54 mm from one end; pins 1/2/3 at 5.08/10.16/20.32 mm across, 2.54 mm from the other end (45.72 mm between rows); body 50.8x25.4x10.5; pin dia 1+-0.1; tol +-0.35. Implemented in build_pcb.py (mirrored for PCB top view)."
  },
  "pi_end_connector_mpn": {
-  "value": "Harwin M20-1070500 housing + M20-1160042 contacts",
+  "value": "Keyed interposer (OSBAMS_Pi_Power_Interposer_RevA) with Micro-Fit 430450400 + 2x20 stacking socket",
   "status": "owner_cited",
-  "source": "Contact verified from uploaded datasheet; housing M20-1070500 datasheet NOT supplied (pin count/layout unconfirmed)"
+  "source": "Owner decision. Harwin M20 no longer in the power path (superseded)."
  },
  "pi_end_contact_max_mohm": {
   "value": 20.0,
@@ -99,14 +99,14 @@
   "source": "22 AWG 53 mOhm/m @20C (standard table), 50 mm branch, 1 mOhm per crimp splice ASSUMED"
  },
  "pi_end_pin_map_confirmed": {
-  "value": false,
-  "status": "unverified",
-  "source": "Housing size/pin map + anti-reversal keying not yet confirmed (see docs/Pi_end_connector_requirements.md: a 180-degree reversed 2x5 housing swaps +5 V and GND)"
+  "value": true,
+  "status": "verified",
+  "source": "Interposer: +5 V on Pi pins 2,4; GND on 6,9,14,20; all 40 positions socketed (no offset); 180-degree reversal blocked by key standoffs (3D check pending)"
  },
  "bench_pi_voltage": {
   "value": false,
   "status": "unverified",
-  "source": "Bench measurement at Pi header under real load"
+  "source": "First-article validation (not an RC2 gate): loaded Pi voltage + harness temperature rise"
  },
  "rsdw_line_reg_pct": {
   "value": 0.2,
@@ -143,9 +143,29 @@
   "status": "verified",
   "source": "spec: single output 3.3-15 Vo: 100 mVp-p (20 MHz, 0.1 uF + 47 uF)"
  },
- "rsdw_input_fuse_recommendation_resolved": {
+ "f1_mpn": {
+  "value": "0453008.MRL",
+  "status": "unverified",
+  "source": "Owner decision: follow Mean Well (8 A time-delay). CANDIDATE from Littelfuse Nano2 453 (time-lag) family, same footprint as 451 - must confirm: 8 A time-lag exists with this exact MPN, DC cold R, >=24 VDC rating, interrupt rating, I2t vs module inrush. Datasheet not reachable from build env: please upload."
+ },
+ "f1_resistance_mohm": {
+  "value": 10.0,
+  "status": "unverified",
+  "source": "ASSUMED 10 mOhm for heating/drop estimate (input side only)"
+ },
+ "interposer_socket_mpn": {
+  "value": null,
+  "status": "unverified",
+  "source": "2x20 2.54 mm gold stacking female header, >=3 A/contact, published contact resistance - exact MPN still to be chosen from a datasheet"
+ },
+ "interposer_socket_contact_mohm": {
+  "value": 20.0,
+  "status": "unverified",
+  "source": "PLACEHOLDER until socket MPN chosen"
+ },
+ "interposer_key_3d_check": {
   "value": false,
   "status": "unverified",
-  "source": "Decision needed: F1 (5 A fast-acting, locked) vs Mean Well recommended 8 A delay type"
+  "source": "Key standoffs must be verified against Raspberry Pi 5 mechanical drawing/3D (header edge distance, nearby parts) and the enclosure"
  }
 }
