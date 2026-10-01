@@ -2,7 +2,7 @@
 
 Every register entry that is **not VERIFIED_LOCAL** is classified by what a wrong value could actually cause. `USER_RELAYED_MANUFACTURER` values are used as authoritative for electrical checks; the PDFs have not been read by the build. Entries read locally (ISO7721, CP2102N, SRN6045TA-100M, EB21A drawing, KiCad library facts) are not listed.
 
-66 entries are not VERIFIED_LOCAL: WRONG_PINOUT: 5, EXCEEDED_ABS_MAX: 14, WRONG_FOOTPRINT: 3, UNSAFE_PROTECTION: 3, FIRST_ARTICLE / INFORMATIONAL: 41.
+65 entries are not VERIFIED_LOCAL: WRONG_PINOUT: 5, EXCEEDED_ABS_MAX: 14, WRONG_FOOTPRINT: 3, UNSAFE_PROTECTION: 2, FIRST_ARTICLE / INFORMATIONAL: 41.
 
 
 ## Could cause a WRONG PINOUT (supply the datasheet to move these to VERIFIED_LOCAL — highest priority)
@@ -40,7 +40,7 @@ Every register entry that is **not VERIFIED_LOCAL** is classified by what a wron
 |---|---|---|---|---|
 | `lmr_pkg` | LMR14006Y | package DDC (TSOT-6); KiCad SOT-23-6 (0.95 mm pitch) used - TI land pattern not compared | USER_RELAYED_MANUFACTURER | KiCad SOT-23-6 vs the TI DDC land pattern (pitch/pin numbering match; land pattern not compared). |
 | `conn_pitch` | Molex 22-27-2031/2041, JST B4B-PH-K-S, Samtec FTSH-105-01-L-DV-K, GCT USB4105-GF-A | pitch/pin count vs KiCad stock footprints: KK 2.54 mm x3/x4, PH 2.00 mm x4 (A = 6.0 mm), FTSH 1.27 mm 2x5, USB | USER_RELAYED_MANUFACTURER | pitch and pin count match. |
-| `conn_footprints` | Molex KK/JST PH/GCT USB4105/Samtec FTSH | connector footprints: J7 (JST) and J8 (GCT) VERIFIED against the drawings; J5/J6 (Molex) and J9 (Samtec) still | UNVERIFIED | stock KiCad footprints; geometry beyond pitch/pin count not checked against the manufacturer drawings (J5, J6, J7, J8, J9). OPEN until the drawings are compared. |
+| `conn_footprints` | Molex KK/JST PH/GCT USB4105/Samtec FTSH | connector footprints: J7 (JST) and J8 (GCT) VERIFIED against the drawings; J9 (Samtec) part number/pitch/tail  | UNVERIFIED | stock KiCad footprints; geometry beyond pitch/pin count not checked against the manufacturer drawings (J5, J6, J7, J8, J9). OPEN until the drawings are compared. |
 
 ## Protection-related (analysis closed in `REV2_CALCULATIONS.md` using the relayed numbers)
 
@@ -48,7 +48,6 @@ Every register entry that is **not VERIFIED_LOCAL** is classified by what a wron
 |---|---|---|---|---|
 | `ina228_status` | INA228 | lifecycle / package | USER_RELAYED_MANUFACTURER | informational. |
 | `dg57_dc1` | DG57CM-5021-76-1012-R | DC1 rated load | USER_RELAYED_MANUFACTURER | relay DC rating >> the 10 A / 44 V ceiling. |
-| `rs_pulse_rating` | Panasonic ERJ-P08F47R0V / ERJ-P08F10R0V | resistor R41-R43 pulse/surge rating: the supplied Panasonic document is ERJP6W (0805, 0.5 W, limiting element  | UNVERIFIED | OPEN: Panasonic ERJ-P08F pulse-energy/surge rating and exact orderable suffix not read; the pack-sense protection is not fully closed until it is. |
 
 ## First-article measurements / design margins / informational (cannot cause a wrong pinout, absolute-maximum violation, wrong footprint or unsafe protection)
 
@@ -82,7 +81,7 @@ Every register entry that is **not VERIFIED_LOCAL** is classified by what a wron
 | `rsa_tol` | RSA-20-50 | tolerance | USER_RELAYED_MANUFACTURER |  |
 | `rsa_tcr` | RSA-20-50 | element TCR | USER_RELAYED_MANUFACTURER |  |
 | `rsa_derate` | RSA-20-50 | recommended continuous current <= 2/3 rated (13.3 A) | USER_RELAYED_MANUFACTURER |  |
-| `tvs_leakage_temp` | 1.5SMBJ48A | reverse leakage vs temperature and vs voltage below VRWM: NOT specified in the datasheet (only the 25 C maximu | UNVERIFIED |  |
+| `tvs_leakage_temp` | 1.5SMBJ48A | reverse leakage vs temperature and vs voltage below VRWM: NOT specified in the datasheet (only the 25 C maximu | UNVERIFIED | Bourns gives IR <= 1.0 uA at 48 V/25 C only; leakage vs temperature/voltage is unspecified: sets the hot Kelvin-line offset (4 mA per uA) and the PACK_INA error (47 uV per uA) -> first-article measurement. |
 | `iso_basic` | ISO7721 | 1 fwd + 1 rev channel, no integrated isolated power | USER_RELAYED_MANUFACTURER |  |
 | `stm32_vih` | STM32L476RGT6 | VIH min as fraction of VDD | UNVERIFIED |  |
 | `stm32_vih_ttl` | STM32L476RGT6 | TTL input levels: VIH min 2.0 V, VIL max 0.8 V; CMOS VIL max 0.3 VDD (CMOS VIH min not relayed) | USER_RELAYED_MANUFACTURER |  |
@@ -93,7 +92,7 @@ Every register entry that is **not VERIFIED_LOCAL** is classified by what a wron
 | `q_rds` | IRLML0060TRPBF | RDS(on) at VGS = 3.3 V (not specified: conservative placeholder) | UNVERIFIED |  |
 | `q_rds_4v5` | IRLML0060TRPBF | RDS(on) max 116 mohm @ VGS 4.5 V, 92 mohm @ 10 V; ID 2.7 A @10 V; VGS +/-16 V; RthJA ~100 C/W (NOT guaranteed  | USER_RELAYED_MANUFACTURER |  |
 | `q_curves` | IRLML0060TRPBF | Infineon typical output curves at VGS 3.0 and 3.3 V make the ~0.17 A coil load plausible; RDS(on) is NOT guara | USER_RELAYED_MANUFACTURER |  |
-| `conn_samtec` | Samtec FTSH-105-01-L-DV-K (J9) | the supplied Samtec document is the CLP/FTSH/FTS/FW product specification (ratings, processing); it contains N | UNVERIFIED |  |
+| `conn_samtec` | Samtec FTSH-105-01-L-DV-K (J9) | Samtec FTSH-105-01-L-DV-K: catalog page confirms the part-number decode (FTSH-1, 05 pins/row = 10 pins, -01 le | UNVERIFIED |  |
 | `conn_molex` | Molex 22-27-2031 / 22-27-2041 (J5, J6) | Molex pad/drill/outline/pin-1 geometry: the supplied product pages give circuits, pitch (2.54), tail (3.56), P | UNVERIFIED |  |
 
 ## Mandatory first-article measurements (not PCBWay blockers)

@@ -2,7 +2,7 @@
 	(version 20260306)
 	(generator "eeschema")
 	(generator_version "10.0")
-	(uuid "7a2805ec-f453-4eb0-8d59-6417a7396b67")
+	(uuid "bc8f8e95-9deb-4478-a191-a41b1259408c")
 	(paper "A4")
 	(title_block
 		(title "Remote TC74A5-3.3VAT probe")
@@ -1063,17 +1063,6 @@
 			(embedded_fonts no)
 		)
 	)
-	(text "TC74 pin map (1 NC, 2 SDA, 3 GND, 4 SCLK, 5 VDD) is UNVERIFIED: confirm against the Microchip datasheet. Keep the cable <= 1.5 m, I2C <= 100 kHz."
-		(exclude_from_sim no)
-		(at 25.4 28.9 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "06ed461f-19d0-4548-a770-c91bb9739d13")
-	)
 	(text "Remote TC74A5-3.3VAT probe"
 		(exclude_from_sim no)
 		(at 25.4 12.7 0)
@@ -1084,7 +1073,18 @@
 			)
 			(justify left)
 		)
-		(uuid "7088ad30-e401-4eb8-a590-88b7600f7956")
+		(uuid "00728b17-ade3-43ca-b81e-45d3458359fc")
+	)
+	(text "TC74 pin map (1 NC, 2 SDA, 3 GND, 4 SCLK, 5 VDD) is UNVERIFIED: confirm against the Microchip datasheet. Keep the cable <= 1.5 m, I2C <= 100 kHz."
+		(exclude_from_sim no)
+		(at 25.4 28.9 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c613027c-e19c-4cfa-b85d-3dab4447d675")
 	)
 	(text "Remote pack-surface TC74A5-3.3VAT probe. 100 nF (owned Vishay VJ0805Y104JXXAT) directly at U1 VDD/GND. SDA/SCL pull-ups are on the controller; R1/R2 are optional DNP footprints."
 		(exclude_from_sim no)
@@ -1095,7 +1095,7 @@
 			)
 			(justify left)
 		)
-		(uuid "a5f964a3-521a-4331-b64f-4c198631de5a")
+		(uuid "c961c90e-6175-4ba0-8134-dc995592ffa8")
 	)
 	(text "OSBAMS Rev.2 Controller RC1 - REVIEW CANDIDATE, NOT FOR FABRICATION. Evidence: VERIFIED_LOCAL / USER_RELAYED_MANUFACTURER / UNVERIFIED (see evidence register)."
 		(exclude_from_sim no)
@@ -1106,81 +1106,11 @@
 			)
 			(justify left)
 		)
-		(uuid "dfd1a591-c5e6-4966-9d7d-f89221ecb180")
+		(uuid "cf52f3e5-1cf3-4ab1-9a28-de9a15cf4d1d")
 	)
 	(no_connect
 		(at 72.39 45.72)
-		(uuid "7cf5a008-6159-4a2c-b860-69afc57c0ad8")
-	)
-	(wire
-		(pts
-			(xy 43.18 50.8) (xy 38.1 50.8)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "0acd236e-e4e9-4c27-af40-13fc5bee7331")
-	)
-	(wire
-		(pts
-			(xy 43.18 53.34) (xy 38.1 53.34)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "27619576-d1d1-49fa-b06c-1b69a5736868")
-	)
-	(wire
-		(pts
-			(xy 25.4 91.44) (xy 25.4 86.36)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "45eebaf6-e6ff-4a79-8b83-225c21aa1cd5")
-	)
-	(wire
-		(pts
-			(xy 142.24 64.77) (xy 142.24 69.85)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "49092e1c-ff00-48d5-ac85-22a174cbb07a")
-	)
-	(wire
-		(pts
-			(xy 157.48 57.15) (xy 157.48 52.07)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "55ed6ad0-fe9b-4f25-a5b7-ec49f0ea8947")
-	)
-	(wire
-		(pts
-			(xy 100.33 45.72) (xy 105.41 45.72)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "5b76fbb5-30ac-43c5-8a2a-0e970c85f30a")
-	)
-	(wire
-		(pts
-			(xy 43.18 48.26) (xy 38.1 48.26)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "72e6f9d0-da8d-45a5-a5a7-8a15537e398d")
+		(uuid "e139d24f-a6e7-4a81-86ee-88b4c56dedcb")
 	)
 	(wire
 		(pts
@@ -1190,27 +1120,17 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "740d0649-daab-41cf-a5dd-b39564f19789")
+		(uuid "014da281-0cc0-45e2-b608-fd8bb330255f")
 	)
 	(wire
 		(pts
-			(xy 100.33 48.26) (xy 105.41 48.26)
+			(xy 142.24 64.77) (xy 142.24 69.85)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "93a05d7d-9ee9-4d87-815a-b4041d4bfa85")
-	)
-	(wire
-		(pts
-			(xy 127 64.77) (xy 127 69.85)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "97b932e2-8927-4eaa-aa0c-f6a12f24c6e3")
+		(uuid "23efe7e4-33be-41e9-abfa-a3067170e2ea")
 	)
 	(wire
 		(pts
@@ -1220,47 +1140,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "c48bf8cc-7e4f-4ebe-bca2-4e733514e982")
-	)
-	(wire
-		(pts
-			(xy 127 57.15) (xy 127 52.07)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "cdadcd93-c372-412e-8ea8-e758fb1d19d7")
-	)
-	(wire
-		(pts
-			(xy 142.24 57.15) (xy 142.24 52.07)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "e90f6924-cb09-4ee4-83f3-d76e25364e5d")
-	)
-	(wire
-		(pts
-			(xy 43.18 45.72) (xy 38.1 45.72)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "e92f9390-8f22-4238-8413-e4c8e9dbd6ca")
-	)
-	(wire
-		(pts
-			(xy 66.04 91.44) (xy 66.04 86.36)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ea344302-ab84-4cdf-8f07-51c309748bc3")
+		(uuid "3c0a381f-7bf9-4550-9446-d03cfab87de5")
 	)
 	(wire
 		(pts
@@ -1270,27 +1150,127 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "f4b7f0b5-e5a4-42ea-8f63-6b0665e9872f")
+		(uuid "4823b633-097c-4b61-a74f-64d7278ae3c9")
 	)
-	(label "SDA"
-		(at 67.31 48.26 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
+	(wire
+		(pts
+			(xy 43.18 45.72) (xy 38.1 45.72)
 		)
-		(uuid "43bd76e4-0dcb-4b65-924f-638c86fbda54")
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "594033ae-1b62-4e4d-be49-340864087973")
 	)
-	(label "SCL"
-		(at 105.41 45.72 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
+	(wire
+		(pts
+			(xy 142.24 57.15) (xy 142.24 52.07)
 		)
-		(uuid "5fd33a12-68b4-4d6f-827e-06ce687df7dc")
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6af3e1c7-8597-4977-9c39-a34b350ad32b")
+	)
+	(wire
+		(pts
+			(xy 43.18 50.8) (xy 38.1 50.8)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "71fa67b6-b19a-4aee-b1d0-c1d6eecdcf16")
+	)
+	(wire
+		(pts
+			(xy 157.48 57.15) (xy 157.48 52.07)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "77577b4c-ada4-4d11-b3f6-d726a3a86a94")
+	)
+	(wire
+		(pts
+			(xy 100.33 45.72) (xy 105.41 45.72)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8084a70d-0744-4b98-99d0-ecae0b1d2c05")
+	)
+	(wire
+		(pts
+			(xy 127 57.15) (xy 127 52.07)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "973e7ee1-4e83-44b5-b287-84fb98a75606")
+	)
+	(wire
+		(pts
+			(xy 127 64.77) (xy 127 69.85)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a04c98c6-7355-46e4-afef-646a2f6f8591")
+	)
+	(wire
+		(pts
+			(xy 25.4 91.44) (xy 25.4 86.36)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b96a6a4e-2cde-4a31-a777-917ada854f08")
+	)
+	(wire
+		(pts
+			(xy 66.04 91.44) (xy 66.04 86.36)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c2369c9c-c0dc-4e79-9eff-5c8757c0c0fb")
+	)
+	(wire
+		(pts
+			(xy 100.33 48.26) (xy 105.41 48.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c48b54a9-1549-426d-97af-dbc9feaa4d78")
+	)
+	(wire
+		(pts
+			(xy 43.18 48.26) (xy 38.1 48.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c651dd77-0002-40af-95f9-854d04cd2980")
+	)
+	(wire
+		(pts
+			(xy 43.18 53.34) (xy 38.1 53.34)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c8a9ddc8-e95b-4e03-bf9b-57b1f6c1fbbb")
 	)
 	(label "SDA"
 		(at 142.24 69.85 270)
@@ -1300,27 +1280,17 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "73fc4bb2-bcd1-4951-abca-8bcba511a505")
-	)
-	(label "SDA"
-		(at 38.1 48.26 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "8693c4b9-cd66-4de1-8348-f1bcd2948dcf")
+		(uuid "062d6f46-9e38-4395-a8a8-0a74155d3f60")
 	)
 	(label "SCL"
-		(at 157.48 69.85 270)
+		(at 105.41 45.72 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify right bottom)
+			(justify left bottom)
 		)
-		(uuid "877c928f-366e-4258-aaa7-26fd3033b830")
+		(uuid "1d2dac31-7fc9-47af-a6d7-a4e9dff3a452")
 	)
 	(label "SCL"
 		(at 38.1 50.8 180)
@@ -1330,724 +1300,37 @@
 			)
 			(justify right bottom)
 		)
-		(uuid "d6d2e99c-46a5-4107-a66f-b56c7ec2ec77")
+		(uuid "5452da40-95e3-4b46-8d7e-6caba073324a")
 	)
-	(symbol
-		(lib_id "power:PWR_FLAG")
-		(at 25.4 91.44 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "04c90ee0-b6e7-446d-a754-ede03518b005")
-		(property "Reference" "#FLG009"
-			(at 25.4 91.44 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
+	(label "SDA"
+		(at 38.1 48.26 180)
+		(effects
+			(font
+				(size 1.27 1.27)
 			)
+			(justify right bottom)
 		)
-		(property "Value" "PWR_FLAG"
-			(at 27.4 89.44 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 25.4 91.44 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 25.4 91.44 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 25.4 91.44 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "dbe8f668-e4ba-4ae9-b716-a2d5f58625b6")
-		)
-		(instances
-			(project "OSBAMS_Rev2_TC74_Probe_RC1"
-				(path "/304270ff-6273-4ec0-8abb-5f35e09f81d6/7a2805ec-f453-4eb0-8d59-6417a7396b67"
-					(reference "#FLG009")
-					(unit 1)
-				)
-			)
-		)
+		(uuid "5d8f5591-3826-4de1-866f-7aa15e116bec")
 	)
-	(symbol
-		(lib_id "power:+3V3")
-		(at 25.4 86.36 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "0b68bffe-a62c-4349-85cb-f469dc8b8c7a")
-		(property "Reference" "#PWR010"
-			(at 25.4 86.36 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
+	(label "SCL"
+		(at 157.48 69.85 270)
+		(effects
+			(font
+				(size 1.27 1.27)
 			)
+			(justify right bottom)
 		)
-		(property "Value" "+3V3"
-			(at 27.4 84.36 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 25.4 86.36 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 25.4 86.36 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 25.4 86.36 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "8843fd37-d0f1-41da-8ba2-134ffbaf2170")
-		)
-		(instances
-			(project "OSBAMS_Rev2_TC74_Probe_RC1"
-				(path "/304270ff-6273-4ec0-8abb-5f35e09f81d6/7a2805ec-f453-4eb0-8d59-6417a7396b67"
-					(reference "#PWR010")
-					(unit 1)
-				)
-			)
-		)
+		(uuid "d4284f4b-97ee-4c48-a5f1-6b98b983fac5")
 	)
-	(symbol
-		(lib_id "OSBAMS_Rev2:TC74A5")
-		(at 86.36 48.26 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "1efb69f5-a4b8-43ba-bf5b-d00fe73f3b00")
-		(property "Reference" "U1"
-			(at 88.9 44.45 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
+	(label "SDA"
+		(at 67.31 48.26 180)
+		(effects
+			(font
+				(size 1.27 1.27)
 			)
+			(justify right bottom)
 		)
-		(property "Value" "TC74A5-3.3VAT"
-			(at 88.9 46.99 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Package_TO_SOT_THT:TO-220-5_P3.4x3.7mm_StaggerOdd_Lead3.8mm_Vertical"
-			(at 86.36 48.26 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 86.36 48.26 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "TC74A5 I2C temperature sensor 3.3 V, address 0x4D, TO-220-5 (pin map compared with the Microchip TO-220-5 table relayed by the user: PASS). Leads must be formed to the staggered footprint (1.7 mm straight pitch gives only 0.085 mm annular ring)"
-			(at 86.36 48.26 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Manufacturer" "Microchip"
-			(at 86.36 48.26 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "MPN" "TC74A5-3.3VAT"
-			(at 86.36 48.26 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Evidence" "USER_RELAYED_MANUFACTURER"
-			(at 86.36 48.26 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Lifecycle" "UNKNOWN (not checked)"
-			(at 86.36 48.26 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Source" "CONSIGN (owned: 2)"
-			(at 86.36 48.26 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Alternate" "TC74A0-3.3VAT (address 0x48: firmware change)"
-			(at 86.36 48.26 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Note" ""
-			(at 86.36 48.26 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "5e277412-780c-4624-a6e8-7f42efac9786")
-		)
-		(pin "2"
-			(uuid "cddc29c9-0489-4329-ad82-519e27a09f80")
-		)
-		(pin "3"
-			(uuid "dd663e5c-a69f-4640-b47d-a4f6d1a99413")
-		)
-		(pin "4"
-			(uuid "ad0619e5-3514-446b-8ff9-829e75c1fbd0")
-		)
-		(pin "5"
-			(uuid "182344b2-43fe-4077-86c0-fa1cc7d4764b")
-		)
-		(instances
-			(project "OSBAMS_Rev2_TC74_Probe_RC1"
-				(path "/304270ff-6273-4ec0-8abb-5f35e09f81d6/7a2805ec-f453-4eb0-8d59-6417a7396b67"
-					(reference "U1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:PWR_FLAG")
-		(at 66.04 91.44 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "306a5a66-b10a-4222-b2ea-0be45ce07e37")
-		(property "Reference" "#FLG011"
-			(at 66.04 91.44 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "PWR_FLAG"
-			(at 68.04 89.44 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 66.04 91.44 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 66.04 91.44 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 66.04 91.44 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "30b554e6-1cba-4d65-86f5-3333695bee3c")
-		)
-		(instances
-			(project "OSBAMS_Rev2_TC74_Probe_RC1"
-				(path "/304270ff-6273-4ec0-8abb-5f35e09f81d6/7a2805ec-f453-4eb0-8d59-6417a7396b67"
-					(reference "#FLG011")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 66.04 86.36 180)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "3a0a3fdb-61ba-4dc1-adef-0df10ab9a646")
-		(property "Reference" "#PWR012"
-			(at 66.04 86.36 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "GND"
-			(at 68.04 84.36 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 66.04 86.36 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 66.04 86.36 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 66.04 86.36 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "9db12715-44c0-4a54-a61b-7f2b2db081f6")
-		)
-		(instances
-			(project "OSBAMS_Rev2_TC74_Probe_RC1"
-				(path "/304270ff-6273-4ec0-8abb-5f35e09f81d6/7a2805ec-f453-4eb0-8d59-6417a7396b67"
-					(reference "#PWR012")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+3V3")
-		(at 157.48 52.07 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "6bfb3209-0e8f-4b55-9b3a-9f2a5f60a42f")
-		(property "Reference" "#PWR008"
-			(at 157.48 52.07 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "+3V3"
-			(at 159.48 50.07 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 157.48 52.07 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 157.48 52.07 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 157.48 52.07 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "4b3a64fe-9ea7-4f13-88e3-24076bad98c2")
-		)
-		(instances
-			(project "OSBAMS_Rev2_TC74_Probe_RC1"
-				(path "/304270ff-6273-4ec0-8abb-5f35e09f81d6/7a2805ec-f453-4eb0-8d59-6417a7396b67"
-					(reference "#PWR008")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 142.24 60.96 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp yes)
-		(fields_autoplaced yes)
-		(uuid "6c812635-4aef-4178-9d16-68ab9457ca1f")
-		(property "Reference" "R1"
-			(at 144.78 57.15 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "4.7k"
-			(at 144.78 59.69 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 142.24 60.96 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 142.24 60.96 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "4.7k 1 % thick film 0603"
-			(at 142.24 60.96 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Manufacturer" "Vishay Dale"
-			(at 142.24 60.96 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "MPN" "CRCW06034K70FKEA"
-			(at 142.24 60.96 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Evidence" "UNVERIFIED"
-			(at 142.24 60.96 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Lifecycle" "UNKNOWN (not checked)"
-			(at 142.24 60.96 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Source" "PCBWay source"
-			(at 142.24 60.96 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Alternate" "Yageo RC0603-FR-07 series"
-			(at 142.24 60.96 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Note" "Optional pull-up footprint (DNP: pull-ups are on the controller)"
-			(at 142.24 60.96 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "e3882269-1f02-4c4f-9f8e-5b0f8300b3fb")
-		)
-		(pin "2"
-			(uuid "30eec604-35cb-4190-a070-b830a56c2e12")
-		)
-		(instances
-			(project "OSBAMS_Rev2_TC74_Probe_RC1"
-				(path "/304270ff-6273-4ec0-8abb-5f35e09f81d6/7a2805ec-f453-4eb0-8d59-6417a7396b67"
-					(reference "R1")
-					(unit 1)
-				)
-			)
-		)
+		(uuid "f2476579-509b-4954-a427-5e90af5e90fc")
 	)
 	(symbol
 		(lib_id "Device:C")
@@ -2060,7 +1343,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "845dec90-b544-4854-b491-67ae091bff2d")
+		(uuid "0bb31e1c-07c7-46cd-9f02-94124f9f4a41")
 		(property "Reference" "C1"
 			(at 129.54 57.15 0)
 			(show_name no)
@@ -2194,15 +1477,93 @@
 			)
 		)
 		(pin "1"
-			(uuid "588dfc8e-aeec-4d6d-8ae1-0856473f4acf")
+			(uuid "eed72bfe-9a07-4da0-bd72-4ff2a138f6a7")
 		)
 		(pin "2"
-			(uuid "3023b11b-73bd-4955-98a3-10b090dee0f5")
+			(uuid "6dee55ea-5845-40b7-a6de-e20852b0bc4e")
 		)
 		(instances
 			(project "OSBAMS_Rev2_TC74_Probe_RC1"
-				(path "/304270ff-6273-4ec0-8abb-5f35e09f81d6/7a2805ec-f453-4eb0-8d59-6417a7396b67"
+				(path "/de58bdfc-d4be-4cfe-b190-6837344f8d82/bc8f8e95-9deb-4478-a191-a41b1259408c"
 					(reference "C1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 38.1 53.34 270)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "1403bcfe-a45a-44f7-b461-1ec77dfb4438")
+		(property "Reference" "#PWR002"
+			(at 38.1 53.34 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 40.1 51.34 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 38.1 53.34 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 38.1 53.34 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 38.1 53.34 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "19aad2e9-2dc2-4e59-9c65-5e9aef6c3680")
+		)
+		(instances
+			(project "OSBAMS_Rev2_TC74_Probe_RC1"
+				(path "/de58bdfc-d4be-4cfe-b190-6837344f8d82/bc8f8e95-9deb-4478-a191-a41b1259408c"
+					(reference "#PWR002")
 					(unit 1)
 				)
 			)
@@ -2219,7 +1580,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "858e4563-4ac0-46d1-8921-fc8a70cee28f")
+		(uuid "2c83b330-3cef-4d82-bbcd-18910aa38dc3")
 		(property "Reference" "J1"
 			(at 50.8 44.45 0)
 			(show_name no)
@@ -2353,20 +1714,20 @@
 			)
 		)
 		(pin "1"
-			(uuid "63dfd465-eb47-43e9-abc1-a068c8fa5663")
+			(uuid "0b154de3-6693-4196-b9f2-d8e95c618eca")
 		)
 		(pin "2"
-			(uuid "281fa3e8-bcd4-4695-9515-a7f35a4997af")
+			(uuid "ff5d8f10-5617-49c8-997c-d50b7b9c3fdf")
 		)
 		(pin "3"
-			(uuid "85fad33a-97fe-46cd-8c62-a0d990bf76d6")
+			(uuid "59986cfa-907c-4b54-97c3-d387437ffdb7")
 		)
 		(pin "4"
-			(uuid "fcb91488-c96e-4d58-ad1f-1e41e9ff1ff0")
+			(uuid "bc529b66-4286-4698-bcc7-b0173f8e6e55")
 		)
 		(instances
 			(project "OSBAMS_Rev2_TC74_Probe_RC1"
-				(path "/304270ff-6273-4ec0-8abb-5f35e09f81d6/7a2805ec-f453-4eb0-8d59-6417a7396b67"
+				(path "/de58bdfc-d4be-4cfe-b190-6837344f8d82/bc8f8e95-9deb-4478-a191-a41b1259408c"
 					(reference "J1")
 					(unit 1)
 				)
@@ -2375,7 +1736,7 @@
 	)
 	(symbol
 		(lib_id "power:+3V3")
-		(at 142.24 52.07 0)
+		(at 25.4 86.36 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2384,9 +1745,9 @@
 		(in_pos_files yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "8a34dae9-2eda-4921-9c4b-604d1cba9aff")
-		(property "Reference" "#PWR007"
-			(at 142.24 52.07 0)
+		(uuid "2fa9d7c7-a4e5-4639-9b88-e4cbc57792c0")
+		(property "Reference" "#PWR010"
+			(at 25.4 86.36 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2397,7 +1758,7 @@
 			)
 		)
 		(property "Value" "+3V3"
-			(at 144.24 50.07 0)
+			(at 27.4 84.36 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2408,7 +1769,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 142.24 52.07 0)
+			(at 25.4 86.36 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2419,7 +1780,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 142.24 52.07 0)
+			(at 25.4 86.36 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2430,7 +1791,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 142.24 52.07 0)
+			(at 25.4 86.36 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2440,12 +1801,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "2fba4262-58cb-43cf-9491-eea7f80cc17d")
+			(uuid "47fab158-8bee-4371-a18c-8f7ca754fc49")
 		)
 		(instances
 			(project "OSBAMS_Rev2_TC74_Probe_RC1"
-				(path "/304270ff-6273-4ec0-8abb-5f35e09f81d6/7a2805ec-f453-4eb0-8d59-6417a7396b67"
-					(reference "#PWR007")
+				(path "/de58bdfc-d4be-4cfe-b190-6837344f8d82/bc8f8e95-9deb-4478-a191-a41b1259408c"
+					(reference "#PWR010")
 					(unit 1)
 				)
 			)
@@ -2462,7 +1823,7 @@
 		(in_pos_files yes)
 		(dnp yes)
 		(fields_autoplaced yes)
-		(uuid "8aa0ea70-2935-4728-9ec1-977e4abbadea")
+		(uuid "5d0ad1e9-fd34-4957-bec5-e5bd0df6b163")
 		(property "Reference" "R2"
 			(at 160.02 57.15 0)
 			(show_name no)
@@ -2596,14 +1957,14 @@
 			)
 		)
 		(pin "1"
-			(uuid "53a36186-11c3-4370-9848-559654bee2b8")
+			(uuid "59661350-e49c-4b25-904b-429937d8412f")
 		)
 		(pin "2"
-			(uuid "9e5630a6-3b31-406d-9a03-d53dcb5c798a")
+			(uuid "384a2537-4a8b-4dff-9d7a-5b76039ccfe8")
 		)
 		(instances
 			(project "OSBAMS_Rev2_TC74_Probe_RC1"
-				(path "/304270ff-6273-4ec0-8abb-5f35e09f81d6/7a2805ec-f453-4eb0-8d59-6417a7396b67"
+				(path "/de58bdfc-d4be-4cfe-b190-6837344f8d82/bc8f8e95-9deb-4478-a191-a41b1259408c"
 					(reference "R2")
 					(unit 1)
 				)
@@ -2611,86 +1972,8 @@
 		)
 	)
 	(symbol
-		(lib_id "power:+3V3")
-		(at 127 52.07 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "96d6b380-c5a4-4c41-8e6b-48b97f73d9f1")
-		(property "Reference" "#PWR005"
-			(at 127 52.07 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "+3V3"
-			(at 129 50.07 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 127 52.07 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 127 52.07 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 127 52.07 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "f5b28bdf-4b8f-423f-8c01-6454f387b407")
-		)
-		(instances
-			(project "OSBAMS_Rev2_TC74_Probe_RC1"
-				(path "/304270ff-6273-4ec0-8abb-5f35e09f81d6/7a2805ec-f453-4eb0-8d59-6417a7396b67"
-					(reference "#PWR005")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "power:GND")
-		(at 38.1 53.34 270)
+		(at 66.04 86.36 180)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2699,9 +1982,9 @@
 		(in_pos_files yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "a2208e5f-8814-433a-ae03-d24021f9b7b5")
-		(property "Reference" "#PWR002"
-			(at 38.1 53.34 0)
+		(uuid "6d1bdcb3-b2fc-4aa6-8cc9-032eaa253b95")
+		(property "Reference" "#PWR012"
+			(at 66.04 86.36 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2712,7 +1995,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 40.1 51.34 0)
+			(at 68.04 84.36 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2723,7 +2006,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 38.1 53.34 0)
+			(at 66.04 86.36 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2734,7 +2017,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 38.1 53.34 0)
+			(at 66.04 86.36 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2745,7 +2028,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 38.1 53.34 0)
+			(at 66.04 86.36 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2755,90 +2038,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "ef301104-a390-4bb8-982a-4e04a3304964")
+			(uuid "0cd9976b-2613-4be5-84b9-a86da4483a30")
 		)
 		(instances
 			(project "OSBAMS_Rev2_TC74_Probe_RC1"
-				(path "/304270ff-6273-4ec0-8abb-5f35e09f81d6/7a2805ec-f453-4eb0-8d59-6417a7396b67"
-					(reference "#PWR002")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+3V3")
-		(at 38.1 45.72 90)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board no)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "aa94c33c-5785-4af0-bb23-21356dad1973")
-		(property "Reference" "#PWR001"
-			(at 38.1 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "+3V3"
-			(at 40.1 43.72 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 38.1 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 38.1 45.72 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 38.1 45.72 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "e98b99d3-3c59-45c3-ae57-892f439c9932")
-		)
-		(instances
-			(project "OSBAMS_Rev2_TC74_Probe_RC1"
-				(path "/304270ff-6273-4ec0-8abb-5f35e09f81d6/7a2805ec-f453-4eb0-8d59-6417a7396b67"
-					(reference "#PWR001")
+				(path "/de58bdfc-d4be-4cfe-b190-6837344f8d82/bc8f8e95-9deb-4478-a191-a41b1259408c"
+					(reference "#PWR012")
 					(unit 1)
 				)
 			)
@@ -2855,7 +2060,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "c73b48fc-3538-4811-b12e-1927e2bf6b17")
+		(uuid "70c23847-5554-46d1-93ba-96b5a5f8f168")
 		(property "Reference" "#PWR004"
 			(at 105.41 48.26 0)
 			(hide yes)
@@ -2911,11 +2116,11 @@
 			)
 		)
 		(pin "1"
-			(uuid "81dc349b-991c-4ece-b765-5ee33702d669")
+			(uuid "e362b6e8-b734-4655-8c10-8baa930b6183")
 		)
 		(instances
 			(project "OSBAMS_Rev2_TC74_Probe_RC1"
-				(path "/304270ff-6273-4ec0-8abb-5f35e09f81d6/7a2805ec-f453-4eb0-8d59-6417a7396b67"
+				(path "/de58bdfc-d4be-4cfe-b190-6837344f8d82/bc8f8e95-9deb-4478-a191-a41b1259408c"
 					(reference "#PWR004")
 					(unit 1)
 				)
@@ -2923,8 +2128,8 @@
 		)
 	)
 	(symbol
-		(lib_id "power:GND")
-		(at 127 69.85 0)
+		(lib_id "power:+3V3")
+		(at 38.1 45.72 90)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2933,9 +2138,9 @@
 		(in_pos_files yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "ed303e7a-ed45-4e7b-adc3-c7fd69a31772")
-		(property "Reference" "#PWR006"
-			(at 127 69.85 0)
+		(uuid "79215d26-5278-475b-bbf5-5ea723992454")
+		(property "Reference" "#PWR001"
+			(at 38.1 45.72 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2945,8 +2150,8 @@
 				)
 			)
 		)
-		(property "Value" "GND"
-			(at 129 67.85 0)
+		(property "Value" "+3V3"
+			(at 40.1 43.72 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2957,7 +2162,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 127 69.85 0)
+			(at 38.1 45.72 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2968,7 +2173,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 127 69.85 0)
+			(at 38.1 45.72 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2979,7 +2184,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 127 69.85 0)
+			(at 38.1 45.72 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2989,12 +2194,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "b8528550-b975-4cc5-9084-70cd5084f329")
+			(uuid "52c06a75-88bd-4afc-b471-73583df1cbd3")
 		)
 		(instances
 			(project "OSBAMS_Rev2_TC74_Probe_RC1"
-				(path "/304270ff-6273-4ec0-8abb-5f35e09f81d6/7a2805ec-f453-4eb0-8d59-6417a7396b67"
-					(reference "#PWR006")
+				(path "/de58bdfc-d4be-4cfe-b190-6837344f8d82/bc8f8e95-9deb-4478-a191-a41b1259408c"
+					(reference "#PWR001")
 					(unit 1)
 				)
 			)
@@ -3011,7 +2216,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "ef5f96f7-1be5-4d37-88a3-38885729c2d4")
+		(uuid "8b02aec0-9fcf-4db6-b2e8-f0fe8170567d")
 		(property "Reference" "#PWR003"
 			(at 67.31 50.8 0)
 			(hide yes)
@@ -3067,12 +2272,807 @@
 			)
 		)
 		(pin "1"
-			(uuid "6e26c962-3fb6-4d68-bb29-194873fe4bd8")
+			(uuid "05dabab3-b466-4959-87e3-7379dc25f3b1")
 		)
 		(instances
 			(project "OSBAMS_Rev2_TC74_Probe_RC1"
-				(path "/304270ff-6273-4ec0-8abb-5f35e09f81d6/7a2805ec-f453-4eb0-8d59-6417a7396b67"
+				(path "/de58bdfc-d4be-4cfe-b190-6837344f8d82/bc8f8e95-9deb-4478-a191-a41b1259408c"
 					(reference "#PWR003")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 127 69.85 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "ab8d64f0-d45c-4f6c-b7ec-747fb7356aad")
+		(property "Reference" "#PWR006"
+			(at 127 69.85 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 129 67.85 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 127 69.85 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 127 69.85 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 127 69.85 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "5d970801-9401-41ca-a072-b5f9763b5bae")
+		)
+		(instances
+			(project "OSBAMS_Rev2_TC74_Probe_RC1"
+				(path "/de58bdfc-d4be-4cfe-b190-6837344f8d82/bc8f8e95-9deb-4478-a191-a41b1259408c"
+					(reference "#PWR006")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 157.48 52.07 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "aef6261e-3de4-44f8-abd0-4b7a0202e216")
+		(property "Reference" "#PWR008"
+			(at 157.48 52.07 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 159.48 50.07 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 157.48 52.07 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 157.48 52.07 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 157.48 52.07 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "2236945b-278d-4177-8e97-8307217d3a21")
+		)
+		(instances
+			(project "OSBAMS_Rev2_TC74_Probe_RC1"
+				(path "/de58bdfc-d4be-4cfe-b190-6837344f8d82/bc8f8e95-9deb-4478-a191-a41b1259408c"
+					(reference "#PWR008")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:PWR_FLAG")
+		(at 66.04 91.44 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "b5fa6958-f2f3-412f-83e2-404e828b83a4")
+		(property "Reference" "#FLG011"
+			(at 66.04 91.44 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "PWR_FLAG"
+			(at 68.04 89.44 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 66.04 91.44 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 66.04 91.44 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 66.04 91.44 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "4968130c-5868-4a91-ba75-6e28ec348667")
+		)
+		(instances
+			(project "OSBAMS_Rev2_TC74_Probe_RC1"
+				(path "/de58bdfc-d4be-4cfe-b190-6837344f8d82/bc8f8e95-9deb-4478-a191-a41b1259408c"
+					(reference "#FLG011")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 127 52.07 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "bd4eb217-5c64-42e9-ac7e-142aa01083c3")
+		(property "Reference" "#PWR005"
+			(at 127 52.07 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 129 50.07 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 127 52.07 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 127 52.07 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 127 52.07 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "e319c053-f86a-4a0e-9769-d94af17cc553")
+		)
+		(instances
+			(project "OSBAMS_Rev2_TC74_Probe_RC1"
+				(path "/de58bdfc-d4be-4cfe-b190-6837344f8d82/bc8f8e95-9deb-4478-a191-a41b1259408c"
+					(reference "#PWR005")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "OSBAMS_Rev2:TC74A5")
+		(at 86.36 48.26 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "cb96cae0-f177-4624-8e7b-3740506b5955")
+		(property "Reference" "U1"
+			(at 88.9 44.45 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TC74A5-3.3VAT"
+			(at 88.9 46.99 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_THT:TO-220-5_P3.4x3.7mm_StaggerOdd_Lead3.8mm_Vertical"
+			(at 86.36 48.26 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 86.36 48.26 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "TC74A5 I2C temperature sensor 3.3 V, address 0x4D, TO-220-5 (pin map compared with the Microchip TO-220-5 table relayed by the user: PASS). Leads must be formed to the staggered footprint (1.7 mm straight pitch gives only 0.085 mm annular ring)"
+			(at 86.36 48.26 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "Microchip"
+			(at 86.36 48.26 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "TC74A5-3.3VAT"
+			(at 86.36 48.26 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Evidence" "USER_RELAYED_MANUFACTURER"
+			(at 86.36 48.26 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Lifecycle" "UNKNOWN (not checked)"
+			(at 86.36 48.26 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Source" "CONSIGN (owned: 2)"
+			(at 86.36 48.26 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Alternate" "TC74A0-3.3VAT (address 0x48: firmware change)"
+			(at 86.36 48.26 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Note" ""
+			(at 86.36 48.26 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "fe03a3f7-bee0-4127-9396-e7442c6d6038")
+		)
+		(pin "2"
+			(uuid "c1a5e91c-6f25-46cf-b714-e8c0a82cc434")
+		)
+		(pin "3"
+			(uuid "68bfff08-07bc-4a49-8505-25fce7a8d59f")
+		)
+		(pin "4"
+			(uuid "222140bc-2446-4156-ab2c-77cb5e6e9bc4")
+		)
+		(pin "5"
+			(uuid "fb33a8da-70d2-4fa5-ab93-b541d543276d")
+		)
+		(instances
+			(project "OSBAMS_Rev2_TC74_Probe_RC1"
+				(path "/de58bdfc-d4be-4cfe-b190-6837344f8d82/bc8f8e95-9deb-4478-a191-a41b1259408c"
+					(reference "U1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 142.24 60.96 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp yes)
+		(fields_autoplaced yes)
+		(uuid "cbbedd97-365e-4724-86d3-81a13908d6eb")
+		(property "Reference" "R1"
+			(at 144.78 57.15 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "4.7k"
+			(at 144.78 59.69 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 142.24 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 142.24 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "4.7k 1 % thick film 0603"
+			(at 142.24 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "Vishay Dale"
+			(at 142.24 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "CRCW06034K70FKEA"
+			(at 142.24 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Evidence" "UNVERIFIED"
+			(at 142.24 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Lifecycle" "UNKNOWN (not checked)"
+			(at 142.24 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Source" "PCBWay source"
+			(at 142.24 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Alternate" "Yageo RC0603-FR-07 series"
+			(at 142.24 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Note" "Optional pull-up footprint (DNP: pull-ups are on the controller)"
+			(at 142.24 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "ba611202-5e43-4ec5-a901-315d13bd498a")
+		)
+		(pin "2"
+			(uuid "eda843bb-56b5-4dce-881b-5aa14fc1bd7b")
+		)
+		(instances
+			(project "OSBAMS_Rev2_TC74_Probe_RC1"
+				(path "/de58bdfc-d4be-4cfe-b190-6837344f8d82/bc8f8e95-9deb-4478-a191-a41b1259408c"
+					(reference "R1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 142.24 52.07 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "d411d32a-b477-4358-8f2a-24ddaf98280c")
+		(property "Reference" "#PWR007"
+			(at 142.24 52.07 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 144.24 50.07 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 142.24 52.07 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 142.24 52.07 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 142.24 52.07 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "e0de3378-335b-41bf-8029-afac9873d48c")
+		)
+		(instances
+			(project "OSBAMS_Rev2_TC74_Probe_RC1"
+				(path "/de58bdfc-d4be-4cfe-b190-6837344f8d82/bc8f8e95-9deb-4478-a191-a41b1259408c"
+					(reference "#PWR007")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:PWR_FLAG")
+		(at 25.4 91.44 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board no)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "ddfef723-4347-4844-a244-d69cb369ac3d")
+		(property "Reference" "#FLG009"
+			(at 25.4 91.44 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "PWR_FLAG"
+			(at 27.4 89.44 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 25.4 91.44 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 25.4 91.44 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 25.4 91.44 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "92afa732-bdbf-44d9-ac22-071e24514ac0")
+		)
+		(instances
+			(project "OSBAMS_Rev2_TC74_Probe_RC1"
+				(path "/de58bdfc-d4be-4cfe-b190-6837344f8d82/bc8f8e95-9deb-4478-a191-a41b1259408c"
+					(reference "#FLG009")
 					(unit 1)
 				)
 			)

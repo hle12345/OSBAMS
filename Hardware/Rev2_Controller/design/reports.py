@@ -33,7 +33,9 @@ def natkey(r):
 
 
 SUFFIX_OK = {"ISO7721DR": "confirmed (TI datasheet ordering table, read locally)", "CP2102N-A02-GQFN20": "confirmed (Silicon Labs datasheet ordering table, read locally)",
-             "SRN6045TA-100M": "confirmed (Bourns datasheet table, read locally)", "EB21A-02-C": "confirmed (Adam Tech drawing EB21A-XX-C, read locally; owned part)"}
+             "SRN6045TA-100M": "confirmed (Bourns datasheet table, read locally)",
+             "ERJ-P08F47R0V": "matches the Panasonic part-number scheme (catalog read locally); distributor listing not checked", "ERJ-P08F10R0V": "matches the Panasonic part-number scheme (catalog read locally); distributor listing not checked",
+             "1.5SMBJ48A": "confirmed (Bourns datasheet table, read locally)", "FTSH-105-01-L-DV-K": "confirmed (Samtec FTSH catalog part-number decode, read locally)", "EB21A-02-C": "confirmed (Adam Tech drawing EB21A-XX-C, read locally; owned part)"}
 
 
 def bom_rows():

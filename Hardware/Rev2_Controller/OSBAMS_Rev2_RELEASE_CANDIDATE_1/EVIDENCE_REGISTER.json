@@ -510,18 +510,18 @@
   {
    "id": "rs_pulse_rating",
    "part": "Panasonic ERJ-P08F47R0V / ERJ-P08F10R0V",
-   "parameter": "resistor R41-R43 pulse/surge rating: the supplied Panasonic document is ERJP6W (0805, 0.5 W, limiting element voltage 150 V, overload 200 V, marked 'not recommended for new design') - it is NOT the ERJ-P08F 1206 part in the BOM and contains no pulse-energy curve; ERJ-P08F datasheet/suffix still needed (or a replacement part with a documented pulse rating)",
-   "value": null,
+   "parameter": "ERJ-P08F47R0V / ERJ-P08F10R0V (1206, anti-surge): part-number scheme confirmed (ERJ P08 / F = +/-1 % / 47R0, 10R0 four-digit value / V packaging; 10 ohm-1 Mohm range includes both); 0.66 W @ 70 C, limiting element voltage 500 V, max overload voltage 1000 V, overload test 2.0 x RCWV for 5 s, ESD test +/-3 kV with 150 pF (0.675 mJ, HBM-style); the catalog contains NO us-ms pulse-energy-vs-duration curve -> credible-set energies (<= 0.37 mJ) are inside the ESD-test energy but the thermal-pulse rating is not documented here",
+   "value": "0.66 W / 500 V / 1000 V",
    "unit": "",
-   "evidence": "UNVERIFIED",
-   "critical": true,
-   "source": "assumption / proposal - needs the manufacturer document",
-   "doc": null
+   "evidence": "VERIFIED_LOCAL",
+   "critical": false,
+   "source": "Panasonic anti-surge thick film chip resistors ERJ P/PA/PM series (24-Feb-22), read locally from the user-supplied PDF: Ratings (ERJP08 row), Dimensions/ESD page, Performance page",
+   "doc": "docs/rev2/pcb/evidence/Panasonic_ERJ_P_PA_PM_anti-surge_series_24Feb22.pdf"
   },
   {
    "id": "erjp6w_ref",
    "part": "Panasonic ERJP6W (reference only)",
-   "parameter": "ERJP6W 0805 anti-surge: 0.5 W @ 70 C, limiting element voltage 150 V, max overload voltage 200 V, R 10 ohm-1 Mohm (1 %), -55..+155 C; NOT RECOMMENDED FOR NEW DESIGN; not the BOM part",
+   "parameter": "Panasonic ERJP6W (0805) datasheet previously supplied: not the BOM part, not recommended for new design (superseded by the ERJ P/PA/PM series document)",
    "value": null,
    "unit": "",
    "evidence": "VERIFIED_LOCAL",
@@ -895,13 +895,13 @@
   {
    "id": "conn_samtec",
    "part": "Samtec FTSH-105-01-L-DV-K (J9)",
-   "parameter": "the supplied Samtec document is the CLP/FTSH/FTS/FW product specification (ratings, processing); it contains NO print, footprint or dimensions and refers to samtec.com for them -> geometry still unverified (footprint is the generic KiCad PinHeader_2x05_P1.27mm_Vertical_SMD)",
+   "parameter": "Samtec FTSH-105-01-L-DV-K: catalog page confirms the part-number decode (FTSH-1, 05 pins/row = 10 pins, -01 lead style 3.05 mm post, -L 10 uin gold on post / matte tin tail, -DV double vertical, -K keying shroud for FFSD cable mating), 1.27 mm pitch, 0.40 mm square post, tail-to-tail width 5.84 mm, 3.4 A, 280 VAC/396 VDC; NO land pattern or key-position drawing on the page -> footprint pad geometry (generic KiCad 2x05 SMD: pads 0.74 x 2.40 at +/-1.95, tails 5.84 wide fit inside the 6.30 mm pad span) and key orientation vs pin 1 still need the Samtec print/footprint",
    "value": null,
    "unit": "",
    "evidence": "UNVERIFIED",
    "critical": true,
-   "source": "document read locally; no dimensional data in it",
-   "doc": "docs/rev2/pcb/evidence/Samtec_CLP_FTSH_FTS_FW_product_specification.pdf"
+   "source": "Samtec FTSH catalog page F-226, read locally",
+   "doc": "docs/rev2/pcb/evidence/Samtec_FTSH_catalog_page.pdf"
   },
   {
    "id": "conn_molex",
@@ -928,7 +928,7 @@
   {
    "id": "conn_footprints",
    "part": "Molex KK/JST PH/GCT USB4105/Samtec FTSH",
-   "parameter": "connector footprints: J7 (JST) and J8 (GCT) VERIFIED against the drawings; J5/J6 (Molex) and J9 (Samtec) still OPEN (no drawing/print supplied)",
+   "parameter": "connector footprints: J7 (JST) and J8 (GCT) VERIFIED against the drawings; J9 (Samtec) part number/pitch/tail span verified but land pattern/key position open; J5/J6 (Molex) product pages only - sales drawings 022272031_sd.pdf / 022272041_sd.pdf still needed",
    "value": "KiCad 10 library",
    "unit": "",
    "evidence": "UNVERIFIED",
