@@ -23,6 +23,8 @@ E-stop and ARM are in the **12 V coil chain only**, never in the battery-current
 | Q1 | STM32L476RGT6 directly on the PCB; Nucleo = programming/bring-up fallback | you | §2 |
 | Q2 | USART2 → ISO7721 → CP2102N → USB-C → Pi 5 | you | §3 |
 | Q3 | XDR-75-12 set and verified at 12.0 V | you | §5, open item O3 |
+| — | **Buck = TI LMR14006Y, direct 12 V → 3.3 V** (TPS54202 dropped) | you (2026-10-01) | §5 |
+| — | **Q1 = AOS AO3400A (SOT-23, 30 V)**; plain-diode flyback only; **27 V fast-release TVS rejected** (12 + 27 > 30 V) | you (2026-10-01) | §6 |
 | — | **Power: wide-input buck straight to 3.3 V + filtered 3V3A, no internal 5 V rail** (Chat's 12→5→LDO chain rejected: the 5 V rail feeds nothing) | you | §5 |
 | — | **TC74 on its own I²C2 (PB10/PB11), ≤ 100 kHz; INA228 on I²C1 (PB8/PB9)** — Chat's table put both on PB8/PB9: rejected | you | §4, §9 |
 | — | **ARM_SENSE: protected resistor divider** (status only), not an opto | you | §8 |
@@ -109,7 +111,7 @@ XDR-75-12 (12.0 V) → J1 → F1 1 A fast → reverse-protection Schottky (SMD) 
    +12V → E-STOP → ARM → K1 coil → Q1                                 ≈ 0.13 A
    +12V → wide-input buck → 3V3 (digital) → ferrite + C → 3V3A (VDDA, INA228)
 ```
-No 5 V rail exists on the board; the Pi/display use a separate external 5 V supply, and the USB-UART bridge's host side is powered from USB VBUS (isolated). 3V3 load ≈ 40 mA typical, design 150 mA; 12 V rail ≈ 0.19 A total; F1 1 A. Buck choice: wide-input 40 V class (LMR14006 family) preferred because the SMBJ15A clamp (≈ 24.4 V) leaves almost no margin on a 28 V part (TPS54202); both are unverified [C] and the FB divider/inductor/Isat follow the datasheet. Series Schottky drop ≈ 0.4 V → coil at ≈ 11.6 V (relay needs to pull in below that; verify). XDR output is adjustable up to ~15 V: it will be set and verified at 12.0 V (coil 2.5 W at 15 V). Capacitors on +12V rated ≥ 35 V. Details: calculations §7.
+No 5 V rail exists on the board; the Pi/display use a separate external 5 V supply, and the USB-UART bridge's host side is powered from USB VBUS (isolated). 3V3 load ≈ 40 mA typical, design 150 mA; 12 V rail ≈ 0.19 A total; F1 1 A. Buck: **TI LMR14006Y (4–40 V in, 600 mA, as reported by you)** — ≈ 15.6 V margin over the SMBJ15A clamp (≈ 24.4 V); fsw, VREF, FB divider, inductor and Isat follow the datasheet (not yet read). Series Schottky drop ≈ 0.4 V → coil at ≈ 11.6 V (relay needs to pull in below that; verify). XDR output is adjustable up to ~15 V: it will be set and verified at 12.0 V (coil 2.5 W at 15 V). Capacitors on +12V rated ≥ 35 V. Details: calculations §7.
 
 ---
 
@@ -117,8 +119,8 @@ No 5 V rail exists on the board; the Pi/display use a separate external 5 V supp
 
 `+12V → J2 (E-stop NC) → ESTOP_OUT → J3 (ARM) → COIL_V → J4 (K1 coil) → COIL_SW → Q1 drain`, source GND.
 - **K1 = Durakool DG57CM-5021-76-1012-R** [P], 12 V coil ≈ 90 Ω (listing; to be read from the datasheet: coil resistance, pick-up/drop-out, release time, inductance, DC make/break at ≤ 44 V/10 A and 15 A fault). Kept unless the datasheet shows it inadequate.
-- **Q1: SMD logic-level N-FET, VDSS ≥ 60 V, RDS(on) specified at VGS 2.5 V and 3.3 V, VGS(th) max ≤ 2.0 V** — part not yet selected (criteria and the dissipation check in calculations §3). **R_G 220 Ω**, **R_PD 10 kΩ gate → GND**: relay OFF whenever the MCU is in reset/unpowered/Hi-Z.
-- **Flyback:** 1N5408G [P] across the coil, cathode on COIL_V; first article = plain diode. A 0 Ω link in series with the diode (and a DNP TVS footprint) allows a faster-release clamp later — only after the relay release-time data and the MOSFET VDSS are verified; **no 27 V commitment**.
+- **Q1 = AOS AO3400A (SOT-23, 30 V)**: RDS(on) 48 mΩ max at VGS 2.5 V (reported) → ≈ 0.8 mV drop / 1.4 mW at the coil current. VDSS 30 V vs the SMBJ15A 24.4 V clamp leaves ≈ 5.6 V: thin, re-checked when the datasheet is read (calculations §3). **R_G 220 Ω**, **R_PD 10 kΩ gate → GND**: relay OFF whenever the MCU is in reset/unpowered/Hi-Z.
+- **Flyback:** 1N5408G [P] across the coil, cathode on COIL_V; first article = plain diode. A 0 Ω link in series with the diode keeps the option open, but **a 27 V TVS is rejected with this 30 V MOSFET** (12 + 27 = 39 V > 30 V); any fast-release clamp needs a new VDS transient analysis first.
 - Amber LED: COIL_V → 2.2 kΩ → LED → COIL_SW (lights only while Q1 conducts). TPs: GATE, COIL_SW, COIL_V.
 - Firmware cannot energise the coil unless J2 and J3 are closed.
 
@@ -181,7 +183,7 @@ EB21A-02-C has no library footprint: draw it from the Adam Tech drawing (never c
 
 ## 12. Preliminary BOM
 
-`REV2_PRELIM_BOM.csv` — Ref, Qty, Description, Manufacturer, MPN, KiCad symbol, KiCad footprint, Status (PURCHASED / CANDIDATE / OPEN), Assembly, KiCad-library check, Datasheet verified, Notes. **Every candidate is "Datasheet verified = NO".** Open lines (no part chosen): Q1 (SMD MOSFET), D2 (SMD Schottky suffix), C_IN (≥ 35 V bulk), D_ADC (clamp). Owned stock: 5 × EB21A, 2 × VO610A-1, 2 × 1N4148, 2 × 1.5SMBJ48A, 2 × VJ0805Y104JXXAT, 2 × 1N5408G, 2 × IRLZ44NPBF (no longer used), 2 × SB560, 2 × TC74A5-3.3VAT.
+`REV2_PRELIM_BOM.csv` — Ref, Qty, Description, Manufacturer, MPN, KiCad symbol, KiCad footprint, Status (PURCHASED / CANDIDATE / OPEN), Assembly, KiCad-library check, Datasheet verified, Notes. **Every candidate is "Datasheet verified = NO".** Open lines (no part chosen): L1 (inductor from the LMR14006Y datasheet), D2 (SMD Schottky suffix), C_IN (≥ 35 V bulk), D_ADC (clamp). Owned but no longer used: IRLZ44NPBF. Owned stock: 5 × EB21A, 2 × VO610A-1, 2 × 1N4148, 2 × 1.5SMBJ48A, 2 × VJ0805Y104JXXAT, 2 × 1N5408G, 2 × IRLZ44NPBF (no longer used), 2 × SB560, 2 × TC74A5-3.3VAT.
 
 ---
 
@@ -190,6 +192,14 @@ EB21A-02-C has no library footprint: draw it from the Adam Tech drawing (never c
 TC74 → I2C2 at ≤ 100 kHz (INA228 stays I2C1); I²C timing and ≥ 300 ms init; INA228 IMAX 20 A / SHUNT_CAL 1250 (header still 30 A); ARM_SENSE read-only status (`ARMED/DISARMED/UNKNOWN`), never a permission; INA_ALERT optional; VREFINT-corrected ADC scale; unit tests "sensing can never enable the relay".
 
 ---
+
+## 13b. Documentation ingestion status (2026-10-01)
+
+You supplied links to the manufacturer PDFs (VO610A, STM32L476, INA228, DG57CM, 1.5SMBJ48A, SMBJ15A, RSA-20-50, ISO7721, CP2102N, LMR14006, AO3400A, Adam Tech catalog) and the relevant figures. **This sandbox still cannot reach any of those hosts (HTTP 403 policy denial) and no PDF was uploaded**, so none of the 30 inputs is verified. What changed:
+- Recorded as *design decisions*: LMR14006Y and AO3400A; plain-diode flyback only; 27 V TVS rejected.
+- Recorded as *reported by you, unverified* (in `calc/datasheet_inputs.json`, shown in `DATASHEET_VERIFICATION.md`): Bourns 1.5SMBJ48A (48 V standoff, 77.4 V clamp); SMBJ15A 24.4 V; RSA-20-50 ±0.25 %, ±15 ppm/°C, ≤ 2/3 rated (13.3 A) continuous; DG57CM DC1 loads 80 A @12 V / 60 A @36 V / 50 A @48 V (envelope ≤ 44 V/10 A → ≥ 5× on those figures); ISO7721 has no isolated power (both supplies provided, §10); INA228 −0.3…85 V; AO3400A 48 mΩ @2.5 V; EB21A-02-C catalog data.
+- Still not provided as numbers: VO610A CTR vs IF/temperature/aging, STM32 I/O types and VIH/VREFINT/POR, buck fsw/FB/inductor, AO3400A VGS(th)/pinout, DG57CM coil resistance/release time, CP2102N package, INA228 pinout. The VO610A stages therefore remain **not frozen** (no assumed CTR will be frozen).
+- Correction applied: 1.5SMBJ48A manufacturer = Bourns.
 
 ## 14. Verification gate and sequence
 

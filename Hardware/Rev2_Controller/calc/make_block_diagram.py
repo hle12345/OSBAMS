@@ -34,9 +34,9 @@ for t, y in ext_l:
     box(2, y, 30, 9, t, EXT, 7)
 # internal boxes
 box(42, 88, 34, 9, "12 V INPUT\nJ1 → F1 1 A → Schottky\n→ SMBJ15A → +12V", PCB)
-box(80, 88, 20, 9, "RAILS\nbuck → 3V3 (no 5 V)\n→ ferrite → 3V3A", PCB)
+box(80, 88, 20, 9, "RAILS\nLMR14006Y → 3V3 (no 5 V)\n→ ferrite → 3V3A", PCB)
 box(103, 88, 17, 9, "LEDs: 3V3,\nPA5, coil", PCB)
-box(42, 70, 34, 14, "COIL SAFETY CHAIN (hardware)\n+12V → E-STOP → ARM → coil\n→ Q1 (SMD, low side)\n220 Ω · 10 k pull-down · flyback\n(+ DNP fast-release link)", PCB, 7)
+box(42, 70, 34, 14, "COIL SAFETY CHAIN (hardware)\n+12V → E-STOP → ARM → coil\n→ Q1 AO3400A (low side)\n220 Ω · 10 k pull-down · flyback\n(+ DNP fast-release link)", PCB, 7)
 box(42, 54, 34, 12, "STATUS SENSING (read-only)\nESTOP: VO610A (post-E-stop node)\nRELAY_FB: VO610A (after K1)\nARM: divider 270k/100k", PCB, 7)
 box(42, 38, 34, 12, "INA228 (I²C1, 0x40)\nIN+/IN− 2×10 Ω + 100 nF, TVS\nVBUS from PACK_INA · ADCRANGE=0", PCB)
 box(42, 22, 34, 12, "ADC CROSS-CHECK → PA1\n75k+75k / 10k · 1 k · 100 nF\nGND-only clamp · VREFINT correction", PCB)

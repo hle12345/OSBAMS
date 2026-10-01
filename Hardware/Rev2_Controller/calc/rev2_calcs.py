@@ -88,6 +88,7 @@ def ina():
     w(f"- Offset {vos * 1e6:.1f} µV{tag('ina228_vos_max')} → {vos / Rs * 1e3:.2f} mA = {vos / Rs / 10 * 100:.4f} % of 10 A.")
     w(f"- 2 × 10 Ω + 100 nF differential: fc = {1 / (2 * math.pi * 20 * 100e-9) / 1e3:.0f} kHz; bias {V('ina228_bias_current') * 1e9:.1f} nA{tag('ina228_bias_current')} × 10 Ω = {V('ina228_bias_current') * 10 * 1e9:.0f} nV.")
     w(f"- TVS 1.5SMBJ48A Vc ≈ {V('tvs_1p5smbj48a_vc')} V{tag('tvs_1p5smbj48a_vc')} vs abs max {V('ina228_abs_max_in')} V{tag('ina228_abs_max_in')} → margin {V('ina228_abs_max_in') - V('tvs_1p5smbj48a_vc'):.1f} V (thin; verify the clamp at the real surge current).")
+    w("- RSA-20-50 (reported, ⚠ unverified): ±0.25 % tolerance, ±15 ppm/°C TCR, continuous ≤ 2/3 of rating = 13.3 A (> our 10 A ceiling). Shunt self-heating at 10 A is 0.25 W → ΔR/R ≈ 15 ppm/K × rise; calibration against the EDU34450A remains the accuracy basis.")
     w("- Sense wiring: IN+ = relay load side (RELAY_OUT), IN− = shunt load-side Kelvin; **VBUS from PACK_INA (upstream of K1)** so open-circuit voltage is read with the relay open; separate PACK_ADC lead for the independent channel; only GND_SENSE bonds logic ground to the pack.\n")
 
 
@@ -95,14 +96,21 @@ def ina():
 def relay():
     R = V("relay_coil_ohm")
     w("## 3. Relay driver (Durakool DG57CM-5021-76-1012-R) — coil data " + ("⚠[unverified]" if not INP["relay_coil_ohm"]["verified"] else "") + "\n")
+    w("Contact rating evidence (reported, ⚠ not read here): DC1 loads 80 A @12 V, 60 A @36 V, 50 A @48 V; our envelope is ≤ 44 V, ≤ 10 A (15 A fault) → ≥ 5× margin on the reported figures. To record against the datasheet page when the PDF is available.\n")
     w("| Coil V | I | P |\n|---|---|---|")
     for v in (10.5, 11.55, 12.0, 13.8, 15.0):
         w(f"| {v} V | {v / R * 1e3:.0f} mA | {v * v / R:.2f} W |")
     w("\nXDR-75-12 is adjustable (to ~15 V): **set and verify 12.0 V** (2.5 W in the coil at 15 V).")
-    w("**MOSFET acceptance criteria (replaces the IRLZ44N by decision):** SMD, VDSS ≥ 60 V, RDS(on) *specified* at VGS = 2.5 V **and** 3.3 V, VGS(th) max ≤ 2.0 V, ID ≥ 1 A, gate charge small enough for a 3.3 V GPIO via 220 Ω. "
-      f"With the coil at 0.17 A, RDS(on) ≤ 0.3 Ω keeps VDS ≤ 50 mV and P ≤ 9 mW. Gate network: 220 Ω in series, 10 kΩ pull-down → relay OFF when the MCU is in reset/unpowered/Hi-Z (gate leakage × 10 kΩ ≪ VGS(th)). Candidate part: **not selected** ({INP['mosfet_candidate']['need']}).")
+    w("**Q1 = AOS AO3400A (SOT-23, 30 V N-FET) — chosen by you; RDS(on) 48 mΩ max at VGS = 2.5 V is reported, not read here" + tag("mosfet_candidate") + ".**")
+    rds = 0.048
+    for v in (11.55, 12.0, 15.0):
+        i = v / R
+        w(f"- coil {v} V: I = {i * 1e3:.0f} mA → VDS(on) = {i * rds * 1e3:.1f} mV, P = {i * i * rds * 1e3:.2f} mW (RDS(on) = 48 mΩ at 2.5 V; the 3.3 V drive is above the specified point)")
+    w("- Gate network: 220 Ω series, 10 kΩ pull-down → relay OFF when the MCU is in reset/unpowered/Hi-Z (gate leakage × 10 kΩ ≪ VGS(th); VGS(th) still to be read).")
+    w(f"- **VDS margin (30 V part):** diode flyback clamps COIL_SW at ≈ +12…15 V + 0.7 V; the +12V surge clamp is the SMBJ15A at {V('tvs_smbj15a_vc')} V{tag('tvs_smbj15a_vc')} → worst-case drain stress ≈ 24.4 V vs 30 V (margin ≈ 5.6 V, thin: re-check with the real clamp/leakage and any inductive kick that bypasses the diode).")
+    w("- **Fast-release 27 V TVS is REJECTED for this MOSFET:** coil rail + TVS = 12 + 27 = 39 V (+ diode) > 30 V VDSS. Baseline is the plain diode; the DNP link/TVS footprint stays but a fast-release clamp is allowed only after a new VDS transient analysis proves margin (e.g. a lower-voltage clamp or a different MOSFET).")
     L = V("relay_coil_L"); I = 12.0 / R
-    w(f"- Flyback energy ½LI² = {0.5 * L * I * I * 1e3:.2f} mJ (L {L} H{tag('relay_coil_L')}); diode-only decay τ = L/R = {L / R * 1e3:.1f} ms; with diode + 27 V TVS in series the current decays {((12.0 + 27.0) / 12.0):.1f}× faster (clamp ≈ {12 + 27 + 0.7:.0f} V + Vf vs MOSFET VDSS ≥ 60 V). **Baseline: plain diode; a series link/TVS footprint is provided (DNP). Do not commit to 27 V until the relay release-time data and MOSFET VDSS are verified.**\n")
+    w(f"- Flyback energy ½LI² = {0.5 * L * I * I * 1e3:.2f} mJ (L {L} H{tag('relay_coil_L')}); diode-only decay τ = L/R = {L / R * 1e3:.1f} ms. Baseline: plain diode (no fast-release clamp, see above).\n")
 
 
 # ---------------------------------------------------------------- 4. optocoupler stages
@@ -155,6 +163,8 @@ def i2c():
 
 # ---------------------------------------------------------------- 7. power tree
 def power():
+    w("## 6b. ISO7721 supplies (reported: no integrated isolated power)\n")
+    w("VCC1 = 3V3 (controller side). VCC2 must be supplied from the host side: the CP2102N's 3.3 V regulator output (VREGIN from USB VBUS) feeds both the bridge VDD and ISO7721 VCC2; its output-current capability vs the isolator's ICC2 plus the bridge's own load, and both supply ranges, are to be verified from the CP2102N and ISO7721 datasheets (`cp2102n_package`, `isolator_iso7721`). Each side gets 100 nF at the pins; no common ground between sides.\n")
     w("## 7. Power tree (wide-input buck directly to 3.3 V; **no 5 V rail**)\n")
     w("XDR-75-12 (set to 12.0 V) → J1 → F1 1 A fast → reverse-protection Schottky → SMBJ15A → +12V. +12V feeds (a) the coil chain E-stop → ARM → coil → Q1, (b) the buck → 3V3 → ferrite → 3V3A.\n")
     loads = {"STM32L476 @ 80 MHz + peripherals": 20.0, "INA228": 1.0, "pull-ups/sense/ISO7721 MCU side": 11.0, "TC74 probe": 0.5, "2 status LEDs": 6.0}
@@ -168,7 +178,7 @@ def power():
         iin = 0.150 * 3.3 / eff / 12.0
         w(f"\nBuck at 150 mA, η {eff:.2f}: input {iin * 1e3:.0f} mA, loss {0.150 * 3.3 * (1 / eff - 1) * 1e3:.0f} mW")
     w(f"\n12 V rail: coil {12 / R * 1e3:.0f} mA + buck ≈ 45 mA + sense 4 mA ≈ {(12 / R + 0.045 + 0.004) * 1e3:.0f} mA of a 6.24 A supply; F1 1 A. Series Schottky drop ≈ 0.4 V → coil at ≈ 11.6 V.")
-    w(f"Surge margin: SMBJ15A clamp {V('tvs_smbj15a_vc')} V{tag('tvs_smbj15a_vc')} vs buck VIN abs max (**datasheet: LMR14006 family 40 V class vs TPS54202 28 V class — unverified**). Wide-input margin is the reason for preferring the 40 V part. "
+    w(f"Surge margin: SMBJ15A clamp {V('tvs_smbj15a_vc')} V{tag('tvs_smbj15a_vc')} vs buck VIN: LMR14006Y is a 4–40 V part (reported) → ≈ 15.6 V margin over the 24.4 V clamp. TPS54202 is dropped. "
       "Buck output → LC → 3V3; 3V3A = ferrite + 1 µF + 100 nF (VDDA, INA228); ripple at bring-up, not by calculation.\n")
 
 
@@ -194,11 +204,11 @@ print("unverified:", len(unverified()), "of", len(INP))
 def worklist():
     L = ["# Datasheet verification worklist (Rev.2 controller)\n",
          "Generated from `calc/datasheet_inputs.json`. **This sandbox cannot reach any manufacturer site** (st.com, ti.com, vishay.com … return HTTP 403 from the egress policy; distributor and datasheet-mirror sites are likewise unreachable), "
-         "so no value below is verified and no citation can honestly be written. To close an item: upload the manufacturer PDF (or its relevant pages), the value is read, `verified` is set to true with `doc` = document number + table/figure/page, and the calculations are re-run.\n",
+         "so no value below is verified and no citation can honestly be written. Values you relayed from the manufacturer documents are recorded in the “Reported” column but stay unverified until the PDF itself is read. To close an item: upload the manufacturer PDF (or its relevant pages), the value is read, `verified` is set to true with `doc` = document number + table/figure/page, and the calculations are re-run.\n",
          "The schematic is not created until the **critical** items are verified (`tests/test_pcb_release_gates.py` enforces: no `.kicad_sch` in `Hardware/Rev2_Controller/` while any `critical` input is unverified).\n",
-         "| # | Input | Critical | Part | What to read | Verified | Document / location |", "|---|---|---|---|---|---|---|"]
+         "| # | Input | Critical | Part | What to read | Reported by you (unverified) | Verified | Document / location |", "|---|---|---|---|---|---|---|---|"]
     for n, (k, v) in enumerate(INP.items(), 1):
-        L.append(f"| {n} | `{k}` | {'**yes**' if v.get('critical') else 'no'} | {v['part']} | {v['need']} | {'YES' if v['verified'] else 'no'} | {v['doc'] or '—'} |")
+        L.append(f"| {n} | `{k}` | {'**yes**' if v.get('critical') else 'no'} | {v['part']} | {v['need']} | {'; '.join(r['value'] for r in v.get('reported', [])) or '—'} | {'YES' if v['verified'] else 'no'} | {v['doc'] or '—'} |")
     L.append("\n## Checked from the installed KiCad 7 libraries (not datasheets)\n")
     L.append("- STM32L476RGTx: symbol + `LQFP-64_10x10mm_P0.5mm` footprint present; LQFP-64 pin numbers for every signal in the pin table read from the library (PA0=14, PA1=15, PA2=16, PA3=17, PA5=21, PA6=22, PA9=42, PA10=43, PA13=46, PA14=49, PB0=26, PB3=55, PB8=61, PB9=62, PB10=29, PB11=30, PC8=39, PC9=40, PC10=51, NRST=7, VBAT=1, VDDA=13, VSSA=12, VDDUSB=48).")
     L.append("- **Missing symbols (must be drawn from datasheet pin tables): INA228, ISO7721, VO610A, LMR14006, TC74.** Present: TPS54202DDC, BAT54S, D_TVS, USBLC6-2*, AP2112K (not used).")

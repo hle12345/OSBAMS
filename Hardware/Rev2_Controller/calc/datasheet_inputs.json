@@ -17,7 +17,13 @@
    "need": "guaranteed/typical CTR vs IF curve at the actual IF (1-3 mA), min-line, or a guaranteed spec at low IF",
    "verified": false,
    "doc": null,
-   "critical": true
+   "critical": true,
+   "reported": [
+    {
+     "value": "datasheet link supplied (Vishay doc 81775); values not relayed (user)",
+     "source": "user message 2026-10-01 (relayed from the manufacturer PDF; not read in this sandbox)"
+    }
+   ]
   },
   "vo610a_ctr_temp_derate": {
    "value": 0.75,
@@ -89,7 +95,13 @@
    "need": "I/O structure of PA1 and PC10 (5 V tolerance, presence of a diode to VDD/VDDA, behaviour in analog mode, abs-max with VDD=0)",
    "verified": false,
    "doc": null,
-   "critical": true
+   "critical": true,
+   "reported": [
+    {
+     "value": "datasheet link supplied (270-page Rev. 11); values not relayed (user)",
+     "source": "user message 2026-10-01 (relayed from the manufacturer PDF; not read in this sandbox)"
+    }
+   ]
   },
   "stm32_vrefint_tol": {
    "value": 0.003,
@@ -134,7 +146,13 @@
    "need": "IN+/IN-/VBUS absolute maximum",
    "verified": false,
    "doc": null,
-   "critical": true
+   "critical": true,
+   "reported": [
+    {
+     "value": "-0.3 to +85 V common-mode range; +/-163.84 / +/-40.96 mV ranges (user, from TI page)",
+     "source": "user message 2026-10-01 (relayed from the manufacturer PDF; not read in this sandbox)"
+    }
+   ]
   },
   "ina228_shunt_cal_eq": {
    "value": "SHUNT_CAL = 13107.2e6 * CURRENT_LSB * RSHUNT (x4 if ADCRANGE=1)",
@@ -179,7 +197,13 @@
    "need": "VRWM, VBR, VC at IPP, leakage at VRWM",
    "verified": false,
    "doc": null,
-   "critical": false
+   "critical": false,
+   "reported": [
+    {
+     "value": "Littelfuse SMBJ series; SMBJ15A clamp 24.4 V in the series table (user)",
+     "source": "user message 2026-10-01 (relayed from the manufacturer PDF; not read in this sandbox)"
+    }
+   ]
   },
   "tvs_1p5smbj48a_vc": {
    "value": 77.4,
@@ -188,7 +212,13 @@
    "need": "VRWM, VBR, VC at IPP, leakage at VRWM, IPP",
    "verified": false,
    "doc": null,
-   "critical": true
+   "critical": true,
+   "reported": [
+    {
+     "value": "manufacturer is Bourns (not Littelfuse); VRWM 48 V, max clamp 77.4 V at the specified 10/1000 us pulse current (user)",
+     "source": "user message 2026-10-01 (relayed from the manufacturer PDF; not read in this sandbox)"
+    }
+   ]
   },
   "relay_coil_ohm": {
    "value": 90.0,
@@ -197,7 +227,13 @@
    "need": "coil resistance, rated coil voltage/current, pick-up/drop-out voltage, operate/release time, coil inductance, DC make/break rating at 44 V/10 A and 15 A fault",
    "verified": false,
    "doc": null,
-   "critical": true
+   "critical": true,
+   "reported": [
+    {
+     "value": "Durakool DG57CM datasheet lists DC1 loads 80 A @12 V, 60 A @36 V, 50 A @48 V; DG57CM-5021-76-1012 appears as an ordering example (user). Coil resistance/current, pick-up/drop-out, release time, inductance NOT provided",
+     "source": "user message 2026-10-01 (relayed from the manufacturer PDF; not read in this sandbox)"
+    }
+   ]
   },
   "relay_coil_L": {
    "value": 0.2,
@@ -209,22 +245,34 @@
    "critical": false
   },
   "mosfet_candidate": {
-   "value": null,
+   "value": "AOS AO3400A (SOT-23, 30 V N-FET)",
    "unit": "",
    "part": "SMD logic-level N-FET, >=60 V",
-   "need": "chosen part: VDSS, RDS(on) specified at VGS=2.5 V and 3.3 V, VGS(th) max, ID, Ciss, SOA, footprint",
+   "need": "AO3400A: VGS(th) min/max, RDS(on) at 2.5 V and 3.3-4.5 V (48 mOhm @2.5 V reported), ID, Ciss/Qg, SOA, SOT-23 pinout, and VDSS 30 V vs +12V transient (SMBJ15A 24.4 V clamp)",
    "verified": false,
    "doc": null,
-   "critical": true
+   "critical": true,
+   "reported": [
+    {
+     "value": "30 V, SOT-23, RDS(on) max 48 mOhm at VGS=2.5 V (user); VGS(th) max, ID, Ciss, pinout, SOA NOT provided",
+     "source": "user message 2026-10-01 (relayed from the manufacturer PDF; not read in this sandbox)"
+    }
+   ]
   },
   "buck_candidate": {
-   "value": null,
+   "value": "TI LMR14006Y (SOT-23-6), direct 12 V -> 3.3 V",
    "unit": "",
    "part": "LMR14006 family or TPS54202",
-   "need": "VIN abs max, VREF, FB equation, fsw, Isat/inductor recommendation, minimum on-time vs 12->3.3 V, EN thresholds",
+   "need": "LMR14006Y: fsw (Y suffix), VREF, FB equation/resistors for 3.3 V, inductor and Isat recommendation, min on-time at 12->3.3 V, EN thresholds, abs-max VIN",
    "verified": false,
    "doc": null,
-   "critical": true
+   "critical": true,
+   "reported": [
+    {
+     "value": "4-40 V input, 600 mA output (user); switching frequency/VREF/FB equation/Isat NOT provided",
+     "source": "user message 2026-10-01 (relayed from the manufacturer PDF; not read in this sandbox)"
+    }
+   ]
   },
   "isolator_iso7721": {
    "value": null,
@@ -233,7 +281,13 @@
    "need": "supply range both sides, default output state, pinout, creepage",
    "verified": false,
    "doc": null,
-   "critical": true
+   "critical": true,
+   "reported": [
+    {
+     "value": "1 forward + 1 reverse channel; NO integrated isolated power: both supplies must be provided and verified (user)",
+     "source": "user message 2026-10-01 (relayed from the manufacturer PDF; not read in this sandbox)"
+    }
+   ]
   },
   "cp2102n_package": {
    "value": null,
@@ -242,16 +296,28 @@
    "need": "choose package (KiCad 7 library holds QFN20 only; BOM candidate was QFN24), reference schematic, VREGIN/VDD behaviour, regulator output current",
    "verified": false,
    "doc": null,
-   "critical": true
+   "critical": true,
+   "reported": [
+    {
+     "value": "CP2102N datasheet link supplied; package choice not stated (user)",
+     "source": "user message 2026-10-01 (relayed from the manufacturer PDF; not read in this sandbox)"
+    }
+   ]
   },
   "rsa_20_50": {
    "value": null,
    "unit": "",
    "part": "Bourns RSA-20-50",
-   "need": "tolerance, TCR, Kelvin terminal geometry, derating",
+   "need": "confirm tolerance/TCR/2-3 derating and Kelvin terminal geometry from the Bourns RSA datasheet",
    "verified": false,
    "doc": null,
-   "critical": false
+   "critical": false,
+   "reported": [
+    {
+     "value": "RSA-20 = 20 A, 2.5 mOhm at 50 mV; tolerance +/-0.25 % standard; element TCR +/-15 ppm/C; continuous operation recommended <= 2/3 rated current = 13.3 A (user)",
+     "source": "user message 2026-10-01 (relayed from the manufacturer PDF; not read in this sandbox)"
+    }
+   ]
   },
   "connectors": {
    "value": null,
@@ -260,7 +326,13 @@
    "need": "mechanical drawings (drill, pitch, keep-out), current/voltage ratings",
    "verified": false,
    "doc": null,
-   "critical": true
+   "critical": true,
+   "reported": [
+    {
+     "value": "EB21A-02-C = 5.00 mm pitch right-angle (Adam Tech 2025 catalog, via user); Mouser lists 8 A / 300 V; NO standalone mechanical drawing found: footprint must NOT be frozen from the catalog alone (user)",
+     "source": "user message 2026-10-01 (relayed from the manufacturer PDF; not read in this sandbox)"
+    }
+   ]
   },
   "led_resistors_misc": {
    "value": null,

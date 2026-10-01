@@ -61,9 +61,12 @@ ADCRANGE=0 (±163.84 mV, 312.5 nV/LSB → 125 µA/LSB native) is kept: ADCRANGE=
 - Offset 1.0 µV ⚠[unverified] → 0.40 mA = 0.0040 % of 10 A.
 - 2 × 10 Ω + 100 nF differential: fc = 80 kHz; bias 2.0 nA ⚠[unverified] × 10 Ω = 20 nV.
 - TVS 1.5SMBJ48A Vc ≈ 77.4 V ⚠[unverified] vs abs max 85.0 V ⚠[unverified] → margin 7.6 V (thin; verify the clamp at the real surge current).
+- RSA-20-50 (reported, ⚠ unverified): ±0.25 % tolerance, ±15 ppm/°C TCR, continuous ≤ 2/3 of rating = 13.3 A (> our 10 A ceiling). Shunt self-heating at 10 A is 0.25 W → ΔR/R ≈ 15 ppm/K × rise; calibration against the EDU34450A remains the accuracy basis.
 - Sense wiring: IN+ = relay load side (RELAY_OUT), IN− = shunt load-side Kelvin; **VBUS from PACK_INA (upstream of K1)** so open-circuit voltage is read with the relay open; separate PACK_ADC lead for the independent channel; only GND_SENSE bonds logic ground to the pack.
 
 ## 3. Relay driver (Durakool DG57CM-5021-76-1012-R) — coil data ⚠[unverified]
+
+Contact rating evidence (reported, ⚠ not read here): DC1 loads 80 A @12 V, 60 A @36 V, 50 A @48 V; our envelope is ≤ 44 V, ≤ 10 A (15 A fault) → ≥ 5× margin on the reported figures. To record against the datasheet page when the PDF is available.
 
 | Coil V | I | P |
 |---|---|---|
@@ -74,8 +77,14 @@ ADCRANGE=0 (±163.84 mV, 312.5 nV/LSB → 125 µA/LSB native) is kept: ADCRANGE=
 | 15.0 V | 167 mA | 2.50 W |
 
 XDR-75-12 is adjustable (to ~15 V): **set and verify 12.0 V** (2.5 W in the coil at 15 V).
-**MOSFET acceptance criteria (replaces the IRLZ44N by decision):** SMD, VDSS ≥ 60 V, RDS(on) *specified* at VGS = 2.5 V **and** 3.3 V, VGS(th) max ≤ 2.0 V, ID ≥ 1 A, gate charge small enough for a 3.3 V GPIO via 220 Ω. With the coil at 0.17 A, RDS(on) ≤ 0.3 Ω keeps VDS ≤ 50 mV and P ≤ 9 mW. Gate network: 220 Ω in series, 10 kΩ pull-down → relay OFF when the MCU is in reset/unpowered/Hi-Z (gate leakage × 10 kΩ ≪ VGS(th)). Candidate part: **not selected** (chosen part: VDSS, RDS(on) specified at VGS=2.5 V and 3.3 V, VGS(th) max, ID, Ciss, SOA, footprint).
-- Flyback energy ½LI² = 1.78 mJ (L 0.2 H ⚠[unverified]); diode-only decay τ = L/R = 2.2 ms; with diode + 27 V TVS in series the current decays 3.2× faster (clamp ≈ 40 V + Vf vs MOSFET VDSS ≥ 60 V). **Baseline: plain diode; a series link/TVS footprint is provided (DNP). Do not commit to 27 V until the relay release-time data and MOSFET VDSS are verified.**
+**Q1 = AOS AO3400A (SOT-23, 30 V N-FET) — chosen by you; RDS(on) 48 mΩ max at VGS = 2.5 V is reported, not read here ⚠[unverified].**
+- coil 11.55 V: I = 128 mA → VDS(on) = 6.2 mV, P = 0.79 mW (RDS(on) = 48 mΩ at 2.5 V; the 3.3 V drive is above the specified point)
+- coil 12.0 V: I = 133 mA → VDS(on) = 6.4 mV, P = 0.85 mW (RDS(on) = 48 mΩ at 2.5 V; the 3.3 V drive is above the specified point)
+- coil 15.0 V: I = 167 mA → VDS(on) = 8.0 mV, P = 1.33 mW (RDS(on) = 48 mΩ at 2.5 V; the 3.3 V drive is above the specified point)
+- Gate network: 220 Ω series, 10 kΩ pull-down → relay OFF when the MCU is in reset/unpowered/Hi-Z (gate leakage × 10 kΩ ≪ VGS(th); VGS(th) still to be read).
+- **VDS margin (30 V part):** diode flyback clamps COIL_SW at ≈ +12…15 V + 0.7 V; the +12V surge clamp is the SMBJ15A at 24.4 V ⚠[unverified] → worst-case drain stress ≈ 24.4 V vs 30 V (margin ≈ 5.6 V, thin: re-check with the real clamp/leakage and any inductive kick that bypasses the diode).
+- **Fast-release 27 V TVS is REJECTED for this MOSFET:** coil rail + TVS = 12 + 27 = 39 V (+ diode) > 30 V VDSS. Baseline is the plain diode; the DNP link/TVS footprint stays but a fast-release clamp is allowed only after a new VDS transient analysis proves margin (e.g. a lower-voltage clamp or a different MOSFET).
+- Flyback energy ½LI² = 1.78 mJ (L 0.2 H ⚠[unverified]); diode-only decay τ = L/R = 2.2 ms. Baseline: plain diode (no fast-release clamp, see above).
 
 ## 4. VO610A-1 stages — design-to-guaranteed method (NOT frozen)
 
@@ -161,6 +170,10 @@ VIH = 2.31 V ⚠[unverified] → thresholds satisfied from 10.5 V up (2.84 V); a
 
 TC74 stays on its own I²C2 (PB10/PB11) at ≤ 100 kHz; INA228 on I²C1 (PB8/PB9). Limit: ≤ 1.5 m of shielded twisted pair; beyond that or if V1 fails, stop and propose another interface (DS18B20/NTC are contingency only, not in the baseline schematic).
 
+## 6b. ISO7721 supplies (reported: no integrated isolated power)
+
+VCC1 = 3V3 (controller side). VCC2 must be supplied from the host side: the CP2102N's 3.3 V regulator output (VREGIN from USB VBUS) feeds both the bridge VDD and ISO7721 VCC2; its output-current capability vs the isolator's ICC2 plus the bridge's own load, and both supply ranges, are to be verified from the CP2102N and ISO7721 datasheets (`cp2102n_package`, `isolator_iso7721`). Each side gets 100 nF at the pins; no common ground between sides.
+
 ## 7. Power tree (wide-input buck directly to 3.3 V; **no 5 V rail**)
 
 XDR-75-12 (set to 12.0 V) → J1 → F1 1 A fast → reverse-protection Schottky → SMBJ15A → +12V. +12V feeds (a) the coil chain E-stop → ARM → coil → Q1, (b) the buck → 3V3 → ferrite → 3V3A.
@@ -179,7 +192,7 @@ Buck at 150 mA, η 0.85: input 49 mA, loss 87 mW
 Buck at 150 mA, η 0.80: input 52 mA, loss 124 mW
 
 12 V rail: coil 133 mA + buck ≈ 45 mA + sense 4 mA ≈ 182 mA of a 6.24 A supply; F1 1 A. Series Schottky drop ≈ 0.4 V → coil at ≈ 11.6 V.
-Surge margin: SMBJ15A clamp 24.4 V ⚠[unverified] vs buck VIN abs max (**datasheet: LMR14006 family 40 V class vs TPS54202 28 V class — unverified**). Wide-input margin is the reason for preferring the 40 V part. Buck output → LC → 3V3; 3V3A = ferrite + 1 µF + 100 nF (VDDA, INA228); ripple at bring-up, not by calculation.
+Surge margin: SMBJ15A clamp 24.4 V ⚠[unverified] vs buck VIN: LMR14006Y is a 4–40 V part (reported) → ≈ 15.6 V margin over the 24.4 V clamp. TPS54202 is dropped. Buck output → LC → 3V3; 3V3A = ferrite + 1 µF + 100 nF (VDDA, INA228); ripple at bring-up, not by calculation.
 
 ## 8. Schematic-freeze status
 
