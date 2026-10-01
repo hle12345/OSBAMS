@@ -78,6 +78,8 @@ part("TVS15", lib="Device:D_Zener", fp="Diode_SMD:D_SMB", mfr="Littelfuse", mpn=
      evid=UR, life="UNKNOWN (not checked)", alt="Bourns SMBJ15A-Q", src="CONSIGN or PCBWay source")
 part("TVS48", lib="Device:D_Zener", fp="Diode_SMD:D_SMB", mfr="Bourns", mpn="1.5SMBJ48A", desc="Unidirectional TVS 48 V standoff 1500 W (K = pin 1)",
      evid=UR, life="UNKNOWN (not checked)", alt="Littelfuse 1.5SMC / SMBJ48A", src="CONSIGN (owned: 2; 3 needed) or PCBWay source")
+part("TVS_DIFF", lib="Device:D_TVS", fp="Diode_SMD:D_SMF", mfr="Littelfuse", mpn="SMF12CA", desc="Bidirectional TVS 12 V standoff 200 W SMF (differential clamp IN+/IN-)",
+     evid=UV, life="UNKNOWN (not checked)", alt="Bourns SMF12CA / Vishay SMF12A (bidirectional)", src="PCBWay source (datasheet NOT yet read)")
 part("D1N4148", lib="Device:D", fp="Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal", mfr="onsemi", mpn="1N4148", desc="Small-signal diode DO-35 (LED reverse clamp)",
      evid=UV, life="UNKNOWN (not checked)", alt="Vishay 1N4148", src="CONSIGN (owned: 2) or PCBWay source")
 part("BAT54S", lib="Diode:BAT54S", fp="Package_TO_SOT_SMD:SOT-23", mfr="Nexperia", mpn="BAT54S,215", desc="Dual series Schottky SOT-23 (clamp)",
@@ -119,7 +121,7 @@ part("J_PH4", lib="Connector_Generic:Conn_01x04", fp="Connector_JST:JST_PH_B4B-P
      evid=UV, life="UNKNOWN (not checked)", alt="JST B4B-PH-K-S(LF)(SN)", src="PCBWay source")
 part("J_USBC", lib="Connector:USB_C_Receptacle_USB2.0_16P", fp="Connector_USB:USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal", mfr="GCT", mpn="USB4105-GF-A", desc="USB-C 2.0 receptacle 16-pin",
      evid=UV, life="UNKNOWN (not checked)", alt="Korean Hroparts TYPE-C-31-M-12", src="PCBWay source")
-part("J_SWD", lib="Connector:Conn_ARM_JTAG_SWD_10", fp="Connector_PinHeader_1.27mm:PinHeader_2x05_P1.27mm_Vertical_SMD", mfr="Samtec", mpn="FTSH-105-01-L-DV-K", desc="Cortex-debug 2x5 1.27 mm shrouded keyed header",
+part("J_SWD", lib="Connector:Conn_ARM_JTAG_SWD_10", fp="OSBAMS_Rev2:FTSH-105-01-L-DV-K", mfr="Samtec", mpn="FTSH-105-01-L-DV-K", desc="Cortex-debug 2x5 1.27 mm shrouded keyed header",
      evid=UV, life="UNKNOWN (not checked)", alt="Harwin M50-3600542", src="PCBWay source")
 
 # ----------------------------------------------------------------------------- components
@@ -207,6 +209,7 @@ add("D5", "TVS48", S5, {"K": "SHUNT_INP_RAW", "A": "GND"}, "1.5SMBJ48A")
 add("D6", "TVS48", S5, {"K": "SHUNT_INN_RAW", "A": "GND"}, "1.5SMBJ48A")
 add("R11", "R0603_10", S5, {1: "SHUNT_INP_RAW", 2: "INA_INP"}, "10")
 add("R12", "R0603_10", S5, {1: "SHUNT_INN_RAW", 2: "INA_INN"}, "10")
+add("D15", "TVS_DIFF", S5, {"A1": "INA_INP", "A2": "INA_INN"}, "SMF12CA", note="Differential clamp across the INA228 IN+/IN- pins (one-Kelvin-lead-open / late-connect: INA228 differential abs max is +/-40 V). Bidirectional, VRWM 12 V >> 50 mV full-scale shunt signal")
 add("C26", "C100n", S5, {1: "INA_INP", 2: "INA_INN"}, "100nF 50V", note="Differential filter fc ~80 kHz")
 add("U2", "U_INA", S5, {"IN+": "INA_INP", "IN-": "INA_INN", "VBUS": "INA_VBUS", "VS": "3V3_A", "GND": "GND", "SDA": "SDA1", "SCL": "SCL1", "ALERT": "INA_ALERT", "A0": "GND", "A1": "GND"}, "INA228")
 add("C27", "C100n", S5, {1: "3V3_A", 2: "GND"}, "100nF", note="INA228 VS")

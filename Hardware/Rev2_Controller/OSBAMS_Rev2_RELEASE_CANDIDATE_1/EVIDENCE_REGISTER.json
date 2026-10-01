@@ -236,11 +236,11 @@
    "id": "ina228_diff_max",
    "part": "INA228",
    "parameter": "IN+ to IN- differential absolute maximum",
-   "value": "unknown",
+   "value": "+/-40 V",
    "unit": "",
-   "evidence": "UNVERIFIED",
-   "critical": false,
-   "source": "assumption / proposal - needs the manufacturer document",
+   "evidence": "USER_RELAYED_MANUFACTURER",
+   "critical": true,
+   "source": "user message 2026-10-01 (INA228 differential abs max +/-40 V; PDF not opened in this build environment)",
    "doc": null
   },
   {
@@ -508,15 +508,26 @@
    "doc": "docs/rev2/pcb/evidence/Bourns_1.5SMBJ_datasheet.pdf"
   },
   {
-   "id": "rs_pulse_rating",
+   "id": "rs_catalog_ratings",
    "part": "Panasonic ERJ-P08F47R0V / ERJ-P08F10R0V",
-   "parameter": "ERJ-P08F47R0V / ERJ-P08F10R0V (1206, anti-surge): part-number scheme confirmed (ERJ P08 / F = +/-1 % / 47R0, 10R0 four-digit value / V packaging; 10 ohm-1 Mohm range includes both); 0.66 W @ 70 C, limiting element voltage 500 V, max overload voltage 1000 V, overload test 2.0 x RCWV for 5 s, ESD test +/-3 kV with 150 pF (0.675 mJ, HBM-style); the catalog contains NO us-ms pulse-energy-vs-duration curve -> credible-set energies (<= 0.37 mJ) are inside the ESD-test energy but the thermal-pulse rating is not documented here",
+   "parameter": "Panasonic ERJ-P08F47R0V / ERJ-P08F10R0V (1206 anti-surge) catalog ratings read from the ERJ P/PA/PM catalog: part-number scheme (ERJ P08 / F = +/-1 % / 47R0 or 10R0 / V packaging), 0.66 W @ 70 C, limiting element voltage 500 V, max overload voltage 1000 V, overload test 2.0 x RCWV for 5 s, ESD test +/-3 kV with 150 pF (0.675 mJ). The catalog has NO us-ms pulse-energy-vs-duration curve.",
    "value": "0.66 W / 500 V / 1000 V",
    "unit": "",
    "evidence": "VERIFIED_LOCAL",
    "critical": false,
    "source": "Panasonic anti-surge thick film chip resistors ERJ P/PA/PM series (24-Feb-22), read locally from the user-supplied PDF: Ratings (ERJP08 row), Dimensions/ESD page, Performance page",
    "doc": "docs/rev2/pcb/evidence/Panasonic_ERJ_P_PA_PM_anti-surge_series_24Feb22.pdf"
+  },
+  {
+   "id": "rs_pulse_rating",
+   "part": "Panasonic ERJ-P08F47R0V / ERJ-P08F10R0V",
+   "parameter": "ERJ-P08F47R0V / ERJ-P08F10R0V PULSE CAPABILITY (energy / peak power vs pulse duration, single and repeated pulses): OPEN. The supplied catalog gives only DC ratings and the +/-3 kV 150 pF ESD test; the Panasonic pulse-data document (AOA0000C331.pdf) has not been checked. Required before the 47 ohm / 10 ohm values are final: single-pulse energy and repetition for the hot-plug and interruption events in CONTROLLER_PROTECTION_AND_CONNECTOR_AUDIT.md (<= 0.4 mJ per event, 20 events) and the resistor-body voltage withstand for a connector ESD pulse",
+   "value": null,
+   "unit": "",
+   "evidence": "UNVERIFIED",
+   "critical": true,
+   "source": "Panasonic ERJ P/PA/PM catalog read (no pulse curve); AOA0000C331.pdf pulse data NOT checked",
+   "doc": null
   },
   {
    "id": "erjp6w_ref",
@@ -895,24 +906,35 @@
   {
    "id": "conn_samtec",
    "part": "Samtec FTSH-105-01-L-DV-K (J9)",
-   "parameter": "Samtec FTSH-105-01-L-DV-K: catalog page confirms the part-number decode (FTSH-1, 05 pins/row = 10 pins, -01 lead style 3.05 mm post, -L 10 uin gold on post / matte tin tail, -DV double vertical, -K keying shroud for FFSD cable mating), 1.27 mm pitch, 0.40 mm square post, tail-to-tail width 5.84 mm, 3.4 A, 280 VAC/396 VDC; NO land pattern or key-position drawing on the page -> footprint pad geometry (generic KiCad 2x05 SMD: pads 0.74 x 2.40 at +/-1.95, tails 5.84 wide fit inside the 6.30 mm pad span) and key orientation vs pin 1 still need the Samtec print/footprint",
+   "parameter": "Samtec FTSH-105-01-L-DV-K land pattern: recommended PCB layout rev H (FTSH-1XX-XX-XXX-DV-XXX): 1.27 mm pitch, pads 0.74 x 2.79 mm, overall pad span 6.86 mm (rows 4.07 mm centre to centre, 1.28 mm gap between pad rows), pin 01 = bottom-left / 02 above it / 03 to the right in the drawing view, symmetric about the centerline; table 1 locating-hole 'A' = N/A for -K (no PCB hole). Product drawing rev FX: 5 positions per row, body 3.43 mm wide, tail-to-tail 5.84 mm, -K keying (FFSD mating, positions 05-25, lead style -01 only), tolerance on length No.pos x 1.27 +0.13/-0.36. J9 now uses this land pattern (footprint OSBAMS_Rev2:FTSH-105-01-L-DV-K, RC1.2e); the old generic 0.74 x 2.40 mm pads were 0.39 mm too short",
+   "value": "0.74 x 2.79 mm pads, 6.86 mm span",
+   "unit": "",
+   "evidence": "VERIFIED_LOCAL",
+   "critical": false,
+   "source": "Samtec recommended PCB layout rev H + product drawing rev FX, read locally from the user-supplied PDFs",
+   "doc": "docs/rev2/pcb/evidence/Samtec_FTSH-1XX-XX-XXX-DV-XXX_recommended_PCB_layout_revH.pdf"
+  },
+  {
+   "id": "conn_samtec_key",
+   "part": "Samtec FTSH-105-01-L-DV-K (J9)",
+   "parameter": "Samtec -K keying: which long side of the shroud carries the key slot (pin-1 row side vs pin-2 row side) is not resolved by the drawings (fig 2 shows a keying part FTSH-50-CN-xx centred on the shroud, side ambiguous in the top view); it does not change the land pattern (symmetric) but decides the cable-mating direction with the FFSD ribbon pin-1 stripe -> check on the physical part before the first SWD cable is plugged in",
    "value": null,
    "unit": "",
    "evidence": "UNVERIFIED",
-   "critical": true,
-   "source": "Samtec FTSH catalog page F-226, read locally",
-   "doc": "docs/rev2/pcb/evidence/Samtec_FTSH_catalog_page.pdf"
+   "critical": false,
+   "source": "Samtec product drawing rev FX fig 2 (side ambiguous)",
+   "doc": "docs/rev2/pcb/evidence/Samtec_FTSH-1XX-XX-XXX-DV-XXX-XXX-X-XX_product_drawing_revFX.pdf"
   },
   {
    "id": "conn_molex",
    "part": "Molex 22-27-2031 / 22-27-2041 (J5, J6)",
-   "parameter": "Molex pad/drill/outline/pin-1 geometry: the supplied product pages give circuits, pitch (2.54), tail (3.56), PCB thickness (1.60) and 'partially shrouded, polarized to mating part' (match the KiCad KK-254 footprints) but NO dimensioned drawing -> pad 1.74 x 2.19 / drill 1.19 / outline unverified; sales drawings 022272031_sd.pdf and 022272041_sd.pdf (or the Molex footprint zip) needed",
+   "parameter": "Molex pad/drill/outline/pin-1 geometry for 22-27-2031 (J5) and 22-27-2041 (J6): the 022272041 drawing supplied is a 3D isometric of the part (4 circuits, square posts, polarizing/friction-lock shroud with a ramp on one long side) with NO dimensions; the 022272031 sheet was not supplied; product pages give circuits, pitch 2.54, tail 3.56, PCB 1.60, partially shrouded -> pad 1.74 x 2.19 / drill 1.19 / outline / which side the friction-lock ramp is on relative to pin 1 remain unverified (need 022272031_sd.pdf / 022272041_sd.pdf with dimensions or the Molex ECAD model)",
    "value": null,
    "unit": "",
    "evidence": "UNVERIFIED",
    "critical": true,
-   "source": "product pages read; drawings not supplied",
-   "doc": null
+   "source": "Molex 022272041 3D drawing (no dimensions), product pages; dimensioned sales drawings not supplied",
+   "doc": "docs/rev2/pcb/evidence/Molex_022272041_3D_drawing_no_dimensions.pdf"
   },
   {
    "id": "molex_facts",
@@ -945,6 +967,28 @@
    "evidence": "USER_RELAYED_MANUFACTURER",
    "critical": true,
    "source": "user message 2026-10-01 (MANUFACTURER_DATA input: official manufacturer data retrieved by the user's web-capable reviewer; PDF not opened in this build environment)",
+   "doc": null
+  },
+  {
+   "id": "tvs_diff",
+   "part": "SMF12CA (D15)",
+   "parameter": "Littelfuse SMF12CA bidirectional TVS (SMF/SOD-123FL): assumed VRWM 12 V, VBR 13.3-14.7 V, IR <= 1 uA at VRWM, VC about 19.9 V at about 10 A, 200 W (8/20 us ~ 600 W class), junction capacitance tens of pF. NONE of these were read from a datasheet; part choice and the clamp-level estimates in the audit are UNVERIFIED",
+   "value": null,
+   "unit": "",
+   "evidence": "UNVERIFIED",
+   "critical": true,
+   "source": "engineering estimate; Littelfuse/Bourns SMF12CA datasheet not supplied",
+   "doc": null
+  },
+  {
+   "id": "esd_connector",
+   "part": "J5/J6 connectors",
+   "parameter": "ESD at accessible connectors (IEC 61000-4-2, +/-8 kV contact / +/-15 kV air, 150 pF/330 ohm): first-ns peak and the R41-R43-before-TVS ordering cannot be proven by simulation (parasitic L, TVS turn-on, resistor-body withstand unknown) -> first-article test, with a connector-level fast TVS as the RC1.3 fallback",
+   "value": null,
+   "unit": "",
+   "evidence": "UNVERIFIED",
+   "critical": false,
+   "source": "audit analysis; no test data",
    "doc": null
   }
  ]

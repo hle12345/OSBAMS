@@ -34,10 +34,37 @@ def eb21a():
     return s
 
 
+def ftsh105():
+    """Samtec FTSH-105-01-L-DV-K, 10-pos (2x5) 1.27 mm double-row vertical SMT shrouded header.
+    Land pattern from Samtec 'Recommended PCB layout for FTSH-1XX-XX-XXX-DV-XXX' rev H (VERIFIED_LOCAL): pads 0.74 x 2.79 mm,
+    1.27 mm pitch, 6.86 mm overall pad span (pad rows 4.07 mm centre to centre, 1.28 mm between the rows); -K has no locating hole
+    (table 1 'A' = N/A). Body from the product drawing FTSH-1XX-XX-XXX-DV-XXX-XXX-X-XX rev FX: 5 x 1.27 = 6.35 mm long, 3.43 mm wide.
+    Local frame = the KiCad generic frame (origin = array centre, pin 1 top-left, pin 2 to its right, pitch along +y): rotating this
+    footprint by +90 deg (CCW) reproduces the Samtec drawing view (pin 1 bottom-left, pin 2 above it, pin 3 to its right).
+    The position of the -K key slot on the shroud is NOT resolved by the drawings (see CONNECTOR_FOOTPRINT_CHECK.md)."""
+    s = '(footprint "FTSH-105-01-L-DV-K"\n  (version 20240108)\n  (generator "osbams")\n  (layer "F.Cu")\n'
+    s += '  (descr "Samtec FTSH-105-01-L-DV-K 2x5 1.27 mm SMT shrouded header; land pattern from Samtec recommended PCB layout rev H (VERIFIED_LOCAL). Pin 1 top-left in this frame.")\n'
+    s += '  (tags "SWD Cortex debug FTSH 1.27mm")\n  (attr smd)\n'
+    s += '  (property "Reference" "REF**" (at 0 -4.2 0) (layer "F.SilkS") (effects (font (size 1 1) (thickness 0.15))))\n'
+    s += '  (property "Value" "FTSH-105-01-L-DV-K" (at 0 4.2 0) (layer "F.Fab") (effects (font (size 1 1) (thickness 0.15))))\n'
+    for n in range(1, 11):
+        row = (n - 1) // 2
+        x = -2.035 if n % 2 else 2.035
+        y = -2.54 + 1.27 * row
+        s += f'  (pad "{n}" smd rect (at {x} {y}) (size 2.79 0.74) (layers "F.Cu" "F.Mask" "F.Paste"))\n'
+    s += rect(-1.715, -3.175, 1.715, 3.175, "F.Fab", 0.1)
+    s += rect(-3.68, -3.43, 3.68, 3.43, "F.CrtYd", 0.05)
+    s += line(-1.7, -3.3, 1.7, -3.3, "F.SilkS") + line(-1.7, 3.3, 1.7, 3.3, "F.SilkS")
+    s += '  (fp_poly (pts (xy -3.95 -2.54) (xy -4.45 -2.84) (xy -4.45 -2.24)) (stroke (width 0.1) (type solid)) (fill solid) (layer "F.SilkS"))\n'
+    s += '  (fp_text user "1" (at -4.9 -2.54 0) (layer "F.SilkS") (effects (font (size 0.8 0.8) (thickness 0.12))))\n)\n'
+    return s
+
+
 def write_all():
     d = os.path.join(PRJ, "OSBAMS_Rev2.pretty")
     os.makedirs(d, exist_ok=True)
     open(os.path.join(d, "EB21A-02-C.kicad_mod"), "w").write(eb21a())
+    open(os.path.join(d, "FTSH-105-01-L-DV-K.kicad_mod"), "w").write(ftsh105())
 
 
 if __name__ == "__main__":

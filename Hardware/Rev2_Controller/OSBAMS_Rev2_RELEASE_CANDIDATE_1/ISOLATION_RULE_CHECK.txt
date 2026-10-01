@@ -2,4 +2,4 @@ Custom-rule activity check (design/isorule_test.py, KiCad 10.0.6): the project i
 custom rule file present next to the project: True
 fresh-folder copy: 0 DRC violations (rules triggered: none)
    sample: ['[clearance]: Clearance violation (zone clearance 0.2500 mm; actual 0.1505 mm)', '[clearance]: Clearance violation (zone clearance 0.2500 mm; actual 0.1505 mm)']
-negative control (same project, rule tightened to 3.0 mm, existing zone fills left as they are): 119 violations (0 -> 119; the existing fills no longer satisfy the tightened rule) -> the .kicad_dru is read and applied by KiCad when the project is opened from this folder
+negative control (same project, rule tightened to 3.0 mm, existing zone fills left as they are): 144 violations (0 -> 144; the existing fills no longer satisfy the tightened rule) -> the .kicad_dru is read and applied by KiCad when the project is opened from this folder

@@ -68,7 +68,7 @@ class TestReleaseGates(unittest.TestCase):
         need = ["OSBAMS_Rev2_RC1.kicad_pro", "OSBAMS_Rev2_RC1.kicad_sch", "OSBAMS_Rev2_RC1.kicad_pcb", "OSBAMS_Rev2_RC1_Schematic.pdf",
                 "OSBAMS_Rev2_RC1_BOM.xlsx", "OSBAMS_Rev2_RC1_CPL.csv", "OSBAMS_Rev2_RC1_Assembly_Drawing_Top.pdf",
                 "ASSEMBLY_NOTES.md", "FABRICATION_NOTES.md", "ISOLATION_CHECK.txt", "OSBAMS_Rev2_RC1.kicad_dru", "PRE_PCBWAY_RELEASE_CHECKLIST.md", "EVIDENCE_RISK_CLASSIFICATION.md", "CONNECTOR_FOOTPRINT_CHECK.md", "OSBAMS_Rev2_RC1_Test_Point_Map.pdf", "POWER_TREE_AND_CALCULATIONS.md", "DFM_DFA_REPORT.md",
-                "EVIDENCE_REGISTER.md", "SUPPLY_CHAIN_REPORT.md", "ERC_REPORT.rpt", "DRC_REPORT.rpt", "PCBWAY_RELEASE_CANDIDATE_REPORT.md", "NETLIST_CHECK.txt"]
+                "EVIDENCE_REGISTER.md", "SUPPLY_CHAIN_REPORT.md", "ERC_REPORT.rpt", "DRC_REPORT.rpt", "PCBWAY_RELEASE_CANDIDATE_REPORT.md", "NETLIST_CHECK.txt", "CONTROLLER_PROTECTION_AND_CONNECTOR_AUDIT.md"]
         for f in need:
             self.assertTrue(os.path.getsize(os.path.join(self.RC, f)) > 0, f)
         # the script-generated candidate Gerbers/drills must not ship: the owner exports them from the final PCB in KiCad 10
@@ -84,6 +84,25 @@ class TestReleaseGates(unittest.TestCase):
         self.assertIn("** Found 0 DRC violations **", drc)
         dru = open(os.path.join(self.RC, "OSBAMS_Rev2_RC1.kicad_dru")).read()
         self.assertIn("isolation_host_to_controller", dru)
+
+    def test_protection_audit_sections_and_rc12e_changes(self):
+        t = open(os.path.join(self.RC, "CONTROLLER_PROTECTION_AND_CONNECTOR_AUDIT.md")).read()
+        for h in ("## PASS", "## CHANGE REQUIRED", "## FIRST-ARTICLE VALIDATION", "## REMAINING FABRICATION BLOCKERS"):
+            self.assertIn(h, t)
+        self.assertIn("NOT RELEASED FOR FABRICATION", t)
+        self.assertNotIn("PRODUCTION READY", t.upper().replace("NOT PRODUCTION READY", ""))
+        # J9 uses the Samtec land pattern (0.74 x 2.79 mm pads) and the differential clamp D15 exists
+        fp = open(os.path.join(self.RC, "OSBAMS_Rev2.pretty", "FTSH-105-01-L-DV-K.kicad_mod")).read()
+        self.assertIn("(size 2.79 0.74)", fp)
+        self.assertNotIn("(size 2.4 0.74)", fp)
+        pcb = open(os.path.join(self.RC, "OSBAMS_Rev2_RC1.kicad_pcb")).read()
+        self.assertIn('"OSBAMS_Rev2:FTSH-105-01-L-DV-K"', pcb)
+        self.assertIn('"D15"', pcb)
+        # resistor pulse capability stays open until the Panasonic pulse-data document is checked
+        reg = {e["id"]: e for e in self._register()}
+        self.assertEqual(reg["rs_pulse_rating"]["evidence"], "UNVERIFIED")
+        self.assertTrue(reg["rs_pulse_rating"]["critical"])
+        self.assertEqual(reg["ina228_diff_max"]["value"], "+/-40 V")
 
     def test_netlist_and_polarity_checks_pass(self):
         t = open(os.path.join(self.RC, "NETLIST_CHECK.txt")).read()

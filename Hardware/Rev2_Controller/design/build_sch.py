@@ -47,7 +47,7 @@ def write_tables():
 
 def write_pro():
     pro = {"meta": {"filename": D.PROJECT + ".kicad_pro", "version": 1}, "board": {"design_settings": {"rules": {"min_clearance": 0.1, "min_track_width": 0.15, "min_via_diameter": 0.5, "min_through_hole_diameter": 0.3, "min_copper_edge_clearance": 0.3, "min_hole_clearance": 0.19, "min_resolved_spacing": 0.0, "min_silk_clearance": 0.0, "min_text_height": 0.8, "min_text_thickness": 0.08, "solder_mask_to_copper_clearance": 0.0}}}, "libraries": {"pinned_footprint_libs": [], "pinned_symbol_libs": []},
-           "sheets": [], "text_variables": {"REV": "RC1.2"}}
+           "sheets": [], "text_variables": {"REV": "RC1.2e"}}
     from design import netclasses
     pro["net_settings"] = netclasses.pro_net_settings()
     open(os.path.join(OUT, D.PROJECT + ".kicad_dru"), "w").write(netclasses.dru_text())

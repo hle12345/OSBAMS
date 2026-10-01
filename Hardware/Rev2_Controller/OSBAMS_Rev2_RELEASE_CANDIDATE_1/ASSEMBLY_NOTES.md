@@ -1,9 +1,9 @@
 # OSBAMS Rev.2 Controller — Assembly notes (2026-10-01)
 
-**RC1.2 - REVIEW CANDIDATE - NOT RELEASED FOR FABRICATION.**
+**RC1.2e - REVIEW CANDIDATE - NOT RELEASED FOR FABRICATION.**
 
 ## Assembly summary
-- 105 SMT/SMD-only footprints (top side) and 12 through-hole footprints (including connectors, 2 x VO610A-1 DIP-4, 2 x 1N4148 DO-35, JP1, mounting hole/test-point features are not parts).
+- 106 SMT/SMD-only footprints (top side) and 12 through-hole footprints (including connectors, 2 x VO610A-1 DIP-4, 2 x 1N4148 DO-35, JP1, mounting hole/test-point features are not parts).
 - Parts are on the **top side only**; no bottom-side assembly. Test points are bare 1.5 mm pads (no component).
 - **THT parts needing hand/selective soldering:** J1-J4 (Adam Tech EB21A-02-C), J5 (Molex 22-27-2031), J6 (22-27-2041), J7 (JST B4B-PH-K-S), JP1, U4/U5 (VO610A-1 DIP-4), D11/D12 (1N4148 DO-35), J9/J8 mixed SMT+THT shield.
 - **Consigned vs sourced:** default is PCBWay-sourced. Owned parts that can be consigned (BOM column `PCBWay Source / Consign`): 2 x VO610A-1 (exactly the two needed), 2 x 1N4148, EB21A-02-C (5 owned, 4 needed), 1.5SMBJ48A (2 owned, 3 needed), SMBJ15A. VJ0805Y104JXXAT (2 owned) are used on the probe board.

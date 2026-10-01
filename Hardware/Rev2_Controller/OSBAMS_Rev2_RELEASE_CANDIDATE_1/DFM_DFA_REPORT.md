@@ -1,6 +1,6 @@
 # OSBAMS Rev.2 Controller — DFM / DFA report (2026-10-01)
 
-**RC1.2 - REVIEW CANDIDATE - NOT RELEASED FOR FABRICATION.** Automated checks are in the repository (`design/checks.py`, KiCad ERC/DRC). Human review of PCBWay's CAM feedback is still required.
+**RC1.2e - REVIEW CANDIDATE - NOT RELEASED FOR FABRICATION.** Automated checks are in the repository (`design/checks.py`, KiCad ERC/DRC). Human review of PCBWay's CAM feedback is still required.
 
 ## Electrical rule checks (KiCad 10.0.6)
 - ERC (schematic, 11 sheets): **0 violations**.
@@ -25,7 +25,7 @@
 Result: **PASS**. (Rev.1's symbol-vs-footprint polarity defect is not repeated: every diode uses a KiCad symbol with K = pin 1 and a footprint with the cathode bar at pad 1.)
 
 ## Layout statistics
-721 track segments, 518 vias, min track 0.20 mm, min via 0.50/0.30 mm, 105 SMD footprints, 12 through-hole footprints, 3 fiducials, 4 mounting holes, 27 test points.
+733 track segments, 522 vias, min track 0.20 mm, min via 0.50/0.30 mm, 106 SMD footprints, 12 through-hole footprints, 3 fiducials, 4 mounting holes, 27 test points.
 
 ## DFM items for review
 - 0.5 mm pitch LQFP-64 and QFN-20: confirm PCBWay minimum solder-mask bridge and paste stencil; ENIG recommended.

@@ -8,7 +8,7 @@ from design import rev2_design as D
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 RC = os.path.join(ROOT, "OSBAMS_Rev2_RELEASE_CANDIDATE_1")
 BOARD = json.load(open(os.environ.get("BOARDDATA", os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "build", "boarddata.json"))))
-NOTFAB = "RC1.2 - REVIEW CANDIDATE - NOT RELEASED FOR FABRICATION"
+NOTFAB = "RC1.2e - REVIEW CANDIDATE - NOT RELEASED FOR FABRICATION"
 
 
 def pkg(fp):
