@@ -12,14 +12,14 @@ No STM32, ADC, INA228, relay or safety logic on this board. `PI_GND` is **not** 
 
 | # | Gate | State |
 |---|------|-------|
-| 1 | **5 V voltage-drop budget** ≥ 4.85 V at the Pi header @ 5 A worst case | **OPEN** — with F2 = 7.7 mΩ and Micro-Fit at 10 mΩ max, worst case @ 5 A is 4.74 V (Pi-end 10 mΩ) before trim; a ~5.10 V setpoint (+2.3 %) gives 4.85 V, no-load max 5.22 V. Feasible only if the **Pi-end connector is ≤ ~16 mΩ/contact (target ≤10)**. Pi-end connector NOT selected (`docs/Pi_end_connector_requirements.md`). |
-| 2 | RSDW40F-05 footprint verified against Mean Well drawing | **OPEN / BLOCKER** — still placeholder geometry (50.8×25.4 mm body, 6 pins at module ends, 5.08 mm pitch). Mean Well and every datasheet mirror tried were blocked. Supply the mechanical drawing (or pin X/Y, drill, body size) and it drops into `build_pcb.py`. |
+| 1 | **5 V voltage-drop budget** ≥ 4.85 V at Pi header @ 5 A worst case, ≤ 5.25 V no-load | **CLOSED on paper** (inputs owner-cited): ±1 % RSDW, F2 7.7 mΩ, Micro-Fit 10 mΩ, Harwin M20 20 mΩ ×2/rail → untrimmed worst 4.72 V; **trim to 5.14 V (Rt = 105 kΩ)** gives 4.86 V worst, 5.19 V no-load max. Hot-fuse case 4.84 V. Needs bench confirmation. |
+| 2 | RSDW40F-05 footprint | **OPEN** — body 50.8×25.4 mm, pin Ø≈1.0 mm and pinout recorded (owner-cited) but pin X/Y/drill/keepout not supplied; still placeholder. Drawing site unreachable from here. |
 | 3 | Other footprints (Molex 43045-0400/-0200, Nano2 0451, SMB, radial caps, passives) | **LIBRARY-SOURCED, not manufacturer-PDF-verified** — official KiCad library, which cites the Molex/Littelfuse datasheets, incl. Micro-Fit pegs/drills. Cross-check against the Molex drawing before release. |
-| 4 | Molex mating parts (43025 housings, 43030 terminals, wire gauge) | **OPEN** — candidates only |
+| 4 | Mating parts / Pi end | Molex 43025/43030 candidates; Pi end = Harwin M20 (owner-cited). **Pi-end pin map + anti-reversal keying OPEN** — an unkeyed reversed housing swaps +5 V and GND (`docs/Pi_end_connector_requirements.md`). |
 | 5 | KiCad ERC passes | **OPEN** — build container only has KiCad 7.0.11 (no `sch erc`; KiCad 10 not obtainable here). Custom connectivity check passes (`reports/ERC_equivalent_connectivity_report.txt`). Run ERC in KiCad 10 locally, then regenerate. |
 | 6 | KiCad DRC passes | **PARTIAL** — 0 electrical/courtyard/clearance errors; only silkscreen-overlap and "library not configured" warnings. Re-run in KiCad 10. |
 | 7 | Isolation spacing checked | **PARTIAL** — 10 mm copper-free lane, no crossing; module-specific spacing not verified |
-| 8 | Pi 5 voltage under load bench-verified; Waveshare + Pi current measured | **OPEN** |
+| 8 | Bench: Pi voltage under load; Waveshare + Pi current; harness temp rise | **OPEN** |
 | 9 | PCBWay sourcing of RSDW40F-05 | **OPEN** — else **consigned / customer-supplied** |
 
 ## Contents

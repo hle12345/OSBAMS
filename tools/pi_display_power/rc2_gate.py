@@ -2,7 +2,7 @@
 """RC2 gate: refuses unless every required input is verified or owner-cited."""
 import json, os, sys
 I = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "datasheet_inputs.json")))
-need = ["f2_resistance_cold_mohm", "j_out_contact_max_mohm", "rsdw_trim_network", "rsdw_tolerance_pct", "rsdw_footprint_drawing", "pi_end_connector_mpn", "pi_end_contact_max_mohm", "erc_clean_kicad10"]
+need = ["f2_resistance_cold_mohm", "j_out_contact_max_mohm", "rsdw_trim_network", "rsdw_tolerance_pct", "pi_end_connector_mpn", "pi_end_contact_max_mohm", "rsdw_footprint_drawing", "pi_end_pin_map_confirmed", "erc_clean_kicad10", "bench_pi_voltage"]
 ok = lambda k: I[k]["status"] in ("verified", "owner_cited") and I[k]["value"] not in (None, False)
 bad = [k for k in need if not ok(k)]
 print("RC2 gate:", "OPEN" if bad else "CLEAR")

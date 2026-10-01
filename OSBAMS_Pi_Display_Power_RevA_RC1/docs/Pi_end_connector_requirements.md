@@ -1,18 +1,32 @@
-# Pi-end connector — selection requirements (NOT YET SELECTED)
+# Pi-end connector — Harwin M20 crimp system (owner-selected; pin map + keying still OPEN)
 
-No exact MPN is chosen. Choosing one without its published per-contact current and contact-resistance rating would repeat the placeholder problem, and the manufacturer datasheets are not reachable from the build environment. The connector must be selected from a datasheet and entered in `tools/pi_display_power/datasheet_inputs.json` (`pi_end_connector_mpn`, `pi_end_contact_max_mohm`).
+## Selection (owner-cited, re-check vs Harwin PDFs)
+- Housing: Harwin **M20-1070500** (2×N 2.54 mm cable housing; confirm pin count/layout on the drawing). Contacts: Harwin **M20-1160042** gold crimp, 22–30 AWG, **3 A per contact, 20 mΩ max initial**. Wire: **22 AWG** per contact. Harwin M20 housings are **not polarised**.
+- Two contacts in parallel for +5 V (Pi pins 2, 4) and at least two for GND (e.g. pins 6, 9). 16 AWG trunk (≤150 mm) from J_OUT splits/splices to 22 AWG branch leads (~50 mm) near the Pi. No 16 AWG into the Pi-end contacts.
 
-## Electrical (from `Voltage_drop_budget.md`)
-- Published contact resistance **<= 10 mOhm per contact** (design target). Hard ceiling **~16 mOhm** — above that no single trim setpoint meets both 4.85 V @ 5 A and 5.25 V no-load (assuming +-2 % RSDW tolerance, unverified).
-- Published current rating **>= 3 A per contact** at the specified temperature rise (5 A split over 2 pins per rail = 2.5 A each, plus 0.5 A margin; >= 5 A/contact preferred).
-- Use **both** Pi 5 V pins (2 and 4) and **>= 2 GND pins** (6 and 9); more GND pins (14, 20) welcome.
+## Pin map (proposal) — Pi GPIO pins 1–10, 2×5 housing
+| Pi pin | Role | Harness |
+|---|---|---|
+| 2, 4 | +5 V | populated (22 AWG red) |
+| 6, 9 | GND | populated (22 AWG black); pins 14/20 can add GND contacts with a larger housing |
+| 1,3,5,7,8,10 | 3V3 / GPIO | cavities left **empty** |
 
-## Mechanical
-- Female contacts for the Pi's 2.54 mm male GPIO pins (pins 1-10 area), crimped to **16 AWG** (<=150 mm) wire; crimp tool and wire range published by the manufacturer. No Dupont/jumper hardware, no hand-soldered pin sockets.
-- Housing with positive retention/friction lock; polarisation by housing shape or a keyed shell where possible (the Pi header itself is unkeyed - mark pin 1 and fit a label).
-- Cavities for unused positions (1, 3, 5, 7, 8, 10) left empty; confirm the housing allows partial population and does not short adjacent GPIO pins (3V3 pin 1, GPIO pins 3, 5, 8).
-- Contact plating compatible with the Pi's header pin plating (confirm Pi 5 header plating).
-- Height clearance over the Pi 5 / Waveshare display flex.
+Loading at 5 A: **2.5 A per 5 V contact vs the 3 A rating (83 %)** — no derating headroom, and the Pi has only two 5 V pins. Keep real load ≤ ~5 A; do not use this for 8 A. (3 GND contacts help only the return.) Check the Waveshare power leads: they also need Pi 5 V/GND pins; if they use pins 2/4/6/9 they must share this housing, not a second Dupont plug.
 
-## Open question for you
-Provide the chosen Pi-end connector datasheet (or a shortlist of MPNs) and I will enter the numbers, re-run the budget, and rebuild the harness drawing and BOM. A bench pull-out/temperature-rise test of the assembled 5 A harness remains a release gate.
+## Hazard found: reversed insertion is destructive
+The housing is unpolarised and the Pi header is unkeyed. Inserting the 2×5 housing rotated 180° maps pin *n* → 11−*n*:
+
+| Harness contact | Intended pin | Reversed lands on |
+|---|---|---|
+| +5 V | 2 | pin 9 = **GND** |
+| +5 V | 4 | pin 7 = GPIO4 (5 V into a 3.3 V pin) |
+| GND | 6 | pin 5 = GPIO3 |
+| GND | 9 | pin 2 = **+5 V** |
+
+No population pattern is safe against reversal (any 5 V contact lands on a GPIO or GND pin). Anti-reversal must be **mechanical**. Options (your decision):
+1. **Keyed interposer (recommended):** small board with a female 2×5 socket for the Pi pins and a keyed Micro-Fit receptacle/header toward the harness, so the whole path stays polarised and high-current. Adds one part.
+2. A moulded/printed polarising shroud or clip that collides with the Pi/board features if reversed — needs 3D verification on the Pi 5 + Waveshare mounting, not just labeling.
+3. Colour/label only — **not acceptable** for a permanent harness.
+
+## Still open
+Confirm housing pin count/orientation and keying choice; then update `datasheet_inputs.json` (`pi_end_pin_map_confirmed`). A bench temperature-rise and pull-out test of the assembled harness at 5 A remains a release gate.

@@ -59,8 +59,10 @@ ws.append([]); ws.append(["MATING HARNESS PARTS (not on PCB) - all candidates, v
 ws.append(["J_OUT mate", 1, "", "Micro-Fit 3.0 receptacle housing, 4 circuits, dual row", "Molex", "43025-0400", "", "Harness", "Keyed; mates J_OUT 430450400", "Verify"])
 ws.append(["J_IN mate", 1, "", "Micro-Fit 3.0 receptacle housing, 2 circuits", "Molex", "43025-0200", "", "Harness", "Keyed; mates J_IN 430450200", "Verify"])
 ws.append(["Terminals", 6, "", "Micro-Fit 3.0 crimp terminals (43030 family) - 4 out + 2 in, wire 18 AWG", "Molex", "43030-0007 (candidate)", "", "Harness", "Select exact terminal for 18 AWG insulation OD; confirm current rating", "Verify - candidate only"])
-ws.append(["Pi-side housing", 1, "", "2.54 mm pitch 2x5 crimp housing for Pi GPIO pins 1-10, populate cavities 2,4,6,9 only", "TBD", "TBD", "", "Harness", "Choose crimp housing + terminals rated >=3 A/contact; NO Dupont jumpers", "OPEN"])
-ws.append(["Wire", 1, "", "18 AWG (or 16 AWG) stranded silicone, red/black, <=250 mm", "TBD", "TBD", "", "Harness", "", "OPEN"])
+ws.append(["Pi-side housing", 1, "", "Harwin M20 2x5 cable housing, populate cavities 2,4,6,9 only (UNPOLARISED - needs anti-reversal key)", "Harwin", "M20-1070500", "", "Harness", "Owner-cited; confirm layout on Harwin drawing", "Owner-cited"])
+ws.append(["Pi-side contacts", 4, "", "Harwin M20 gold crimp contact, 22-30 AWG, 3 A, 20 mOhm max", "Harwin", "M20-1160042", "", "Harness", "22 AWG branch leads; 2x +5V, 2x GND", "Owner-cited"])
+ws.append(["Anti-reversal key / interposer", 1, "", "Mechanical key or keyed interposer for Pi end", "TBD", "TBD", "", "Harness", "Reversed housing swaps +5V and GND - decision required", "OPEN"])
+ws.append(["Wire", 1, "", "16 AWG trunk (<=150 mm) + 22 AWG branch leads (~50 mm), red/black", "TBD", "TBD", "", "Harness", "", "OPEN"])
 for c in ws[1]: c.font = Font(bold=True, color="FFFFFF"); c.fill = PatternFill("solid", fgColor="1F3864")
 for i, wd in enumerate([16, 6, 14, 52, 18, 24, 26, 8, 52, 46], 1): ws.column_dimensions[get_column_letter(i)].width = wd
 for row in ws.iter_rows(min_row=2):

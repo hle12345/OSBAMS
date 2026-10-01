@@ -1,7 +1,7 @@
 # 5 V distribution voltage-drop budget (RC1.1)
 
-Path: `RSDW40F-05 +VOUT -> PCB copper -> F2 -> J_OUT contacts -> harness -> Pi-end contacts -> Pi 5V pins` and return. 2 contacts paralleled for +5 V and for GND, 16 AWG <=150 mm (x1.2 hot), 2 oz copper from the layout.
-Target: **>= 4.85 V at the Pi header at 5 A, worst case** (Pi floor 4.75 V, ceiling 5.25 V); nominal input 5.0-5.1 V.
+Path: `RSDW40F-05 +VOUT -> PCB copper -> F2 -> J_OUT (2 contacts/rail) -> 16 AWG trunk (<=150 mm) -> splice -> 22 AWG branch leads (~50 mm) -> Harwin M20 contacts (2 per rail) -> Pi 5V pins` and the matching return.
+Target: **>= 4.85 V at the Pi header at 5 A, worst case**; **<= 5.25 V no-load / high-line** (Pi floor 4.75 V).
 
 ## Inputs and status (`datasheet_inputs.json`)
 
@@ -13,44 +13,49 @@ Target: **>= 4.85 V at the Pi header at 5 A, worst case** (Pi floor 4.75 V, ceil
 | j_out_contact_typ_mohm | 5.24 | owner_cited | Molex wire-to-board test data, ~5.24 mOhm initial in one configuration (owner-cited; includes wire) |
 | j_out_rating_a | 8.5 | owner_cited | Molex 43045-0400, 8.5 A max per contact (owner-cited) |
 | rsdw_trim_range_pct | 10.0 | owner_cited | RSDW40F-05 output trim +-10 % (owner-cited, RS Components datasheet A700000011914648) |
-| rsdw_trim_network | {'Vref': 1.24, 'R1_kohm': 15.47, 'R2_kohm': 5.1, 'R3_kohm': 33.0, 'trim_up': 'resistor from TRIM to -Vout'} | owner_cited | 5 V model trim network (owner-cited). Exact formula/topology of R3 vs R2 NOT given - see Trim_calculation in docs (assumed topology) |
-| rsdw_tolerance_pct | 2.0 | unverified | ASSUMED +-2 % setpoint+line+load; need RSDW40F-05 datasheet |
-| rsdw_footprint_drawing | False | unverified | Need Mean Well mechanical drawing (body, pin XY, pin dia, drill) |
-| pi_end_connector_mpn | None | unverified | NOT SELECTED. Needs exact MPN with published per-contact current + contact resistance (see docs/Pi_end_connector_requirements.md) |
-| pi_end_contact_max_mohm | 20.0 | unverified | PLACEHOLDER only - do not rely on it; replace with the selected connector's published value |
-| pi_end_contact_typ_mohm | 8.0 | unverified | PLACEHOLDER |
+| rsdw_trim_network | {'Vref': 1.24, 'R1_kohm': 15.47, 'R2_kohm': 5.1, 'R3_kohm': 33.0, 'trim_up': 'resistor from TRIM to -Vout'} | owner_cited | 5 V model trim network + trim-up formula (owner-cited from Mean Well spec): a = Vref*R1/(Vout-Vref); Rt = a*R2/(R2-a) - R3; trim-up resistor TRIM -> -Vout. Identical to the topology assumed earlier. |
+| rsdw_tolerance_pct | 1.0 | owner_cited | RSDW40F-05 output accuracy +-1 % (Mean Well RSDW40/RDDW40 spec, owner-cited; assumed to hold at trimmed setpoints - confirm) |
+| rsdw_footprint_drawing | False | unverified | Pin X/Y positions, pin pitch/rows, drill and keepout needed from the Mean Well drawing. Footprint remains the placeholder. |
+| pi_end_connector_mpn | Harwin M20-1070500 housing + M20-1160042 gold crimp contacts | owner_cited | Harwin M20: 3 A/contact, 20 mOhm max initial, 22-30 AWG crimp (owner-cited). Housing pin count/layout to be confirmed from the Harwin drawing. |
+| pi_end_contact_max_mohm | 20.0 | owner_cited | Harwin M20 series 20 mOhm max initial per contact (owner-cited) |
+| pi_end_contact_typ_mohm | 12.0 | unverified | ASSUMED typical (Harwin quotes max only) |
 | erc_clean_kicad10 | False | unverified | Run ERC in KiCad 10 locally |
+| rsdw_body_pins_owner | {'body_mm': [50.8, 25.4], 'pin_dia_mm': 1.0, 'pinout': '1 +VIN, 2 -VIN, 3 ON/OFF, 4 +VOUT, 5 -VOUT, 6 TRIM'} | owner_cited | Mean Well drawing as described by owner. Pin X/Y coordinates were NOT supplied. |
+| pi_end_contact_rating_a | 3.0 | owner_cited | Harwin M20 3 A per contact (owner-cited) |
+| branch_wire | {'awg': 22, 'mohm_per_m': 53.0, 'length_m': 0.05, 'splice_mohm': 1.0} | unverified | 22 AWG 53 mOhm/m @20C (standard table), 50 mm branch, 1 mOhm per crimp splice ASSUMED |
+| pi_end_pin_map_confirmed | False | unverified | Housing size/pin map + anti-reversal keying not yet confirmed (see docs/Pi_end_connector_requirements.md: a 180-degree reversed 2x5 housing swaps +5 V and GND) |
+| bench_pi_voltage | False | unverified | Bench measurement at Pi header under real load |
 
-`owner_cited` = given by the project owner with a source; the build environment cannot reach the manufacturer sites, so re-check against the PDFs. **The Pi-end contact value is a placeholder, not a design input** - the Pi-end connector has not been selected.
+`owner_cited` = supplied by the project owner with a source; the build environment cannot reach Mean Well, Molex, Littelfuse or Harwin, so re-check against the PDFs. Assumptions: typical Harwin 12 mOhm, branch wire/splice values, hot-fuse 1.3x sensitivity.
 
-F2 = 7.7 mOhm cold (as instructed). Hot sensitivity: if F2 runs 1.3x hot in service, the worst-case path gains 2.3 mOhm = 12 mV at 5 A. J_OUT: 10.0 mOhm max / 5.24 typ per contact (max is conservative).
+Source accuracy +-1 % (was assumed +-2 %). PCB copper 2.2 mOhm; F2 7.7 mOhm cold; J_OUT 10.0 mOhm max/contact; Harwin M20 20 mOhm max/contact, 2 contacts per rail.
 
-## Results vs the unknown Pi-end contact resistance
+## Results at the Pi 5V pins
 
-| Pi-end contact (mOhm, per contact) | R typ / max (mOhm) | 5 A typ / worst V | 3 A worst V | setpoint for 4.85 V (worst) | no-load max | fits <= 5.25 V |
-|---|---|---|---|---|---|---|
-| 5 | 20.5 / 27.3 | 4.90 / 4.76 | 4.82 | 5.088 V (+1.8 %) | 5.190 V | yes |
-| 10 | 23.5 / 32.3 | 4.88 / 4.74 | 4.80 | 5.114 V (+2.3 %) | 5.216 V | yes |
-| 15 | 26.5 / 37.3 | 4.87 / 4.71 | 4.79 | 5.139 V (+2.8 %) | 5.242 V | yes |
-| 20 | 29.5 / 42.3 | 4.85 / 4.69 | 4.77 | 5.165 V (+3.3 %) | 5.268 V | NO |
-
-With +-2 % source tolerance (assumed), one setpoint can satisfy both 4.85 V @ 5 A and <= 5.25 V no-load only if worst-case path R <= 38.8 mOhm, i.e. **the Pi-end connector must be <= ~16.5 mOhm per contact** (2 contacts in parallel per rail) with the other terms as above. This is the requirement for the connector selection.
-
-## Trim calculation (ASSUMED topology - do not fit R2/R3 on this basis)
-
-Given: Vref = 1.24 V, R1 = 15.47 k, R2 = 5.1 k, R3 = 33.0 k -> nominal Vout = Vref(1 + R1/R2) = 5.001 V (matches 5 V). Trim-up resistor Rt connects TRIM to -Vout (board pad **R3** = TRIM to PI_GND; pad R2 = TRIM to +VOUT is trim-down and is not needed).
-Assumed network: Vout = Vref * (1 + R1 * (1/R2 + 1/(R3 + Rt))), i.e. R3 in series with Rt, both in parallel with R2. The source gave the component values but not this exact topology, so the Rt values below must be confirmed against the Mean Well datasheet formula before any resistor is fitted.
-
-| Setpoint | +% | Rt (R3 DNP pad), calc | nearest E96 | resulting Vout | Vout if Rt +1 % |
+| Case | R typ / max (mOhm) | setpoint | 5 A typ / worst (V) | 3 A worst (V) | no-load max (V) |
 |---|---|---|---|---|---|
-| 5.05 V | +1.0 % | 361.2 kOhm | 365.0 kOhm | 5.050 V | 5.049 V |
-| 5.10 V | +2.0 % | 161.4 kOhm | 162.0 kOhm | 5.100 V | 5.099 V |
-| 5.15 V | +3.0 % | 96.0 kOhm | 95.3 kOhm | 5.151 V | 5.150 V |
+| Untrimmed (5.00 V) | 33.7 / 46.5 | 5.000 | 4.83 / 4.72 | 4.81 | 5.050 |
+| Trimmed to 5.14 V (selected) | 33.7 / 46.5 | 5.140 | 4.97 / 4.86 | 4.95 | 5.191 |
+| Trimmed, 3 Pi GND contacts | 31.0 / 42.5 | 5.140 | 4.98 / 4.88 | 4.96 | 5.191 |
+| Hot F2 (x1.3), trimmed | 36.0 / 48.8 | 5.140 | 4.96 / 4.84 | 4.94 | 5.191 |
 
-Check: Rt -> 0 gives 5.58 V (+11.6 %), consistent with a +-10 % trim range under this assumed topology. Setpoint tolerance adds the unknown RSDW tolerance on top; E96 1 % resistors move Vout by only a few mV at these values.
+Feasibility window: one setpoint can meet both limits only if worst-case path R <= 59.2 mOhm; this design is 46.5 mOhm -> **feasible, margin 12.7 mOhm**. Untrimmed, the 5 A worst case is below the Pi floor, so **trim is required**.
+Contact loading at 5 A: 2.5 A per Harwin 5 V contact vs 3 A rating (83 %) - **no derating headroom**; the Pi has only two 5 V pins (2 and 4), so this cannot be improved by adding 5 V contacts. At 8 A the contacts and Pi header pins would be overloaded (4 A each): keep real load <= ~5 A. See the Pi_end note.
 
-## Still open before RC2
+## Trim-up resistor (Mean Well formula, owner-cited)
 
-1. Select the Pi-end connector (exact MPN, published per-contact current and contact resistance <= the limit above) - `Pi_end_connector_requirements.md`.
-2. RSDW40F-05 setpoint tolerance and the exact trim formula/topology; then pick the setpoint (likely 5.05-5.10 V) and keep R2/R3 DNP until then.
-3. RSDW40F-05 mechanical drawing -> U1 footprint.  4. KiCad 10 ERC.  5. Bench voltage at the Pi header under real load.
+Vref = 1.24 V, R1 = 15.47 k, R2 = 5.1 k, R3 = 33.0 k; nominal Vout = 5.001 V. `a = Vref*R1/(Vout - Vref)`, `Rt = a*R2/(R2 - a) - R3`, Rt from TRIM to -Vout (board pad **R3**; R2 pad is trim-down and is not used).
+
+| Setpoint | +% | Rt (R3 pad), calc | E96 | Vout with E96 | worst-case Pi @5A | no-load max |
+|---|---|---|---|---|---|---|
+| 5.12 V | +2.4 % | 128.7 kOhm | 130.0 kOhm | 5.119 V | 4.84 V | 5.170 V |
+| 5.14 V | +2.8 % | 105.3 kOhm | 105.0 kOhm | 5.140 V | 4.86 V | 5.192 V |
+| 5.16 V | +3.2 % | 87.9 kOhm | 88.7 kOhm | 5.159 V | 4.87 V | 5.211 V |
+
+**Selected setpoint 5.14 V -> Rt = 105.3 kOhm, E96 105.0 kOhm (gives 5.140 V). R3 stays DNP until you approve the resistor.** The +-1 % accuracy is assumed to hold at the trimmed setpoint (confirm). R3 pad is 0603; use a 0.1 % or 1 % resistor.
+
+## Remaining RC2 gates
+
+1. Housing size / pin map and anti-reversal keying at the Pi end (`Pi_end_connector_requirements.md`).
+2. RSDW40F-05 pin X/Y, drill and keepout from the Mean Well drawing (body 50.8 x 25.4 mm, pin dia ~1.0 mm are recorded; coordinates not supplied).
+3. KiCad 10 ERC.  4. Bench voltage at the Pi header under real load.
