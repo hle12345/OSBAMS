@@ -994,13 +994,13 @@
   {
    "id": "rs_voltage_ratings",
    "part": "Panasonic ERJP08 (R41-R43)",
-   "parameter": "ERJP08 (1206): 0.66 W, limiting element voltage 125 V, maximum overload voltage 500 V (current ERJP08 datasheet AOA0000C331, as relayed). This resolves the earlier 500 V / 1000 V figures read from the 24-Feb-22 ERJ P/PA/PM catalog: those were not the ERJP08 row. A modeled 8 kV ESD pulse puts about 1.3 kV across R41, above the 500 V overload rating (the rating is a 5 s overload test, not a pulse rating, but no pulse curve supports the event)",
-   "value": "125 V / 500 V",
+   "parameter": "ERJP08 (1206) row of the Panasonic anti-surge ERJ P/PA/PM catalog (read locally twice: the 24-Feb-22 copy and the later 'UPDATE' series catalog supplied as 3750967.pdf): power 0.66 W at 70 C, rated terminal part temperature 125 C, limiting element voltage 500 V, maximum overload voltage 1000 V, TCR +/-100 (>= 10 ohm). The values '125 V limiting / 500 V overload' relayed to this session do NOT match this row: '125' is the rated terminal-part TEMPERATURE (deg C) of the ERJP08 row. AOA0000C331.pdf itself has not been read; if it states different voltages the discrepancy must be resolved. A modeled 8 kV ESD pulse puts about 1.3 kV across R41: above the 1000 V overload voltage (a 5 s overload-test rating, not a pulse rating); R42/R43 (about 0.37 kV) are below 500 V",
+   "value": "500 V / 1000 V",
    "unit": "",
-   "evidence": "USER_RELAYED_MANUFACTURER",
-   "critical": true,
-   "source": "user message 2026-10-01 (AOA0000C331 table as relayed; PDF not read by this build)",
-   "doc": null
+   "evidence": "VERIFIED_LOCAL",
+   "critical": false,
+   "source": "Panasonic anti-surge ERJ P/PA/PM catalog, ratings table ERJP08 row, read locally",
+   "doc": "docs/rev2/pcb/evidence/Panasonic_ERJ_P_PA_PM_anti-surge_series_24Feb22.pdf"
   },
   {
    "id": "ina228_zvbus_rdiff",
