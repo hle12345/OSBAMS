@@ -1,5 +1,0 @@
-KiCad ERC: NOT RUN.
-Reason: build container has KiCad 7.0.11; `kicad-cli sch erc` was introduced in KiCad 8 and the 8+ packages were not reachable.
-Substitute: reports/ERC_equivalent_connectivity_report.txt (custom netlist/PCB parity, power-driver, isolation checks) -- not equivalent to ERC.
-Action: open kicad/OSBAMS_Pi_Display_Power_RevA.kicad_sch in KiCad 8+ and run Inspect > Electrical Rules Checker; save the report here.
-Expected items to review: lib symbols embedded (no external lib), PWR_FLAG usage, unconnected U1 pins 3/6 (marked no-connect).

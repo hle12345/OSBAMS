@@ -28,7 +28,7 @@ ax.text(4.0, 8.4, "+12 V / GND", fontsize=8)
 for a, c in [((8.4, 5.3), (9.2, 5.3)), ((10.8, 5.3), (11.4, 5.3)), ((13.0, 5.3), (13.8, 5.3)), ((18.4, 5.3), (19.2, 5.3)), ((20.8, 5.3), (21.2, 5.3)), ((23.6, 5.3), (24.2, 5.3))]: line(ax, [a, c], "#c62828")
 # harness to Pi
 box(ax, 20.0, 10.6, 7.6, 3.6, "RASPBERRY PI 5 (GPIO header)\n5V pins 2 & 4   |   GND pins 6 & 9\nUSB-C power input: NOT connected\nPSU_MAX_CURRENT=5000 (after bench checks)", "#f3e5f5", "#6a1b9a", 8.5, True)
-line(ax, [(25.8, 7.0), (25.8, 10.6)], "#2e7d32", 3); ax.text(26.0, 8.8, "crimped keyed harness\n4x 18 AWG, <=250 mm\n(no Dupont jumpers)", fontsize=8, color="#2e7d32")
+line(ax, [(25.8, 7.0), (25.8, 10.6)], "#2e7d32", 3); ax.text(26.0, 8.8, "crimped keyed harness\n4x 16 AWG, <=150 mm\n(no Dupont jumpers)", fontsize=8, color="#2e7d32")
 box(ax, 14.0, 10.6, 5.2, 3.6, "Waveshare 10.1\" DSI display\n22-pin DSI to Pi (video/data)\n5V/GND to Pi GPIO 5V/GND\n(same isolated 5 V domain)", "#fff3e0", "#e65100", 8.5)
 line(ax, [(19.2, 12.4), (20.0, 12.4)], "#e65100", 2)
 ax.text(0.3, 0.2, "PI_GND is isolated from 12V_GND. Do not connect the isolated 5 V ground to the controller ground.", fontsize=9, color="#c62828", fontweight="bold")
@@ -41,6 +41,6 @@ box(ax, 0.5, 4.5, 5.2, 4.2, "Molex 43025-0400\nreceptacle housing\n(mates 430450
 for i, (lab, c) in enumerate([("1  +5V_PI (red)", "#c62828"), ("2  +5V_PI (red)", "#c62828"), ("3  PI_GND (black)", "k"), ("4  PI_GND (black)", "k")]):
     y = 8.0 - i * 1.1; line(ax, [(5.7, y), (21.5, y)], c, 3.5); ax.text(6.0, y + 0.25, lab, fontsize=8.5, color=c)
 box(ax, 21.5, 3.6, 5.5, 5.6, "2.54 mm 2x5 crimp housing\nover Pi GPIO pins 1-10\npopulated cavities only:\n pin 2 = 5V   pin 4 = 5V\n pin 6 = GND  pin 9 = GND", "#f3e5f5", "#6a1b9a", 9)
-ax.text(12, 2.6, "Wire: 18 AWG stranded silicone (16 AWG optional), length <= 250 mm, twisted pairs per rail.\nTerminals: Molex 43030 family crimp (candidate 43030-0007; confirm AWG range / current rating).\nCircuit 1+2 = +5 V pair, 3+4 = GND pair. Each pair splits to two Pi header contacts.\nKey: housing is polarised - cannot be mated backwards. Mark pin 1 on harness label.\nPI USB-C must not be connected to any power source when this harness is fitted.", ha="center", va="top", fontsize=9)
+ax.text(12, 2.6, "Wire: 16 AWG stranded silicone preferred (18 AWG min), length <= 150 mm, twisted pairs per rail.\nTerminals: Molex 43030 family crimp (candidate 43030-0007; confirm AWG range / current rating).\nCircuit 1+2 = +5 V pair (outer row), 3+4 = GND pair (inner row) - Molex dual-row numbering runs along rows.\nKey: housing is polarised - cannot be mated backwards. Mark pin 1 on harness label.\nPI USB-C must not be connected to any power source when this harness is fitted.", ha="center", va="top", fontsize=9)
 fig.savefig(f"{D}/docs/Harness_drawing.png", dpi=150, bbox_inches="tight"); fig.savefig(f"{D}/docs/Harness_drawing.pdf", bbox_inches="tight"); plt.close(fig)
 print("figs ok")

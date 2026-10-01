@@ -12,7 +12,7 @@ meta = {p[0]: p for p in PARTS}
 # part -> list of (pin number, pin name, type, net)  ; side L/R is assigned by order list below
 SYM = {
  "U1": dict(L=[("1","+VIN","power_in","+12V_F"),("2","-VIN","power_in","12V_GND"),("3","ON/OFF","input","NC")],
-            R=[("4","+VOUT","power_out","5V_ISO_RAW"),("5","-VOUT","power_out","PI_GND"),("6","TRIM","passive","NC")]),
+            R=[("4","+VOUT","power_out","5V_ISO_RAW"),("5","-VOUT","power_out","PI_GND"),("6","TRIM","passive","TRIM")]),
  "F1": dict(L=[("1","1","passive","+12V_IN")], R=[("2","2","passive","+12V_F")]),
  "F2": dict(L=[("1","1","passive","5V_ISO_RAW")], R=[("2","2","passive","5V_PI")]),
  "TVS1": dict(L=[("1","K","passive","+12V_F")], R=[("2","A","passive","12V_GND")]),
@@ -21,8 +21,10 @@ SYM = {
  "C1": dict(L=[("1","1","passive","+12V_F")], R=[("2","2","passive","12V_GND")]),
  "C2": dict(L=[("1","+","passive","+12V_F")], R=[("2","-","passive","12V_GND")]),
  "C4": dict(L=[("1","+","passive","5V_PI")], R=[("2","-","passive","PI_GND")]),
- "C5": dict(L=[("1","1","passive","PI_GND")], R=[("2","2","passive","5V_PI")]),
- "C6": dict(L=[("1","1","passive","PI_GND")], R=[("2","2","passive","5V_PI")]),
+ "C5": dict(L=[("1","1","passive","5V_PI")], R=[("2","2","passive","PI_GND")]),
+ "C6": dict(L=[("1","1","passive","5V_PI")], R=[("2","2","passive","PI_GND")]),
+ "R2": dict(L=[("1","1","passive","TRIM")], R=[("2","2","passive","5V_ISO_RAW")]),
+ "R3": dict(L=[("1","1","passive","TRIM")], R=[("2","2","passive","PI_GND")]),
  "R1": dict(L=[("1","1","passive","5V_PI")], R=[("2","2","passive","PG_LED_A")]),
  "D1": dict(L=[("1","K","passive","PI_GND")], R=[("2","A","passive","PG_LED_A")]),
 }
@@ -60,14 +62,14 @@ def wire(x1,y1,x2,y2): body.append(f'(wire (pts (xy {x1:.2f} {y1:.2f}) (xy {x2:.
 def noconn(x,y): body.append(f'(no_connect (at {x:.2f} {y:.2f}) (uuid "{u()}"))')
 # placement grid: (col, row) per ref
 LAY = {"J_IN":(1,1),"F1":(2,1),"TVS1":(3,1),"C1":(4,1),"C2":(5,1),"TP1":(1,2),"TP2":(2,2),"U1":(3,3),
-       "F2":(1,5),"C4":(2,5),"C5":(3,5),"C6":(4,5),"R1":(5,5),"D1":(6,5),"J_OUT":(1,7),"TP3":(2,7),"TP4":(3,7),"TP5":(4,7)}
+       "R2":(5,3),"R3":(6,3),"F2":(1,5),"C4":(2,5),"C5":(3,5),"C6":(4,5),"R1":(5,5),"D1":(6,5),"J_OUT":(1,7),"TP3":(2,7),"TP4":(3,7),"TP5":(4,7)}
 for ref, (cx, cy) in LAY.items():
     x0 = 25.4 + (cx - 1) * 45.72; y0 = 38.1 + (cy - 1) * 38.1
     d = SYM[ref]; hw = 7.62; m = meta[ref]
-    fpn = f"OSBAMS_PiPwr:{m[5]}"
+    fpn = m[5] if ":" in m[5] else f"OSBAMS_PiPwr:{m[5]}"
     pins = "".join(f'(pin "{p[0]}" (uuid "{u()}"))' for p in d["L"] + d["R"])
     refdes = ref
-    body.append(f'(symbol (lib_id "OSBAMS_PiPwr:{ref}") (at {x0:.2f} {y0:.2f} 0) (unit 1) (in_bom yes) (on_board yes) (dnp no) (uuid "{u()}")\n'
+    body.append(f'(symbol (lib_id "OSBAMS_PiPwr:{ref}") (at {x0:.2f} {y0:.2f} 0) (unit 1) (in_bom yes) (on_board yes) (dnp {"yes" if m[7]=="DNP" else "no"}) (uuid "{u()}")\n'
       f'  (property "Reference" "{refdes}" (at {x0:.2f} {y0 - 6:.2f} 0) (effects (font (size 1.27 1.27))))\n'
       f'  (property "Value" "{m[1]}" (at {x0:.2f} {y0 + 6:.2f} 0) (effects (font (size 1.27 1.27))))\n'
       f'  (property "Footprint" "{fpn}" (at {x0:.2f} {y0:.2f} 0) (effects (font (size 1.27 1.27)) hide))\n'
@@ -93,7 +95,7 @@ for i, (net) in enumerate(FLAG_NETS):
 txt = lambda s, x, y, sz=1.8: body.append(f'(text "{s}" (at {x} {y} 0) (effects (font (size {sz} {sz})) (justify left)) (uuid "{u()}"))')
 txt("OSBAMS Pi/Display Power Rev.A - RC1 (NOT FOR FAB). XDR-75-12 12V -> RSDW40F-05 -> isolated 5V for Pi 5 + Waveshare DSI.", 12, 12, 2.2)
 txt("PI_GND is isolated from 12V_GND. Do NOT tie them. 12V_GND is the XDR-75-12 return shared with OSBAMS Rev.2 controller PCB.", 12, 18)
-txt("U1 pin 3 (ON/OFF) and pin 6 (TRIM) intentionally unconnected - confirm remote ON/OFF default state vs Mean Well datasheet.", 12, 22)
+txt("U1 pin 3 (ON/OFF) left open - confirm default state. TRIM (pin 6) only goes to DNP pads R2/R3 (do not fit without Mean Well trim formula).", 12, 22)
 txt("Isolation barrier is inside U1 (1.6 kVDC). No Y-capacitor / bonding between PI_GND and 12V_GND is fitted.", 12, 26)
 doc = f'''(kicad_sch (version 20230121) (generator eeschema)
   (uuid "{ROOT}") (paper "A2")

@@ -1,23 +1,26 @@
-# OSBAMS_Pi_Display_Power_RevA — RC1
+# OSBAMS_Pi_Display_Power_RevA — RC1.1 (rework of RC1)
 
-**Status: RELEASE CANDIDATE 1 — NOT FINAL, NOT AUTHORIZED FOR FABRICATION.**
+**Status: NOT FINAL, NOT AUTHORIZED FOR FABRICATION. `..._RC2` has deliberately NOT been generated** — it is gated on the items below (the Mean Well RSDW40F-05 footprint cannot be verified from the build environment, and the 5 V worst-case voltage margin is unproven).
+
+RC1.1 changes vs RC1: (a) every footprint except U1 now comes from the official KiCad libraries (fixes a real error: Micro-Fit dual-row pin numbering runs along rows, so +5 V = outer row, GND = inner row; Nano2 fuse is ~6 mm, not 12 mm); (b) 5 V distribution re-laid and budgeted (`docs/Voltage_drop_budget.md`); (c) harness changed to 16 AWG ≤150 mm; (d) DNP trim-network pads R2/R3 added.
 
 PCB #2 of OSBAMS: isolated 5 V / 8 A supply for Raspberry Pi 5 + Waveshare 10.1" DSI display.
 `120 VAC → XDR-75-12 → 12 V bus → (this board) → RSDW40F-05 → isolated 5 V → Pi 5 + display`.
 No STM32, ADC, INA228, relay or safety logic on this board. `PI_GND` is **not** connected to `12V_GND`.
 
-## Release gates (all must be closed before a FINAL tag)
+## Release gates (all must be closed before RC2 / FINAL)
 
 | # | Gate | State |
 |---|------|-------|
-| 1 | RSDW40F-05 footprint verified against Mean Well mechanical drawing | **OPEN** — placeholder geometry (50.8×25.4 mm body, 6 pins on 5.08 mm pitch at the module ends). Mean Well site was unreachable from the build environment. |
-| 2 | Molex mating parts verified (43025 housings, 43030 terminals, wire gauge) | **OPEN** — candidates only; Micro-Fit footprints have no positioning pegs yet and pin geometry is unverified |
-| 3 | KiCad ERC passes | **OPEN** — `kicad-cli` 7.0.11 has no ERC. Only a custom connectivity check ran (`reports/ERC_equivalent_connectivity_report.txt`, PASS). Run real ERC in KiCad 8+. |
-| 4 | KiCad DRC passes | **PARTIAL** — 0 electrical errors; only silkscreen + "library not configured" warnings (see `reports/DRC_report.rpt`). Re-run in your KiCad version after footprints are verified. |
-| 5 | Isolation spacing checked | **PARTIAL** — 10 mm copper-free lane, no crossing (`docs/Isolation_review.md`); module-specific spacing not verified |
-| 6 | Pi 5 voltage under load bench-verified | **OPEN** — estimate only (`docs/Isolation_review.md` §Voltage budget): margin is thin at ≥5 A |
-| 7 | Waveshare + Pi combined current measured | **OPEN** |
-| 8 | PCBWay sourcing of RSDW40F-05 | **OPEN** — if unavailable, mark **consigned / customer-supplied**; no substitution |
+| 1 | **5 V voltage-drop budget** meets target at the Pi pins | **OPEN** — typical 4.87 V @ 5 A, stacked worst case 4.65 V (assumed resistances). No single lever closes it; see `docs/Voltage_drop_budget.md`. Needs datasheet values (F2, Micro-Fit, Pi-end terminals) and a decision on trim. |
+| 2 | RSDW40F-05 footprint verified against Mean Well drawing | **OPEN / BLOCKER** — still placeholder geometry (50.8×25.4 mm body, 6 pins at module ends, 5.08 mm pitch). Mean Well and every datasheet mirror tried were blocked. Supply the mechanical drawing (or pin X/Y, drill, body size) and it drops into `build_pcb.py`. |
+| 3 | Other footprints (Molex 43045-0400/-0200, Nano2 0451, SMB, radial caps, passives) | **LIBRARY-SOURCED, not manufacturer-PDF-verified** — official KiCad library, which cites the Molex/Littelfuse datasheets, incl. Micro-Fit pegs/drills. Cross-check against the Molex drawing before release. |
+| 4 | Molex mating parts (43025 housings, 43030 terminals, wire gauge) | **OPEN** — candidates only |
+| 5 | KiCad ERC passes | **OPEN** — build container only has KiCad 7.0.11 (no `sch erc`; KiCad 10 not obtainable here). Custom connectivity check passes (`reports/ERC_equivalent_connectivity_report.txt`). Run ERC in KiCad 10 locally, then regenerate. |
+| 6 | KiCad DRC passes | **PARTIAL** — 0 electrical/courtyard/clearance errors; only silkscreen-overlap and "library not configured" warnings. Re-run in KiCad 10. |
+| 7 | Isolation spacing checked | **PARTIAL** — 10 mm copper-free lane, no crossing; module-specific spacing not verified |
+| 8 | Pi 5 voltage under load bench-verified; Waveshare + Pi current measured | **OPEN** |
+| 9 | PCBWay sourcing of RSDW40F-05 | **OPEN** — else **consigned / customer-supplied** |
 
 ## Contents
 | Path | What |
@@ -30,5 +33,6 @@ No STM32, ADC, INA228, relay or safety logic on this board. `PI_GND` is **not** 
 | `reports/` | DRC report, ERC-equivalent report, ERC status |
 | `generator/` | `run_drc.py`; the full generators live in `tools/pi_display_power/` in this repo |
 
+Y capacitor: not fitted (decision: keep isolation clean unless EMC testing gives a reason).
 Board: 100 × 70 mm, 2-layer, 1.6 mm, 2 oz Cu (stackup in PCB file), ENIG, 4× M3, 3 fiducials.
 Regenerate: `tools/pi_display_power/build_all.sh`.
