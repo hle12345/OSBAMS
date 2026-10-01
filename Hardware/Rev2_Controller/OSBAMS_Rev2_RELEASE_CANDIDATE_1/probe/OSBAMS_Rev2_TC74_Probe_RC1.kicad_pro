@@ -373,7 +373,7 @@
     "netclass_patterns": [
       {
         "netclass": "POWER",
-        "pattern": "12V_RAW"
+        "pattern": "COIL_V"
       },
       {
         "netclass": "POWER",
@@ -381,23 +381,7 @@
       },
       {
         "netclass": "POWER",
-        "pattern": "COIL_V"
-      },
-      {
-        "netclass": "POWER",
-        "pattern": "BUCK_SW"
-      },
-      {
-        "netclass": "POWER",
-        "pattern": "3V3_HOST"
-      },
-      {
-        "netclass": "POWER",
-        "pattern": "ESTOP_OUT"
-      },
-      {
-        "netclass": "POWER",
-        "pattern": "12V_F"
+        "pattern": "COIL_SW"
       },
       {
         "netclass": "POWER",
@@ -405,7 +389,23 @@
       },
       {
         "netclass": "POWER",
-        "pattern": "COIL_SW"
+        "pattern": "12V_F"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "BUCK_SW"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "12V_RAW"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "ESTOP_OUT"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "3V3_HOST"
       },
       {
         "netclass": "RAIL",
@@ -417,15 +417,7 @@
       },
       {
         "netclass": "PACKLEVEL",
-        "pattern": "FB_R2"
-      },
-      {
-        "netclass": "PACKLEVEL",
         "pattern": "ADC_MID"
-      },
-      {
-        "netclass": "PACKLEVEL",
-        "pattern": "PACK_INA"
       },
       {
         "netclass": "PACKLEVEL",
@@ -433,15 +425,11 @@
       },
       {
         "netclass": "PACKLEVEL",
-        "pattern": "FB_R1"
-      },
-      {
-        "netclass": "PACKLEVEL",
-        "pattern": "INA_VBUS"
-      },
-      {
-        "netclass": "PACKLEVEL",
         "pattern": "SHUNT_INN_RAW"
+      },
+      {
+        "netclass": "PACKLEVEL",
+        "pattern": "PACK_INA"
       },
       {
         "netclass": "PACKLEVEL",
@@ -449,15 +437,27 @@
       },
       {
         "netclass": "PACKLEVEL",
+        "pattern": "INA_VBUS"
+      },
+      {
+        "netclass": "PACKLEVEL",
+        "pattern": "FB_R1"
+      },
+      {
+        "netclass": "PACKLEVEL",
         "pattern": "SHUNT_INP_RAW"
       },
       {
-        "netclass": "KELVIN",
-        "pattern": "INA_INP"
+        "netclass": "PACKLEVEL",
+        "pattern": "FB_R2"
       },
       {
         "netclass": "KELVIN",
         "pattern": "INA_INN"
+      },
+      {
+        "netclass": "KELVIN",
+        "pattern": "INA_INP"
       }
     ]
   },

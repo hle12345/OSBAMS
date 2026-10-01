@@ -14,28 +14,30 @@ def rect(x1, y1, x2, y2, layer, w=0.12):
 
 
 def eb21a():
-    """Adam Tech EB21A-02-C, 2-position 5.00 mm pitch right-angle screw terminal.
-    PROVISIONAL GEOMETRY (VERIFY_MECHANICAL_DRAWING): pitch from the catalog; drill/pad/body are conservative placeholders.
-    Pin 1 at the origin, pin 2 at y = +5.00, wire entry toward -x."""
-    s = '(footprint "EB21A-02-C_PROVISIONAL"\n  (version 20240108)\n  (generator "osbams")\n  (layer "F.Cu")\n'
-    s += '  (descr "Adam Tech EB21A-02-C 2-pos 5.00 mm right-angle terminal block. PROVISIONAL GEOMETRY: VERIFY_MECHANICAL_DRAWING before fabrication")\n'
-    s += '  (tags "EB21A terminal block 5.00mm provisional")\n  (attr through_hole)\n'
+    """Adam Tech EB21A-02-C, 2-position 5.00 mm pitch right-angle screw terminal (drawing EB21A-XX-C rev B, 7/30/18).
+    From the drawing: pitch 5.00; recommended PCB hole 1.30 mm (+/-0.25 mm hole tolerance); pins 0.90 x 0.60 mm, 4.00 mm tail;
+    body 5.00*N + 0.60 = 10.60 mm wide (2.50 mm before pin 1, 3.10 mm after the last pin), 8.50 mm deep (pins 4.00 mm from the back,
+    4.50 mm from the wire-entry face), 10.20 mm tall. Pad size, courtyard and silkscreen are design choices (the drawing gives none).
+    Local frame: pin 1 at the origin, pin 2 at y = +5.00, wire-entry face toward -x (pin row 4.50 mm behind it), back wall at x = +4.00."""
+    s = '(footprint "EB21A-02-C"\n  (version 20240108)\n  (generator "osbams")\n  (layer "F.Cu")\n'
+    s += '  (descr "Adam Tech EB21A-02-C 2-pos 5.00 mm right-angle screw terminal; geometry from drawing EB21A-XX-C rev B (VERIFIED_LOCAL). Pin 1 = square pad; wire entry toward -x.")\n'
+    s += '  (tags "EB21A terminal block 5.00mm")\n  (attr through_hole)\n'
     s += '  (property "Reference" "REF**" (at -4.5 -3.8 0) (layer "F.SilkS") (effects (font (size 1 1) (thickness 0.15))))\n'
-    s += '  (property "Value" "EB21A-02-C" (at -4.5 8.8 0) (layer "F.Fab") (effects (font (size 1 1) (thickness 0.15))))\n'
-    s += rect(-9.2, -2.6, 1.2, 7.6, "F.SilkS")
-    s += line(1.2, -2.6, 1.2, 7.6, "F.SilkS", 0.3)
-    s += rect(-9.7, -3.1, 1.7, 8.1, "F.CrtYd", 0.05)
-    s += rect(-9.2, -2.6, 1.2, 7.6, "F.Fab", 0.1)
-    s += '  (fp_text user "VERIFY_MECHANICAL_DRAWING" (at -4 2.5 90) (layer "F.Fab") (effects (font (size 0.8 0.8) (thickness 0.1))))\n'
-    s += '  (pad "1" thru_hole rect (at 0 0) (size 2.6 2.6) (drill 1.4) (layers "*.Cu" "*.Mask"))\n'
-    s += '  (pad "2" thru_hole circle (at 0 5) (size 2.6 2.6) (drill 1.4) (layers "*.Cu" "*.Mask"))\n)\n'
+    s += '  (property "Value" "EB21A-02-C" (at -4.5 9.3 0) (layer "F.Fab") (effects (font (size 1 1) (thickness 0.15))))\n'
+    s += rect(-4.5, -2.5, 4.0, 8.1, "F.SilkS")
+    s += line(-4.5, -2.5, -4.5, 8.1, "F.SilkS", 0.3)            # heavy line = wire-entry face
+    s += rect(-4.75, -2.75, 4.25, 8.35, "F.CrtYd", 0.05)
+    s += rect(-4.5, -2.5, 4.0, 8.1, "F.Fab", 0.1)
+    s += '  (fp_text user "WIRE ENTRY" (at -2.2 2.5 90) (layer "F.Fab") (effects (font (size 0.8 0.8) (thickness 0.1))))\n'
+    s += '  (pad "1" thru_hole rect (at 0 0) (size 2.6 2.6) (drill 1.3) (layers "*.Cu" "*.Mask"))\n'
+    s += '  (pad "2" thru_hole circle (at 0 5) (size 2.6 2.6) (drill 1.3) (layers "*.Cu" "*.Mask"))\n)\n'
     return s
 
 
 def write_all():
     d = os.path.join(PRJ, "OSBAMS_Rev2.pretty")
     os.makedirs(d, exist_ok=True)
-    open(os.path.join(d, "EB21A-02-C_PROVISIONAL.kicad_mod"), "w").write(eb21a())
+    open(os.path.join(d, "EB21A-02-C.kicad_mod"), "w").write(eb21a())
 
 
 if __name__ == "__main__":

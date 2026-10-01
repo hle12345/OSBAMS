@@ -106,7 +106,7 @@ part("U_ESD", lib="Power_Protection:USBLC6-2SC6", fp="Package_TO_SOT_SMD:SOT-23-
      evid=UV, life="UNKNOWN (not checked)", alt="Nexperia IP4220CZ6", src="PCBWay source")
 part("OPTO", lib="Isolator:PC817", fp="Package_DIP:DIP-4_W7.62mm", mfr="Vishay", mpn="VO610A-1", desc="Optocoupler transistor output DIP-4, CTR bin -1 (13 % min @ 1 mA, 40 % min @ 10 mA: user-relayed)",
      evid=UR, life="UNKNOWN (not checked)", alt="Vishay VO610A-2 (63-125 % bin, resistor re-check)", src="CONSIGN (owned: 2) + spares")
-part("J_EB21", lib="Connector_Generic:Conn_01x02", fp="OSBAMS_Rev2:EB21A-02-C_PROVISIONAL", mfr="Adam Tech", mpn="EB21A-02-C", desc="2-pos 5.00 mm right-angle screw terminal, 8 A / 300 V (FOOTPRINT: VERIFY_MECHANICAL_DRAWING)",
+part("J_EB21", lib="Connector_Generic:Conn_01x02", fp="OSBAMS_Rev2:EB21A-02-C", mfr="Adam Tech", mpn="EB21A-02-C", desc="2-pos 5.00 mm right-angle screw terminal, 8 A / 300 V (footprint from Adam Tech drawing EB21A-XX-C rev B)",
      evid=UR, life="UNKNOWN (not checked)", alt="Phoenix MKDS 1/2-5,08 (different footprint)", src="CONSIGN (owned: 5) or PCBWay source")
 part("J_KK3", lib="Connector_Generic:Conn_01x03", fp="Connector_Molex:Molex_KK-254_AE-6410-03A_1x03_P2.54mm_Vertical", mfr="Molex", mpn="22-27-2031", desc="KK 254 3-pos vertical header (mate 22-01-3037 + 08-50-0114)",
      evid=UV, life="UNKNOWN (not checked)", alt="Molex 22-23-2031", src="PCBWay source")

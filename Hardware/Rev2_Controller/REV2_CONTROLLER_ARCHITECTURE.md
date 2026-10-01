@@ -56,10 +56,10 @@ Every unused MCU pin has a no-connect flag and is configured analog/pulled low i
 ## 5. Connectors
 | Ref | Function | Part | Footprint status |
 |---|---|---|---|
-| J1 | 12 V in (1 +12 V, 2 GND) | Adam Tech EB21A-02-C | **PROVISIONAL (VERIFY_MECHANICAL_DRAWING)** |
-| J2 | E-stop loop | EB21A-02-C | provisional |
-| J3 | ARM switch | EB21A-02-C | provisional |
-| J4 | K1 coil | EB21A-02-C | provisional |
+| J1 | 12 V in (1 +12 V, 2 GND) | Adam Tech EB21A-02-C | footprint from the Adam Tech drawing (VERIFIED_LOCAL; hole 1.30 mm, body 10.6×8.5 mm, wire entry toward −x) |
+| J2 | E-stop loop | EB21A-02-C | verified (drawing) |
+| J3 | ARM switch | EB21A-02-C | verified (drawing) |
+| J4 | K1 coil | EB21A-02-C | verified (drawing) |
 | J5 | Shunt Kelvin (IN+, IN−, shield) | Molex 22-27-2031, mate 22-01-3037 + 08-50-0114 | KiCad stock |
 | J6 | Pack sense (PACK_INA, PACK_ADC, RELAY_OUT, GND_SENSE) | Molex 22-27-2041, mate 22-01-3047 | KiCad stock |
 | J7 | Temp probe (3V3, SDA2, SCL2, GND) | JST B4B-PH-K-S, mate PHR-4 | KiCad stock |

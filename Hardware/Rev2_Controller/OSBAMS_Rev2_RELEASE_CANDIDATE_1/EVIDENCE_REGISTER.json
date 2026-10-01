@@ -632,23 +632,23 @@
    "id": "eb21a_catalog",
    "part": "EB21A-02-C",
    "parameter": "5.00 mm pitch, right-angle, 8 A / 300 V",
-   "value": "as stated",
+   "value": "5.00 mm pitch, 8 A, 300 V (drawing spec block)",
    "unit": "",
-   "evidence": "USER_RELAYED_MANUFACTURER",
+   "evidence": "VERIFIED_LOCAL",
    "critical": false,
-   "source": "user message 2026-10-01 (manufacturer information relayed by the user; PDF not opened in this build environment)",
-   "doc": null
+   "source": "Adam Tech drawing EB21A-XX-C rev B (7/30/18), read locally in this build from the user-supplied PDF docs/rev2/pcb/evidence/EB21A-XX-C_drawing_revB.pdf",
+   "doc": "docs/rev2/pcb/evidence/EB21A-XX-C_drawing_revB.pdf"
   },
   {
    "id": "eb21a_drawing",
    "part": "EB21A-02-C",
-   "parameter": "drill, pad and body dimensions (footprint is PROVISIONAL)",
-   "value": null,
+   "parameter": "PCB hole, pin, body and pin-offset dimensions (footprint EB21A-02-C)",
+   "value": "hole 1.30 mm; pins 0.90x0.60, tail 4.00; body 10.60 W x 8.50 D x 10.20 H; pin1 2.50 / pin2 3.10 from body ends; pins 4.00 from back, 4.50 from wire-entry face",
    "unit": "",
-   "evidence": "UNVERIFIED",
+   "evidence": "VERIFIED_LOCAL",
    "critical": true,
-   "source": "assumption / proposal - needs the manufacturer document",
-   "doc": null
+   "source": "Adam Tech drawing EB21A-XX-C rev B (7/30/18), read locally in this build from the user-supplied PDF docs/rev2/pcb/evidence/EB21A-XX-C_drawing_revB.pdf; pad diameter, courtyard, silkscreen, edge clearance and pin-1 end are design choices (not on the drawing)",
+   "doc": "docs/rev2/pcb/evidence/EB21A-XX-C_drawing_revB.pdf"
   },
   {
    "id": "conn_footprints",

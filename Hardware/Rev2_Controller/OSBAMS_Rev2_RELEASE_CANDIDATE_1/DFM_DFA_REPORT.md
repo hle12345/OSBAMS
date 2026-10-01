@@ -4,7 +4,7 @@
 
 ## Electrical rule checks (KiCad 10.0.6)
 - ERC (schematic, 11 sheets): **0 violations**.
-- DRC (PCB): **12 violations, 0 unconnected pads, 0 footprint errors**. Violation types: silk_over_copper: 9, silk_overlap: 3.
+- DRC (PCB): **4 violations, 0 unconnected pads, 0 footprint errors**. Violation types: silk_over_copper: 1, silk_overlap: 3.
 - Netlist: the KiCad schematic netlist was compared with the design intent (66+ nets, every pin): see `NETLIST_CHECK.txt`.
 
 ## Polarity
@@ -25,12 +25,12 @@
 Result: **PASS**. (Rev.1's symbol-vs-footprint polarity defect is not repeated: every diode uses a KiCad symbol with K = pin 1 and a footprint with the cathode bar at pad 1.)
 
 ## Layout statistics
-676 track segments, 517 vias, min track 0.20 mm, min via 0.60/0.30 mm, 99 SMD footprints, 12 through-hole footprints, 3 fiducials, 4 mounting holes, 27 test points.
+701 track segments, 517 vias, min track 0.20 mm, min via 0.50/0.30 mm, 99 SMD footprints, 12 through-hole footprints, 3 fiducials, 4 mounting holes, 27 test points.
 
 ## DFM items for review
 - 0.5 mm pitch LQFP-64 and QFN-20: confirm PCBWay minimum solder-mask bridge and paste stencil; ENIG recommended.
 - Via-in-pad is NOT used. Tracks to LQFP pads leave on the pad axis.
-- THT connectors (EB21A-02-C) have a **provisional footprint**: drill 1.4 mm / pad 2.6 mm / body outline are placeholders until the Adam Tech drawing is checked.
+- THT connectors (EB21A-02-C) use a footprint drawn from the Adam Tech drawing EB21A-XX-C rev B (hole 1.30 mm, pad 2.6 mm [design choice], body 10.6 x 8.5 mm).
 - Mounting holes are NPTH 3.2 mm; fiducials 1 mm / 2 mm opening at three corners.
 - USB-C GCT USB4105-GF-A: confirm the shield tab/NPTH holes against the connector drawing; overhang 0.8 mm beyond the board edge is intentional.
 - Isolation: GND and GND_HOST are separate copper islands with a 3 mm gap; no track crosses the gap except through the ISO7721 (checked by DRC clearance between nets). Pack-level nets (PACK_INA, PACK_ADC, ADC_MID, RELAY_OUT, FB_R1, FB_R2, SHUNT_*_RAW, INA_*) use a 0.4 mm clearance class.

@@ -347,6 +347,8 @@ class PCB:
             t.SetBold(True)
         if just == 'left':
             t.SetHorizJustify(pcbnew.GR_TEXT_H_ALIGN_LEFT)
+        elif just == 'right':
+            t.SetHorizJustify(pcbnew.GR_TEXT_H_ALIGN_RIGHT)
         self.b.Add(t)
 
     def silk(self):
@@ -356,7 +358,7 @@ class PCB:
         for ref, s in labels.items():
             x, y = self.pad_pos(ref, "1" if ref != "J8" else "A5")
             if ref in ("J1", "J2", "J3", "J4"):
-                self.text(s, x + 4, y + 2.5, 1.0, rot=90)
+                self.text(s, x - 5.2, y + 2.5, 1.0, just='right')
             elif ref in ("J5", "J6", "J7"):
                 self.text(s, x + 3.5, y - 4.0, 1.0)
             elif ref == "J8":
@@ -366,8 +368,8 @@ class PCB:
         # pin 1 / polarity legends for terminals
         for ref, names in {"J1": ("+12V", "GND"), "J2": ("+12V", "ESTOP_OUT"), "J3": ("ESTOP_OUT", "COIL_V"), "J4": ("COIL_V", "COIL_SW")}.items():
             x, y = self.pad_pos(ref, "1")
-            self.text(f"1 {names[0]}", x + 2.0, y - 1.6, 0.8, just='left')
-            self.text(f"2 {names[1]}", x + 2.0, y + 5.0 + 1.6, 0.8, just='left')
+            self.text(f"1 {names[0]}", x - 5.2, y, 0.8, just='right')
+            self.text(f"2 {names[1]}", x - 5.2, y + 5.0, 0.8, just='right')
         for ref, c in self.D.COMPS.items():
             if c['key'] == 'TP':
                 x, y = ToMM(self.fps[ref].GetPosition().x) - OX, ToMM(self.fps[ref].GetPosition().y) - OY

@@ -61,6 +61,6 @@ Generated from `calc/datasheet_inputs.json`. States: **VERIFIED_LOCAL** (read by
 | 55 | `q_pinout` | IRLML0060TRPBF | SOT-23 pinout 1 G, 2 S, 3 D | as KiCad Transistor_FET:IRLML0030 symbol | UNVERIFIED | **yes** | — |
 | 56 | `bat54s_ir` | BAT54S | reverse leakage at ~3 V | 1e-07 A | UNVERIFIED | no | — |
 | 57 | `bat54s_vf` | BAT54S | forward voltage at 0.1 mA | 0.25 V | UNVERIFIED | no | — |
-| 58 | `eb21a_catalog` | EB21A-02-C | 5.00 mm pitch, right-angle, 8 A / 300 V | as stated | USER_RELAYED_MANUFACTURER | no | — |
-| 59 | `eb21a_drawing` | EB21A-02-C | drill, pad and body dimensions (footprint is PROVISIONAL) | — | UNVERIFIED | **yes** | — |
+| 58 | `eb21a_catalog` | EB21A-02-C | 5.00 mm pitch, right-angle, 8 A / 300 V | 5.00 mm pitch, 8 A, 300 V (drawing spec block) | VERIFIED_LOCAL | no | docs/rev2/pcb/evidence/EB21A-XX-C_drawing_revB.pdf |
+| 59 | `eb21a_drawing` | EB21A-02-C | PCB hole, pin, body and pin-offset dimensions (footprint EB21A-02-C) | hole 1.30 mm; pins 0.90x0.60, tail 4.00; body 10.60 W x 8.50 D x 10.20 H; pin1 2.50 / pin2 3.10 from body ends; pins 4.00 from back, 4.50 from wire-entry face | VERIFIED_LOCAL | **yes** | docs/rev2/pcb/evidence/EB21A-XX-C_drawing_revB.pdf |
 | 60 | `conn_footprints` | Molex KK/JST PH/GCT USB4105/Samtec FTSH | footprint = KiCad stock; MPN-to-footprint match not checked against drawings | KiCad 10 library | UNVERIFIED | **yes** | — |

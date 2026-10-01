@@ -168,5 +168,5 @@ ISO7721 has **no isolated power**: VCC1 = +3V3 (100 nF, controller GND); VCC2 = 
 
 ## 9. Evidence summary
 
-VERIFIED_LOCAL 2 · USER_RELAYED_MANUFACTURER 24 · UNVERIFIED 34 (total 60). Critical entries not yet VERIFIED_LOCAL: **32** — these are fabrication gates, not schematic/layout gates.
+VERIFIED_LOCAL 4 · USER_RELAYED_MANUFACTURER 23 · UNVERIFIED 33 (total 60). Critical entries not yet VERIFIED_LOCAL: **31** — these are fabrication gates, not schematic/layout gates.
 

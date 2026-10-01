@@ -27,3 +27,6 @@ Q1 direct STM32L476RGT6 · Q2 isolated host (USART2 → ISO7721 → CP2102N → 
 
 ## 2026-10-01 — RC1 authoritative build instruction
 Manufacturer-PDF access no longer blocks KiCad work; evidence states VERIFIED_LOCAL / USER_RELAYED_MANUFACTURER / UNVERIFIED; manufacturer verification remains a fabrication gate. Deliverable: `Hardware/Rev2_Controller/OSBAMS_Rev2_RELEASE_CANDIDATE_1/` (review only). See its `PCBWAY_RELEASE_CANDIDATE_REPORT.md`.
+
+## 2026-10-01 — EB21A-02-C footprint verified from the manufacturer drawing
+Adam Tech drawing EB21A-XX-C rev B (committed: `docs/rev2/pcb/evidence/EB21A-XX-C_drawing_revB.pdf`) read locally: pitch 5.00, recommended hole 1.30 mm, body 10.6 x 8.5 x 10.2 mm, pins 4.00 mm from the back / 4.50 mm from the wire-entry face. Footprint `EB21A-02-C` replaces the provisional one; J1-J4 re-placed, board re-routed, ERC 0, DRC 0 electrical. Not on the drawing (design choices): pad diameter 2.6 mm, courtyard, silkscreen, edge clearance, pin-1 end. Fabrication is NOT authorized by this item.

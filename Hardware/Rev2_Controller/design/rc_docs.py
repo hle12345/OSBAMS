@@ -85,7 +85,7 @@ def assembly_notes(s):
 ## Polarity / orientation
 - Diodes: pad 1 = cathode on every diode footprint (checked against the library geometry and the netlist; see `DFM_DFA_REPORT.md`). D1, D2, D5-D7, D9 SMA/SMB bars face pad 1; D11/D12 DO-35 band at pad 1 side; LEDs D3/D4/D10 pad 1 = cathode.
 - U1 pin 1 dot top-left; U2 (MSOP-10) pin 1 dot; U3, U9, U10 SOT-23-6 pin 1; U6 QFN-20 pin 1 + exposed pad to GND_HOST; U7 SOIC-8 pin 1.
-- J1-J4: pin 1 square pad, wire entry toward the board edge. **Footprint is PROVISIONAL (VERIFY_MECHANICAL_DRAWING).**
+- J1-J4: pin 1 square pad, wire entry toward the board edge. Footprint `EB21A-02-C` follows the Adam Tech drawing (VERIFIED_LOCAL); the drawing does not number the pins, so pin 1 = the 2.50 mm end is a design convention.
 - J5/J6/J7 are keyed (KK 254 / PH). J9 SWD is a shrouded keyed header. J8 USB-C front face overhangs the right edge by ~0.8 mm.
 
 ## CPL
@@ -121,7 +121,7 @@ Result: {'**PASS**' if not pol_errs else '**FAIL: ' + '; '.join(pol_errs) + '**'
 ## DFM items for review
 - 0.5 mm pitch LQFP-64 and QFN-20: confirm PCBWay minimum solder-mask bridge and paste stencil; ENIG recommended.
 - Via-in-pad is NOT used. Tracks to LQFP pads leave on the pad axis.
-- THT connectors (EB21A-02-C) have a **provisional footprint**: drill 1.4 mm / pad 2.6 mm / body outline are placeholders until the Adam Tech drawing is checked.
+- THT connectors (EB21A-02-C) use a footprint drawn from the Adam Tech drawing EB21A-XX-C rev B (hole 1.30 mm, pad 2.6 mm [design choice], body 10.6 x 8.5 mm).
 - Mounting holes are NPTH 3.2 mm; fiducials 1 mm / 2 mm opening at three corners.
 - USB-C GCT USB4105-GF-A: confirm the shield tab/NPTH holes against the connector drawing; overhang 0.8 mm beyond the board edge is intentional.
 - Isolation: GND and GND_HOST are separate copper islands with a 3 mm gap; no track crosses the gap except through the ISO7721 (checked by DRC clearance between nets). Pack-level nets (PACK_INA, PACK_ADC, ADC_MID, RELAY_OUT, FB_R1, FB_R2, SHUNT_*_RAW, INA_*) use a 0.4 mm clearance class.
@@ -184,12 +184,11 @@ Everything below is complete and internally checked (KiCad 10.0.6 tooling in the
 Only items that genuinely must be resolved before ordering:
 
 1. **Manufacturer-document verification** — {len(crit)} critical register entries are not VERIFIED_LOCAL (see `EVIDENCE_REGISTER.md`). Most important: **INA228 VSSOP-10 pin map** (symbol follows the INA226 family and is unverified), **LMR14006Y pin map and FB/inductor/min-on-time data**, **ISO7721 pin map and supply ranges**, **VO610A-1 pinout and CTR curve/VF**, **TC74A5 pin map** (probe), **IRLML0060TRPBF** pin map, gate-drive curve at 3 V and VGS(th) (RDS(on) at 3.3 V is not specified; drop was computed with a pessimistic placeholder), **CP2102N** reference design (VBUS pin connection, VDD regulator current for ISO7721 VCC2), **STM32L476 I/O types of PA1/PC10 and VIH/POR/VREFINT values**, DG57CM coil resistance/pick-up/release data, 1.5SMBJ48A clamp vs the INA228 85 V margin.
-2. **EB21A-02-C footprint** is PROVISIONAL (`VERIFY_MECHANICAL_DRAWING`): drill, pad and body dimensions must be checked against the Adam Tech drawing; the footprint was not frozen from the catalog.
-3. **ERC/DRC and Gerber regeneration on your own KiCad 10 installation.** The ERC/DRC results above come from the build container; the Gerber/drill files in this package are exports of a script-generated design and must not be used for fabrication. Remaining DRC items ({s['drc_viol']}) must be reviewed and dispositioned (see `DFM_DFA_REPORT.md`).
-4. **Protection calculation sign-off:** the ADC clamp/back-feed analysis depends on UNVERIFIED diode leakage/forward-voltage and on the MCU pin structure; the 3V3_A bleeder (R4) is fitted to guard the unknown, at 1 mA permanent load.
-5. **Distributor stock / lifecycle / supplier SKUs** were not checked (sites unreachable); orderable suffixes (INA228AIDGSR, LMR14006YDDCR, ISO7721DR, CP2102N-A02-GQFN20, SS14-E3/61T) must be confirmed; only 2 of ~25 VJ0805-style 100 nF are owned, and a 3rd 1.5SMBJ48A is needed.
-6. **PCBWay CPL rotations** must be checked in PCBWay's CAM preview (library rotation offsets differ).
-7. Relay-feedback and E-stop resistor networks are sized from user-relayed CTR data with design-margin derates (0.8 × 0.8, UNVERIFIED); confirm with the official CTR-vs-IF curve.
+2. **ERC/DRC and Gerber regeneration on your own KiCad 10 installation.** The ERC/DRC results above come from the build container; the Gerber/drill files in this package are exports of a script-generated design and must not be used for fabrication. Remaining DRC items ({s['drc_viol']}) must be reviewed and dispositioned (see `DFM_DFA_REPORT.md`).
+3. **Protection calculation sign-off:** the ADC clamp/back-feed analysis depends on UNVERIFIED diode leakage/forward-voltage and on the MCU pin structure; the 3V3_A bleeder (R4) is fitted to guard the unknown, at 1 mA permanent load.
+4. **Distributor stock / lifecycle / supplier SKUs** were not checked (sites unreachable); orderable suffixes (INA228AIDGSR, LMR14006YDDCR, ISO7721DR, CP2102N-A02-GQFN20, SS14-E3/61T) must be confirmed; only 2 of ~25 VJ0805-style 100 nF are owned, and a 3rd 1.5SMBJ48A is needed.
+5. **PCBWay CPL rotations** must be checked in PCBWay's CAM preview (library rotation offsets differ).
+6. Relay-feedback and E-stop resistor networks are sized from user-relayed CTR data with design-margin derates (0.8 × 0.8, UNVERIFIED); confirm with the official CTR-vs-IF curve.
 
 *First-article measurements (3V3/3V3_A ripple, coil current, release time) are bring-up items, not order blockers.*
 

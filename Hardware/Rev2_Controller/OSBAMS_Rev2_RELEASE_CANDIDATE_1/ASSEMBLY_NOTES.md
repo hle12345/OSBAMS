@@ -12,7 +12,7 @@
 ## Polarity / orientation
 - Diodes: pad 1 = cathode on every diode footprint (checked against the library geometry and the netlist; see `DFM_DFA_REPORT.md`). D1, D2, D5-D7, D9 SMA/SMB bars face pad 1; D11/D12 DO-35 band at pad 1 side; LEDs D3/D4/D10 pad 1 = cathode.
 - U1 pin 1 dot top-left; U2 (MSOP-10) pin 1 dot; U3, U9, U10 SOT-23-6 pin 1; U6 QFN-20 pin 1 + exposed pad to GND_HOST; U7 SOIC-8 pin 1.
-- J1-J4: pin 1 square pad, wire entry toward the board edge. **Footprint is PROVISIONAL (VERIFY_MECHANICAL_DRAWING).**
+- J1-J4: pin 1 square pad, wire entry toward the board edge. Footprint `EB21A-02-C` follows the Adam Tech drawing (VERIFIED_LOCAL); the drawing does not number the pins, so pin 1 = the 2.50 mm end is a design convention.
 - J5/J6/J7 are keyed (KK 254 / PH). J9 SWD is a shrouded keyed header. J8 USB-C front face overhangs the right edge by ~0.8 mm.
 
 ## CPL

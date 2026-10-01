@@ -58,7 +58,8 @@ class TestReleaseGates(unittest.TestCase):
             self.assertIn(e["evidence"], ("VERIFIED_LOCAL", "USER_RELAYED_MANUFACTURER", "UNVERIFIED"), e["id"])
             self.assertTrue(e["source"], e["id"])
             if e["evidence"] == "VERIFIED_LOCAL":
-                self.assertRegex(e["source"], r"KiCad|read by", e["id"])      # only library facts read by the build; no manufacturer PDF was opened
+                # library facts read by the build, or a manufacturer document that is committed in the repo
+                self.assertTrue(re.search(r"KiCad|read by", e["source"]) or (e["doc"] and os.path.isfile(os.path.join(ROOT, e["doc"]))), e["id"])
         ids = {e["id"] for e in self._register()}
         for must in ("vo610a_ctr_min_1mA", "vo610a_ctr_min_10mA", "ina228_pinmap", "lmr_pinmap", "iso_pinmap", "eb21a_drawing", "q_rds"):
             self.assertIn(must, ids)
