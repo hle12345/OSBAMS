@@ -29,6 +29,9 @@ Agilent/Keysight **6060B** (primary and only external load) · Keysight **EDU344
 ## Bench work
 `docs/rev2/BENCH_CHECKLIST.md` — the exact physical tests, in order (workflow: `LV_HARDWARE_VALIDATION_PLAN.md`; verification: `INSTRUMENT_CALIBRATION_PLAN.md`). `docs/rev2/6060B_DRIVER_EVIDENCE.md` — remote-control command evidence (nothing VERIFIED yet).
 
+## Controller PCB manufacturing package
+`manufacturing/PCBWay_OSBAMS_Rev2_PCBA/` — candidate Gerber/BOM/CPL/PDFs for the KiCad controller PCB, with a design review and checklist. **Not production-ready** (see its README and checklist).
+
 ## Layout
 - `desktop/` — Python application (`equipment/`, `services/`, `db/`, `gui/`)
 - `Firmware/` — STM32 firmware + host C tests

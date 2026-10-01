@@ -27,5 +27,8 @@ Read the installed part numbers off the hardware and record them in `docs/rev2/H
 
 Next milestone: **physical validation** — `docs/rev2/FIRST_BATTERY_TEST_PROCEDURE.md`. Do not add features until real measurements exist.
 
+## Controller PCB manufacturing package
+`manufacturing/PCBWay_OSBAMS_Rev2_PCBA/` (built by `python3 -m tools.mfg.build_package`). The KiCad PCB is a through-hole carrier (12 V coil driver, TC74, headers to an external Nucleo and INA228 breakout), NOT an STM32/INA228-on-board design. Files are script-generated candidates (no KiCad 10 here): **not production-ready** — diode polarity mismatch D1–D3 (symbol pin 1 = anode, footprint pad 1 = cathode), missing MPNs, no DRC/ERC, scope gaps. Read `Documentation/OSBAMS_Rev2_PCBWAY_CHECKLIST.md` before touching it.
+
 ## Commands
 `python3 -m pytest tests` (needs pytest numpy scikit-learn pyserial PySide6 pyqtgraph; `QT_QPA_PLATFORM=offscreen`) · `make -C Firmware/Tests run` · `python3 tools/gen_rev2_docs.py` after editing `commands.py`, `validation.py` or `inventory.py` (tests fail if the generated docs are stale).
