@@ -1,5 +1,8 @@
 # OSBAMS Rev.2 controller PCB — PCBWay production readiness checklist
 
+> **SNAPSHOT — historical.** This production checklist describes the KiCad board exactly as committed in `d400e2d` (before any revision). The PCBWay package it referred to was **removed** (see `MANUFACTURING_STATE.md`); paths below that point into `manufacturing/` no longer exist. Numbers marked 'script estimate' were never KiCad DRC/ERC results. Findings R1/U1 (diode polarity) etc. remain the open work items.
+
+
 Generated 2026-10-01. **Overall: NOT PRODUCTION-READY** — see the failed items and the issue list at the end.
 
 | # | Item | Status | Evidence / note |

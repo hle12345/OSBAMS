@@ -379,7 +379,21 @@ def build_schematic_pdf(b, s, review):
     return out
 
 
-def main():
+GATES_FILE = os.path.join(REPO, "docs", "rev2", "pcb", "RELEASE_GATES.json")
+
+
+def open_gates():
+    import json
+    g = json.load(open(GATES_FILE))
+    return [k for k, v in g.items() if not k.startswith("_") and v is not True]
+
+
+def main(candidate=False):
+    still_open = open_gates()
+    if still_open and not candidate:
+        raise SystemExit("Refusing to generate manufacturing files: release gates still open:\n  - " +
+                         "\n  - ".join(still_open) +
+                         "\n(docs/rev2/pcb/RELEASE_GATES.json). Use --candidate only for a throw-away preview; never commit it.")
     b = Board()
     s = Schematic()
     clean()
@@ -399,6 +413,7 @@ def main():
 
 
 if __name__ == "__main__":
-    c = main()
+    import sys
+    c = main(candidate="--candidate" in sys.argv)
     print("gerber verification:", c["gerber"])
     print("cpl verification:", c["cpl"])

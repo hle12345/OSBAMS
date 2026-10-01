@@ -17,7 +17,7 @@ This record does not make the hardware BENCH_TESTED or HARDWARE_VALIDATED; it re
 |---|---|---|---|---|---|---|
 | J1 | Battery connector | Amass XT60 (BOM, purchase list: genuine XT60; datasheet figures: ~500 V DC, 60 A on 8 AWG, lower on thinner wire) | | | needs ≥ 10 A at the 12 AWG wire in use | |
 | F1 | Main DC fuse | **15 A**, ≥ 58 V DC, Littelfuse/Eaton DC fuse (purchase list: "HOLD - verify part") | | | DC interrupt rating documented? | |
-| FH1 | Fuse holder | Blue Sea 5504 or exact match for the fuse | | | accepts the chosen fuse style? | |
+| FH1 | Fuse holder | Littelfuse 0FHM0001ZXJ-RED holder (per purchase record; verify DC V/A rating — V5) with fuse Littelfuse 0997015.WXN 15 A / 58 V | | | accepts the chosen fuse style? | |
 | SW1 | Manual disconnect | Blue Sea 6006 (48 V DC max, 300 A continuous, 25 A switching — distributor listings) | | | ≥ 44 V system ceiling | |
 | K1 | Relay / contactor | firmware records **Durakool DG57CM-5021-76-1012-R** (no aux contact). BOM/purchase spreadsheets still say Albright SW60 — stale | | | DC rating at ≥ 44 V / 10 A from the datasheet for THIS suffix; coil voltage 12 V? | |
 | RS1 | Current shunt | firmware: **RSA-20-50** (2.5 mΩ, 20 A / 50 mV); purchase list: "15 A or 20 A / 50 mV candidate" | | | rating, tolerance, power | |
@@ -33,11 +33,11 @@ Layered limits to confirm against the above: battery profile · 6060B 300 W/V ·
 | U1 | STM32L476RG Nucleo-64 | NUCLEO-L476RG | | |
 | U2 | INA228 | Adafruit 5832 breakout | | shunt cal matches RS1? |
 | U3 | TC74 | TC74A0-5.0VAT (address 0x48) | | **thermal protection unvalidated until working**; attachment point on the pack: |
-| Q1 / D1 | coil driver / flyback | MOSFET TBD / 1N4007 | | |
-| ES1 | E-stop (NC) | Schneider XB4 series | | wired in series with the coil supply |
-| SW2 | ARM switch | NKK | | |
-| PS1 | 12 V supply | Mean Well XDR-75-12 (12 V / 6.3 A) | | purchase list only says "≥ 2 A, TBD" |
-| DCDC1 | 12→5 V | Pololu/Murata TBD (purchase list ≥ 2 A) | | **a Pi 5 needs a much larger 5 V budget — specify before powering the Pi from it** |
+| Q1 / D1 | coil driver / flyback | IRLZ44NPBF / 1N5408G (per purchase record; confirm installed — V8) | | |
+| ES1 | E-stop (NC) | Eaton M22-PV-K02 (per purchase record; verify NC contact count — V6) | | wired in series with the coil supply |
+| SW2 | ARM switch | C&K T102SHZQE SPDT (per purchase record; verify — V6) | | |
+| PS1 | 12 V supply | Mean Well XDR-75-12 (12 V / 6.24 A / 74.88 W) | | purchase list only says "≥ 2 A, TBD" |
+| DCDC1 | 12→5 V | undefined — decision pending, see `pcb/PI_POWER_ARCHITECTURE.md` (external 5 V recommended) | | **a Pi 5 needs a much larger 5 V budget — specify before powering the Pi from it** |
 | VO610A feedback | K1 voltage feedback on PC9 | firmware: PC9 = VO610A, active low | | confirm wiring matches |
 | ADC divider | independent voltage channel | **unfinished** (purchase list: "DO NOT ORDER YET") | | needed for bench step C2 |
 | TVS | pack-input protection | **unfinished** (purchase list: hold) | | |

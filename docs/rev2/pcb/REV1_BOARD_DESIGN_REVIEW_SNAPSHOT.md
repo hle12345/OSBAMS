@@ -1,5 +1,8 @@
 # OSBAMS Rev.2 controller PCB — design review (pre-fabrication)
 
+> **SNAPSHOT — historical.** This design review describes the KiCad board exactly as committed in `d400e2d` (before any revision). The PCBWay package it referred to was **removed** (see `MANUFACTURING_STATE.md`); paths below that point into `manufacturing/` no longer exist. Numbers marked 'script estimate' were never KiCad DRC/ERC results. Findings R1/U1 (diode polarity) etc. remain the open work items.
+
+
 Generated 2026-10-01 by `tools/mfg` from `Hardware/Schematic/OSBAMS PCB.kicad_pcb` / `.kicad_sch` (KiCad format 20260206).
 
 > **Verdict: NOT READY FOR PRODUCTION.** Two critical findings (R1 diode polarity, R2 scope gap) and several open items are listed in §7. DRC and ERC were **not run** (no KiCad 10 available); every geometric number below is a script estimate, not a KiCad DRC result.
