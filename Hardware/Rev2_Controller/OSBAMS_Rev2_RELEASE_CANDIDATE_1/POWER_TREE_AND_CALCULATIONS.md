@@ -293,5 +293,5 @@ Regulator: VREGIN 3.0-5.25 V, VDD 3.1-3.6 V, IREGOUT 100 mA **total including th
 
 ## 9. Evidence summary
 
-VERIFIED_LOCAL 32 · USER_RELAYED_MANUFACTURER 41 · UNVERIFIED 19 (total 92). Critical entries not yet VERIFIED_LOCAL: **28** — these are fabrication gates, not schematic/layout gates.
+VERIFIED_LOCAL 33 · USER_RELAYED_MANUFACTURER 40 · UNVERIFIED 19 (total 92). Critical entries not yet VERIFIED_LOCAL: **27** — these are fabrication gates, not schematic/layout gates.
 

@@ -2,7 +2,7 @@
 
 Every register entry that is **not VERIFIED_LOCAL** is classified by what a wrong value could actually cause. `USER_RELAYED_MANUFACTURER` values are used as authoritative for electrical checks; the PDFs have not been read by the build. Entries read locally (ISO7721, CP2102N, SRN6045TA-100M, EB21A drawing, KiCad library facts) are not listed.
 
-60 entries are not VERIFIED_LOCAL: WRONG_PINOUT: 4, EXCEEDED_ABS_MAX: 12, WRONG_FOOTPRINT: 5, UNSAFE_PROTECTION: 5, FIRST_ARTICLE / INFORMATIONAL: 34.
+59 entries are not VERIFIED_LOCAL: WRONG_PINOUT: 4, EXCEEDED_ABS_MAX: 12, WRONG_FOOTPRINT: 5, UNSAFE_PROTECTION: 4, FIRST_ARTICLE / INFORMATIONAL: 34.
 
 
 ## Could cause a WRONG PINOUT (supply the datasheet to move these to VERIFIED_LOCAL — highest priority)
@@ -48,7 +48,6 @@ Every register entry that is **not VERIFIED_LOCAL** is classified by what a wron
 | `ina228_status` | INA228 | lifecycle / package | USER_RELAYED_MANUFACTURER | informational. |
 | `dg57_dc1` | DG57CM-5021-76-1012-R | DC1 rated load | USER_RELAYED_MANUFACTURER | relay DC rating >> the 10 A / 44 V ceiling. |
 | `rs_pulse_rating` | Panasonic ERJ-P08F47R0V / ERJ-P08F10R0V | ERJ-P08F47R0V / ERJ-P08F10R0V PULSE CAPABILITY (energy / peak power vs pulse duration, single and repeated pul | UNVERIFIED | OPEN: the catalog (read) gives DC ratings and the +/-3 kV 150 pF ESD test only; the pulse-data document AOA0000C331.pdf is not checked. ERJP08 catalog row (read locally): 500 V limiting / 1000 V overload (a relayed 125/500 V does not match; 125 is the terminal temperature in C); modeled 8 kV ESD = about 1.3 kV across R41, above the 1000 V overload rating -> ESD_PROTECTION_OPEN. |
-| `tvs_diff` | SMF12CA (D15) | Littelfuse SMF12CA bidirectional (CA) TVS: VRWM 12 V, VBR 13.3-14.7 V, VC about 19.9 V at IPP about 10.1 A (re | USER_RELAYED_MANUFACTURER | D15 SMF12CA: VRWM 12 V, VBR 13.3-14.7 V, VC 19.9 V at 10.1 A relayed; leakage, capacitance, pulse curve and land pattern vs D_SMF open. |
 | `esd_connector` | J5/J6 connectors | ESD_PROTECTION_OPEN: ESD at accessible connectors (IEC 61000-4-2, 8 kV contact / 15 kV air). R41-R43 sit upstr | UNVERIFIED | ESD at J5/J6 cannot be shown by simulation; R41-R43 sit upstream of the TVS -> first-article test F1, connector-level TVS = RC1.3 fallback. |
 
 ## First-article measurements / design margins / informational (cannot cause a wrong pinout, absolute-maximum violation, wrong footprint or unsafe protection)
