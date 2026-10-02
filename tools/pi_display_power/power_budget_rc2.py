@@ -3,7 +3,7 @@
 import sys, os, json, math
 D = sys.argv[1]; HERE = os.path.dirname(os.path.abspath(__file__))
 I = json.load(open(f"{HERE}/datasheet_inputs.json")); V = lambda k: I[k]["value"]
-RS = 0.246; PCB = (4.8 + 3.7 + 0.4) * RS; TRUNK = 13.4 * 1.2 * 0.15; IPCU = 2.0           # same constants as voltage_budget.py
+RS = 0.246; PCB = (4.8 + 3.7 + 0.4) * RS; TRUNK = 21.0 * 1.2 * 0.15; IPCU = 2.0           # same constants as voltage_budget.py
 F2 = V("f2_resistance_cold_mohm"); F2H = 1.3; J = V("j_out_contact_max_mohm"); JT = V("j_out_contact_typ_mohm"); SOCK = V("interposer_socket_contact_mohm")
 ACC, LINE, LOAD, TC, DT = V("rsdw_tolerance_pct") / 100, V("rsdw_line_reg_pct") / 100, V("rsdw_load_reg_pct") / 100, V("rsdw_tempco_pct_per_c") / 100, V("delta_t_c")
 TARGET, PI_MAX, PI_MIN = 4.85, 5.25, 4.75
@@ -11,7 +11,7 @@ TARGET, PI_MAX, PI_MIN = 4.85, 5.25, 4.75
 shared = [("PCB copper (2 oz, +5 V and GND paths, from layout squares)", PCB, PCB),
           ("F2 output fuse 0451008.MRL (7.7 mOhm cold; 1.3x hot)", F2, F2 * F2H)]
 branch = [("J_OUT Micro-Fit 430450400 (2 contacts/rail, 5.24 typ / 10 max mOhm per contact)", 2 * JT / 2, 2 * J / 2),
-          ("Harness 16 AWG, 150 mm, 2 wires/rail (hot 1.2x)", 2 * TRUNK / 2 / 1.2, 2 * TRUNK / 2),
+          ("Harness 18 AWG (43030-0038), 150 mm, 2 wires/rail (hot 1.2x)", 2 * TRUNK / 2 / 1.2, 2 * TRUNK / 2),
           ("Interposer J1 Micro-Fit (2 contacts/rail)", 2 * JT / 2, 2 * J / 2),
           ("Interposer copper (estimate 2 mOhm/rail)", 2 * IPCU, 2 * IPCU),
           (f"SSW-120 socket contacts ({SOCK:g} mOhm/contact max; 2 on +5 V, 4 on GND; typ = 0.6x)", SOCK * 0.6 / 2 + SOCK * 0.6 / 4, SOCK / 2 + SOCK / 4)]
@@ -25,7 +25,7 @@ def vpi(ip, idisp, sp=SP, worst=True, dt=DT):
     vm = sp * (1 - tl(it) - TC * dt) if worst else sp * (1 - LOAD * it / 8)
     return vm - it * rs / 1e3 - ip * rb / 1e3
 L = ["# 5 V power-budget report (RC2)", "",
-     "Topology (RC2): `RSDW40F-05 +VOUT -> PCB copper -> F2 -> [5V_PI node]`; from the node two branches: (a) **Pi branch**: J_OUT -> 16 AWG harness -> interposer J1 -> interposer copper -> SSW-120 socket -> Pi pins 2/4 (+5 V) and 6/9/14/20 (GND); (b) **display branch**: J_DISP (Micro-Fit 430450200) -> display lead. The display is fed directly from the board because the interposer covers the Pi header (see `Waveshare_integration.md`), so display current does not pass through the harness, the interposer or the socket. Both loads share only the PCB copper and F2.", "",
+     "Topology (RC2): `RSDW40F-05 +VOUT -> PCB copper -> F2 -> [5V_PI node]`; from the node two branches: (a) **Pi branch**: J_OUT -> 18 AWG harness -> interposer J1 -> interposer copper -> SSW-120 socket -> Pi pins 2/4 (+5 V) and 6/9/14/20 (GND); (b) **display branch**: J_DISP (Micro-Fit 430450200) -> display lead. The display is fed directly from the board because the interposer covers the Pi header (see `Waveshare_integration.md`), so display current does not pass through the harness, the interposer or the socket. Both loads share only the PCB copper and F2.", "",
      f"Inputs: `datasheet_inputs.json` (source/status per value, see `Parts_and_sources.md`). Targets: **Pi pins >= {TARGET} V at the maximum intended Pi load, worst case**; **<= {PI_MAX} V at no load / high line**; Pi under-voltage region begins near {PI_MIN} V or lower (design floor {PI_MIN} V). Calibrated unit: module setpoint **{SP:.3f} V** (25 C, no load); line {LINE*100:.1f} %, load {LOAD*100:.1f} % over 0-8 A, temperature {TC*100:.2f} %/C x {DT:.0f} C = {TC*DT*100:.2f} %.", "",
      "## 1. Element drops", "",
      "| Element | carries | R typ (mOhm) | R worst (mOhm) | drop @3 A typ / worst (mV) | drop @5 A typ / worst (mV) |", "|---|---|---|---|---|---|"]
@@ -44,7 +44,7 @@ SPMIN = max((TARGET + 5 * (Rb_m) / 1e3 + 5 * Rs_m / 1e3) / (1 - tl(5) - TC * DT)
 SPMIN_t = (TARGET + 5 * Rb_t / 1e3 + 6 * Rs_t / 1e3) / (1 - tl(6) - TC * DT)
 wmin = vpi(5, 1)
 L += ["", f"Lowest voltage anywhere in the table (every resistance at its maximum, F2 hot, +{DT:.0f} C, 5 A Pi + 1 A display): **{wmin:.3f} V**: {'meets' if wmin >= TARGET else 'MISSES'} the {TARGET} V owner target by {(wmin-TARGET)*1000:+.0f} mV and clears the {PI_MIN} V design floor by {(wmin-PI_MIN)*1000:+.0f} mV. The {TARGET} V target is the conservative owner target; the {PI_MIN} V floor is the under-voltage design limit.", "",
-     "The 5 A + 1 A row is the maximum intended load (Pi 5 at its 5 A supply rating plus ~1 A display; owner note in `docs/rev2/pcb/PI_POWER_ARCHITECTURE.md`: Pi 5 5 V / up to 5 A, display ~0.8-1 A - the actual Waveshare model rating must still be confirmed).", "",
+     "The 5 A + 1 A row is the maximum intended load (Pi 5 at its 5 A supply rating plus ~1 A display; owner note in `docs/rev2/pcb/PI_POWER_ARCHITECTURE.md`: Pi 5 5 V / up to 5 A, display ~0.8-1 A - Waveshare 10.1-DSI-TOUCH-A, user-relayed manufacturer data: 4.75-5.30 V input, **0.8 A typical, maximum not published**; 1.0 A here is a design scenario, not a manufacturer maximum).", "",
       f"**Setpoint window (calibrated unit, worst path, hot F2, 5 A Pi + 1 A display):** the module output measured at 25 C, no load, must lie in **{SPMIN:.3f} V ... {SPMAX:.3f} V** (lower bound: 4.85 V at the Pi pins; upper bound: 5.25 V at no load / high line / +{DT:.0f} C): width {(SPMAX-SPMIN)*1000:.0f} mV {'(CLOSED: no setpoint satisfies both limits with every resistance at its maximum)' if SPMAX <= SPMIN else ('(effectively closed: narrower than one E96 trim step, ~20 mV)' if (SPMAX-SPMIN) < 0.02 else '(open)')}. With **typical** resistances the window is {SPMIN_t:.3f} V ... {SPMAX:.3f} V ({(SPMAX-SPMIN_t)*1000:.0f} mV wide). The worst-path window stacks every contact at its maximum with F2 hot at once; it shows the limit, not the expected case. **Calibration is therefore done on the assembled system** (measure the real drop, then choose the trim resistor; `Trim_calibration_procedure.md`, `First_article_checklist.md`); worst-path closure is checked by measuring the socket and connector contact resistances on the first articles.", "",
       f"No-load worst case: **{SP*(1+th+TC*DT):.3f} V** (setpoint {SP:.3f} V x (1 + line {LINE*100:.1f} % + temperature {TC*DT*100:.2f} %)) -> {'below' if SP*(1+th+TC*DT) <= PI_MAX else 'ABOVE'} the {PI_MAX} V Pi maximum.", "",
       "## 3. Scenarios and acceptance (measured at first article)", "",
@@ -60,3 +60,19 @@ L += [f"| Baseline | {vpi(5, 1):.3f} |", f"| Only 2 GND socket pins used (no pin
       f"| Module 5 C hotter (dT {DT+5:.0f} C) | {vpi(5, 1, dt=DT+5):.3f} |", f"| Uncalibrated unit (accuracy +-1 % included, same setpoint) | {vpi(5, 1) - SP*ACC:.3f} |", "",
       "The uncalibrated row shows why **per-unit trim calibration is required**: without it the 5 A worst case falls below 4.85 V and no fixed setpoint can satisfy both the 4.85 V and 5.25 V limits.", ""]
 open(f"{D}/docs/Power_budget_report.md", "w").write("\n".join(L)); print("\n".join(L[16:44]))
+
+I_PI, I_D = 5.0, 1.0; IT = I_PI + I_D
+LEAD = 2 * 0.2 * 33.0                                   # display lead 20 AWG, 200 mm, both wires (33 mOhm/m), mOhm
+vd_lo = SP * (1 - tl(IT) - TC * DT) - IT * Rs_m / 1e3 - I_D * (2 * J + LEAD) / 1e3
+vd_hi = SP * (1 + th + TC * DT)
+L += ["## 5. Display input check (Waveshare 10.1-DSI-TOUCH-A, user-relayed: 4.75 / 5.00 / 5.30 V, 0.8 A typical, maximum not published)", "",
+      f"| Case | Display input (V) | Waveshare range 4.75-5.30 V |", "|---|---|---|",
+      f"| Lowest: worst path, 5 A Pi + 1 A display, J_DISP contacts 2 x 10 mOhm + 200 mm 20 AWG lead ({LEAD:.0f} mOhm) | {vd_lo:.3f} | {'inside' if vd_lo >= 4.75 else 'BELOW'} (+{(vd_lo-4.75)*1000:.0f} mV) |",
+      f"| Highest: no load / high line / +{DT:.0f} C, display idle | {vd_hi:.3f} | {'inside' if vd_hi <= 5.30 else 'ABOVE'} ({(5.30-vd_hi)*1000:+.0f} mV to the upper limit) |", "",
+      "Waveshare warns the supply must deliver at least ~0.8 A or start-up abnormalities may occur: F2/the module deliver this with large margin. The display shares the Pi's 5 V rail and trim setpoint, so the calibrated 5.19-5.20 V keeps it inside its 5.30 V limit. The maximum display current is unpublished: the first article measures it (`First_article_checklist.md` D5).", "",
+      "## 6. Dissipation estimate at 5 A Pi + 1 A display (worst resistances; first article measures the real temperatures)", "",
+      "| Element | Current | R (mOhm) | Power |", "|---|---|---|---|"]
+for nm, i_, r_ in (("F2 (hot)", IT, F2 * F2H), ("J_OUT contact (+5 V, 2 parallel)", I_PI / 2, J), ("Harness wire 18 AWG, 150 mm (2 parallel/rail)", I_PI / 2, TRUNK), ("Interposer J1 contact", I_PI / 2, J), ("SSW socket pin (+5 V, 2 pins)", I_PI / 2, SOCK), ("SSW socket pin (GND, 4 pins)", I_PI / 4, SOCK), ("J_DISP contact", I_D, J)):
+    L.append(f"| {nm} | {i_:.2f} A | {r_:.1f} | {i_*i_*r_:.0f} mW |")
+L += ["", "All individual dissipations are below ~0.4 W; the module (40 W class, ~89 % efficient, about 3.5 W at 31 W out) dominates the heat. Micro-Fit rated 8.5 A per contact (owner-cited): 2.5 A on 18 AWG terminals is 29 %. Terminal rating with 18 AWG wire is not in the uploaded Molex file - check the temperature rise on the first article (B2).", ""]
+open(f"{D}/docs/Power_budget_report.md", "a").write("\n".join(L)); print("appended")

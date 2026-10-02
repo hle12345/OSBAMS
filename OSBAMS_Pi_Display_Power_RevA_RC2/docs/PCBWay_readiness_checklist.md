@@ -11,6 +11,6 @@ Owner runs ERC/DRC and exports Gerbers/drill in KiCad 10 from the delivered proj
 - [ ] **Owner:** Gerber/drill export in KiCad 10, CAM preview, CPL rotation check at PCBWay (THT parts are hand/selective soldered)
 - [ ] **Owner:** confirm PCBWay heavy-copper (2 oz) minimum trace/space and drill/annular limits
 - [ ] **Owner:** PCBWay stock of RSDW40F-05, else **consigned**; Molex 43045 headers fit-check against the physical part (library footprints)
-- [ ] **Owner:** orderable Samtec SSW-120-01 code (plating letter), Molex 43030 terminals and wire (harness, not on PCB)
+- [x] Samtec SSW-120-01-L-D (user-relayed), harness terminals Molex 43030-0038 + 18 AWG (Molex ATS-638280200)
 - [ ] Remove `RC2 – NOT FOR FAB` silk at release
 - [ ] First article: `First_article_checklist.md` (trim calibration, loaded voltage, temperatures, Pi + display)

@@ -13,7 +13,8 @@ Bench 12 V supply (current limit 1 A -> 5 A), electronic load 0-10 A with 4-wire
 | A3 | Input 12.0 V, no load: input current | < 0.2 A | |
 | A4 | No-load 5 V: V(TP3) module output, V(TP4) after F2, V at J_OUT pins | 5.00 V +-1.7 %; TP4 = TP3 within 5 mV; PG LED lit | |
 | A5 | Isolation resistance 500 V (or the highest safe test voltage) between 12V_GND and PI_GND | >= 100 MOhm (module spec 1000 MOhm at 500 VDC) | |
-| A6 | Contact resistances (4-wire, 5 A DC): J_OUT contact pair, J1 pair, SSW socket per pin (interposer on a spare Pi header or a test header), F2 | each <= its budget row in `Power_budget_report.md` (J 10 mOhm/contact, socket 20 mOhm/contact, F2 <= 10 mOhm hot) | |
+| A5b | Harness crimp inspection (43030-0038 on 18 AWG): conductor crimp height 1.00–1.10 mm, strip 2.54–2.92 mm, pull ≥ 89 N on a sample, insulation OD ≤ 1.85 mm | per Molex ATS-638280200 | |
+| A6 | Contact resistances (4-wire, 5 A DC): J_OUT contact pair, J1 pair, SSW socket per pin (interposer on a spare Pi header or a test header), F2 | each <= its budget row in `Power_budget_report.md` (J 10 mOhm/contact, socket 20 mOhm/contact, F2 <= 10 mOhm hot, 18 AWG wire <= 3.8 mOhm per 150 mm) | |
 
 ## Part B - loaded, no Pi (electronic load at the interposer / Pi-end connector)
 | # | Step | Pass if | Result |

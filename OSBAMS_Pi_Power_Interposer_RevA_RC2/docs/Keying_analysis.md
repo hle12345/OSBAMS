@@ -28,7 +28,7 @@ Script: `tools/pi_display_power/check_pi5_keying.py` → `reports/Pi5_keying_che
 - **Clearances in plan (correct orientation):** SoC/Active-Cooler area 17.1 mm; chip B 4.4 mm; USB/Ethernet stack 5.8 mm; DSI/CSI FFCs (left edge, y ≥ 20 mm) and the PoE 2×2 header (bottom right) > 12 mm. **Watch:** the small connector by the right mounting hole is only 0.2 mm from the interposer's right edge in plan (and another 0.9 mm away) — the board floats well above it at the seated gap, but confirm its height.
 - The spacers alone still do not key the board (end holes are symmetric); the posts do.
 
-## Heights — with Samtec SSW-120-01 (owner code -S-D; plating letter to be confirmed at purchase) (see `reports/Stack_height_check.txt`)
+## Heights — with Samtec SSW-120-01-L-D (see `reports/Stack_height_check.txt`)
 Seated gap G = 8.51 mm body + ~2.5 mm Pi header plastic (assumed) = 11.0 mm → **M1/M2: M2.5 × 11 mm** spacers (standard HAT length). Pi pins protrude ~6.5 mm above the plastic (tip ~9 mm, Pi drawing) and enter the 8.51 mm body. **K1/K2: M2.5 × 20 mm standoffs** — reversed, the socket face stops at 20 − 8.51 = 11.5 mm above the Pi PCB, 2.5 mm above the pin tips, so the pins cannot enter (minimum post length for 1.5 mm margin: 19.0 mm). In the correct orientation the posts hang ~9 mm below the Pi PCB plane, 11 mm beyond its edge. No Active-Cooler collision (17 mm away in plan). A physical reversed-fit test with a real Pi 5 is still a first-article check; a STEP confirmation is optional.
 
 ## Waveshare display

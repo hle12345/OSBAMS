@@ -1,10 +1,10 @@
 # Interposer mechanical verification (RC2)
 
-Evidence: `reports/Pi5_keying_check.txt` (plan view digitised from the official Raspberry Pi 5 mechanical drawing RP-008347-DS-1, ±0.3 mm), `reports/Stack_height_check.txt`, `reports/ERC_equivalent_connectivity_report.txt`, KiCad 10 ERC/DRC reports. HAT+ geometry from RP-008281-DS-1. Socket dimensions from Samtec catalog F-226.
+Evidence: `reports/Pi5_keying_check.txt` (plan view digitised from the official Raspberry Pi 5 mechanical drawing RP-008347-DS-1, ±0.3 mm), `reports/Stack_height_check.txt`, `reports/ERC_equivalent_connectivity_report.txt`, KiCad 10 ERC/DRC reports. HAT+ geometry from RP-008281-DS-1. Socket dimensions from Samtec catalog F-226; orderable code `SSW-120-01-L-D` (user-relayed from the Samtec product page).
 
 | Requirement | Result | Evidence |
 |---|---|---|
-| 2×20 header alignment | Pad pattern generated from the Pi pin numbers (pin 1 square pad, odd pins inner row, even pins outer row), 2.54 mm pitch; pin 1 silk marker; full 40-position socket (no offset fit possible) | footprint `SSW-120-01-S-D_RPi_TopView` (`OSBAMS_PiPwr.pretty`), HAT+ Fig. 2 |
+| 2×20 header alignment | Pad pattern generated from the Pi pin numbers (pin 1 square pad, odd pins inner row, even pins outer row), 2.54 mm pitch; pin 1 silk marker; full 40-position socket (no offset fit possible) | footprint `SSW-120-01-L-D_RPi_TopView` (`OSBAMS_PiPwr.pretty`), HAT+ Fig. 2 |
 | +5 V only on Pi pins 2 and 4 | PASS | netlist: `5V_PI` = J1.1, J1.2, J2.2, J2.4 |
 | GND on the intended pins | PASS: Pi pins 6, 9, 14, 20 | netlist: `PI_GND` = J1.3, J1.4, J2.6, J2.9, J2.14, J2.20 |
 | No accidental power on GPIO | PASS: the other 34 header pins are no-connect (no net, no copper) | `check_interposer.py`: 34 unconnected positions |

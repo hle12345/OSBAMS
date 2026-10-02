@@ -35,8 +35,8 @@ for p in fp.Pads():
     if p.GetNumber() in ("3", "4"): p.SetNet(net("PI_GND"))
 fp.Reference().SetLayer(pcbnew.F_Fab); fp.Value().SetVisible(False); b.Add(fp)
 # J2: 2x20 socket pattern by Raspberry Pi pin number (THT 1.7 mm pad, 1.0 mm drill), mounted from the underside
-fp2 = pcbnew.FOOTPRINT(b); fp2.SetReference("J2"); fp2.SetValue("SSW-120-01-S-D"); fp2.SetPosition(P(X0, YH))
-fp2.SetFPID(pcbnew.LIB_ID("OSBAMS_PiPwr", "SSW-120-01-S-D_RPi_TopView")); fp2.Reference().SetLayer(pcbnew.F_Fab); fp2.Value().SetVisible(False)
+fp2 = pcbnew.FOOTPRINT(b); fp2.SetReference("J2"); fp2.SetValue("SSW-120-01-L-D"); fp2.SetPosition(P(X0, YH))
+fp2.SetFPID(pcbnew.LIB_ID("OSBAMS_PiPwr", "SSW-120-01-L-D_RPi_TopView")); fp2.Reference().SetLayer(pcbnew.F_Fab); fp2.Value().SetVisible(False)
 for n in range(1, 41):
     x, y = pin_xy(n); pd = pcbnew.PAD(fp2); pd.SetNumber(str(n)); pd.SetPosition(P(x, y)); pd.SetPos0(P(x - X0, y - YH))
     pd.SetSize(P(1.7, 1.7)); pd.SetAttribute(pcbnew.PAD_ATTRIB_PTH); pd.SetLayerSet(pd.PTHMask()); pd.SetDrillSize(P(1.0, 1.0))
@@ -113,7 +113,7 @@ def place(ref, libname, pins, x0, y0, fpn, val, mpn):
                 body.append(f'(label "{net_}" (at {ex:.2f} {y:.2f} {ang}) (effects (font (size 1.27 1.27)) (justify {"right" if ang == 180 else "left"} bottom)) (uuid "{u()}"))')
 PIN_NETS_STR = {str(k): v for k, v in PIN_NETS.items()}
 place("J1", "MicroFit4", J1pins, 40.64, 60.96, "Connector_Molex:Molex_Micro-Fit_3.0_43045-0400_2x02_P3.00mm_Horizontal", "43045-0400", "430450400")
-place("J2", "RPi40", J2pins, 129.54, 149.86, "OSBAMS_PiPwr:SSW-120-01-S-D_RPi_TopView", "SSW-120-01-S-D", "SSW-120-01-S-D")
+place("J2", "RPi40", J2pins, 129.54, 149.86, "OSBAMS_PiPwr:SSW-120-01-L-D_RPi_TopView", "SSW-120-01-L-D", "SSW-120-01-L-D")
 for i, net_ in enumerate(["5V_PI", "PI_GND"]):
     xx = 40.64 + i * 15.24
     body.append(f'(symbol (lib_id "OSBAMS_PiPwr:PWR_FLAG") (at {xx} 100.33 0) (unit 1) (in_bom no) (on_board no) (dnp no) (uuid "{u()}")\n  (property "Reference" "#FLG0{i+1}" (at {xx} 97.33 0) (effects hide)) (property "Value" "PWR_FLAG" (at {xx} 103.33 0) (effects hide))\n  (pin "1" (uuid "{u()}")) (instances (project "{NAME}" (path "/{ROOT}" (reference "#FLG0{i+1}") (unit 1)))))')

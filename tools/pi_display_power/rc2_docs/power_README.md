@@ -11,8 +11,8 @@ No STM32, ADC, INA228, relay or safety logic here. `PI_GND` is **not** connected
 |---|---|
 | KiCad 10 ERC / DRC / parity / unconnected / footprint errors | **0 / 0 / 0 / 0** on this board and the interposer (KiCad 10.0.6, `reports/*_kicad10.rpt`). Owner re-runs locally. |
 | Isolation (≥ 8 mm PRIMARY↔ISOLATED rule, negative control; single boundary in U1) | **PASS** — `reports/Isolation_check.txt`, `docs/Isolation_review.md` |
-| Exact parts, no placeholder MPN in the BOM | **DONE** — `docs/Parts_and_sources.md`; owner items listed there (harness terminals, Samtec code, Waveshare data) |
-| 5 V budget with the real parts | **DONE** — `docs/Power_budget_report.md` (typical 4.98 V at 5 A + 1 A; absolute worst path 4.836 V, floor 4.75 V; per-unit calibration) |
+| Exact parts, no placeholder MPN in the BOM | **DONE** — `docs/Parts_and_sources.md`; remaining items listed there |
+| 5 V budget with the real parts | **DONE** — `docs/Power_budget_report.md` (18 AWG harness: typical 4.97 V at 5 A Pi + 1 A display; absolute worst path 4.829 V, floor 4.75 V; per-unit calibration mandatory) |
 | Display feed decision | **J_DISP direct feed** — `docs/Waveshare_integration.md` |
 | Interposer mechanical/keying | **PASS** (plan view + heights) — interposer `docs/Mechanical_verification.md`; physical reversed-fit test at first article |
 | First article | **OPEN (by design)** — `docs/First_article_checklist.md` |

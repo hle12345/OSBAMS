@@ -154,9 +154,9 @@
   "source": "407 datasheet nominal resistance 0.009 ohm (measured <10 % rated current); hot value from 0.097 V drop at 8 A = 12.1 mOhm"
  },
  "interposer_socket_mpn": {
-  "value": "SSW-120-01-S-D",
-  "status": "owner_cited",
-  "source": "Owner selection. CATALOG MISMATCH: on catalog page F-226 the plating options are -F (gold flash, tin tail), -L (10 uin Au, tin tail), -G (20 uin Au, gold-flash tail) and -T (tin); '-S' there is a ROW option (single row), so '-S' in the plating position is not a listed code and no 30 uin gold option appears. Confirm the exact orderable code with the distributor/Samtec; catalog-valid equivalents: SSW-120-01-L-D (10 uin Au) or SSW-120-01-G-D (20 uin Au). Dimensions (8.51 mm body, lead style -01 tail 2.64 mm) ARE confirmed by the catalog."
+  "value": "SSW-120-01-L-D",
+  "status": "user_relayed_manufacturer",
+  "source": "Samtec SSW-120-01-L-D (user-relayed from the Samtec product page): 40 pos, 2 rows, 2.54 mm, vertical THT, 10 uin Au mating, tin post, post 2.64 mm, insulation 8.51 mm, 4.7 A per contact (Samtec basis: 2 pins powered), -55..+125 C. Dimensions also verified from catalog F-226 (uploaded). Not read locally from the product page."
  },
  "interposer_socket_contact_mohm": {
   "value": 20.0,
@@ -260,8 +260,46 @@
   "source": "Design decision (Waveshare_integration.md): the interposer covers the Pi header, so the display cannot use Pi pins; display current stays out of the harness/interposer/socket. Waveshare datasheet itself not available: display current is a first-article measurement."
  },
  "waveshare_current_a": {
-  "value": null,
-  "status": "unverified",
-  "source": "No Waveshare datasheet available to the build. Owner note (PI_POWER_ARCHITECTURE.md): ~0.8-1 A; confirm for the exact model. Used only for scenario rows; hardware limits (5.0 A Pi pins, 6.0 A total) do not depend on it."
+  "value": 0.8,
+  "status": "user_relayed_manufacturer",
+  "source": "0.8 A typical (manufacturer); maximum NOT published. 1.0 A is used as a design scenario only; first article measures the actual current."
+ },
+ "harness_terminal": {
+  "value": "Molex 43030-0038 (18 AWG / 0.75 mm2, tin) with 18 AWG UL1061-type wire, insulation OD <= 1.85 mm; housings 43025-0200 / 43025-0400",
+  "status": "verified",
+  "source": "Molex ATS-638280200 (Hand Crimp Tool 63828-0200 application tooling spec, rev D, uploaded): 43030-0038/-0039/-0040 = 18 AWG / 0.75 mm2; insulation OD 1.60-1.85 mm (IPC) / 0.90-1.85 mm (terminal); strip 2.54-2.92 mm; conductor crimp height 1.00-1.10 mm (18 AWG) / 0.85-0.95 mm (0.75 mm2); pull force >= 89 N; locator 63828-0275. The 24-20 AWG / 30-26 AWG rows of the 43030 series table are user-relayed (not in the uploaded file): no 16 AWG 43030 terminal."
+ },
+ "harness_wire_awg": {
+  "value": 18,
+  "status": "verified",
+  "source": "Follows from harness_terminal: 16 AWG does not fit any 43030 terminal; 18 AWG (20.9 mOhm/m at 20 C, x1.2 hot) is used in the budget"
+ },
+ "waveshare_input_range_v": {
+  "value": [
+   4.75,
+   5.0,
+   5.3
+  ],
+  "status": "user_relayed_manufacturer",
+  "source": "Waveshare 10.1-DSI-TOUCH-A (SKU 30052) specification as relayed by the owner: input 4.75 / 5.00 / 5.30 V (min/nom/max); 0.8 A typical, maximum not published; supply should provide >= ~0.8 A or start-up abnormalities may occur; 0-60 C operating. Package cables: MX1.25 2PIN to 2.54 3PIN and MX1.25 2PIN to MX1.25 4PIN. Not read locally."
+ },
+ "tvs1_smbj15a": {
+  "value": {
+   "vrwm_v": 15.0,
+   "vbr_min_v": 16.7,
+   "vbr_max_v": 18.5,
+   "vbr_test_ma": 1,
+   "vc_max_v": 24.4,
+   "ipp_a": 24.6,
+   "ppp_w": 600,
+   "ir_ua": 1,
+   "package": "DO-214AA / SMB",
+   "tj_c": [
+    -65,
+    150
+   ]
+  },
+  "status": "user_relayed_manufacturer",
+  "source": "Littelfuse SMBJ series datasheet, SMBJ15A row (user-relayed; not read locally). Unidirectional A part."
  }
 }

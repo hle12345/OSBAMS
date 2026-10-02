@@ -4,7 +4,7 @@ import sys, json, os
 D = sys.argv[1]; HERE = os.path.dirname(os.path.abspath(__file__))
 I = json.load(open(f"{HERE}/datasheet_inputs.json")); V = lambda k: I[k]["value"]
 RS = 0.246; PCB = (4.8 + 3.7 + 0.4) * RS                    # 2 oz, squares from RC1.1 layout
-TRUNK = 13.4 * 1.2 * 0.15                                    # 16 AWG trunk, 150 mm, hot  (mOhm, one wire)
+TRUNK = 21.0 * 1.2 * 0.15                                    # 18 AWG (20.9 mOhm/m at 20 C) trunk, 150 mm, hot 1.2x (mOhm, one wire)
 SOCK = V("interposer_socket_contact_mohm"); IPCU = 2.0      # stacking-socket contact (PLACEHOLDER until MPN chosen); interposer copper per rail (mOhm, estimate)
 TARGET, PI_MAX, PI_MIN = 4.85, 5.25, 4.75
 ACC, LINE, LOAD, TC, DT = V("rsdw_tolerance_pct") / 100, V("rsdw_line_reg_pct") / 100, V("rsdw_load_reg_pct") / 100, V("rsdw_tempco_pct_per_c") / 100, V("delta_t_c")
@@ -12,7 +12,7 @@ tl = ACC + LINE + LOAD * 5 / 8        # low corner at 5 A (5/8 of rated load), 2
 th = ACC + LINE + LOAD                # high corner at no load, 25 C
 tol = (tl + th) / 2
 def R(j, sock, f2, n_gnd=4, n_5v=2):
-    """mOhm. Power board J_OUT (2 contacts/rail) -> 2x16 AWG/rail (150 mm) -> interposer Micro-Fit J1 (2 contacts/rail) -> interposer copper -> stacking socket -> Pi pins (2 x 5V, n_gnd x GND)."""
+    """mOhm. Power board J_OUT (2 contacts/rail) -> 2x18 AWG/rail (150 mm) -> interposer Micro-Fit J1 (2 contacts/rail) -> interposer copper -> stacking socket -> Pi pins (2 x 5V, n_gnd x GND)."""
     rail5 = j / 2 + TRUNK / 2 + j / 2 + IPCU + sock / n_5v
     railg = j / 2 + TRUNK / 2 + j / 2 + IPCU + sock / n_gnd
     return PCB + f2 + rail5 + railg
@@ -72,12 +72,12 @@ f1txt = (f"F1 = {V('f1_mpn')} (Littelfuse 407, 1206 time-lag, 8 A, {F1S['max_vol
 lines = [
 "# 5 V voltage-drop budget — detail and trim table (" + os.environ.get("REL", "RC1.1") + ")", "",
 "Scenario tables (Pi / display loads, element drops, setpoint window) are in `Power_budget_report.md`; this file keeps the datasheet-input table, the tolerance scenarios and the trim-resistor table. In RC2 the display is fed from J_DISP, so the display current does not pass through the Pi path modelled below.", "",
-"Path: `RSDW40F-05 +VOUT -> PCB copper -> F2 -> J_OUT (2 contacts/rail) -> 16 AWG harness (<=150 mm) -> keyed interposer Micro-Fit J1 (2 contacts/rail) -> interposer copper -> 2x20 stacking socket -> Pi pins (+5 V: 2 and 4; GND: 6, 9, 14, 20)` and the matching return. The Harwin M20 fan-out is no longer in the path.",
+"Path: `RSDW40F-05 +VOUT -> PCB copper -> F2 -> J_OUT (2 contacts/rail) -> 18 AWG harness (<=150 mm) -> keyed interposer Micro-Fit J1 (2 contacts/rail) -> interposer copper -> 2x20 stacking socket -> Pi pins (+5 V: 2 and 4; GND: 6, 9, 14, 20)` and the matching return. The Harwin M20 fan-out is no longer in the path.",
 f"Target: **>= {TARGET} V at the Pi header at 5 A, worst case**; **<= {PI_MAX} V no-load / high-line** (Pi floor {PI_MIN} V).", "",
 "## Inputs and status (`datasheet_inputs.json`)", "", "| Input | Value | Status | Source |", "|---|---|---|---|",
 *[f"| {k} | {I[k]['value']} | {I[k]['status']} | {I[k]['source']} |" for k in I if not k.startswith('_')], "",
-"`owner_cited` = supplied by the project owner with a source; the build environment cannot reach Mean Well, Molex, Littelfuse or Harwin, so re-check against the PDFs. Assumptions: socket contact resistance (SSW-120-01-S-D, no initial value published) is a conservative 20 mOhm PLACEHOLDER to be MEASURED on first articles - not lowered on paper, interposer copper 2 mOhm/rail, hot-fuse 1.3x sensitivity.", "",
-f"Source tolerance from the datasheet: accuracy +-1 % + line +-0.2 % + load +-0.5 % (low corner at 5 A = -{tl*100:.2f} %, no-load high corner = +{th*100:.2f} %, at 25 C). PCB copper {PCB:.1f} mOhm; F2 {F2} mOhm cold; J_OUT {Jmax} mOhm max/contact; SSW-120-01-S-D socket contact {Pmax:.0f} mOhm (placeholder, first-article measured), 2 contacts on +5 V and 4 on GND.", "",
+"`owner_cited` = supplied by the project owner with a source; the build environment cannot reach Mean Well, Molex, Littelfuse or Harwin, so re-check against the PDFs. Assumptions: socket contact resistance (SSW-120-01-L-D, no initial value published) is a conservative 20 mOhm PLACEHOLDER to be MEASURED on first articles - not lowered on paper, interposer copper 2 mOhm/rail, hot-fuse 1.3x sensitivity.", "",
+f"Source tolerance from the datasheet: accuracy +-1 % + line +-0.2 % + load +-0.5 % (low corner at 5 A = -{tl*100:.2f} %, no-load high corner = +{th*100:.2f} %, at 25 C). PCB copper {PCB:.1f} mOhm; F2 {F2} mOhm cold; J_OUT {Jmax} mOhm max/contact; SSW-120-01-L-D socket contact {Pmax:.0f} mOhm (placeholder, first-article measured), 2 contacts on +5 V and 4 on GND.", "",
 "## Results at the Pi 5V pins", "", *tab, "",
 f"Feasibility window (25 C stack): one setpoint can meet both limits only if worst-case path R <= {rwin:.1f} mOhm; this design is {rm_:.1f} mOhm -> **{'feasible' if rm_ <= rwin else 'NOT feasible without per-unit calibration'}** (margin {rwin - rm_:+.1f} mOhm). Untrimmed, the 5 A worst case is below the Pi floor, so **trim is required**.",
 "", "Required stacking-socket contact resistance (max, per contact; 2 contacts on +5 V, 4 on GND) for a single fixed setpoint to satisfy both limits:", "", *sk, "",

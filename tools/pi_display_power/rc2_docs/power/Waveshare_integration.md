@@ -8,17 +8,19 @@ Why:
 2. **The display load is not negligible** (owner note, `docs/rev2/pcb/PI_POWER_ARCHITECTURE.md`: display ~0.8-1 A, Pi 5 up to 5 A). Fed from the board it reduces the Pi-branch current: the Pi header pins (2 x 5 V, ~4.7 A each) carry only the Pi (+USB) current; the display shares only the PCB copper and F2 (`Power_budget_report.md`).
 3. **One isolated domain.** Display ground = PI_GND = Pi ground (the DSI ribbon also carries ground). There is no second ground reference and nothing connects to 12V_GND.
 
-Cost: one more connector on the power board (J_DISP, same part as J_IN, placed beside J_OUT), 2 extra Micro-Fit terminals and a 2-wire display lead.
+Cost: one more connector on the power board (J_DISP, same part as J_IN, placed beside J_OUT), 2 extra Micro-Fit terminals (43030-0038) and a 2-wire display lead (display end: MX1.25 2-pin, confirm the housing).
 
-## Requirements still to be confirmed from Waveshare (not available to this build)
-| Item | Needed | Why |
-|---|---|---|
-| Exact model (10.1" DSI touch variant) and revision | Waveshare product page / wiki | power connector and cable differ between variants |
-| Supply voltage range and **maximum current** (full brightness, touch active, backlight at 100 %) | datasheet or measured | sets the display wire gauge and the 6 A total budget |
-| Power connector type on the display side (pitch, housing, pin order) | datasheet | the display-end of the 2-wire lead; the board end is Micro-Fit |
-| Whether the display must also be powered over the DSI ribbon / USB | datasheet | avoid a second 5 V source back-feeding |
+## Manufacturer data (user-relayed from the Waveshare page; not read locally)
+Waveshare **10.1-DSI-TOUCH-A** (SKU 30052): 10.1" IPS capacitive touch, 800 × 1280, MIPI DSI, Pi 5 supported.
+| Item | Value |
+|---|---|
+| Input voltage | **4.75 V min / 5.00 V nominal / 5.30 V max** |
+| Input current | **0.8 A typical; maximum not published** (supply should deliver ≥ ~0.8 A or start-up/display abnormalities may occur) |
+| Temperature | operating 0–60 °C, storage −10–70 °C |
+| Pi 5 connection | 22-pin DSI/FFC cable to the Pi DSI connector (data) + a **separate GPIO-style power cable to 5 V + GND** |
+| Package cables | `MX1.25 2PIN to 2.54 3PIN` and `MX1.25 2PIN to MX1.25 4PIN` |
 
-The owner's working figure (~0.8-1 A) is used only for the scenario table in `Power_budget_report.md` (Pi 5 A + display 1 A); the display current is **measured at first article** (`First_article_checklist.md`) and the acceptance limits are stated for the measured value. The design limits are fixed regardless: 5.0 A into the Pi pins, 6.0 A total through F2 / the module (8 A rated), J_DISP 1 A at 8.5 A contact rating.
+Consequences: (1) the same 5 V rail is electrically appropriate (budget: 5.01 V lowest, 5.234 V highest at the display, inside 4.75–5.30 V — `Power_budget_report.md` §5); (2) the documented power cable lands on Pi header pins, which the interposer covers, so `J_DISP` is the right adaptation; (3) the display power is **not** routed through the interposer, only the DSI ribbon goes Pi → display; (4) 1.0 A is a design scenario, not a manufacturer maximum — the first article measures the real current (D5).
 
 ## Wiring rules
 - J_DISP pin 1 (+5V_PI, red) and pin 2 (PI_GND, black), 20 AWG or heavier, <= 200 mm, twisted; display-end connector per the Waveshare data.

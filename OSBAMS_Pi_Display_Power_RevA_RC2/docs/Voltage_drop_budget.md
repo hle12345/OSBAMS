@@ -2,7 +2,7 @@
 
 Scenario tables (Pi / display loads, element drops, setpoint window) are in `Power_budget_report.md`; this file keeps the datasheet-input table, the tolerance scenarios and the trim-resistor table. In RC2 the display is fed from J_DISP, so the display current does not pass through the Pi path modelled below.
 
-Path: `RSDW40F-05 +VOUT -> PCB copper -> F2 -> J_OUT (2 contacts/rail) -> 16 AWG harness (<=150 mm) -> keyed interposer Micro-Fit J1 (2 contacts/rail) -> interposer copper -> 2x20 stacking socket -> Pi pins (+5 V: 2 and 4; GND: 6, 9, 14, 20)` and the matching return. The Harwin M20 fan-out is no longer in the path.
+Path: `RSDW40F-05 +VOUT -> PCB copper -> F2 -> J_OUT (2 contacts/rail) -> 18 AWG harness (<=150 mm) -> keyed interposer Micro-Fit J1 (2 contacts/rail) -> interposer copper -> 2x20 stacking socket -> Pi pins (+5 V: 2 and 4; GND: 6, 9, 14, 20)` and the matching return. The Harwin M20 fan-out is no longer in the path.
 Target: **>= 4.85 V at the Pi header at 5 A, worst case**; **<= 5.25 V no-load / high-line** (Pi floor 4.75 V).
 
 ## Inputs and status (`datasheet_inputs.json`)
@@ -36,7 +36,7 @@ Target: **>= 4.85 V at the Pi header at 5 A, worst case**; **<= 5.25 V no-load /
 | rsdw_ripple_mvpp | 100 | verified | spec: single output 3.3-15 Vo: 100 mVp-p (20 MHz, 0.1 uF + 47 uF) |
 | f1_mpn | 0407008.WR | verified | Littelfuse 407 Series datasheet (rev 09/14/20, uploaded): 1206 time-lag, amp code 008., part number 0407 008. W R (W = 3000 pcs, R = reel). Replaces 0453008.MRL, which is very fast-acting (451/453 datasheet). |
 | f1_resistance_mohm | 9.0 | verified | 407 datasheet nominal resistance 0.009 ohm (measured <10 % rated current); hot value from 0.097 V drop at 8 A = 12.1 mOhm |
-| interposer_socket_mpn | SSW-120-01-S-D | owner_cited | Owner selection. CATALOG MISMATCH: on catalog page F-226 the plating options are -F (gold flash, tin tail), -L (10 uin Au, tin tail), -G (20 uin Au, gold-flash tail) and -T (tin); '-S' there is a ROW option (single row), so '-S' in the plating position is not a listed code and no 30 uin gold option appears. Confirm the exact orderable code with the distributor/Samtec; catalog-valid equivalents: SSW-120-01-L-D (10 uin Au) or SSW-120-01-G-D (20 uin Au). Dimensions (8.51 mm body, lead style -01 tail 2.64 mm) ARE confirmed by the catalog. |
+| interposer_socket_mpn | SSW-120-01-L-D | user_relayed_manufacturer | Samtec SSW-120-01-L-D (user-relayed from the Samtec product page): 40 pos, 2 rows, 2.54 mm, vertical THT, 10 uin Au mating, tin post, post 2.64 mm, insulation 8.51 mm, 4.7 A per contact (Samtec basis: 2 pins powered), -55..+125 C. Dimensions also verified from catalog F-226 (uploaded). Not read locally from the product page. |
 | interposer_socket_contact_mohm | 20.0 | unverified | CONSERVATIVE PLACEHOLDER - no initial contact resistance is published for this ordering code (Samtec spec gives delta 15 mOhm max after tests only). Treated as a FIRST-ARTICLE MEASURED parameter: measure it on the assembled interposer; do not substitute a lower value on paper. |
 | interposer_key_3d_check | True | verified | PLAN-VIEW check PASS against the official drawing (reports/Pi5_keying_check.txt): correct orientation posts hang beyond the Pi edge; reversed they land on bare PCB (1.6 mm and 3.3 mm clear of components for a 5 mm post). Height/engagement check (post length vs seated gap G) still pending the SSW-120 drawing; optional STEP confirmation. |
 | f1_spec | {'rating_a': 8, 'max_voltage_v': 24, 'interrupt': '60 A @ 24 VDC', 'nominal_resistance_mohm': 9.0, 'melting_i2t_a2s': 24.12, 'vdrop_at_rated_v': 0.097, 'power_at_rated_w': 0.8, 'continuous_derate': '<=80 % of rating (6.4 A), plus temperature re-rating curve', 'time_lag': '100 %: 4 h min; 200 %: 1-120 s; 300 %: 0.1-3 s; 800 %: 2-50 ms', 'land_pattern_mm': 'pad 1.0 x 1.8, gap 1.5, span 3.5; body 3.2 x 1.6'} | verified | 407 datasheet electrical specs by item |
@@ -49,31 +49,35 @@ Target: **>= 4.85 V at the Pi header at 5 A, worst case**; **<= 5.25 V no-load /
 | pi_m2_hat_reference | M.2 HAT+ ships with a 16 mm stacking header + threaded spacers so it fits over the Active Cooler | verified | Raspberry Pi M.2 HAT+ product brief RP-009234-MM-1 (uploaded) |
 | interposer_socket_dims | {'body_height_mm': 8.51, 'tail_length_mm': 2.64, 'pitch_mm': 2.54, 'rows': 2, 'positions': 40, 'insertion_depth_mm': [3.68, 6.35], 'pi_header_plastic_mm': 2.5, 'pi_pin_tip_height_mm': 9.0} | verified | Samtec SSW/SSQ through-hole catalog page F-226 (uploaded): straight-pin body height 8.51 mm (.335 in); lead style -01 tail A = 2.64 mm (.104 in) (-02 4.93, -03 10.00, -04 14.83, -06 3.15); double row width 4.95 mm; mating insertion depth 3.68-6.35 mm; Pi header plastic 2.5 mm is a standard-header ASSUMPTION; pin tip ~9 mm from the Pi 5 drawing. |
 | display_power_feed | J_DISP direct feed (Molex 430450200) from the 5V_PI node after F2 | verified | Design decision (Waveshare_integration.md): the interposer covers the Pi header, so the display cannot use Pi pins; display current stays out of the harness/interposer/socket. Waveshare datasheet itself not available: display current is a first-article measurement. |
-| waveshare_current_a | None | unverified | No Waveshare datasheet available to the build. Owner note (PI_POWER_ARCHITECTURE.md): ~0.8-1 A; confirm for the exact model. Used only for scenario rows; hardware limits (5.0 A Pi pins, 6.0 A total) do not depend on it. |
+| waveshare_current_a | 0.8 | user_relayed_manufacturer | 0.8 A typical (manufacturer); maximum NOT published. 1.0 A is used as a design scenario only; first article measures the actual current. |
+| harness_terminal | Molex 43030-0038 (18 AWG / 0.75 mm2, tin) with 18 AWG UL1061-type wire, insulation OD <= 1.85 mm; housings 43025-0200 / 43025-0400 | verified | Molex ATS-638280200 (Hand Crimp Tool 63828-0200 application tooling spec, rev D, uploaded): 43030-0038/-0039/-0040 = 18 AWG / 0.75 mm2; insulation OD 1.60-1.85 mm (IPC) / 0.90-1.85 mm (terminal); strip 2.54-2.92 mm; conductor crimp height 1.00-1.10 mm (18 AWG) / 0.85-0.95 mm (0.75 mm2); pull force >= 89 N; locator 63828-0275. The 24-20 AWG / 30-26 AWG rows of the 43030 series table are user-relayed (not in the uploaded file): no 16 AWG 43030 terminal. |
+| harness_wire_awg | 18 | verified | Follows from harness_terminal: 16 AWG does not fit any 43030 terminal; 18 AWG (20.9 mOhm/m at 20 C, x1.2 hot) is used in the budget |
+| waveshare_input_range_v | [4.75, 5.0, 5.3] | user_relayed_manufacturer | Waveshare 10.1-DSI-TOUCH-A (SKU 30052) specification as relayed by the owner: input 4.75 / 5.00 / 5.30 V (min/nom/max); 0.8 A typical, maximum not published; supply should provide >= ~0.8 A or start-up abnormalities may occur; 0-60 C operating. Package cables: MX1.25 2PIN to 2.54 3PIN and MX1.25 2PIN to MX1.25 4PIN. Not read locally. |
+| tvs1_smbj15a | {'vrwm_v': 15.0, 'vbr_min_v': 16.7, 'vbr_max_v': 18.5, 'vbr_test_ma': 1, 'vc_max_v': 24.4, 'ipp_a': 24.6, 'ppp_w': 600, 'ir_ua': 1, 'package': 'DO-214AA / SMB', 'tj_c': [-65, 150]} | user_relayed_manufacturer | Littelfuse SMBJ series datasheet, SMBJ15A row (user-relayed; not read locally). Unidirectional A part. |
 
-`owner_cited` = supplied by the project owner with a source; the build environment cannot reach Mean Well, Molex, Littelfuse or Harwin, so re-check against the PDFs. Assumptions: socket contact resistance (SSW-120-01-S-D, no initial value published) is a conservative 20 mOhm PLACEHOLDER to be MEASURED on first articles - not lowered on paper, interposer copper 2 mOhm/rail, hot-fuse 1.3x sensitivity.
+`owner_cited` = supplied by the project owner with a source; the build environment cannot reach Mean Well, Molex, Littelfuse or Harwin, so re-check against the PDFs. Assumptions: socket contact resistance (SSW-120-01-L-D, no initial value published) is a conservative 20 mOhm PLACEHOLDER to be MEASURED on first articles - not lowered on paper, interposer copper 2 mOhm/rail, hot-fuse 1.3x sensitivity.
 
-Source tolerance from the datasheet: accuracy +-1 % + line +-0.2 % + load +-0.5 % (low corner at 5 A = -1.51 %, no-load high corner = +1.70 %, at 25 C). PCB copper 2.2 mOhm; F2 7.7 mOhm cold; J_OUT 10.0 mOhm max/contact; SSW-120-01-S-D socket contact 20 mOhm (placeholder, first-article measured), 2 contacts on +5 V and 4 on GND.
+Source tolerance from the datasheet: accuracy +-1 % + line +-0.2 % + load +-0.5 % (low corner at 5 A = -1.51 %, no-load high corner = +1.70 %, at 25 C). PCB copper 2.2 mOhm; F2 7.7 mOhm cold; J_OUT 10.0 mOhm max/contact; SSW-120-01-L-D socket contact 20 mOhm (placeholder, first-article measured), 2 contacts on +5 V and 4 on GND.
 
 ## Results at the Pi 5V pins
 
 | Case | R typ / max (mOhm) | setpoint | 5 A typ / worst (V) | 3 A worst (V) | no-load max (V) |
 |---|---|---|---|---|---|
-| Untrimmed (5.00 V) | 35.8 / 51.3 | 5.000 | 4.82 / 4.67 | 4.77 | 5.085 |
-| Trimmed to 5.185 V (window-limited) | 35.8 / 51.3 | 5.185 | 5.01 / 4.85 | 4.95 | 5.273 |
-| Trimmed, only 2 GND contacts (no 14/20) | 38.8 / 56.3 | 5.185 | 4.99 / 4.83 | 4.94 | 5.273 |
-| Socket contact 25 mOhm (placeholder + 5), trimmed | 38.0 / 55.1 | 5.185 | 4.99 / 4.83 | 4.94 | 5.273 |
-| Hot F2 (x1.3), trimmed | 38.1 / 53.6 | 5.185 | 4.99 / 4.84 | 4.95 | 5.273 |
+| Untrimmed (5.00 V) | 37.1 / 52.7 | 5.000 | 4.81 / 4.66 | 4.77 | 5.085 |
+| Trimmed to 5.192 V (window-limited) | 37.1 / 52.7 | 5.192 | 5.01 / 4.85 | 4.96 | 5.280 |
+| Trimmed, only 2 GND contacts (no 14/20) | 40.1 / 57.7 | 5.192 | 4.99 / 4.83 | 4.94 | 5.280 |
+| Socket contact 25 mOhm (placeholder + 5), trimmed | 39.4 / 56.4 | 5.192 | 5.00 / 4.83 | 4.94 | 5.280 |
+| Hot F2 (x1.3), trimmed | 39.5 / 55.0 | 5.192 | 4.99 / 4.84 | 4.95 | 5.280 |
 
-Feasibility window (25 C stack): one setpoint can meet both limits only if worst-case path R <= 46.8 mOhm; this design is 51.3 mOhm -> **NOT feasible without per-unit calibration** (margin -4.5 mOhm). Untrimmed, the 5 A worst case is below the Pi floor, so **trim is required**.
+Feasibility window (25 C stack): one setpoint can meet both limits only if worst-case path R <= 46.8 mOhm; this design is 52.7 mOhm -> **NOT feasible without per-unit calibration** (margin -5.8 mOhm). Untrimmed, the 5 A worst case is below the Pi floor, so **trim is required**.
 
 Required stacking-socket contact resistance (max, per contact; 2 contacts on +5 V, 4 on GND) for a single fixed setpoint to satisfy both limits:
 
 | Tolerance scenario | max socket contact (mOhm) |
 |---|---|
-| 25 C stack | 14.0 |
+| 25 C stack | 12.2 |
 | stack + 15 C drift | not achievable (even 0 mOhm contacts) |
-| calibrated unit + 15 C drift | 20.8 |
+| calibrated unit + 15 C drift | 19.0 |
 
 Contact loading at 5 A: 2.5 A per Pi 5 V pin/socket contact. Samtec SSW rates 4.7 A with one pin powered per row; that is NOT 4.7 A per contact with all adjacent power contacts loaded - here two +5 V pins share ~5 A (2.5 A each, 53 % of 4.7 A, comfortable) and the Pi header pin is the nominal ~3 A-class limit (83 %) - **no derating headroom**; the Pi has only two 5 V pins (2 and 4), so this cannot be improved by adding 5 V contacts. At 8 A the contacts and Pi header pins would be overloaded (4 A each): keep real load <= ~5 A. See the Pi_end note.
 
@@ -81,9 +85,9 @@ Contact loading at 5 A: 2.5 A per Pi 5 V pin/socket contact. Samtec SSW rates 4.
 
 | Tolerance scenario | low / high corner | setpoint needed | max setpoint allowed (<=5.25 V) | margin | feasible |
 |---|---|---|---|---|---|
-| Datasheet stack at 25 C (accuracy+line+load) | -1.51 % / +1.70 % | 5.185 V | 5.162 V | -23 mV | NO |
-| Stack + temperature drift (0.75 % for dT=15 C) | -2.26 % / +2.45 % | 5.225 V | 5.124 V | -100 mV | NO |
-| Unit calibrated at 25 C (accuracy term removed) + temp drift | -1.26 % / +1.45 % | 5.172 V | 5.175 V | +3 mV | yes |
+| Datasheet stack at 25 C (accuracy+line+load) | -1.51 % / +1.70 % | 5.192 V | 5.162 V | -30 mV | NO |
+| Stack + temperature drift (0.75 % for dT=15 C) | -2.26 % / +2.45 % | 5.232 V | 5.124 V | -107 mV | NO |
+| Unit calibrated at 25 C (accuracy term removed) + temp drift | -1.26 % / +1.45 % | 5.179 V | 5.175 V | -4 mV | NO |
 
 The +-1 % accuracy alone (as first assumed) hides the line/load terms and the 0.05 %/C coefficient. At 25 C the design closes by only a few mV; with realistic temperature rise it does **not** close by the stated criteria unless each unit is calibrated (measure the untrimmed output, then select Rt) and/or path resistance is reduced.
 
@@ -93,11 +97,11 @@ Vref = 1.24 V, R1 = 15.47 k, R2 = 5.1 k, R3 = 33.0 k; nominal Vout = 5.001 V. `a
 
 | Setpoint | +% | Rt (R3 pad), calc | E96 | Vout with E96 | worst-case Pi @5A | no-load max |
 |---|---|---|---|---|---|---|
-| 5.165 V | +3.3 % | 84.2 kOhm | 84.5 kOhm | 5.165 V | 4.83 V | 5.252 V |
-| 5.185 V | +3.7 % | 71.4 kOhm | 71.5 kOhm | 5.185 V | 4.85 V | 5.273 V |
-| 5.205 V | +4.1 % | 61.2 kOhm | 61.9 kOhm | 5.203 V | 4.87 V | 5.292 V |
+| 5.172 V | +3.4 % | 79.4 kOhm | 78.7 kOhm | 5.173 V | 4.83 V | 5.261 V |
+| 5.192 V | +3.8 % | 67.6 kOhm | 68.1 kOhm | 5.191 V | 4.85 V | 5.279 V |
+| 5.212 V | +4.2 % | 58.1 kOhm | 57.6 kOhm | 5.213 V | 4.87 V | 5.302 V |
 
-**Window-limited setpoint 5.185 V -> Rt = 71.4 kOhm, E96 71.5 kOhm (gives 5.185 V). R3 stays DNP until you approve the resistor.** The +-1 % accuracy is assumed to hold at the trimmed setpoint (confirm). R3 pad is 0603; use a 0.1 % or 1 % resistor.
+**Window-limited setpoint 5.192 V -> Rt = 67.6 kOhm, E96 68.1 kOhm (gives 5.191 V). R3 stays DNP until you approve the resistor.** The +-1 % accuracy is assumed to hold at the trimmed setpoint (confirm). R3 pad is 0603; use a 0.1 % or 1 % resistor.
 
 ## F1 (input fuse)
 
