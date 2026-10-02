@@ -1,0 +1,30 @@
+OSBAMS_Pi_Display_Power_RevA RC1 - custom connectivity / isolation checks
+!! This is NOT KiCad ERC. kicad-cli 7.0.11 in the build container has no 'sch erc' command.
+!! Official KiCad ERC must still be run in KiCad 8+ and recorded before any FINAL status.
+
+PASS  Net +12V_F: schematic pins == PCB pads  (5 vs 5)
+PASS  Net +12V_IN: schematic pins == PCB pads  (3 vs 3)
+PASS  Net 12V_GND: schematic pins == PCB pads  (6 vs 6)
+PASS  Net 5V_ISO_RAW: schematic pins == PCB pads  (4 vs 4)
+PASS  Net 5V_PI: schematic pins == PCB pads  (8 vs 8)
+PASS  Net PG_LED_A: schematic pins == PCB pads  (2 vs 2)
+PASS  Net PI_GND: schematic pins == PCB pads  (9 vs 9)
+PASS  Net TRIM: schematic pins == PCB pads  (3 vs 3)
+PASS  Net +12V_F: power_in pin has a driver / PWR_FLAG
+PASS  Net +12V_F: at least 2 connections
+PASS  Net +12V_IN: at least 2 connections
+PASS  Net 5V_ISO_RAW: at least 2 connections
+PASS  Net 5V_PI: at least 2 connections
+PASS  Net 12V_GND: power_in pin has a driver / PWR_FLAG
+PASS  Net 12V_GND: at least 2 connections
+PASS  Net PG_LED_A: at least 2 connections
+PASS  Net PI_GND: at least 2 connections
+PASS  Net TRIM: at least 2 connections
+PASS  PI_GND and 12V_GND share no pin
+PASS  U1 pin 3 (ON/OFF) unconnected (open) - confirm vs datasheet
+PASS  Min primary-to-secondary copper gap = 10.00 mm (primary max x 45.00, secondary min x 55.00); target >= 8 mm (U1 internal barrier governs; module datasheet spacing NOT verified)
+PASS  No primary/secondary copper bounding-box overlap
+PASS  4 mounting holes
+PASS  >=2 fiducials
+
+RESULT: PASS (0 failures)
