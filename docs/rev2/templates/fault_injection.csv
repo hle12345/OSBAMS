@@ -1,0 +1,11 @@
+test_no,fault,expected_response,observed,result,firmware_version,pcb_revision,date,operator
+1,E-stop pressed,relay drops immediately,,,,,,
+2,ARM off,load cannot energize,,,,,,
+3,INA228 absent / I2C fault,fault + load off,,,,,,
+4,TC74 absent,temperature fault; test refuses to start,,,,,,
+5,ADC vs INA228 disagreement,sensor fault (needs protocol v2),,,,,,
+6,Pi disconnected / UART silent,STM32 stays safe,,,,,,
+7,UART corrupted,frames rejected; no unsafe command,,,,,,
+8,Relay feedback wrong,latched relay fault,,,,,,
+9,Kelvin lead open,sensor fault / load off,,,,,,
+10,Hot-plug sense harness at 42-44 V,pins within limits; no calibration shift,,,,,,

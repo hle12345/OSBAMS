@@ -1,9 +1,13 @@
 """services/run_persistence.py — store orchestrator Results in the `tests` row."""
 
+import json
+
 from db.database import get_connection
 
 
-def save_run_results(test_id: int, res, operator: str = "operator") -> None:
+def save_run_results(test_id: int, res, operator: str = "operator", calibration_id=None, quality=None,
+                     rated_capacity_ah=None, firmware_version=None, pcb_revision=None,
+                     total_frames: int = 0, missing_frames: int = 0, integration=None) -> None:
     """Write the Rev.2 result fields (columns added by db.migrations.migrate())."""
     rec30 = res.recovery_v.get(30.0)
     rec_final = res.recovery_v[max(res.recovery_v)] if res.recovery_v else None
@@ -25,6 +29,15 @@ def save_run_results(test_id: int, res, operator: str = "operator") -> None:
              else res.commanded_current_a * res.conservative_voltage_v, test_id))
         conn.execute("UPDATE tests SET notes=COALESCE(notes||' | ','')||? WHERE test_id=?",
                      (notes, test_id))
+        # traceability / validation layer (columns added by db.migrations.migrate())
+        conn.execute("""UPDATE tests SET calibration_id=?, rated_capacity_ah=?, capacity_retention_pct=?,
+                measurement_quality=?, quality_json=?, firmware_version=?, pcb_revision=?, sample_count=?,
+                missing_sample_count=?, dcir_conditions_json=?, integration_json=? WHERE test_id=?""",
+            (calibration_id, rated_capacity_ah, getattr(res, "capacity_retention_pct", None),
+             None if quality is None else quality.status, None if quality is None else json.dumps(quality.to_dict()),
+             firmware_version, pcb_revision, res.n_samples, missing_frames if total_frames else None,
+             json.dumps(res.dcir_conditions) if getattr(res, "dcir_conditions", None) else None,
+             None if integration is None else json.dumps(integration), test_id))
         conn.commit()
     finally:
         conn.close()

@@ -31,6 +31,7 @@ from typing import Callable, Optional
 
 from equipment import capability as cap
 from services.battery_profiles import BatteryProfile
+from services import metrics
 
 
 class Phase(str, Enum):
@@ -113,6 +114,9 @@ class Results:
     initial_sag_v: Optional[float] = None
     recovery_v: dict = field(default_factory=dict)      # {seconds: volts}
     soh_capacity: Optional[float] = None
+    capacity_retention_pct: Optional[float] = None   # measured / rated capacity * 100 (NOT a validated cell-level SOH)
+    retention_note: str = ""
+    dcir_conditions: dict = field(default_factory=dict)  # conditions the DCIR value is only valid for
     dcir_steps: list = field(default_factory=list)      # dicts
     dcir_mohm: Optional[float] = None
     safety_checks: list = field(default_factory=list)   # dicts: name, ok, detail
@@ -515,6 +519,8 @@ class CapacityTest(_Run):
     def results(self) -> Results:
         r = self._results()
         r.soh_capacity = r.capacity_ah / self.profile.rated_ah if self.profile.rated_ah else None
+        r.capacity_retention_pct = metrics.capacity_retention_pct(r.capacity_ah, self.profile.rated_ah)
+        r.retention_note = metrics.RETENTION_NOTE
         return r
 
 
@@ -624,6 +630,9 @@ class DcirTest(_Run):
         r.dcir_steps = list(self.steps)
         vals = [x["r_mohm"] for x in self.steps if x["r_mohm"] is not None]
         r.dcir_mohm = sum(vals) / len(vals) if vals else None
+        r.dcir_conditions = dict(ocv_v=self.ocv_v, step_currents_a=list(self._plan_steps), pulse_s=self.cfg.dcir_step_s,
+                                 avg_window_s=self.cfg.dcir_avg_s, max_temp_c=self._t_max,
+                                 note="resistance depends on state of charge, temperature, current and pulse length")
         return r
 
 

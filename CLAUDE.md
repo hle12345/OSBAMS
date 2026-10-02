@@ -25,6 +25,8 @@ XT60 = supported; connector type does not determine test capability — the vali
 ## Open items
 Read the installed part numbers off the hardware and record them in `docs/rev2/HARDWARE_ACCEPTANCE_RECORD.md` (relay — firmware records DG57CM-5021-76-1012-R; shunt — firmware RSA-20-50; fuse + holder; 12→5 V converter + Pi 5 supply; XT60 supplier); identify the 6060B interface; ADC divider and TVS unfinished; shunt high/low-side vs PCB; TC74 bring-up (thermal protection unvalidated, safety check refuses to start without a temperature); read the two official 6060B manuals (www.keysight.com was blocked in the cloud environment). The 15 A fuse vs 10 A software limit vs 18.5 A firmware trip is a documented layered design, not a defect.
 
+Validation/calibration software layer (calibration fit + store, Ah/Wh agreement, measurement-quality report, capacity retention, repeatability, DB provenance): `docs/rev2/VALIDATION_AND_CALIBRATION_PLAN.md` — host-tested only; protocol v2 (ADC + device accumulators) and the Pi calibration screens are NOT done.
+
 Next milestone: **physical validation** — `docs/rev2/FIRST_BATTERY_TEST_PROCEDURE.md`. Do not add features until real measurements exist.
 
 ## Controller PCB (Rev.2 = NEW integrated board)
