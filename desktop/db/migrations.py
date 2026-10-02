@@ -116,9 +116,15 @@ def migrate():
     for col, defn in [("calibration_id", "TEXT"), ("rated_capacity_ah", "REAL"), ("capacity_retention_pct", "REAL"),
                       ("measurement_quality", "TEXT"), ("quality_json", "TEXT"), ("firmware_version", "TEXT"),
                       ("pcb_revision", "TEXT"), ("sample_count", "INTEGER"), ("missing_sample_count", "INTEGER"),
-                      ("dcir_conditions_json", "TEXT"), ("integration_json", "TEXT")]:
+                      ("dcir_conditions_json", "TEXT"), ("integration_json", "TEXT"),
+                      ("ah_ina", "REAL"), ("ah_mcu", "REAL"), ("ah_pi", "REAL"), ("wh_ina", "REAL"), ("wh_mcu", "REAL"),
+                      ("wh_pi", "REAL"), ("integration_disagreement_ah_pct", "REAL"), ("integration_disagreement_wh_pct", "REAL"),
+                      ("capacity_validation_status", "TEXT")]:
         if _add_col(c, "tests", col, defn):
             added.append(f"tests.{col}")
+    for col, defn in [("connector_type", "TEXT"), ("profile_key", "TEXT"), ("passport_notes", "TEXT")]:
+        if _add_col(c, "batteries", col, defn):
+            added.append(f"batteries.{col}")
     for col, defn in [("voltage_adc_mv", "INTEGER"), ("flags", "INTEGER")]:     # filled once the protocol carries them
         if _add_col(c, "readings", col, defn):
             added.append(f"readings.{col}")

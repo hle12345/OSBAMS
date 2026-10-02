@@ -41,3 +41,20 @@ def save_run_results(test_id: int, res, operator: str = "operator", calibration_
         conn.commit()
     finally:
         conn.close()
+
+
+def save_capacity_validation(test_id: int, cv) -> None:
+    """Store the three-way cross-check (services.capacity_validation.CapacityValidation) on the test row."""
+    conn = get_connection()
+    try:
+        conn.execute("""UPDATE tests SET ah_ina=?, ah_mcu=?, ah_pi=?, wh_ina=?, wh_mcu=?, wh_pi=?,
+                integration_disagreement_ah_pct=?, integration_disagreement_wh_pct=?, capacity_validation_status=?,
+                sample_count=?, missing_sample_count=?, calibration_id=COALESCE(?, calibration_id),
+                firmware_version=COALESCE(?, firmware_version), pcb_revision=COALESCE(?, pcb_revision),
+                integration_json=? WHERE test_id=?""",
+            (cv.ah.get("INA228"), cv.ah.get("STM32"), cv.ah.get("Pi"), cv.wh.get("INA228"), cv.wh.get("STM32"),
+             cv.wh.get("Pi"), cv.disagreement_ah_pct, cv.disagreement_wh_pct, cv.status, cv.sample_count,
+             cv.missing_sample_count, cv.calibration_id, cv.firmware_version, cv.pcb_revision, cv.to_json(), test_id))
+        conn.commit()
+    finally:
+        conn.close()

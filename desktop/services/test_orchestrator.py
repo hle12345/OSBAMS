@@ -616,7 +616,11 @@ class DcirTest(_Run):
             r_mohm = (self._ref_v - v) / di * 1000.0 if di > 1e-6 else None
             self.steps.append(dict(step=k + 1, current_a=i, voltage_v=v, d_current_a=di,
                                    d_voltage_v=self._ref_v - v, r_mohm=r_mohm,
-                                   from_a=self._ref_i, hold_s=c.dcir_step_s))
+                                   from_a=self._ref_i, hold_s=c.dcir_step_s,
+                                   # standardized record: R = (V_before - V_during) / (I_during - I_before)
+                                   v_before_v=self._ref_v, v_during_v=v, i_before_a=self._ref_i, i_during_a=i,
+                                   pulse_s=c.dcir_step_s, temp_c=s.temp_c, pack_ocv_v=self.ocv_v,
+                                   soc_estimate_pct=None))
             self.log(f"step {k + 1}: I={i:.3f} A V={v:.3f} V R={r_mohm:.1f} mOhm")
             self._ref_v, self._ref_i = v, i
             if k + 1 < len(self._plan_steps):
@@ -632,6 +636,7 @@ class DcirTest(_Run):
         r.dcir_mohm = sum(vals) / len(vals) if vals else None
         r.dcir_conditions = dict(ocv_v=self.ocv_v, step_currents_a=list(self._plan_steps), pulse_s=self.cfg.dcir_step_s,
                                  avg_window_s=self.cfg.dcir_avg_s, max_temp_c=self._t_max,
+                                 soc_note="SOC not estimated: no validated OCV-SOC curve; the pack OCV is stored instead",
                                  note="resistance depends on state of charge, temperature, current and pulse length")
         return r
 

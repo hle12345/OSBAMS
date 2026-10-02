@@ -19,6 +19,7 @@ from gui.tabs.dashboard_tab import DashboardTab
 from gui.tabs.ai_tab        import AITab
 from gui.tabs.registry_tab  import RegistryTab
 from gui.tabs.analytics_tab import AnalyticsTab
+from gui.tabs.settings_tab  import SettingsTab
 from db.database import init_db
 from db.migrations import migrate
 from config import APP_NAME, APP_FULL, VISION, APP_VERSION
@@ -45,12 +46,14 @@ class MainWindow(QMainWindow):
         self.ai_tab      = AITab()
         self.registry_tab= RegistryTab()
         self.analytics_tab = AnalyticsTab()
+        self.settings_tab = SettingsTab()
 
         self.tabs.addTab(self.intake_tab,   "🔋  Battery Registration")
         self.tabs.addTab(self.dash_tab,     "⚡  Dashboard")
         self.tabs.addTab(self.ai_tab,       "📊  Health Estimation")
         self.tabs.addTab(self.registry_tab, "📋  Registry")
         self.tabs.addTab(self.analytics_tab, "📊  Analytics")
+        self.tabs.addTab(self.settings_tab, "⚙  Settings")
 
         self.intake_tab.battery_saved.connect(self._on_battery_saved)
         self.registry_tab.battery_selected.connect(self._on_battery_selected)
