@@ -20,6 +20,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include "ina228.h"
+#include "app_config.h"
 
 int main(void)
 {
@@ -43,6 +44,11 @@ int main(void)
     printf("CalcShuntCal(2500uOhm, 30000mA) = %u (expect 1873-1876)\n", cal_30A);
     assert(cal_30A >= 1873U);
     assert(cal_30A <= 1876U);
+
+    /* --- Rev.2 configuration actually compiled into the firmware: 20 A scale -> SHUNT_CAL 1250. */
+    uint16_t cal_cfg = INA228_CalcShuntCal(OSBAMS_SHUNT_MICRO_OHM, OSBAMS_INA228_IMAX_MA);
+    printf("CalcShuntCal(app_config) = %u (expect 1249-1251)\n", cal_cfg);
+    assert(cal_cfg >= 1249U && cal_cfg <= 1251U);
 
     /* --- Guard against the old bug's specific failure mode: cal must
      * never come back as 0 or 1 for any physically sane shunt/range pair

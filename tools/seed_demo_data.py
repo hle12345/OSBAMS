@@ -25,14 +25,14 @@ import argparse
 import random
 from datetime import datetime, timedelta
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "desktop"))
 from db.database import (
     get_connection, get_all_batteries, start_test, end_test,
     insert_reading, get_tests_for_battery, init_db
 )
 from db.migrations import migrate, save_prediction, log_event
 from gui.scoring import ScoringInputs, ScoringResult, trapezoidal_integrate
-from services.electronic_load import SimulatorLoad
+from equipment.drivers import Simulator6060B
 from gui.ai_model import OSBAMSModel, extract_features, second_life_recommendation
 
 # ── Demo scenarios per battery ────────────────────────────────────────────────
@@ -85,7 +85,7 @@ DEMO_SCENARIOS = {
 def _sim_readings(profile: str, rated_ah: float,
                   soh_override: float, base_tick: int = 0) -> list[dict]:
     """Generate simulated readings scaled to the battery's rated capacity."""
-    sim = SimulatorLoad(profile=profile, sample_rate_ms=500)
+    sim = Simulator6060B(profile=profile, sample_rate_ms=500)
     p   = sim._p.copy()
     p["rated_ah"] = rated_ah
     p["soh"]      = soh_override

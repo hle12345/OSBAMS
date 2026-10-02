@@ -4,7 +4,7 @@ tests/test_suitability.py — Unit tests for suitability and lifecycle services
 
 import sys
 import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "desktop"))
 
 import unittest
 from services.suitability import (

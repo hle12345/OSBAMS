@@ -30,11 +30,13 @@
 
 /* ── INA228 / shunt — FROZEN ─────────────────────────────────────────
  * RSA-20-50 shunt: 2.5 mOhm, 20 A / 50 mV physical rating.
- * i_max scale deliberately set ABOVE the shunt rating and above the
- * firmware trip (30 A digital range) so the 20-bit CURRENT register
- * doesn't saturate/sign-wrap at the values we actually trip on. */
+ * Rev.2: IMAX = 20 A digital full scale (CURRENT_LSB ~ 38.147 uA, SHUNT_CAL = 1250,
+ * ADCRANGE = 0). 20 A is above the 18.5 A firmware hard trip, so the 20-bit CURRENT
+ * register does not saturate at the trip point. ADCRANGE = 1 (+/-40.96 mV = 16.4 A)
+ * must NOT be used: it saturates below the 18.5 A trip. (Rev.1 used 30 A / SHUNT_CAL 1875.)
+ * Manufacturer data: USER_RELAYED_MANUFACTURER (docs: Hardware/Rev2_Controller/MANUFACTURER_DATA_RECONCILIATION.md). */
 #define OSBAMS_SHUNT_MICRO_OHM       2500U
-#define OSBAMS_INA228_IMAX_MA        30000U
+#define OSBAMS_INA228_IMAX_MA        20000U
 
 /* ── Current protection — FROZEN (hard trip only; see KNOWN GAP above
  * for the still-unimplemented 17.0/18.5 warn+debounce tiers) ────────── */

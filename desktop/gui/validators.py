@@ -123,20 +123,33 @@ def validate_test_config(**fields) -> tuple[list, list]:
             f"Battery safety status is '{safety}'. "
             "Resolve safety issue before connecting to load."))
 
-    if cutoff_v is not None and cutoff_v < 20:
+    # No global minimum voltage: cutoff is profile-specific. The only absolute
+    # floor is the 6060B's own 3 V minimum input voltage.
+    from equipment import capability as cap
+    if cutoff_v is not None and cutoff_v < cap.INSTRUMENT_VOLTAGE_MIN_V:
         errors.append(("cutoff_voltage_v",
-            f"Cutoff voltage {cutoff_v}V is dangerously low. "
-            "Minimum recommended is 27V for a 10S Li-ion pack."))
+            f"Cutoff voltage {cutoff_v}V is below the 6060B minimum input "
+            f"voltage ({cap.INSTRUMENT_VOLTAGE_MIN_V:g} V); it cannot be tested."))
 
     if max_temp is not None and max_temp > 60:
         errors.append(("max_temp_c",
             f"Max temperature limit {max_temp}°C exceeds safe limit. "
             "Recommended maximum is 50°C."))
 
-    if current is not None and current > 10:
-        warnings.append(("current_setpoint_a",
-            f"Current setpoint {current}A is high for scooter pack testing. "
-            "Ensure load and wiring are rated for this current."))
+    # Power-envelope gate: V <= 60, I <= 60, V*I <= 300 and all OSBAMS limits.
+    pack_v = fields.get("pack_voltage_v")
+    if current is not None and pack_v is not None:
+        try:
+            cap.check_load_command(pack_v, current, power,
+                                   fields.get("profile_current_limit_a"))
+        except cap.EnvelopeViolation as e:
+            errors.append(("current_setpoint_a", f"Outside the permitted envelope: {e}"))
+    elif current is not None:
+        import config
+        if current > config.SAFETY_MAX_CURRENT_A:
+            errors.append(("current_setpoint_a",
+                f"Current setpoint {current}A exceeds the OSBAMS validated "
+                f"hardware limit ({config.SAFETY_MAX_CURRENT_A:g} A)."))
 
     return errors, warnings
 

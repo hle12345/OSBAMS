@@ -1,0 +1,57 @@
+{
+ "version": "osbams-protocol-v2-vectors/0.1",
+ "note": "Golden frames; firmware tests are to be written against these BEFORE the encoder is implemented. CRC-16/CCITT-FALSE.",
+ "vectors": [
+  {
+   "name": "v2_full",
+   "line": "OSBAMS,2,42,1500,41820,3000,125460,250,0,DISCHARGING,41790,1234,1230,51500,51400,2999,0,6F49",
+   "expect": {
+    "ok": true,
+    "voltage_mv": 41820,
+    "v_adc_mv": 41790,
+    "q_ina_uah": 1234,
+    "q_mcu_uah": 1230,
+    "e_ina_uwh": 51500,
+    "e_mcu_uwh": 51400,
+    "acq_count": 2999,
+    "sensor_status": 0
+   }
+  },
+  {
+   "name": "v2_unavailable_fields",
+   "line": "OSBAMS,2,43,2000,41800,3000,125400,250,0,DISCHARGING,NA,NA,NA,NA,NA,3499,10,C394",
+   "expect": {
+    "ok": true,
+    "v_adc_mv": null,
+    "q_ina_uah": null,
+    "sensor_status": 10
+   }
+  },
+  {
+   "name": "v1_still_accepted",
+   "line": "OSBAMS,1,42,1500,41820,3000,125460,250,0,DISCHARGING,A1A4",
+   "expect": {
+    "ok": true,
+    "voltage_mv": 41820,
+    "v_adc_mv": null,
+    "sensor_status": null
+   }
+  },
+  {
+   "name": "v2_bad_crc",
+   "line": "OSBAMS,2,44,2500,41800,3000,125400,250,0,DISCHARGING,41790,1,1,1,1,1,0,0000",
+   "expect": {
+    "ok": false,
+    "error_contains": "CRC mismatch"
+   }
+  },
+  {
+   "name": "v2_wrong_field_count",
+   "line": "OSBAMS,2,1,2,3,4,5,6,7,IDLE,CRC",
+   "expect": {
+    "ok": false,
+    "error_contains": "field count"
+   }
+  }
+ ]
+}

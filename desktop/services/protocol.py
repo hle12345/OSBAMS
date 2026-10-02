@@ -112,6 +112,8 @@ class OsbamsSample:
 
     # ── Convenience conversions ──────────────────────────────────────────
     @property
+    def time_s(self) -> float: return self.tick_ms / 1000.0
+    @property
     def voltage_v(self) -> float: return self.voltage_mv / 1000.0
     @property
     def current_a(self) -> float: return self.current_ma / 1000.0

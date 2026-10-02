@@ -13,12 +13,11 @@ Testing profiles use chemistry profiles to set correct voltage thresholds
 automatically when a battery is registered with a known chemistry and
 cell count (series_count).
 
-Supported:
+Rev.2 supports lithium-ion only (approximately 10S, ~30-42 V packs):
   NMC   — Lithium Nickel Manganese Cobalt Oxide (most scooters)
   NCA   — Lithium Nickel Cobalt Aluminium Oxide (high-energy)
-  LFP   — Lithium Iron Phosphate (safer, longer life)
-  LTO   — Lithium Titanate (ultra-safe, fast charge, short life)
-  NiMH  — Nickel Metal Hydride (older packs)
+  LFP   — Lithium Iron Phosphate
+Other chemistries (e.g. nickel-metal-hydride) are not supported.
 """
 
 from dataclasses import dataclass, field
@@ -140,49 +139,6 @@ CHEMISTRIES: dict[str, ChemistryProfile] = {
         ],
     ),
 
-    "LTO": ChemistryProfile(
-        name                 = "Lithium Titanate",
-        abbreviation         = "LTO",
-        nominal_cell_v       = 2.40,
-        max_cell_v           = 2.85,
-        cutoff_cell_v        = 1.80,
-        max_temp_charge_c    = 55.0,
-        max_temp_discharge_c = 55.0,
-        cycle_life_est       = 10000,
-        energy_density_whkg  = 80.0,
-        description          = "Extremely long cycle life (10,000+ cycles). "
-                               "Ultra-safe — no lithium plating risk. Supports fast "
-                               "charge. Very low energy density. Used in grid storage "
-                               "and some transit applications.",
-        degradation_note     = "Minimal capacity fade over lifetime. If degraded LTO "
-                               "is found, suspect cell imbalance rather than wear.",
-        soc_ocv_table        = [
-            (100, 2.85), (90, 2.65), (80, 2.56), (70, 2.52),
-            (60, 2.50), (50, 2.47), (40, 2.45), (30, 2.43),
-            (20, 2.40), (10, 2.30), (5, 2.10), (0, 1.80),
-        ],
-    ),
-
-    "NiMH": ChemistryProfile(
-        name                 = "Nickel Metal Hydride",
-        abbreviation         = "NiMH",
-        nominal_cell_v       = 1.20,
-        max_cell_v           = 1.45,
-        cutoff_cell_v        = 1.00,
-        max_temp_charge_c    = 45.0,
-        max_temp_discharge_c = 50.0,
-        cycle_life_est       = 300,
-        energy_density_whkg  = 80.0,
-        description          = "Older chemistry. Fewer second-life applications — "
-                               "included for completeness and legacy pack support.",
-        degradation_note     = "Memory effect possible if repeatedly partially discharged. "
-                               "High self-discharge rate compared to lithium chemistries.",
-        soc_ocv_table        = [
-            (100, 1.45), (80, 1.35), (60, 1.30), (40, 1.25),
-            (20, 1.20), (10, 1.15), (0, 1.00),
-        ],
-    ),
-
     "unknown": ChemistryProfile(
         name                 = "Unknown Chemistry",
         abbreviation         = "?",
@@ -199,6 +155,9 @@ CHEMISTRIES: dict[str, ChemistryProfile] = {
                                "is confirmed.",
     ),
 }
+
+
+LITHIUM_ION_CHEMISTRIES = ("NMC", "NCA", "LFP")
 
 
 def get_chemistry(abbreviation: str) -> ChemistryProfile:
