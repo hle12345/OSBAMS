@@ -32,6 +32,9 @@ Agilent/Keysight **6060B** (primary and only external load) · Keysight **EDU344
 
 OSBAMS is a platform for assessing unknown and second-life batteries, not just a low-cost cycler: **open hardware** (Rev.2 controller PCB review package), **open firmware and software**, **open battery profiles and test protocols**, **open standardized data** (`docs/rev2/DATASET_SCHEMA.md`, Battery Passport) and **open health models** (`ai/`). Chain: Rev.2 hardware → calibration/validation layer → real battery dataset → explainable AI health assessment. The calibration/validation and AI work is **under development**: thresholds are provisional until reference-instrument validation, Rev.2 remains unbench-validated until first article, AI health estimation is experimental/research-stage, and capacity retention is not a validated cell-level SOH. See `docs/rev2/WORKSTREAMS.md`, `docs/rev2/VALIDATION_AND_CALIBRATION_PLAN.md`, `ai/README.md`.
 
+## Hardware workstreams
+Two separate hardware workstreams live in this (private) repo: the **Rev.2 controller PCB** (`Hardware/Rev2_Controller/`, RC1.2e) and the **Pi/display power distribution board plus Pi-power interposer** (`OSBAMS_Pi_Display_Power_RevA_RC1/`, `OSBAMS_Pi_Power_Interposer_RevA_RC1/`, generators in `tools/pi_display_power/`; isolated 12 V → 5 V for the Pi 5 + display). Neither is bench-validated. See `docs/rev2/PI_POWER_WORKSTREAM.md`.
+
 ## Next milestone: first real battery test
 `docs/rev2/FIRST_BATTERY_TEST_PROCEDURE.md`, with `CALIBRATION_RECORD_TEMPLATE.md` and `HARDWARE_ACCEPTANCE_RECORD.md`. Software is ahead of hardware; no more features until measurements exist.
 
