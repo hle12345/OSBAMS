@@ -1,0 +1,22 @@
+Pi 5 keying check - plan view, from the official mechanical drawing RP-008347-DS-1 (digitised, +-0.3 mm)
+
+Correct orientation: key posts K at x = 18.5, 43.25, 14.5 mm outward of the header axis -> Pi y = -11.0 mm (board edge is y = 0)
+  post at (18.5, -11.0): beyond the Pi edge in free air (PASS)
+  post at (43.2, -11.0): beyond the Pi edge in free air (PASS)
+
+Reversed 180 deg about the header centre: x' = 65 - x, y' = 3.5 + 14.5 = 18.0 mm (inboard)
+  post at (46.5, 18.0): over the Pi PCB = True; clearance of a 5 mm post to nearest component edge = 3.3 mm (C  chip right) -> lands on bare PCB (PASS)
+  post at (21.8, 18.0): over the Pi PCB = True; clearance of a 5 mm post to nearest component edge = 1.6 mm (A  chip left of centre) -> lands on bare PCB (PASS)
+
+Hole alignment: interposer M1/M2 at (3.5, 3.5) and (61.5, 3.5) in Pi coordinates = Pi mounting holes (drawing: 58 mm pitch, 3.5 mm from edges, dia 2.7).
+Interposer plan extent (correct orientation): x 0..65, y from -14.3 to +7.5 mm. Components under it in plan: A  chip left of centre, E  small part under header (right) (the board floats at the seated gap G above them; height check needs G).
+  plan gap to D  SoC heat spreader: 17.1 mm
+  plan gap to USB/Ethernet stack: 5.8 mm
+  plan gap to F  connector by right hole: 0.2 mm
+  plan gap to G  connector by right hole (2): 0.9 mm
+  plan gap to C  chip right: 7.5 mm
+  plan gap to B  chip below header: 4.4 mm
+  (F, the small connector by the right mounting hole, is ~0.2 mm from the interposer's right edge in plan; the board floats at the seated gap G above it - check its height when G is known. DSI/CSI FFCs are on the left edge at y >= 20 mm and the PoE 2x2 header is at the bottom right: both > 12 mm from the footprint. The Active Cooler/SoC (D) is >= 17 mm away in plan.)
+
+RESULT (plan view): PASS
+Not covered: heights (post length vs seated gap G, header/socket engagement) - need the SSW-120 drawing; optional STEP for a 3-D confirmation.

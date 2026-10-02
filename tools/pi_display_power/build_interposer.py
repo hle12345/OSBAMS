@@ -2,9 +2,9 @@
 """OSBAMS_Pi_Power_Interposer_RevA: keyed 5 V power interposer that plugs onto the Raspberry Pi 5 40-pin header.
 Run with /usr/bin/python3 (KiCad 7 pcbnew).  Output dir: argv[1]."""
 import sys, os, re, subprocess, uuid, glob, zipfile, csv
-import pcbnew
+import pcbnew, kcompat
 from pcbnew import FromMM as mm, VECTOR2I as V
-D = sys.argv[1]; NAME = "OSBAMS_Pi_Power_Interposer_RevA"; LIB = "/usr/share/kicad/footprints"
+REL = os.environ.get("REL", "RC1"); D = sys.argv[1]; NAME = "OSBAMS_Pi_Power_Interposer_RevA"; LIB = "/usr/share/kicad/footprints"
 for sub in ("kicad", "gerbers", "drill", "bom", "docs", "reports"): os.makedirs(f"{D}/{sub}", exist_ok=True)
 P = lambda x, y: V(mm(x), mm(y))
 # ---------- geometry (mm, board top-left origin, +y down; header axis along x; outward (beyond Pi edge) = -y)
@@ -69,7 +69,7 @@ for a in ((0, Y_TOP, BW, Y_TOP), (BW, Y_TOP, BW, Y_BOT), (BW, Y_BOT, 0, Y_BOT), 
 def text(s, x, y, h=1.0, layer=pcbnew.F_SilkS):
     t = pcbnew.PCB_TEXT(b); t.SetText(s); t.SetPosition(P(x, y)); t.SetLayer(layer); t.SetTextSize(P(h, h)); t.SetTextThickness(mm(0.18)); t.SetHorizJustify(pcbnew.GR_TEXT_H_ALIGN_LEFT); b.Add(t)
 text("OSBAMS Pi Power Interposer Rev.A", 29.0 + DX, 3.4, 0.9); text("KEY", 17.5, 7.6, 0.8); text("KEY", 42.25, 7.6, 0.8)
-text("FIT KEY STANDOFFS", 29.0 + DX, 9.6, 0.8); text("5V / 8A MAX  1,2=+5V 3,4=GND", 29.0 + DX, 12.6, 0.8); text("ISOLATED 5V IN", 29.0 + DX, 14.6, 0.8)
+text("FIT KEY STANDOFFS", 29.0 + DX, 9.6, 0.8); text("5V / 5A MAX  1,2=+5V 3,4=GND", 29.0 + DX, 12.6, 0.8); text("ISOLATED 5V IN", 29.0 + DX, 14.6, 0.8)
 text("PI SIDE - ISOLATED", 29.0 + DX, 16.4, 0.8); text("PI PIN 1", 6.0, 22.9, 0.7); text(os.environ.get("REL", "RC1") + " - NOT FOR FAB", 29.0 + DX, 22.7, 0.8)
 text("Rev.A  2oz Cu  1.6mm", 30.0 + DX, 21.2, 0.8, pcbnew.B_SilkS)
 b.GetDesignSettings().SetBoardThickness(mm(1.6))
@@ -79,7 +79,7 @@ stack = ('(stackup (layer "F.SilkS" (type "Top Silk Screen")) (layer "F.Paste" (
  '(layer "B.Cu" (type "copper") (thickness 0.07)) (layer "B.Mask" (type "Bottom Solder Mask") (thickness 0.01)) (layer "B.Paste" (type "Bottom Solder Paste")) (layer "B.SilkS" (type "Bottom Silk Screen")) (copper_finish "ENIG") (dielectric_constraints no))')
 t = open(out).read(); t = re.sub(r'\(setup\b', '(setup\n    ' + stack, t, count=1); open(out, "w").write(t)
 open(f"{D}/kicad/{NAME}.kicad_pro", "w").write('{"meta":{"filename":"%s.kicad_pro","version":1},"board":{"design_settings":{"rules":{"min_copper_edge_clearance":0.5,"min_clearance":0.25}}},"sheets":[["root",""]]}\n' % NAME)
-pcbnew.WriteDRCReport(pcbnew.LoadBoard(out), f"{D}/reports/DRC_report.rpt", pcbnew.EDA_UNITS_MILLIMETRES, True)
+pass   # DRC is run with kicad-cli (build_k10.py)
 
 # ---------- schematic (embedded symbols, labels on pin ends)
 ROOT = "3b1d6c7e-2a44-4f0e-8d5a-91c0a7e4b002"; G = 2.54; u = lambda: str(uuid.uuid4())
@@ -112,17 +112,17 @@ def place(ref, libname, pins, x0, y0, fpn, val, mpn):
                 body.append(f'(wire (pts (xy {x:.2f} {y:.2f}) (xy {ex:.2f} {y:.2f})) (stroke (width 0) (type default)) (uuid "{u()}"))')
                 body.append(f'(label "{net_}" (at {ex:.2f} {y:.2f} {ang}) (effects (font (size 1.27 1.27)) (justify {"right" if ang == 180 else "left"} bottom)) (uuid "{u()}"))')
 PIN_NETS_STR = {str(k): v for k, v in PIN_NETS.items()}
-place("J1", "MicroFit4", J1pins, 40.0, 60.0, "Connector_Molex:Molex_Micro-Fit_3.0_43045-0400_2x02_P3.00mm_Horizontal", "43045-0400", "430450400")
-place("J2", "RPi40", J2pins, 130.0, 150.0, "OSBAMS_PiPwr:SSW-120-01-S-D_RPi_TopView", "SSW-120-01-S-D", "SSW-120-01-S-D")
+place("J1", "MicroFit4", J1pins, 40.64, 60.96, "Connector_Molex:Molex_Micro-Fit_3.0_43045-0400_2x02_P3.00mm_Horizontal", "43045-0400", "430450400")
+place("J2", "RPi40", J2pins, 129.54, 149.86, "OSBAMS_PiPwr:SSW-120-01-S-D_RPi_TopView", "SSW-120-01-S-D", "SSW-120-01-S-D")
 for i, net_ in enumerate(["5V_PI", "PI_GND"]):
-    xx = 40.0 + i * 15
-    body.append(f'(symbol (lib_id "OSBAMS_PiPwr:PWR_FLAG") (at {xx} 100 0) (unit 1) (in_bom no) (on_board no) (dnp no) (uuid "{u()}")\n  (property "Reference" "#FLG0{i+1}" (at {xx} 97 0) (effects hide)) (property "Value" "PWR_FLAG" (at {xx} 103 0) (effects hide))\n  (pin "1" (uuid "{u()}")) (instances (project "{NAME}" (path "/{ROOT}" (reference "#FLG0{i+1}") (unit 1)))))')
-    body.append(f'(wire (pts (xy {xx} 100) (xy {xx} 105.08)) (stroke (width 0) (type default)) (uuid "{u()}"))'); body.append(f'(label "{net_}" (at {xx} 105.08 270) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "{u()}"))')
-body.append(f'(text "OSBAMS Pi Power Interposer Rev.A RC1 - keyed Micro-Fit to Pi GPIO. +5 V on pins 2,4; GND on 6,9,14,20. All other pins unconnected." (at 12 12 0) (effects (font (size 2 2)) (justify left)) (uuid "{u()}"))')
+    xx = 40.64 + i * 15.24
+    body.append(f'(symbol (lib_id "OSBAMS_PiPwr:PWR_FLAG") (at {xx} 100.33 0) (unit 1) (in_bom no) (on_board no) (dnp no) (uuid "{u()}")\n  (property "Reference" "#FLG0{i+1}" (at {xx} 97.33 0) (effects hide)) (property "Value" "PWR_FLAG" (at {xx} 103.33 0) (effects hide))\n  (pin "1" (uuid "{u()}")) (instances (project "{NAME}" (path "/{ROOT}" (reference "#FLG0{i+1}") (unit 1)))))')
+    body.append(f'(wire (pts (xy {xx} 100.33) (xy {xx} 105.41)) (stroke (width 0) (type default)) (uuid "{u()}"))'); body.append(f'(label "{net_}" (at {xx} 105.41 270) (effects (font (size 1.27 1.27)) (justify left bottom)) (uuid "{u()}"))')
+body.append(f'(text "OSBAMS Pi Power Interposer Rev.A {REL} - keyed Micro-Fit to Pi GPIO. +5 V on pins 2,4; GND on 6,9,14,20. All other pins unconnected." (at 12 12 0) (effects (font (size 2 2)) (justify left)) (uuid "{u()}"))')
 pwr = '''(symbol "OSBAMS_PiPwr:PWR_FLAG" (power) (pin_names (offset 0) hide) (in_bom no) (on_board no)
   (property "Reference" "#FLG" (at 0 1.9 0) (effects (font (size 1.27 1.27)) hide)) (property "Value" "PWR_FLAG" (at 0 3.8 0) (effects (font (size 1.27 1.27))))
   (property "Footprint" "" (at 0 0 0) (effects hide)) (property "Datasheet" "" (at 0 0 0) (effects hide))
   (symbol "PWR_FLAG_0_0" (pin power_out line (at 0 0 90) (length 0) (name "pwr" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27))))))
   (symbol "PWR_FLAG_0_1" (polyline (pts (xy 0 0) (xy 0 1.27) (xy -1.016 1.905) (xy 0 2.54) (xy 1.016 1.905) (xy 0 1.27)) (stroke (width 0) (type default)) (fill (type none)))))'''
-open(f"{D}/kicad/{NAME}.kicad_sch", "w").write(f'(kicad_sch (version 20230121) (generator eeschema)\n  (uuid "{ROOT}") (paper "A2")\n  (title_block (title "OSBAMS Pi Power Interposer Rev.A") (rev "RC1"))\n  (lib_symbols\n{sym_lib("MicroFit4", *J1pins)}\n{sym_lib("RPi40", *J2pins)}\n{pwr}\n  )\n' + "\n".join(body) + '\n  (sheet_instances (path "/" (page "1")))\n)\n')
+open(f"{D}/kicad/{NAME}.kicad_sch", "w").write(f'(kicad_sch (version 20230121) (generator eeschema)\n  (uuid "{ROOT}") (paper "A2")\n  (title_block (title "OSBAMS Pi Power Interposer Rev.A") (rev "{REL}"))\n  (lib_symbols\n{sym_lib("MicroFit4", *J1pins)}\n{sym_lib("RPi40", *J2pins)}\n{pwr}\n  )\n' + "\n".join(body) + '\n  (sheet_instances (path "/" (page "1")))\n)\n')
 print("interposer built")

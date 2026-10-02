@@ -1,0 +1,10 @@
+#!/bin/bash
+# Run a command inside the KiCad 10.0.6 container rootfs (/opt/kicad10) with this repository bind-mounted at /work (see BUILD_ENVIRONMENT in the controller docs).
+R=/opt/kicad10
+REPO=$(cd "$(dirname "$0")/../.." && pwd)
+mountpoint -q $R/proc || mount --bind /proc $R/proc
+mountpoint -q $R/dev || mount --bind /dev $R/dev
+mkdir -p $R/work
+mountpoint -q $R/work && umount $R/work
+mount --bind "$REPO" $R/work
+exec chroot $R "$@"

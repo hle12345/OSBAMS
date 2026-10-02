@@ -2,7 +2,7 @@
 """Build the KiCad PCB with pcbnew (run with /usr/bin/python3, KiCad 7).
 All parts except U1 use footprints from the official KiCad libraries (kicad-footprints)."""
 import sys, os, re
-import pcbnew
+import pcbnew, kcompat
 from pcbnew import FromMM as mm, VECTOR2I as V
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from parts import *
@@ -52,6 +52,7 @@ libfp("F2", meta["F2"][5], *POS["F2"], 270, two("F2", "5V_ISO_RAW", "5V_PI"))
 libfp("TVS1", meta["TVS1"][5], *POS["TVS1"], 0, two("T", "+12V_F", "12V_GND"))          # pad1 = cathode
 libfp("J_IN", meta["J_IN"][5], *POS["J_IN"], 90, two("J", "+12V_IN", "12V_GND"))
 libfp("J_OUT", meta["J_OUT"][5], *POS["J_OUT"], 180, {"1": "5V_PI", "2": "5V_PI", "3": "PI_GND", "4": "PI_GND"})
+libfp("J_DISP", meta["J_DISP"][5], *POS["J_DISP"], 180, {"1": "5V_PI", "2": "PI_GND"})
 libfp("C1", meta["C1"][5], *POS["C1"], 0, two("C", "+12V_F", "12V_GND"))
 libfp("C2", meta["C2"][5], *POS["C2"], 0, two("C", "+12V_F", "12V_GND"))                 # pad1 = +
 libfp("C4", meta["C4"][5], *POS["C4"], 270, two("C", "5V_PI", "PI_GND"))                  # pad1 = +
@@ -113,6 +114,7 @@ trk("5V_PI", [c5, (83.0, c5[1])], 0.8); trk("5V_PI", [c6, (83.0, c6[1])], 0.8)
 for ref in ("C5", "C6"):
     g = padpos(ref, 2); trk("PI_GND", [g, (g[0] + 1.6, g[1])], 0.5); via("PI_GND", g[0] + 1.6, g[1])
 c4 = padpos("C4", 1); trk("5V_PI", [c4, (79.0, c4[1])], 2.0)
+jd = padpos("J_DISP", 1); trk("5V_PI", [jd, (78.6, jd[1])], 2.0)          # display feed: J_DISP pin 1 (+5 V) -> 5V_PI pour; pin 2 (GND) is in the PI_GND B.Cu pour
 r1p, r1n, d1k, d1a = padpos("R1", 1), padpos("R1", 2), padpos("D1", 1), padpos("D1", 2)
 trk("5V_PI", [(83.0, 47.8), (85.0, 47.8), (85.0, r1p[1]), r1p], 0.5); trk("5V_PI", [(85.0, 47.8), padpos("TP4", 1)], 0.5)
 trk("PG_LED_A", [r1n, d1a], 0.5); trk("PI_GND", [d1k, (d1k[0] - 1.7, d1k[1])], 0.5); via("PI_GND", d1k[0] - 1.7, d1k[1])
@@ -144,11 +146,12 @@ def text(s, x, y, h=1.2, layer=pcbnew.F_SilkS, just=pcbnew.GR_TEXT_H_ALIGN_LEFT)
 C = pcbnew.GR_TEXT_H_ALIGN_CENTER
 text("OSBAMS Pi/Display Power Rev.A", 50, 2.6, 1.6, just=C)
 text("12V IN", 6.5, 56.5, 1.4); text("PRIMARY 12V SIDE", 9, 64, 1.2); text("+12V   GND", 6.5, 51.5, 0.9)
-text("ISOLATED 5V OUT", 56.0, 63.0, 0.9); text("5V / 8A MAX", 56.0, 60.6, 0.9)
-text("1,2=+5V 3,4=GND", 56.0, 68.4, 0.8)
-text("PI SIDE — ISOLATED", 56.0, 66.2, 1.1); text("ISOLATION BARRIER", 50, 38.5, 1.0, just=C)
+text("ISOLATED 5V OUT", 69.0, 63.4, 0.75); text("5V / 5A MAX", 69.0, 65.0, 0.75)
+text("1,2=+5V 3,4=GND", 69.0, 66.6, 0.75)
+text("PI SIDE-ISOLATED", 69.0, 68.4, 0.75); text("ISOLATION BARRIER", 50, 38.5, 1.0, just=C)
 text("NO COPPER CROSSING / 10mm GAP", 50, 40.2, 0.8, just=C)
-text("R2/R3 DNP - TRIM OPTION", 56.0, 52.0, 0.8); text("U1 PIN1 SIDE", 28.0, 14.5, 0.8)
+text("DISPLAY 5V", 48.0, 62.0, 0.8); text("1=+5V 2=GND", 48.0, 63.8, 0.8)
+text("R3: SELECT-ON-TEST TRIM", 50.0, 50.0, 0.8); text("U1 PIN1 SIDE", 28.0, 14.5, 0.8)
 text(os.environ.get("REL", "RC1.1") + " - NOT FOR FAB", 50, 69.0, 0.8, pcbnew.F_SilkS, C)
 text("OSBAMS Pi/Display Power Rev.A  2oz Cu", 50, 68.0, 0.9, pcbnew.B_SilkS, C)
 for y in range(5, 66, 4):

@@ -1,0 +1,14 @@
+Isolation check (OSBAMS_Pi_Display_Power_RevA, KiCad 10.0.6)
+
+Rule: copper of net class PRIMARY (*12V*: +12V_IN, +12V_F, 12V_GND) vs ISOLATED (*5V*, *PI_GND*, *PG_LED_A*, *TRIM*) >= 8 mm on every layer (file OSBAMS_Pi_Display_Power_RevA.kicad_dru).
+DRC with the 8 mm rule: 0 isolation clearance violations  -> PASS
+Negative control (rule tightened to 24 mm, same board): 5 violations -> rule is applied by KiCad
+Parts with pads on both sides: ['U1'] (expected: U1 only)
+Nets joining a 12 V net and a 5 V / PI_GND net: none
+GND pours: 12V_GND zones ['/12V_GND'], PI_GND zones ['/PI_GND'] (separate zones; no stitching / bond / Y capacitor)
+Mounting holes / board-only footprints (hidden second ground path check):
+  H3: [('', '<no net>', 'NPTH')]
+  H2: [('', '<no net>', 'NPTH')]
+  H1: [('', '<no net>', 'NPTH')]
+  H4: [('', '<no net>', 'NPTH')]
+  -> mounting holes are NPTH with no copper pad (no chassis / shield connection from the board)

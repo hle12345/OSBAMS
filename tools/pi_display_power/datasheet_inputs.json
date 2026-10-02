@@ -67,9 +67,9 @@
   "source": "ASSUMED typical (Harwin quotes max only)"
  },
  "erc_clean_kicad10": {
-  "value": false,
-  "status": "unverified",
-  "source": "Run ERC in KiCad 10 locally"
+  "value": true,
+  "status": "verified",
+  "source": "KiCad 10.0.6 (container) ERC 0 / DRC 0 incl. schematic parity on both projects, reports in reports/*_kicad10.rpt (build_k10.py). Owner re-runs locally before the Gerber export."
  },
  "rsdw_body_pins_owner": {
   "value": {
@@ -253,5 +253,15 @@
   },
   "status": "verified",
   "source": "Samtec SSW/SSQ through-hole catalog page F-226 (uploaded): straight-pin body height 8.51 mm (.335 in); lead style -01 tail A = 2.64 mm (.104 in) (-02 4.93, -03 10.00, -04 14.83, -06 3.15); double row width 4.95 mm; mating insertion depth 3.68-6.35 mm; Pi header plastic 2.5 mm is a standard-header ASSUMPTION; pin tip ~9 mm from the Pi 5 drawing."
+ },
+ "display_power_feed": {
+  "value": "J_DISP direct feed (Molex 430450200) from the 5V_PI node after F2",
+  "status": "verified",
+  "source": "Design decision (Waveshare_integration.md): the interposer covers the Pi header, so the display cannot use Pi pins; display current stays out of the harness/interposer/socket. Waveshare datasheet itself not available: display current is a first-article measurement."
+ },
+ "waveshare_current_a": {
+  "value": null,
+  "status": "unverified",
+  "source": "No Waveshare datasheet available to the build. Owner note (PI_POWER_ARCHITECTURE.md): ~0.8-1 A; confirm for the exact model. Used only for scenario rows; hardware limits (5.0 A Pi pins, 6.0 A total) do not depend on it."
  }
 }

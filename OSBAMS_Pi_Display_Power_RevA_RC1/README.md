@@ -1,5 +1,8 @@
 # OSBAMS_Pi_Display_Power_RevA — RC1.1 (rework of RC1)
 
+> **SUPERSEDED by `OSBAMS_Pi_Display_Power_RevA_RC2/`** (KiCad 10 clean, display feed J_DISP, no placeholder MPNs). This RC1 folder is kept as history; its gate table below is out of date.
+
+
 **Status: NOT FINAL, NOT AUTHORIZED FOR FABRICATION. `..._RC2` has deliberately NOT been generated** — it is gated on the items below (the Mean Well RSDW40F-05 footprint cannot be verified from the build environment, and the 5 V worst-case voltage margin is unproven).
 
 RC1.1 changes vs RC1: (a) every footprint comes from the official KiCad libraries or the Mean Well drawing (U1 now implemented from the drawing) (fixes a real error: Micro-Fit dual-row pin numbering runs along rows, so +5 V = outer row, GND = inner row; Nano2 fuse is ~6 mm, not 12 mm); (b) 5 V distribution re-laid and budgeted (`docs/Voltage_drop_budget.md`); (c) harness changed to 16 AWG ≤150 mm; (d) DNP trim-network pads R2/R3 added.

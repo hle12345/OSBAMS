@@ -1,5 +1,8 @@
 # OSBAMS_Pi_Power_Interposer_RevA — RC1
 
+> **SUPERSEDED by `OSBAMS_Pi_Power_Interposer_RevA_RC2/`** (KiCad 10 clean, display feed J_DISP, no placeholder MPNs). This RC1 folder is kept as history; its gate table below is out of date.
+
+
 **NOT FOR FABRICATION (release candidate).** Small keyed interposer that plugs onto the Raspberry Pi 5 40-pin header and exposes the isolated 5 V rail through a keyed Micro-Fit connector. Replaces the unpolarised Harwin M20 housing at the Pi end of the power harness.
 
 `... Power PCB J_OUT (430450400) → short 16 AWG harness → J1 (430450400) on this board → Pi pins 2,4 (+5 V) and 6,9,14,20 (GND)`

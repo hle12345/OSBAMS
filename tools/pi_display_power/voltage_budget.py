@@ -70,7 +70,8 @@ f1txt = (f"F1 = {V('f1_mpn')} (Littelfuse 407, 1206 time-lag, 8 A, {F1S['max_vol
          f"Inrush check (ASSUMED 122 uF, 10 mOhm loop, 14.4 V): I2t ~ {I2T_INRUSH:.2f} A2s vs fuse melting I2t {F1S['melting_i2t_a2s']} A2s = {I2T_INRUSH/F1S['melting_i2t_a2s']*100:.0f} % - comfortable; confirm by scope. "
          "Input-side drop does not enter the 5 V budget (module UVLO 8 V). Note: 24 V max rating is ample for the 12 V bus (<=14.4 V); the SMBJ15A clamps ~24 V only in a surge.")
 lines = [
-"# 5 V distribution voltage-drop budget (RC1.1)", "",
+"# 5 V voltage-drop budget — detail and trim table (" + os.environ.get("REL", "RC1.1") + ")", "",
+"Scenario tables (Pi / display loads, element drops, setpoint window) are in `Power_budget_report.md`; this file keeps the datasheet-input table, the tolerance scenarios and the trim-resistor table. In RC2 the display is fed from J_DISP, so the display current does not pass through the Pi path modelled below.", "",
 "Path: `RSDW40F-05 +VOUT -> PCB copper -> F2 -> J_OUT (2 contacts/rail) -> 16 AWG harness (<=150 mm) -> keyed interposer Micro-Fit J1 (2 contacts/rail) -> interposer copper -> 2x20 stacking socket -> Pi pins (+5 V: 2 and 4; GND: 6, 9, 14, 20)` and the matching return. The Harwin M20 fan-out is no longer in the path.",
 f"Target: **>= {TARGET} V at the Pi header at 5 A, worst case**; **<= {PI_MAX} V no-load / high-line** (Pi floor {PI_MIN} V).", "",
 "## Inputs and status (`datasheet_inputs.json`)", "", "| Input | Value | Status | Source |", "|---|---|---|---|",
@@ -87,8 +88,8 @@ f"Vref = {Vr} V, R1 = {R1} k, R2 = {R2} k, R3 = {R3} k; nominal Vout = {vnom:.3f
 *trim, "",
 f"**Window-limited setpoint {SP:.3f} V -> Rt = {rt_sel:.1f} kOhm, E96 {e_sel:.1f} kOhm (gives {vo_sel:.3f} V). R3 stays DNP until you approve the resistor.** The +-1 % accuracy is assumed to hold at the trimmed setpoint (confirm). R3 pad is 0603; use a 0.1 % or 1 % resistor.", "",
 "## F1 (input fuse)", "", f1txt, "",
-"## Remaining RC2 gates", "",
-"1. Local KiCad 10 ERC.",
-"2. First article (not a gate): per-unit trim calibration, **measured socket contact resistance on the assembled interposer** (replaces the 20 mOhm placeholder), loaded Pi voltage and harness/connector temperature rise.", ""]
+"## Status", "",
+"1. KiCad 10 ERC/DRC: run in the build container (reports in `reports/`), re-run locally by the owner.",
+"2. First article (not a gate): per-unit trim calibration, **measured socket and connector contact resistances**, loaded Pi voltage and harness/connector temperature rise (`First_article_checklist.md`).", ""]
 open(f"{D}/docs/Voltage_drop_budget.md", "w").write("\n".join(lines))
 print("\n".join(tab)); print("window", round(rwin,1), "Rmax", round(rm_,1)); print("\n".join(trim))
