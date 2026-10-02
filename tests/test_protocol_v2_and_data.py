@@ -167,3 +167,47 @@ class TestPassportAndDataset(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestFirmwareEncoderAgreesWithHostParser(unittest.TestCase):
+    """The C protocol v2 encoder (Firmware/App/Src/protocol.c) vs the golden vectors and the Python reference parser."""
+
+    @classmethod
+    def setUpClass(cls):
+        import subprocess
+        fw = os.path.join(ROOT, "Firmware")
+        cls.tmp = tempfile.mkdtemp()
+        cls.exe = os.path.join(cls.tmp, "t2")
+        r = subprocess.run(["gcc", "-Wall", "-Wextra", "-std=c11", f"-I{fw}/App/Inc", f"-I{fw}/Drivers/Inc", f"-I{fw}/Core/Inc",
+                            f"-I{fw}/Tests", "-o", cls.exe, os.path.join(fw, "Tests", "test_protocol_v2.c"),
+                            os.path.join(fw, "App", "Src", "protocol.c")], capture_output=True, text=True)
+        if r.returncode != 0:
+            raise unittest.SkipTest("no C compiler available: " + r.stderr[:200])
+        cls.src = open(os.path.join(fw, "Tests", "test_protocol_v2.c")).read()
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmp, ignore_errors=True)
+
+    def test_c_golden_literals_equal_json_vectors(self):
+        import re
+        with open(os.path.join(ROOT, "docs", "rev2", "protocol_v2_test_vectors.json")) as f:
+            lines = {v["name"]: v["line"] for v in json.load(f)["vectors"]}
+        c = dict(re.findall(r'static const char \*(GOLD_\w+)\s*=\s*"([^"]+?)\\r\\n";', self.src))
+        self.assertEqual(c["GOLD_FULL"], lines["v2_full"])
+        self.assertEqual(c["GOLD_NA"], lines["v2_unavailable_fields"])
+        self.assertEqual(c["GOLD_V1"], lines["v1_still_accepted"])
+
+    def test_c_encoder_output_parses_with_python(self):
+        import subprocess
+        out = subprocess.run([self.exe, "frames"], capture_output=True, text=True).stdout.splitlines()
+        self.assertEqual(len(out), 2)
+        a, b = (p2.parse_any(x).sample for x in out)
+        self.assertEqual((a.v_adc_mv, a.q_ina_uah, a.e_mcu_uwh, a.acq_count, a.sensor_status), (41790, 1234, 51400, 2999, 0))
+        self.assertIsNone(b.v_adc_mv)
+        self.assertEqual(b.status_names, ["ADC_FAULT", "ACCUM_INVALID"])
+
+    def test_c_assertions_pass(self):
+        import subprocess
+        r = subprocess.run([self.exe], capture_output=True, text=True)
+        self.assertEqual(r.returncode, 0, r.stdout)

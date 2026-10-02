@@ -23,6 +23,7 @@ TARGETS := \
     $(BIN_DIR)/test_measurement_invalid_channel \
     $(BIN_DIR)/test_protocol_c \
     $(BIN_DIR)/test_protocol_estop \
+    $(BIN_DIR)/test_protocol_v2 \
     $(BIN_DIR)/test_safety_modules \
     $(BIN_DIR)/test_safety_power_optional \
     $(BIN_DIR)/test_ina228_calibration \
@@ -48,6 +49,10 @@ $(BIN_DIR)/test_measurement_invalid_channel: test_measurement_invalid_channel.c 
 
 # Protocol conformance — real encoder, prints frames for the Python side.
 $(BIN_DIR)/test_protocol_c: test_protocol_c.c $(APP_SRC)/protocol.c
+	$(CC) $(CFLAGS) $(INC) -o $@ $^
+
+# Protocol v2 encoder against the golden vectors (docs/rev2/protocol_v2_test_vectors.json).
+$(BIN_DIR)/test_protocol_v2: test_protocol_v2.c $(APP_SRC)/protocol.c
 	$(CC) $(CFLAGS) $(INC) -o $@ $^
 
 # Regression: Protocol_StateName(TEST_ESTOP) must be "E_STOP", not "UNKNOWN".

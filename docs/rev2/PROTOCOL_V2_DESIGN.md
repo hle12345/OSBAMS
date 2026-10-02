@@ -1,7 +1,6 @@
-# Serial protocol v2 — design (firmware NOT changed)
+# Serial protocol v2 — design, host reference and firmware encoder (not wired in)
 
-**Status: design plus a host reference implementation (`desktop/services/protocol_v2.py`). The STM32 firmware still speaks protocol v1.
-Nothing here has run on hardware.** v1 (`services/protocol.py`, CRC-16/CCITT-FALSE) stays authoritative for the existing firmware and is
+**Status: design, a host reference implementation (`desktop/services/protocol_v2.py`) and a host-tested C encoder (`Protocol_EncodeDataV2` in `Firmware/App/Src/protocol.c`, tests in `Firmware/Tests/test_protocol_v2.c`). The firmware still SENDS protocol v1: `OSBAMS_PROTOCOL_VERSION` is 1 and `main.c` does not call the v2 encoder. The INA228 CHARGE/ENERGY registers and the STM32 timestamp integration are not yet exposed, so the v2 fields cannot be filled on hardware. Nothing here has run on hardware.** v1 (`services/protocol.py`, CRC-16/CCITT-FALSE) stays authoritative for the existing firmware and is
 still accepted by `parse_any`.
 
 ## Why
@@ -25,10 +24,9 @@ SS_ACCUM_INVALID, SS_TIME_JUMP).
    result is reported separately and is the one used for capacity retention.
 5. Nothing in the protocol can change relay, E-stop or load-control behaviour.
 
-## Test-first firmware plan
+## Test-first firmware plan (steps 1–2 done)
 Golden frames: `docs/rev2/protocol_v2_test_vectors.json` (valid, NA fields, v1 still accepted, bad CRC, wrong field count). Host tests:
-`tests/test_protocol_v2_and_data.py`. Firmware order of work: (1) add C tests in `Firmware/Tests` that encode/parse these vectors; (2)
-implement the encoder; (3) expose the INA228 CHARGE/ENERGY registers; (4) add STM32 timestamp integration; (5) bench-compare on the
+`tests/test_protocol_v2_and_data.py`. Firmware order of work: (1) DONE: C tests in `Firmware/Tests/test_protocol_v2.c` encode these vectors byte for byte, and `tests/test_protocol_v2_and_data.py` checks the C literals against the JSON and parses the C output with the Python parser; (2) DONE: encoder implemented (pure formatting, v1 untouched); (3) expose the INA228 CHARGE/ENERGY registers; (4) add STM32 timestamp integration; (5) bench-compare on the
 first-article rig. The Pi side and the AI/data work do not wait for any of this.
 
 ## Pi-side comparison at test completion
