@@ -7,6 +7,11 @@ Target: **≥ 4.85 V at the Pi header pins at the intended worst-case load (5 A)
 ## Equipment
 Bench supply for the 12 V bus (current-limited 5 A), electronic load rated ≥ 8 A at 5 V with 4-wire sense, DMM (≥ 5½ digit preferred), thermocouple, the carrier, and a **Pi-header test adapter** (a 2 × 20 male header board that brings Pi pins 2 and 4 together and pins 6, 9, 14, 20 together to 4-wire terminals; it plugs into the carrier's SSW socket exactly as the Pi does), 0603 resistors from the E96 series (1 % or better).
 
+## Acceptance criteria (both are mandatory — never calibrate under load only)
+1. **No-load maximum ≤ 5.25 V** at the Pi-header adapter with the unit cold and at its warm steady state. The modeled no-load maximum is 5.234 V (setpoint 5.185 V incl. line and temperature), i.e. only **16 mV** below the ceiling: measure it, do not assume it.
+2. **Loaded Pi-pin voltage ≥ 4.85 V (design floor 4.75 V) under the defined worst practical load: 5 A Pi + the measured display current (design scenario 1.0 A), 30 min, warm.**
+A unit that meets one and not the other is rejected (do not trade the no-load limit for the loaded limit).
+
 ## Steps
 1. **Assemble** the power board with R3 **unfitted** (R2 has no part). No Pi connected.
 2. **Polarity/continuity (power off):** confirm `+5V_PI` ≠ `PI_GND` (no short), J_OUT pins 1,2 = +5 V, 3,4 = GND, and ≥ 1 MΩ between `12V_GND` and `PI_GND` (isolation).

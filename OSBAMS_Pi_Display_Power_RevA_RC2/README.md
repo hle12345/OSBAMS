@@ -1,5 +1,8 @@
 # OSBAMS_Pi_Display_Power_RevA — RC2
 
+> **SUPERSEDED / REFERENCE-ONLY by `OSBAMS_Pi_Power_Carrier_RevB_RC1/`** (combined board: worst-case Pi-pin voltage 4.962 V vs 4.829 V here). Kept unchanged as the previous reference design; do not build from it unless RevB is abandoned. PCB geometry is not altered by this note.
+
+
 **Status: review/release candidate for the owner's local KiCad 10 ERC/DRC and Gerber export. No Gerbers are included and this is not a fabrication authorization.** Read `docs/Current_State_Summary.md` first.
 
 PCB #2 of OSBAMS: isolated 5 V / 8 A supply for a Raspberry Pi 5 and a Waveshare 10.1" DSI display.

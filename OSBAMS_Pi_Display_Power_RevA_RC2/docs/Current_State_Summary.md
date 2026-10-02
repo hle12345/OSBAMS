@@ -1,3 +1,5 @@
+> **SUPERSEDED / REFERENCE-ONLY by `OSBAMS_Pi_Power_Carrier_RevB_RC1/`** (combined board: worst-case Pi-pin voltage 4.962 V vs 4.829 V here). Kept unchanged as the previous reference design; do not build from it unless RevB is abandoned. PCB geometry is not altered by this note.
+
 # Pi / display power — current state (RC2)
 
 Branch `claude/affectionate-fermi-qkgfwz`. This supersedes the RC1 / RC1.1 README gate table and older notes (`Voltage_drop_budget.md` is now a detail file; scenarios are in `Power_budget_report.md`). The controller PCB and its firmware are not touched.

@@ -35,3 +35,5 @@ Bench supply for the 12 V bus (current-limited 5 A), electronic load rated ≥ 8
 | Pass / Fail, operator, date | |
 
 Safety: R3 must never be fitted on the basis of the nominal calculation alone; an incorrect value could over-voltage the Pi. Verify polarity and the no-load limit before ever connecting a Pi.
+
+**Correction (RevB review):** one E96 step of R3 (71.5 k → 73.2 k) changes the module output by only about **3 mV**, and a 1 % resistor by about 1 mV. The earlier statement of "~20 mV per E96 step" was wrong (20 mV is the spread between the three kit values 61.9 k / 71.5 k / 84.5 k). The calibration therefore resolves the setpoint finely; the limiting factor is the window width, not the resistor step. See `Voltage_drop_report.md` of RevB RC1.

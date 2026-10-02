@@ -71,6 +71,6 @@ Trim tolerance: a 1 % resistor on the trim-up pad (71.5 k nominal) moves the out
 
 Power dissipation at 5 A + 1 A (worst): F2 360 mW; SSW +5 V pin 125 mW each; SSW GND pin 31 mW each; J_DISP contact 10 mW; copper negligible. The module (~3.5 W) dominates. First article measures the real temperatures.
 
-## 6. What is estimated
+## 6. What is estimated (all BENCH_REQUIRED — see `BENCH_REQUIRED.md`)
 
-Copper squares are measured on this layout but the plated-through-hole barrels, solder joints and the Pi-side pin resistance are estimates (0.5 mOhm per module pin, 1 mOhm per Pi header contact). The SSW contact resistance (20 mOhm max) is a conservative limit — Samtec publishes no initial value for this code — and is **measured at first article**. The display current maximum is unpublished. All are bench items (`First_article_checklist.md`).
+Copper squares are measured on this layout but the plated-through-hole barrels, solder joints and the Pi-side pin resistance are estimates (0.5 mOhm per module pin, 1 mOhm per Pi header contact). The SSW contact resistance (20 mOhm max) is a conservative limit — Samtec publishes no initial value for this code — and is **BENCH_REQUIRED** (measure the actual drop across the socket at high load), as are the module solder-joint resistance, the real Waveshare current (0.8 A typical, maximum unpublished; 1.0 A is a design scenario), the no-load maximum (5.234 V, only 16 mV below the 5.25 V ceiling) and the mechanical fit.

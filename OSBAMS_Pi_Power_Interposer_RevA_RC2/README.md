@@ -1,5 +1,8 @@
 # OSBAMS_Pi_Power_Interposer_RevA — RC2
 
+> **SUPERSEDED / REFERENCE-ONLY by `OSBAMS_Pi_Power_Carrier_RevB_RC1/`** (combined board: worst-case Pi-pin voltage 4.962 V vs 4.829 V here). Kept unchanged as the previous reference design; do not build from it unless RevB is abandoned. PCB geometry is not altered by this note.
+
+
 Keyed Pi-end interposer for the isolated 5 V supply: Molex Micro-Fit 430450400 (J1) → Samtec **SSW-120-01-L-D** 2 × 20 socket (J2, mounted from the underside) → Raspberry Pi 5 header. **No Gerbers are included; not a fabrication authorization.**
 
 - +5 V on Pi pins **2 and 4**; GND on **6, 9, 14, 20**; the other 34 pins unconnected.

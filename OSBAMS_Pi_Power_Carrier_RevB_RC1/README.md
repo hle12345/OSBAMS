@@ -1,5 +1,7 @@
 # OSBAMS_Pi_Power_Carrier_RevB — RC1
 
+**FROZEN as the current combined Pi/display power release candidate: no schematic/PCB change unless local KiCad verification or first-article testing finds a real defect. Modeled quantities are listed in `docs/BENCH_REQUIRED.md` (not verified).** RC2 + interposer are superseded, reference-only designs (kept, not deleted).
+
 **Status: new-revision review candidate (not a patch of RC2) for the owner's local KiCad 10 ERC/DRC and Gerber export. No Gerbers are included; not a fabrication authorization.** The previous reference design (`OSBAMS_Pi_Display_Power_RevA_RC2` + `OSBAMS_Pi_Power_Interposer_RevA_RC2`) is unchanged.
 
 One board replaces the separate Pi/display power PCB, the Pi interposer and the Micro-Fit harness between them:
@@ -17,6 +19,7 @@ One board replaces the separate Pi/display power PCB, the Pi interposer and the 
 | Pin map: power only on Pi pins 2, 4 (+5 V) and 6, 9, 14, 20 (GND); 34 pins no-connect; polarity; module pins vs the Mean Well drawing | **PASS** — 97 checks (`reports/Connectivity_pinmap_check.txt`) |
 | Mechanical fit (plan view vs Pi 5 drawing, key, heights) | **PASS on paper**; physical fit at first article (no STEP models available) |
 | Voltage budget recomputed from scratch | worst case **4.962 V** at the Pi pins with 5 A + 1.0 A display (RC2: 4.829 V) — `docs/Voltage_drop_report.md` |
+| Bench-required quantities (SSW contact resistance, module joint resistance, real Waveshare current, mechanical fit, reversed-fit key test, no-load maximum 5.234 V) | **BENCH_REQUIRED** — `docs/BENCH_REQUIRED.md` |
 | First article | **OPEN (by design)** — `docs/First_article_checklist.md` |
 | Gerbers / PCBWay CAM / CPL orientation | **OWNER** |
 

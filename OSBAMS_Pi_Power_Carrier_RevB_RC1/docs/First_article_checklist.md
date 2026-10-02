@@ -1,6 +1,6 @@
 # Carrier RevB — first-article bench plan
 
-Run on the first built units before they power a real Pi 5 or the display. Not a fabrication gate. Record every value in the acceptance record. Stop if any step fails. **The power path is not validated until every row below has been measured.**
+Run on the first built units before they power a real Pi 5 or the display. Not a fabrication gate. Record every value in the acceptance record. Stop if any step fails. **The power path is not validated until every row below has been measured.** Items the model only estimates are listed in `BENCH_REQUIRED.md`.
 
 Equipment: 12 V bench supply (1 A → 5 A limit), electronic load 0–10 A with 4-wire sense, 2 DMMs (≥ 5.5 digit), scope (20 MHz BW limit, short ground), thermocouple logger / IR camera, a **Pi-header test adapter** (2 × 20 male header board: pins 2 + 4 → +5 V terminal, pins 6, 9, 14, 20 → GND terminal, 4-wire), a Pi 5 (+ Active Cooler if used), the Waveshare 10.1-DSI-TOUCH-A, a USB load, a spare/dummy Pi board for D1.
 
@@ -31,7 +31,7 @@ Equipment: 12 V bench supply (1 A → 5 A limit), electronic load 0–10 A with 
 | C1 | Untrimmed no-load V at the socket (R3 absent) | 5.00 V ±1.7 % | |
 | C2 | Untrimmed 5 A loaded at the socket | recorded | |
 | C3 | `trim_calibration.py V_unt V_5A 5.0` → R3 (E96 kit 61.9k / 71.5k / 84.5k) | RESULT: ACCEPT | |
-| C4 | Fit R3; no-load, 1/3/5 A at the socket, then 5 A + display load | no-load ≤ 5.25 V; 5 A at the Pi pins ≥ 4.85 V (design floor 4.75 V) | |
+| C4 | Fit R3; **no-load (cold and warm)**, 1/3/5 A at the socket, then 5 A + display load (worst practical load), 30 min warm | **both**: no-load ≤ 5.25 V (modeled 5.234 V, only 16 mV margin) **and** loaded ≥ 4.85 V at the Pi pins (design floor 4.75 V) | |
 
 ## D — with the Pi 5 (USB-C power NOT connected)
 | # | Step | Pass if | Result |
