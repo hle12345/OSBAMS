@@ -24,6 +24,12 @@ Agilent/Keysight **6060B** (primary and only external load) · Keysight **EDU344
 `services/test_orchestrator.py`: Capacity (`PROFILE → OCV screen → hardware safety check → capability calculation → READY → CC discharge → cutoff → load OFF verified → recovery → results`) and a separate DCIR current-step test. The dashboard shows the live permitted-current breakdown and drives a *manual* 6060B (operator sets/enables the load; OSBAMS verifies from measurements). Hard invariant: commanded current × conservative pack voltage ≤ 300 W; sag never raises current.
 
 ## Open at multiple levels
+**Current status of the calibration / validation / AI work (under development)**
+- The Rev.2 PCB remains frozen at RC1.2e (release candidate, not bench-validated until first article); the validation/AI work makes no PCB or schematic geometry change.
+- Protocol v2 firmware is still under development: only a host-side reference parser, golden vectors and design exist; the STM32 firmware still speaks protocol v1.
+- Calibration, measurement-quality and agreement thresholds (and the rule-baseline thresholds) are provisional until real bench/reference-instrument measurements exist.
+- The AI/data work is experimental/research-stage; no ML-based battery-health result is production-valid yet, and capacity retention vs rated is not a validated cell-level SOH.
+
 OSBAMS is a platform for assessing unknown and second-life batteries, not just a low-cost cycler: **open hardware** (Rev.2 controller PCB review package), **open firmware and software**, **open battery profiles and test protocols**, **open standardized data** (`docs/rev2/DATASET_SCHEMA.md`, Battery Passport) and **open health models** (`ai/`). Chain: Rev.2 hardware → calibration/validation layer → real battery dataset → explainable AI health assessment. The calibration/validation and AI work is **under development**: thresholds are provisional until reference-instrument validation, Rev.2 remains unbench-validated until first article, AI health estimation is experimental/research-stage, and capacity retention is not a validated cell-level SOH. See `docs/rev2/WORKSTREAMS.md`, `docs/rev2/VALIDATION_AND_CALIBRATION_PLAN.md`, `ai/README.md`.
 
 ## Next milestone: first real battery test
