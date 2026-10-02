@@ -447,6 +447,11 @@ class DashboardTab(QWidget):
 
         dcir = self.mode_combo.currentIndex() == 1
         self._test_id = start_test(self._battery_id, "dcir" if dcir else "discharge")
+        try:                                    # active calibration profile (None = raw values, flagged REVIEW REQUIRED)
+            from services.calibration_store import get_active
+            self._cal = get_active()
+        except Exception:
+            self._cal = None
         cls = DcirTest if dcir else CapacityTest
         self._load = Manual6060B()
         self._orch = cls(self._profile, self._load,
@@ -477,7 +482,13 @@ class DashboardTab(QWidget):
             self._reader.stop(); self._reader.wait(); self._reader = None
 
         if self._orch is not None and self._test_id:
-            save_run_results(self._test_id, self._orch.results())
+            res = self._orch.results()
+            cal = getattr(self, "_cal", None)
+            from services.quality import assess
+            quality = assess(cal)               # device-side totals / ADC channel arrive with protocol v2
+            save_run_results(self._test_id, res, calibration_id=None if cal is None else cal.calibration_id,
+                             quality=quality,
+                             rated_capacity_ah=getattr(self._profile, "rated_ah", None))
         if self._test_id and self._samples and \
                 (self._orch is None or isinstance(self._orch, CapacityTest)):
             self._finalize_test()
@@ -648,7 +659,9 @@ class DashboardTab(QWidget):
         # the profile cutoff, so UNDERVOLT is not treated as a sensor fault.
         critical = FLAG_OVERTEMP | FLAG_OVERCURRENT | FLAG_REVERSE_CURR | FLAG_LOAD_FAULT
         fault = bool(s.flags & critical)
-        self._orch.on_sample(Sample(s.time_s, s.voltage_v, s.current_a, s.temp_c, fault))
+        cal = getattr(self, "_cal", None)
+        v, i = (s.voltage_v, s.current_a) if cal is None else (cal.apply_voltage(s.voltage_v), cal.apply_current(s.current_a))
+        self._orch.on_sample(Sample(s.time_s, v, i, s.temp_c, fault))
         self._show_phase()
         if self._orch.done and not self._stop_pending:
             self._stop_pending = True

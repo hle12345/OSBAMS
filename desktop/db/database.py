@@ -24,7 +24,7 @@ def get_connection() -> sqlite3.Connection:
 
 def _next_osbams_id(conn) -> str:
     row = conn.execute("SELECT MAX(battery_id) FROM batteries").fetchone()
-    return f"OSB-{(row[0] or 0) + 1:04d}"
+    return f"OSB-{(row[0] or 0) + 1:06d}"   # persistent passport id, e.g. OSB-000001
 
 
 def init_db():
