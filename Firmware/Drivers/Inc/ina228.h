@@ -33,6 +33,7 @@
 #define INA228_H
 
 #include <stdint.h>
+#include <stdbool.h>
 #include "osbams_status.h"
 
 /* 7-bit I²C address, A0=GND A1=GND. Left-shifted for the 8-bit bus API. */
@@ -47,6 +48,8 @@
 #define INA228_REG_DIETEMP     0x06U   /* die temperature, 16-bit */
 #define INA228_REG_CURRENT     0x07U   /* current, 24-bit */
 #define INA228_REG_POWER       0x08U   /* power, 24-bit */
+#define INA228_REG_ENERGY      0x09U   /* 40-bit unsigned, Joules x (16 x 3.2 x CURRENT_LSB) */
+#define INA228_REG_CHARGE      0x0AU   /* 40-bit two's complement, Coulombs / CURRENT_LSB */
 #define INA228_REG_DIAG_ALRT   0x0BU   /* diagnostic flags, incl. CNVRF (conversion-ready) */
 #define INA228_REG_MFR_ID      0x3EU   /* returns 'TI' (0x5449) */
 #define INA228_REG_DEV_ID      0x3FU   /* device ID, 0x228x */
@@ -116,5 +119,33 @@ osbams_status_t INA228_ReadPower_mW(int32_t *out_mw);
 
 /** @brief Shunt voltage in microvolts (diagnostic / calibration use). */
 osbams_status_t INA228_ReadShunt_uV(int32_t *out_uv);
+
+/* ── CHARGE / ENERGY accumulators (TI INA228 datasheet SLYS021A eq. 6 and 7) ─────────────────────────
+ *   Charge [C] = CURRENT_LSB x CHARGE             40-bit two's complement
+ *   Energy [J] = 16 x 3.2 x CURRENT_LSB x ENERGY  40-bit unsigned
+ * CONFIG bit 14 (RSTACC) clears both; it does NOT self-clear. Both registers roll over on overflow; this driver never
+ * unwraps: a decrease of ENERGY latches INA228_ACCUM_F_DECREASE until an explicit reset.
+ * Conversions use CURRENT_LSB in nA exactly as INA228_Init() programs it (truncated), not the ideal value.
+ * Not wired into live telemetry. Bench-dependent behaviour is listed as BENCH_REQUIRED in docs/rev2/PROTOCOL_V2_DESIGN.md. */
+#define INA228_CONFIG_RSTACC        (1U << 14)
+#define INA228_ACCUM_F_DECREASE     (1U << 0)   /* ENERGY went backwards: rollover or unexpected reset */
+
+typedef struct {
+    bool     valid;       /* false when a register read failed (never a zero stand-in) */
+    int64_t  q_uah;       /* signed charge since the last reset, microamp-hours */
+    int64_t  e_uwh;       /* energy since the last reset, microwatt-hours */
+    uint8_t  flags;       /* INA228_ACCUM_F_* */
+} ina228_accum_snapshot_t;
+
+int64_t  INA228_DecodeCharge40(const uint8_t b[5]);
+uint64_t INA228_DecodeEnergy40(const uint8_t b[5]);
+uint32_t INA228_CurrentLsbNa(uint32_t i_max_milliamp);
+bool     INA228_ChargeToUah(int64_t code, uint32_t lsb_nA, int64_t *out_uah);
+bool     INA228_EnergyToUwh(uint64_t code, uint32_t lsb_nA, int64_t *out_uwh);
+/** Reset read-back check: true if the energy read after reset is below the one before (or was already 0). */
+bool     INA228_ResetVerified(uint64_t energy_before, uint64_t energy_after);
+
+osbams_status_t INA228_ReadAccumulators(ina228_accum_snapshot_t *out);
+osbams_status_t INA228_ResetAccumulators(void);
 
 #endif /* INA228_H */

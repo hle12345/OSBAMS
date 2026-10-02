@@ -211,3 +211,62 @@ class TestFirmwareEncoderAgreesWithHostParser(unittest.TestCase):
         import subprocess
         r = subprocess.run([self.exe], capture_output=True, text=True)
         self.assertEqual(r.returncode, 0, r.stdout)
+
+
+class TestSignAgnosticTracker(unittest.TestCase):
+    def test_negative_polarity_charge_is_not_a_reset(self):
+        t = cv.AccumulatorTracker()
+        for i in range(30):
+            q = -int(3.0 * i / 3600 * 1e6)
+            e = int(120.0 * i / 3600 * 1e6)
+            line = p2.encode_data_frame_v2(i, i * 1000, 40000, -3000, 120000, 250, v_adc_mv=40010, q_ina_uah=q, q_mcu_uah=-q,
+                                           e_ina_uwh=e, e_mcu_uwh=e, acq_count=i)
+            t.add(p2.parse_any(line).sample)
+        r = cv.validate(t.summary(5.0))
+        self.assertFalse(t.summary().accumulator_reset)
+        self.assertEqual(r.status, "OK", r.notes)
+        self.assertGreater(r.ah["INA228"], 0)
+
+    def test_new_status_bits_have_names(self):
+        s = p2.parse_any(p2.encode_data_frame_v2(1, 2, 3, 4, 5, 6, sensor_status=p2.SS_INTEG_GAP | p2.SS_SAMPLE_INVALID)).sample
+        self.assertEqual(s.status_names, ["INTEG_GAP", "SAMPLE_INVALID"])
+
+
+class TestFirmwareIntegratorMatchesPython(unittest.TestCase):
+    """Same irregular sample stream through the C integrator and services/charge_integration.py."""
+
+    @classmethod
+    def setUpClass(cls):
+        import subprocess
+        fw = os.path.join(ROOT, "Firmware")
+        cls.tmp = tempfile.mkdtemp()
+        cls.exe = os.path.join(cls.tmp, "ti")
+        r = subprocess.run(["gcc", "-Wall", "-Wextra", "-std=c11", f"-I{fw}/App/Inc", f"-I{fw}/Core/Inc", f"-I{fw}/Drivers/Inc", "-o", cls.exe,
+                            os.path.join(fw, "Tests", "test_integrator.c"), os.path.join(fw, "App", "Src", "integrator.c")],
+                           capture_output=True, text=True)
+        if r.returncode != 0:
+            raise unittest.SkipTest("no C compiler available: " + r.stderr[:200])
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmp, ignore_errors=True)
+
+    def test_agreement_on_irregular_discharge(self):
+        import random, subprocess
+        from services import charge_integration as ci
+        rng = random.Random(7)
+        t_us, rows, py = 0, [], []
+        for k in range(400):
+            t_us += rng.randint(20_000, 1_900_000)                  # irregular spacing, all below the 10 s default gap limit
+            i_ma = int(5000 + 2500 * rng.random()) * (-1 if k % 2 else -1)      # negative polarity throughout
+            v_mv = 40000 - k * 5
+            p_mw = abs(i_ma) * v_mv // 1000
+            rows.append(f"{t_us},{i_ma},{p_mw},1")
+            py.append((t_us / 1e6, p_mw / abs(i_ma), i_ma / 1000.0))
+        out = subprocess.run([self.exe, "csv"], input="\n".join(rows) + "\n", capture_output=True, text=True).stdout.strip().split(",")
+        c_uah, c_uwh = int(out[0]), int(out[1])
+        want = ci.integrate([(t, v, i) for t, v, i in py])
+        self.assertAlmostEqual(c_uah / 1e6, want.ah, delta=2e-6 + 1e-4 * want.ah)
+        self.assertAlmostEqual(c_uwh / 1e6, want.wh, delta=2e-6 + 2e-3 * want.wh)     # v is p/|i| rounded to 1 mV in the stream
+        self.assertGreater(want.ah, 0.1)
+        self.assertEqual(int(out[2]), 0)

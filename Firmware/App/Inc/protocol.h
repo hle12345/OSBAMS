@@ -30,6 +30,8 @@
 #define PROTO_SS_TEMP_FAULT     (1U << 2)
 #define PROTO_SS_ACCUM_INVALID  (1U << 3)
 #define PROTO_SS_TIME_JUMP      (1U << 4)
+#define PROTO_SS_INTEG_GAP      (1U << 5)   /* STM32 integration skipped an over-long interval */
+#define PROTO_SS_SAMPLE_INVALID (1U << 6)   /* STM32 integration skipped an invalid sample */
 
 typedef struct {
     bool     v_adc_valid; int32_t v_adc_mv;      /* independent STM32 ADC pack voltage            */

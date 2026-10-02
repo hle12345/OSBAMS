@@ -15,8 +15,8 @@ exactly as v1.
 | # | Field          | Type          | Units | Meaning                                                                 |
 |---|----------------|---------------|-------|-------------------------------------------------------------------------|
 |10 | V_adc_mV       | int32 or NA   | mV    | independent STM32 ADC measurement of pack voltage (cross-check channel) |
-|11 | Q_ina_uAh      | int64 or NA   | uAh   | INA228 CHARGE register, converted, signed accumulation since test start  |
-|12 | Q_mcu_uAh      | int64 or NA   | uAh   | STM32 integration of I over actual timestamps since test start           |
+|11 | Q_ina_uAh      | int64 or NA   | uAh   | INA228 CHARGE register, converted, SIGNED (follows shunt polarity) since test start |
+|12 | Q_mcu_uAh      | int64 or NA   | uAh   | STM32 integration of |I| over actual timestamps since test start (magnitude) |
 |13 | E_ina_uWh      | int64 or NA   | uWh   | INA228 ENERGY register, converted, since test start                      |
 |14 | E_mcu_uWh      | int64 or NA   | uWh   | STM32 integration of V*I over actual timestamps since test start         |
 |15 | acq_count      | uint32        | —     | measurements taken by the STM32 since test start (gaps vs `seq` = frames lost, not samples lost) |
@@ -49,8 +49,11 @@ SS_ADC_FAULT = 1 << 1
 SS_TEMP_FAULT = 1 << 2
 SS_ACCUM_INVALID = 1 << 3
 SS_TIME_JUMP = 1 << 4
+SS_INTEG_GAP = 1 << 5          # STM32 integration skipped an over-long interval
+SS_SAMPLE_INVALID = 1 << 6     # STM32 integration skipped an invalid sample
 SS_NAMES = {SS_INA_FAULT: "INA_FAULT", SS_ADC_FAULT: "ADC_FAULT", SS_TEMP_FAULT: "TEMP_FAULT",
-            SS_ACCUM_INVALID: "ACCUM_INVALID", SS_TIME_JUMP: "TIME_JUMP"}
+            SS_ACCUM_INVALID: "ACCUM_INVALID", SS_TIME_JUMP: "TIME_JUMP",
+            SS_INTEG_GAP: "INTEG_GAP", SS_SAMPLE_INVALID: "SAMPLE_INVALID"}
 
 
 @dataclass(frozen=True)

@@ -245,3 +245,105 @@ osbams_status_t INA228_ReadPower_mW(int32_t *out_mw)
     *out_mw = (int32_t)(((int64_t)code * 32 * s_current_lsb_nA) / 10000000LL);
     return OSBAMS_STATUS_OK;
 }
+
+
+/* ── CHARGE / ENERGY accumulators ───────────────────────────────────────────
+ * Datasheet SLYS021A eq. 6/7. Integer math only:
+ *   uAh  = lsb_nA x code / 3.6e6                      (Charge[C] = lsb x code; 1 Ah = 3600 C)
+ *   uWh  = 51.2 x lsb_nA x code / 3.6e6 = lsb_nA x code x 4 / 281250   (Energy[J] = 16 x 3.2 x lsb x code)
+ * Rounded to nearest (half away from zero). Products are checked against int64 range first. */
+#define ACCUM_UAH_DEN   3600000ULL
+#define ACCUM_UWH_NUM   4ULL
+#define ACCUM_UWH_DEN   281250ULL
+
+static uint8_t  s_energy_seen   = 0;
+static uint64_t s_energy_last   = 0;
+static uint8_t  s_decrease_flag = 0;
+
+uint32_t INA228_CurrentLsbNa(uint32_t i_max_milliamp)
+{
+    uint64_t lsb_nA = ((uint64_t)i_max_milliamp * 1000000ULL) / 524288ULL;   /* same expression as INA228_Init() */
+    return (uint32_t)(lsb_nA == 0 ? 1 : lsb_nA);
+}
+
+int64_t INA228_DecodeCharge40(const uint8_t b[5])
+{
+    uint64_t raw = ((uint64_t)b[0] << 32) | ((uint64_t)b[1] << 24) | ((uint64_t)b[2] << 16) | ((uint64_t)b[3] << 8) | b[4];
+    if (raw & (1ULL << 39)) raw |= 0xFFFFFF0000000000ULL;     /* sign-extend 40 -> 64 */
+    return (int64_t)raw;
+}
+
+uint64_t INA228_DecodeEnergy40(const uint8_t b[5])
+{
+    return ((uint64_t)b[0] << 32) | ((uint64_t)b[1] << 24) | ((uint64_t)b[2] << 16) | ((uint64_t)b[3] << 8) | b[4];
+}
+
+bool INA228_ChargeToUah(int64_t code, uint32_t lsb_nA, int64_t *out_uah)
+{
+    if (!out_uah || lsb_nA == 0) return false;
+    uint64_t mag = (code < 0) ? (uint64_t)(-(code + 1)) + 1ULL : (uint64_t)code;
+    if (mag > (uint64_t)INT64_MAX / lsb_nA) return false;
+    uint64_t q = (mag * lsb_nA + ACCUM_UAH_DEN / 2ULL) / ACCUM_UAH_DEN;
+    *out_uah = (code < 0) ? -(int64_t)q : (int64_t)q;
+    return true;
+}
+
+bool INA228_EnergyToUwh(uint64_t code, uint32_t lsb_nA, int64_t *out_uwh)
+{
+    if (!out_uwh || lsb_nA == 0) return false;
+    if (code > (uint64_t)INT64_MAX / (lsb_nA * ACCUM_UWH_NUM)) return false;
+    *out_uwh = (int64_t)((code * lsb_nA * ACCUM_UWH_NUM + ACCUM_UWH_DEN / 2ULL) / ACCUM_UWH_DEN);
+    return true;
+}
+
+bool INA228_ResetVerified(uint64_t energy_before, uint64_t energy_after)
+{
+    return energy_before == 0ULL || energy_after < energy_before;
+}
+
+osbams_status_t INA228_ReadAccumulators(ina228_accum_snapshot_t *out)
+{
+    if (!out) return OSBAMS_STATUS_INVALID_ARGUMENT;
+    out->valid = false; out->q_uah = 0; out->e_uwh = 0; out->flags = s_decrease_flag;
+    if (!s_ready) return OSBAMS_STATUS_NOT_READY;
+
+    uint8_t qb[5], eb[5];
+    osbams_status_t st = I2C1_ReadReg(INA228_I2C_ADDR, INA228_REG_CHARGE, qb, 5);
+    if (st != OSBAMS_STATUS_OK) return st;
+    st = I2C1_ReadReg(INA228_I2C_ADDR, INA228_REG_ENERGY, eb, 5);
+    if (st != OSBAMS_STATUS_OK) return st;
+
+    uint64_t ecode = INA228_DecodeEnergy40(eb);
+    if (s_energy_seen && ecode < s_energy_last) s_decrease_flag = INA228_ACCUM_F_DECREASE;   /* latched, never unwrapped */
+    s_energy_seen = 1; s_energy_last = ecode;
+
+    if (!INA228_ChargeToUah(INA228_DecodeCharge40(qb), s_current_lsb_nA, &out->q_uah)) return OSBAMS_STATUS_SENSOR_FAILURE;
+    if (!INA228_EnergyToUwh(ecode, s_current_lsb_nA, &out->e_uwh)) return OSBAMS_STATUS_SENSOR_FAILURE;
+    out->flags = s_decrease_flag;
+    out->valid = true;
+    return OSBAMS_STATUS_OK;
+}
+
+osbams_status_t INA228_ResetAccumulators(void)
+{
+    if (!s_ready) return OSBAMS_STATUS_NOT_READY;
+    uint16_t cfg;
+    osbams_status_t st = rd16(INA228_REG_CONFIG, &cfg);
+    if (st != OSBAMS_STATUS_OK) return st;
+    uint8_t eb[5];
+    uint64_t before = 0;
+    if (I2C1_ReadReg(INA228_I2C_ADDR, INA228_REG_ENERGY, eb, 5) == OSBAMS_STATUS_OK) before = INA228_DecodeEnergy40(eb);
+
+    st = wr16(INA228_REG_CONFIG, (uint16_t)((cfg | INA228_CONFIG_RSTACC) & ~0x8000U));   /* never set the system-reset bit */
+    if (st != OSBAMS_STATUS_OK) return st;
+    st = wr16(INA228_REG_CONFIG, (uint16_t)(cfg & ~(INA228_CONFIG_RSTACC | 0x8000U)));  /* RSTACC does not self-clear */
+    if (st != OSBAMS_STATUS_OK) return st;
+
+    st = I2C1_ReadReg(INA228_I2C_ADDR, INA228_REG_ENERGY, eb, 5);
+    if (st != OSBAMS_STATUS_OK) return st;
+    uint64_t after = INA228_DecodeEnergy40(eb);
+    if (!INA228_ResetVerified(before, after)) return OSBAMS_STATUS_SENSOR_FAILURE;   /* device did not clear */
+
+    s_energy_seen = 0; s_energy_last = 0; s_decrease_flag = 0;
+    return OSBAMS_STATUS_OK;
+}

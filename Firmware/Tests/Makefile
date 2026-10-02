@@ -28,6 +28,9 @@ TARGETS := \
     $(BIN_DIR)/test_safety_power_optional \
     $(BIN_DIR)/test_ina228_calibration \
     $(BIN_DIR)/test_ina228_power_decode \
+    $(BIN_DIR)/test_ina228_accum \
+    $(BIN_DIR)/test_integrator \
+    $(BIN_DIR)/test_accum_session \
     $(BIN_DIR)/test_estop_and_contactor \
     $(BIN_DIR)/test_tick_consolidation \
     $(BIN_DIR)/test_state_machine \
@@ -76,6 +79,18 @@ $(BIN_DIR)/test_ina228_calibration: test_ina228_calibration.c \
 
 # Regression: INA228 POWER register decode (was ~16x too small).
 $(BIN_DIR)/test_ina228_power_decode: test_ina228_power_decode.c $(DRIVERS_SRC)/ina228.c
+	$(CC) $(CFLAGS) $(INC) -o $@ $^
+
+# INA228 CHARGE/ENERGY accumulator decode, scaling, reset (fake I2C register file).
+$(BIN_DIR)/test_ina228_accum: test_ina228_accum.c $(DRIVERS_SRC)/ina228.c
+	$(CC) $(CFLAGS) $(INC) -o $@ $^
+
+# Timestamp-based Ah/Wh integrator (actual dt, explicit reset, gap/overflow behaviour).
+$(BIN_DIR)/test_integrator: test_integrator.c $(APP_SRC)/integrator.c
+	$(CC) $(CFLAGS) $(INC) -o $@ $^
+
+# Explicit accumulator start/reset rules, ACCUM_START command gating, protocol v2 field assembly.
+$(BIN_DIR)/test_accum_session: test_accum_session.c $(APP_SRC)/accum_session.c $(APP_SRC)/integrator.c $(APP_SRC)/protocol.c
 	$(CC) $(CFLAGS) $(INC) -o $@ $^
 
 # E-stop + PC9 contactor supervision logic.

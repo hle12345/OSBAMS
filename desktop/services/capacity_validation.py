@@ -75,9 +75,10 @@ class AccumulatorTracker:
             if self._first is None:
                 self._first = s
             elif self._last is not None and any(
-                    (getattr(s, n) is not None and getattr(self._last, n) is not None and getattr(s, n) < getattr(self._last, n))
+                    (getattr(s, n) is not None and getattr(self._last, n) is not None
+                     and abs(getattr(s, n)) < abs(getattr(self._last, n)))
                     for n in ("q_ina_uah", "q_mcu_uah", "e_ina_uwh", "e_mcu_uwh")):
-                self.reset = True            # decrease => reset/overflow: flag, never silently re-baseline
+                self.reset = True            # |total| decrease => reset/overflow: flag, never silently re-baseline (sign-agnostic: shunt polarity may be negative)
             self._last = s
 
     def summary(self, gap_s: Optional[float] = None) -> TrackerSummary:
@@ -85,7 +86,7 @@ class AccumulatorTracker:
             if self._first is None or self._last is None:
                 return None
             a, b = getattr(self._first, name), getattr(self._last, name)
-            return None if a is None or b is None else (b - a) / scale
+            return None if a is None or b is None else abs(b - a) / scale
         acq_gap = 0
         if self._first_acq is not None and self._last_acq is not None:
             acq_gap = max(0, (self._last_acq - self._first_acq + 1) - self.frames)
