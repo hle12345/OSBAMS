@@ -1,0 +1,38 @@
+Pi Power Carrier RevB - mechanical fit, plan view vs the official Raspberry Pi 5 drawing RP-008347-DS-1 (digitised, +-0.3 mm); Pi frame: origin = Pi top-left, header axis y = 3.5, header centre x = 32.5
+
+Carrier outline in Pi coordinates: x -7.5..77.5, y -60.0..7.5 mm (85 x 67.5 mm). Main body y <= -0.5 mm (outside the Pi outline); plug tab x 0..65, y -0.5..7.5 mm over the header (same footprint as the RC2 interposer).
+Components under the plug tab in plan (the carrier floats G = 11.0 mm above the Pi PCB): A chip left of centre, E small part under header (right)
+  plan gap tab -> D SoC heat spreader / Active Cooler: 17.1 mm
+  plan gap tab -> USB/Ethernet stack: 5.8 mm
+  plan gap tab -> F connector by right hole: 0.2 mm
+  plan gap tab -> G connector by right hole (2): 0.9 mm
+  plan gap tab -> C chip right: 7.5 mm
+  plan gap tab -> B chip below header: 4.4 mm
+  main body vs USB/Ethernet stack (x 70.8..85, y >= 1.0): the body ends at Pi y = -0.5, i.e. 1.5 mm short of the stack in plan -> the body is beside/above the Pi's top edge, not over any connector.
+
+Key / support posts (M3, 6 mm assumed footprint). Correct orientation: all posts are outside the Pi outline (Pi y < -0.5) -> they stand on the enclosure floor in free air.
+  K1 at Pi (-3.5, -47.0): free air (PASS); reversed 180 deg -> (68.5, 54.0): over the Pi PCB, 7.3 mm clear of the nearest component (USB/Ethernet stack) -> lands on bare PCB: KEY POST
+  K2 at Pi (50.0, -23.0): free air (PASS); reversed 180 deg -> (15.0, 30.0): over the Pi PCB, 6.5 mm clear of the nearest component (D SoC heat spreader / Active Cooler) -> lands on bare PCB: KEY POST
+  S3 at Pi (73.5, -56.0): free air (PASS); reversed 180 deg -> (-8.5, 63.0): outside the Pi outline (support only, no keying)
+  S4 at Pi (74.0, -4.7): free air (PASS); reversed 180 deg -> (-9.0, 11.7): outside the Pi outline (support only, no keying)
+  Key posts (land on bare PCB when reversed): K1, K2
+
+Heights - Samtec SSW-120-01-L-D (body 8.51 mm, tail 2.64 mm; Pi pins protrude 6.5 mm above the 2.5 mm header plastic, tip 9.0 mm):
+  Seated gap G (carrier underside -> Pi PCB) = 8.51 + 2.5 = 11.01 mm -> header-end spacers M1/M2: M2.5 x 11 mm.
+  Carrier top surface = 12.6 mm above the Pi PCB (parts on the carrier add their own height).
+  Standoff length L (enclosure floor -> carrier underside) = Pi standoff height + 1.6 + 11.01; with L = 20 mm the Pi standoffs are 7.4 mm.
+  Reversed fit: posts rest on the Pi PCB -> socket face at L - 8.51 = 11.5 mm vs pin tips 9.0 mm -> margin +2.5 mm: pins cannot enter (PASS)
+  Minimum standoff length for >= 1.5 mm margin: 19.0 mm  -> use M3 x 20 mm (Pi standoffs 7.4 mm). With shorter posts the key fails.
+  Carrier underside parts: RSDW40F-05 pins protrude 5.6 mm min below the board (spec side view) in free air beside the Pi; with L = 20 mm there is 14 mm to the floor. THT leads of C2/C4/J_IN/J_DISP are in free air. Only the SSW tails (2.64 mm) and the header-end spacers are over the Pi.
+
+Clearances to the rest of the Pi and enclosure:
+  Active Cooler / SoC: the carrier body is outside the Pi outline; the plug tab is 17.1 mm (plan) from the SoC box D -> no collision (board floats 11 mm over header-side chips <= ~2 mm).
+  USB / Ethernet: plan gap tab -> stack 5.8 mm; body ends 1.5 mm before the stack's first edge in plan (the stack is 16 mm tall, the carrier body is outside the Pi PCB outline).
+  DSI / CSI flex connectors (left edge, Pi y >= 20 mm) and the PoE 2x2 header (bottom right): not under the carrier (> 12 mm). DSI ribbon routes away from the header edge below the carrier plane.
+  Power cables: J_IN and J_DISP mate toward +x (board right edge), away from the Pi; the display's DSI ribbon and USB-C power input are unaffected.
+  Small connector F by the right mounting hole is 0.2 mm from the tab edge in plan; the carrier floats 11 mm above it - check its height at fit.
+  Enclosure envelope (plan): carrier 85 x 67.5 mm over the Pi's 85 x 56 mm; combined x -7.5..85, y -60..56 mm; posts reach the floor 20 mm below the carrier. The official Pi 5 case does not take it: custom enclosure or open frame; wall clearance >= 2 mm around the outline.
+  Weight: the module (~25 g) and the carrier hang from the four M3 standoffs to the enclosure floor; the 2x20 socket carries no mechanical load (header-end spacers M1/M2 only locate/relieve the header).
+
+RESULT (plan view + heights): PASS
+Not covered: no STEP model of the Pi 5 / SSW socket / RSDW module was available: confirm with a physical fit (first-article D1) incl. the real standoffs.

@@ -2,10 +2,10 @@
 """Generate the KiCad 7 schematic (embedded symbols, net labels on pin ends)."""
 import sys, os, uuid
 sys.path.insert(0, os.path.dirname(__file__))
-from parts import *
+from parts_carrier import *
 REL = os.environ.get('REL', 'RC1')
 
-ROOT = "7f3c1a52-0d4e-4c8e-9b61-5a0e3f2d1c11"
+ROOT = "5b2e9d14-8c3a-4f6b-a7d1-2c9e0b4f6a33"
 def u(): return str(uuid.uuid4())
 FP = {"RSDW40_PLACEHOLDER": "OSBAMS_PiPwr:RSDW40F-05_PLACEHOLDER"}
 meta = {p[0]: p for p in PARTS}
@@ -18,14 +18,12 @@ SYM = {
  "F2": dict(L=[("1","1","passive","5V_ISO_RAW")], R=[("2","2","passive","5V_PI")]),
  "TVS1": dict(L=[("1","K","passive","+12V_F")], R=[("2","A","passive","12V_GND")]),
  "J_IN": dict(L=[("1","+12V","passive","+12V_IN"),("2","GND","passive","12V_GND")], R=[]),
- "J_OUT": dict(L=[("1","+5V","passive","5V_PI"),("2","+5V","passive","5V_PI"),("3","GND","passive","PI_GND"),("4","GND","passive","PI_GND")], R=[]),
  "J_DISP": dict(L=[("1","+5V","passive","5V_PI"),("2","GND","passive","PI_GND")], R=[]),
  "C1": dict(L=[("1","1","passive","+12V_F")], R=[("2","2","passive","12V_GND")]),
  "C2": dict(L=[("1","+","passive","+12V_F")], R=[("2","-","passive","12V_GND")]),
  "C4": dict(L=[("1","+","passive","5V_PI")], R=[("2","-","passive","PI_GND")]),
  "C5": dict(L=[("1","1","passive","5V_PI")], R=[("2","2","passive","PI_GND")]),
  "C6": dict(L=[("1","1","passive","5V_PI")], R=[("2","2","passive","PI_GND")]),
- "R2": dict(L=[("1","1","passive","TRIM")], R=[("2","2","passive","5V_ISO_RAW")]),
  "R3": dict(L=[("1","1","passive","TRIM")], R=[("2","2","passive","PI_GND")]),
  "R1": dict(L=[("1","1","passive","5V_PI")], R=[("2","2","passive","PG_LED_A")]),
  "D1": dict(L=[("1","K","passive","PI_GND")], R=[("2","A","passive","PG_LED_A")]),
@@ -64,7 +62,7 @@ def wire(x1,y1,x2,y2): body.append(f'(wire (pts (xy {x1:.2f} {y1:.2f}) (xy {x2:.
 def noconn(x,y): body.append(f'(no_connect (at {x:.2f} {y:.2f}) (uuid "{u()}"))')
 # placement grid: (col, row) per ref
 LAY = {"J_IN":(1,1),"F1":(2,1),"TVS1":(3,1),"C1":(4,1),"C2":(5,1),"TP1":(1,2),"TP2":(2,2),"U1":(3,3),
-       "R2":(5,3),"R3":(6,3),"F2":(1,5),"C4":(2,5),"C5":(3,5),"C6":(4,5),"R1":(5,5),"D1":(6,5),"J_OUT":(1,7),"TP3":(2,7),"TP4":(3,7),"TP5":(4,7),"J_DISP":(5,7)}
+       "R3":(5,3),"F2":(1,5),"C4":(2,5),"C5":(3,5),"C6":(4,5),"R1":(5,5),"D1":(6,5),"TP3":(2,7),"TP4":(3,7),"TP5":(4,7),"J_DISP":(5,7)}
 for ref, (cx, cy) in LAY.items():
     x0 = 25.4 + (cx - 1) * 45.72; y0 = 38.1 + (cy - 1) * 38.1
     d = SYM[ref]; hw = 7.62; m = meta[ref]
@@ -95,16 +93,43 @@ for i, (net) in enumerate(FLAG_NETS):
       f'  (pin "1" (uuid "{u()}")) (instances (project "{NAME}" (path "/{ROOT}" (reference "#FLG0{i+1}") (unit 1)))))')
     wire(xx, yy, xx, yy + 5.08); label(net, xx, yy + 5.08, 270)
 txt = lambda s, x, y, sz=1.8: body.append(f'(text "{s}" (at {x} {y} 0) (effects (font (size {sz} {sz})) (justify left)) (uuid "{u()}"))')
-txt(f"OSBAMS Pi/Display Power Rev.A - {REL} (review candidate, NOT for fab). XDR-75-12 12V -> RSDW40F-05 -> isolated 5V for Pi 5 + Waveshare DSI.", 12, 12, 2.2)
-txt("PI_GND is isolated from 12V_GND. Do NOT tie them. 12V_GND is the XDR-75-12 return shared with OSBAMS Rev.2 controller PCB.", 12, 18)
-txt("U1 pin 3 (ON/OFF) left open - confirm default state. TRIM (pin 6) only goes to DNP pads R2/R3 (do not fit without Mean Well trim formula).", 12, 22)
+txt(f"OSBAMS Pi Power Carrier Rev.B - {REL} (review candidate, NOT for fab). XDR-75-12 12V -> RSDW40F-05 -> isolated 5V -> Pi 5 header (pins 2,4 / 6,9,14,20) + J_DISP (Waveshare).", 12, 12, 2.2)
+txt("PI_GND is isolated from 12V_GND. Do NOT tie them. 12V_GND is the XDR-75-12 return shared with the OSBAMS Rev.2 controller PCB.", 12, 18)
+txt("U1 pin 3 (ON/OFF) left open (= enabled). TRIM (pin 6) goes only to R3 (trim-UP, select-on-test, not fitted at assembly). All other Pi header pins are no-connect.", 12, 22)
 txt("Isolation barrier is inside U1 (1.6 kVDC). No Y-capacitor / bonding between PI_GND and 12V_GND is fitted.", 12, 26)
+# ---- J2: Samtec SSW-120-01-L-D (Pi 2x20 header socket), symbol with all 40 positions
+def sym_lib(name, left, right, hw=7.62):
+    n = max(len(left), len(right)); hh = G * (n + 1) / 2
+    o = [f'(symbol "OSBAMS_PiPwr:{name}" (pin_names (offset 1.016)) (in_bom yes) (on_board yes)',
+         f'  (property "Reference" "J" (at 0 {hh+1.5:.2f} 0) (effects (font (size 1.27 1.27))))', f'  (property "Value" "{name}" (at 0 {-hh-1.5:.2f} 0) (effects (font (size 1.27 1.27))))',
+         '  (property "Footprint" "" (at 0 0 0) (effects hide))', '  (property "Datasheet" "" (at 0 0 0) (effects hide))',
+         f'  (symbol "{name}_0_1" (rectangle (start {-hw} {hh:.2f}) (end {hw} {-hh:.2f}) (stroke (width 0.254) (type default)) (fill (type background))))', f'  (symbol "{name}_1_1"']
+    for side, x, ang in ((left, -hw - G, 0), (right, hw + G, 180)):
+        for i, (num, nm) in enumerate(side):
+            y = (len(side) - 1) * G / 2 - i * G
+            o.append(f'    (pin passive line (at {x:.2f} {y:.2f} {ang}) (length {G}) (name "{nm}" (effects (font (size 1.0 1.0)))) (number "{num}" (effects (font (size 1.0 1.0)))))')
+    o.append("  ))"); return "\n".join(o)
+RPI = {1: "3V3", 2: "5V", 3: "GPIO2", 4: "5V", 5: "GPIO3", 6: "GND", 7: "GPIO4", 8: "GPIO14", 9: "GND", 10: "GPIO15", 11: "GPIO17", 12: "GPIO18", 13: "GPIO27", 14: "GND", 15: "GPIO22", 16: "GPIO23", 17: "3V3", 18: "GPIO24", 19: "GPIO10", 20: "GND", 21: "GPIO9", 22: "GPIO25", 23: "GPIO11", 24: "GPIO8", 25: "GND", 26: "GPIO7", 27: "ID_SD", 28: "ID_SC", 29: "GPIO5", 30: "GND", 31: "GPIO6", 32: "GPIO12", 33: "GPIO13", 34: "GND", 35: "GPIO19", 36: "GPIO16", 37: "GPIO26", 38: "GPIO20", 39: "GND", 40: "GPIO21"}
+J2pins = ([(str(n), f"{n} {RPI[n]}") for n in range(1, 41, 2)], [(str(n), f"{n} {RPI[n]}") for n in range(2, 41, 2)])
+J2_LIB = sym_lib("RPi40", *J2pins)
+x0, y0 = 300.99, 149.86
+left, right = J2pins
+body.append(f'(symbol (lib_id "OSBAMS_PiPwr:RPi40") (at {x0:.2f} {y0:.2f} 0) (unit 1) (in_bom yes) (on_board yes) (dnp no) (uuid "{u()}")\n  (property "Reference" "J2" (at {x0:.2f} {y0-3:.2f} 0) (effects (font (size 1.27 1.27))))\n  (property "Value" "SSW-120-01-L-D" (at {x0:.2f} {y0+3:.2f} 0) (effects (font (size 1.27 1.27))))\n  (property "Footprint" "OSBAMS_PiPwr:SSW-120-01-L-D_RPi_TopView" (at {x0:.2f} {y0:.2f} 0) (effects (font (size 1.27 1.27)) hide))\n  (property "Datasheet" "" (at {x0:.2f} {y0:.2f} 0) (effects hide))\n  (property "Manufacturer" "Samtec" (at {x0:.2f} {y0:.2f} 0) (effects hide))\n  (property "MPN" "SSW-120-01-L-D" (at {x0:.2f} {y0:.2f} 0) (effects hide))\n  '
+    + "".join(f'(pin "{p[0]}" (uuid "{u()}"))' for p in left + right) + f'\n  (instances (project "{NAME}" (path "/{ROOT}" (reference "J2") (unit 1)))))')
+for side, sx, ang in ((left, -7.62 - G, 180), (right, 7.62 + G, 0)):
+    for i_, (num, nm) in enumerate(side):
+        y = y0 - ((len(side) - 1) * G / 2 - i_ * G); x = x0 + sx
+        net_ = PIN_NETS.get(int(num))
+        ex = x + (-G if ang == 180 else G)
+        if net_ is None: noconn(x, y)
+        else: wire(x, y, ex, y); label(net_, ex, y, ang)
 doc = f'''(kicad_sch (version 20230121) (generator eeschema)
   (uuid "{ROOT}") (paper "A2")
-  (title_block (title "OSBAMS Pi/Display Power Rev.A") (rev "{REL}") (comment 1 "Release candidate - not final fabrication authorization"))
+  (title_block (title "OSBAMS Pi Power Carrier Rev.B") (rev "{REL}") (comment 1 "Release candidate - not final fabrication authorization"))
   (lib_symbols
 {chr(10).join(libsym(r) for r in SYM)}
 {pwrflag}
+{J2_LIB}
   )
 {chr(10).join(body)}
   (sheet_instances (path "/" (page "1")))
