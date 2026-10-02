@@ -10,8 +10,8 @@ shared constant diverges. "Defined once" means one authority per value with a
 verified mirror, not one physical file for both languages.
 
 Version scheme (see VERSIONS below):
-    System / Desktop / Firmware : 0.9.0-dev1  (Engineering Prototype)
-    Hardware validation pending — see docs/known_limitations.md
+    System / Desktop / Firmware : 2.0.0-dev1  (Rev.2, SFSU lab-optimized)
+    Hardware validation pending — see docs/rev2/LV_HARDWARE_VALIDATION_PLAN.md
     Serial protocol     : 1
     Database schema     : 6
 
@@ -24,15 +24,15 @@ import os
 # VERSIONS — one scheme, used everywhere
 # ══════════════════════════════════════════════════════════════════════════════
 
-SYSTEM_VERSION      = "0.9.0-dev1"    # whole-system version
-BUILD_DESCRIPTOR    = "Engineering Prototype — Hardware verification and calibration pending"
-APP_VERSION         = "0.9.0-dev1"    # desktop application
-FIRMWARE_VERSION    = "0.9.0-dev1"    # STM32 embedded controller
+SYSTEM_VERSION      = "2.0.0-dev1"    # whole-system version
+BUILD_DESCRIPTOR    = "Rev.2 SFSU Lab-Optimized — hardware verification and calibration pending"
+APP_VERSION         = "2.0.0-dev1"    # desktop application
+FIRMWARE_VERSION    = "2.0.0-dev1"    # STM32 embedded controller
 PROTOCOL_VERSION    = 1               # serial frame format
 SCHEMA_VERSION      = 6               # SQLite database schema
 RULE_ENGINE_VERSION = "1.0"           # 7-component scoring
 ML_MODEL_ID         = "RF-001"        # RandomForest, GroupKFold-validated
-HARDWARE_REV        = "Engineering Prototype"  # not frozen; contactor/E-stop/sensor still in flux
+HARDWARE_REV        = "Rev.2 (unbuilt)"  # power path must be validated before any envelope claim
 
 VERSIONS = {
     "system":      SYSTEM_VERSION,
@@ -111,9 +111,31 @@ STATUS_OVERCURRENT  = 16
 # ══════════════════════════════════════════════════════════════════════════════
 
 SAFETY_MAX_TEMP_C      = 50.0     # °C  — auto-stop above this
-SAFETY_MIN_VOLTAGE_MV  = 28_000   # mV  — absolute floor, never go below
-SAFETY_MAX_VOLTAGE_MV  = 44_000   # mV  — flag if pack exceeds this at intake
-SAFETY_MAX_CURRENT_A   = 10.0     # A   — stop if exceeded
+# NOTE (Rev.2): there is deliberately NO global minimum or maximum battery
+# voltage here. Cutoff and maximum voltage are PROFILE-specific
+# (services/battery_profiles.py). The only absolute voltage bound is the
+# 6060B instrument envelope, owned by equipment/capability.py.
+#
+# SAFETY_MAX_CURRENT_A is the OSBAMS *validated hardware* current limit
+# (REV2 power path). It is NOT the 6060B's 60 A rating and must not be raised
+# until the power path has been redesigned and bench-validated
+# (docs/rev2/LV_POWER_PATH_CAPABILITY.md). Firmware hard trips sit above it.
+SAFETY_MAX_CURRENT_A   = 10.0     # A   — OSBAMS operating ceiling (provisional)
+
+# Layered limit model. Two DIFFERENT concepts — never force them equal:
+#   FIRMWARE_HARD_TRIP_*  absolute protection boundary (mirrors app_config.h;
+#                         tests/test_protocol.py checks the mirror is exact)
+#   SAFETY_MAX_*          desktop operating/test boundary, always BELOW the trip
+# Commanded current = min(profile, OSBAMS ceiling, 6060B 60 A, 300 W / V, ...).
+# OSBAMS validated SYSTEM voltage ceiling (provisional). Not a battery minimum
+# and not a global cutoff — an upper bound set by the weakest power-path part
+# (Blue Sea 6006 disconnect: 48 V DC max) with margin above a 42 V full-charge
+# pack. Mirrors OSBAMS_DEFAULT_MAX_VOLTAGE_MV in app_config.h. The 6060B's 60 V
+# is the INSTRUMENT rating, not this.
+OSBAMS_VALIDATED_MAX_VOLTAGE_V = 44.0
+
+FIRMWARE_HARD_TRIP_A      = 18.5   # A   — OSBAMS_DEFAULT_MAX_CURRENT_MA
+FIRMWARE_HARD_TRIP_TEMP_C = 60.0   # C   — OSBAMS_DEFAULT_MAX_TEMP_C10
 SAFETY_RECOVERY_REST_S = 30       # s   — rest after discharge before OCV read
 
 
@@ -121,7 +143,7 @@ SAFETY_RECOVERY_REST_S = 30       # s   — rest after discharge before OCV read
 # TEST DEFAULTS — starting values, overridable per test profile
 # ══════════════════════════════════════════════════════════════════════════════
 
-DEFAULT_CUTOFF_V       = 30.0    # V  — for 10S NMC; other chemistries differ
+# No default cutoff voltage: cutoff always comes from the battery profile.
 DEFAULT_CURRENT_A      = 3.0     # A
 DEFAULT_SAMPLE_RATE_MS = 500     # ms — defined ONCE
 DEFAULT_MAX_DURATION_H = 8.0     # h
@@ -217,18 +239,32 @@ INA228_SCOPE = (
     "42 V maximum of a fully charged 10S NMC pack."
 )
 
-PRIMARY_DEVELOPMENT_TARGET = "10S NMC scooter battery packs"
+PRIMARY_DEVELOPMENT_TARGET = "Lithium-ion packs, approximately 10S, ~30-42 V (Ninebot/Segway, Shenzhen Elite)"
 CHEMISTRY_SCOPE = (
-    "Architecture supports multiple battery categories and chemistries. "
-    "Primary development target: 10S NMC scooter battery packs. "
-    "No chemistry or category has been validated against hardware."
+    "Rev.2 supports lithium-ion only (NMC / NCA / LFP). No chemistry or pack "
+    "has been validated against hardware yet."
 )
 
+# Rev.2 is designed around the equipment physically available at SFSU
+# (see equipment/inventory.py). The 6060B envelope is an instrument rating,
+# not an OSBAMS capability: the OSBAMS envelope is the intersection of it with
+# the battery profile and the validated power path.
 ELECTRONIC_LOAD_SCOPE = (
-    "OSBAMS v1 uses a manually configured, appropriately rated DC electronic "
-    "load. The specific instrument is selected at build time; the "
-    "ElectronicLoad abstraction supports remote control when a programmable "
-    "load is available."
+    "Rev.2 primary load: Agilent/Keysight 6060B (3-60 V, 60 A, 300 W). "
+    "Remote GPIB control is BLOCKED_BY_INTERFACE_CONFIRMATION and each remote "
+    "command must be VERIFIED against the official manuals; Manual6060B and "
+    "Simulator6060B are the active modes. Permitted current is always "
+    "min(profile, OSBAMS 10 A, 60 A, 300 W / conservative pack voltage, component limits)."
+)
+
+REV2_CLAIM = (
+    "OSBAMS Rev.2 is a standalone lithium-ion battery characterization platform "
+    "optimized around the SFSU Agilent 6060B electronic load. It uses an "
+    "STM32L476RG safety controller, Raspberry Pi 5 interface, INA228-based "
+    "measurement, independent voltage verification, and Keysight reference "
+    "instrumentation to validate capacity, energy, DCIR, thermal behavior, and "
+    "battery health metrics of compatible lithium-ion battery packs within the "
+    "verified hardware envelope."
 )
 
 
@@ -273,7 +309,7 @@ PLATFORM_MODULES = [
 # ══════════════════════════════════════════════════════════════════════════════
 
 PROJECT_STATUS = {
-    "desktop_software":      "Feature-complete candidate",
+    "desktop_software":      "Rev.2 equipment layer implemented (host-tested)",
     "firmware_architecture": "Advanced architecture partially implemented",
     "hardware_integration":  "Pending",
     "end_to_end_validation": "Pending",

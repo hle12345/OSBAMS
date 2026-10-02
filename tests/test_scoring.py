@@ -4,7 +4,7 @@ tests/test_scoring.py — Unit tests for OSBAMS scoring and integration
 
 import sys
 import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "desktop"))
 
 import unittest
 from gui.scoring import ScoringInputs, ScoringResult, trapezoidal_integrate
@@ -201,9 +201,9 @@ class TestSerialParser(unittest.TestCase):
 
     def test_simulator_output_parseable(self):
         """Simulator must emit valid Protocol v1 frames with correct CRC."""
-        from services.electronic_load import SimulatorLoad
+        from equipment.drivers import Simulator6060B
         from services.protocol import parse_frame
-        sim   = SimulatorLoad("normal", sample_rate_ms=30000)
+        sim   = Simulator6060B("normal", sample_rate_ms=30000)
         lines = sim.generate_lines()
         self.assertGreater(len(lines), 0)
         for line in lines[:20]:

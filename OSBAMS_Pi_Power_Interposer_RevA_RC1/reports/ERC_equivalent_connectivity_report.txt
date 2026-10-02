@@ -1,0 +1,11 @@
+Interposer custom connectivity check (NOT KiCad ERC; run ERC in KiCad 10)
+
+PASS Net 5V_PI: schematic 4 pins vs PCB 4 pads
+PASS Net PI_GND: schematic 6 pins vs PCB 6 pads
+PASS 5V_PI = J1 pins + Pi header pins as designed (+5 V: 2,4; GND: 6,9,14,20)
+PASS PI_GND = J1 pins + Pi header pins as designed (+5 V: 2,4; GND: 6,9,14,20)
+INFO  34 unconnected (no-connect) nets = 34 header pins (expect 34)
+PASS 5V_PI and PI_GND share no pad
+INFO  mounting/key holes: K1, K2, M1, M2
+
+RESULT: PASS

@@ -5,7 +5,7 @@ Verifies that firmware, parser, and simulator all speak the same protocol,
 and that shared constants in config.py and app_config.h agree.
 """
 import sys, os, re, unittest
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "desktop"))
 
 from services.protocol import (
     parse_frame, encode_data_frame, crc16, StreamStats,
@@ -152,9 +152,9 @@ class TestSimulatorConformance(unittest.TestCase):
     """Every simulator profile must emit parseable Protocol v1 frames."""
 
     def test_all_profiles_parse(self):
-        from services.electronic_load import SimulatorLoad
-        for profile in SimulatorLoad.PROFILES:
-            sim = SimulatorLoad(profile, sample_rate_ms=60000)
+        from equipment.drivers import Simulator6060B
+        for profile in Simulator6060B.PROFILES:
+            sim = Simulator6060B(profile, sample_rate_ms=60000)
             stats = StreamStats()
             for line in sim.generate_lines():
                 stats.record(parse_frame(line))
@@ -177,11 +177,11 @@ class TestConfigSync(unittest.TestCase):
         version now lives in its own header (included by app_config.h and
         protocol.h) so it cannot be defined twice and drift.
         """
-        base = os.path.join(os.path.dirname(__file__), "..",
-                            "firmware", "Core", "Inc")
+        fw = os.path.join(os.path.dirname(__file__), "..", "Firmware")
         out = {}
-        for fn in ("protocol_version.h", "app_config.h"):
-            path = os.path.join(base, fn)
+        for rel in ("App/Inc/protocol_version.h", "Core/Inc/app_config.h",
+                    "Core/Inc/system_clock.h"):
+            path = os.path.join(fw, rel)
             if not os.path.exists(path):
                 continue
             text = open(path).read()
@@ -197,14 +197,22 @@ class TestConfigSync(unittest.TestCase):
     def test_safety_limits_match(self):
         import config
         c = self._c_defines()
-        self.assertEqual(c["OSBAMS_DEFAULT_MAX_TEMP_C10"],
-                         int(config.SAFETY_MAX_TEMP_C * 10))
-        self.assertEqual(c["OSBAMS_DEFAULT_MIN_VOLTAGE_MV"],
-                         config.SAFETY_MIN_VOLTAGE_MV)
-        self.assertEqual(c["OSBAMS_DEFAULT_MAX_VOLTAGE_MV"],
-                         config.SAFETY_MAX_VOLTAGE_MV)
+        # Layered model: firmware hard trip (absolute protection boundary)
+        # mirrors exactly; the desktop operating ceiling is a DIFFERENT,
+        # lower number and must stay strictly below the trip.
         self.assertEqual(c["OSBAMS_DEFAULT_MAX_CURRENT_MA"],
-                         int(config.SAFETY_MAX_CURRENT_A * 1000))
+                         int(config.FIRMWARE_HARD_TRIP_A * 1000))
+        self.assertEqual(c["OSBAMS_DEFAULT_MAX_TEMP_C10"],
+                         int(config.FIRMWARE_HARD_TRIP_TEMP_C * 10))
+        self.assertEqual(c["OSBAMS_DEFAULT_MAX_VOLTAGE_MV"],
+                         int(config.OSBAMS_VALIDATED_MAX_VOLTAGE_V * 1000))
+        self.assertLess(config.SAFETY_MAX_CURRENT_A, config.FIRMWARE_HARD_TRIP_A)
+        self.assertLess(config.SAFETY_MAX_TEMP_C, config.FIRMWARE_HARD_TRIP_TEMP_C)
+        # Rev.2: there is NO global minimum battery voltage. Cutoff is
+        # profile-specific (services/battery_profiles.py). The firmware
+        # constants are only the power-on defaults before a profile is loaded.
+        self.assertFalse(hasattr(config, "SAFETY_MIN_VOLTAGE_MV"))
+        self.assertFalse(hasattr(config, "SAFETY_MAX_VOLTAGE_MV"))
 
     def test_sample_period_matches(self):
         import config
@@ -219,7 +227,7 @@ class TestConfigSync(unittest.TestCase):
 
     def test_baud_matches(self):
         import config
-        self.assertEqual(self._c_defines()["OSBAMS_UART_BAUD"],
+        self.assertEqual(self._c_defines()["UART_BAUD"],
                          config.SERIAL_BAUD)
 
 
@@ -256,15 +264,16 @@ if __name__ == "__main__":
 import subprocess
 import shutil
 
-FW_TESTS = os.path.join(os.path.dirname(__file__), "..", "firmware", "Tests")
-C_BINARY = os.path.join(FW_TESTS, "test_protocol_c")
+FW_TESTS = os.path.join(os.path.dirname(__file__), "..", "Firmware", "Tests")
+C_BINARY = os.path.join(FW_TESTS, "build", "test_protocol_c")
 
 
 def _build_c_harness() -> bool:
     """Compile the C conformance binary. Returns False if gcc is absent."""
     if shutil.which("gcc") is None:
         return False
-    r = subprocess.run(["make", "-s", "protocol"], cwd=FW_TESTS,
+    os.makedirs(os.path.join(FW_TESTS, "build"), exist_ok=True)
+    r = subprocess.run(["make", "-s", "build/test_protocol_c"], cwd=FW_TESTS,
                        capture_output=True, text=True)
     return r.returncode == 0 and os.path.exists(C_BINARY)
 
@@ -354,7 +363,7 @@ class TestCrossLanguageConformance(unittest.TestCase):
         OSBAMS_PROTOCOL_VERSION must be #defined in exactly one header,
         so app_config.h and protocol.h can never drift apart again.
         """
-        fw = os.path.join(os.path.dirname(__file__), "..", "firmware")
+        fw = os.path.join(os.path.dirname(__file__), "..", "Firmware")
         defining = []
         for root, _dirs, files in os.walk(fw):
             for fn in files:

@@ -30,6 +30,13 @@ import pyqtgraph as pg
 
 from gui.serial_reader import SerialReader, OsbamsSample, list_ports
 from db.database import start_test, end_test, insert_reading, get_battery
+from equipment import capability as cap
+from equipment.drivers import Manual6060B
+from gui.limit_panel import LimitPanel
+from services.battery_profiles import profile_from_battery
+from services.run_persistence import save_run_results
+from services.test_orchestrator import (CapacityTest, DcirTest, Phase, Sample,
+                                        RunConfig)
 
 MAX_POINTS = 600
 GRADE_COLORS = {"A": "#16a34a", "B": "#2563eb", "C": "#d97706", "F": "#dc2626"}
@@ -232,6 +239,11 @@ class DashboardTab(QWidget):
         self._v_min     = 999_999
         self._v_max     = 0
         self._samples: list = []
+        self._batt: dict | None = None
+        self._profile = None
+        self._orch = None
+        self._stop_pending = False
+        self._load = Manual6060B()
 
         self._t  = deque(maxlen=MAX_POINTS)
         self._v  = deque(maxlen=MAX_POINTS)
@@ -327,6 +339,35 @@ class DashboardTab(QWidget):
         row1.addWidget(cards_box, 5)
         root.addLayout(row1)
 
+        # ── Row 1b: permitted current + orchestrated run control ───────
+        row1b = QHBoxLayout()
+        row1b.setSpacing(12)
+        self.limit_panel = LimitPanel()
+        row1b.addWidget(self.limit_panel, 3)
+
+        run_box = QGroupBox("Test orchestrator (Rev.2)")
+        rbl = QVBoxLayout(run_box)
+        mode_row = QHBoxLayout()
+        mode_row.addWidget(QLabel("Test:"))
+        self.mode_combo = QComboBox()
+        self.mode_combo.addItems(["Capacity (CC discharge)", "DCIR (current steps)"])
+        mode_row.addWidget(self.mode_combo)
+        mode_row.addStretch()
+        rbl.addLayout(mode_row)
+        self.phase_lbl = QLabel("Phase: IDLE")
+        self.phase_lbl.setStyleSheet("font-weight:bold;")
+        self.prompt_lbl = QLabel("Load: Manual 6060B (operator drives the front panel)")
+        self.prompt_lbl.setWordWrap(True)
+        self.confirm_btn = QPushButton("✔  Confirm: load is set / enabled")
+        self.confirm_btn.setEnabled(False)
+        self.confirm_btn.clicked.connect(self._confirm_clicked)
+        rbl.addWidget(self.phase_lbl)
+        rbl.addWidget(self.prompt_lbl)
+        rbl.addWidget(self.confirm_btn)
+        rbl.addStretch()
+        row1b.addWidget(run_box, 2)
+        root.addLayout(row1b)
+
         # ── Row 2: Graphs ──────────────────────────────────────────────
         pg.setConfigOption("background", "#fafafa")
         pg.setConfigOption("foreground", "#222")
@@ -370,6 +411,14 @@ class DashboardTab(QWidget):
         self._batt_label_lbl.setText(label)
         self.ai_panel.reset()
         self.gauge.set_health(0, "—", "Register and test a battery")
+        self._batt, self._profile = get_battery(battery_id), None
+        try:
+            self._profile = profile_from_battery(self._batt or {})
+            # Before OCV is known, show the worst case: the profile's maximum voltage.
+            self.limit_panel.update_limit(self._profile.permitted_current())
+        except ValueError as e:
+            self.limit_panel.update_limit(cap.compute_permitted_current(None))
+            self.prompt_lbl.setText(f"No test profile: {e}")
 
     # ── Test lifecycle ────────────────────────────────────────────────
 
@@ -377,6 +426,11 @@ class DashboardTab(QWidget):
         if self._battery_id is None:
             QMessageBox.warning(self, "No Battery",
                 "Register a battery first (Battery Registration tab).")
+            return
+        if self._profile is None:
+            QMessageBox.warning(self, "No test profile",
+                "This battery lacks nominal/max voltage, rated Ah or a cutoff voltage. "
+                "Complete them in the registry (cutoff is profile-specific).")
             return
         port = self.port_combo.currentText()
         if "No ports" in port:
@@ -391,7 +445,20 @@ class DashboardTab(QWidget):
         self._samples.clear()
         for b in [self._t, self._v, self._i, self._pw, self._tp]: b.clear()
 
-        self._test_id = start_test(self._battery_id, "discharge")
+        dcir = self.mode_combo.currentIndex() == 1
+        self._test_id = start_test(self._battery_id, "dcir" if dcir else "discharge")
+        try:                                    # active calibration profile (None = raw values, flagged REVIEW REQUIRED)
+            from services.calibration_store import get_active
+            self._cal = get_active()
+        except Exception:
+            self._cal = None
+        cls = DcirTest if dcir else CapacityTest
+        self._load = Manual6060B()
+        self._orch = cls(self._profile, self._load,
+                         RunConfig(battery_safety_status=(self._batt or {}).get("safety_status")),
+                         prompt=self._on_prompt)
+        self._orch.start()
+        self._show_phase()
 
         self._reader = SerialReader(port)
         self._reader.sample_received.connect(self._on_sample)
@@ -403,48 +470,114 @@ class DashboardTab(QWidget):
         self.csv_btn.setEnabled(False)
         self.ai_panel.reset()
 
-    def _stop_test(self):
+    def _stop_test(self, force: bool = False):
+        # While the orchestrator is running, Stop = abort + VERIFIED load-off:
+        # keep reading samples until the measured current confirms the load is off.
+        if self._orch is not None and not self._orch.done and not force:
+            self._orch.abort("operator stop")
+            self._show_phase()
+            return
+        self._stop_pending = False
         if self._reader:
             self._reader.stop(); self._reader.wait(); self._reader = None
 
-        if self._test_id and self._samples:
+        if self._orch is not None and self._test_id:
+            res = self._orch.results()
+            cal = getattr(self, "_cal", None)
+            from services.quality import assess
+            quality = assess(cal)               # device-side totals / ADC channel arrive with protocol v2
+            save_run_results(self._test_id, res, calibration_id=None if cal is None else cal.calibration_id,
+                             quality=quality,
+                             rated_capacity_ah=getattr(self._profile, "rated_ah", None))
+        if self._test_id and self._samples and \
+                (self._orch is None or isinstance(self._orch, CapacityTest)):
             self._finalize_test()
+        elif self._test_id and self._samples:
+            self._finalize_dcir()
+        self._orch = None
+        self.confirm_btn.setEnabled(False)
 
         self.start_btn.setEnabled(True)
         self.stop_btn.setEnabled(False)
         self.csv_btn.setEnabled(bool(self._samples))
 
+    def _finalize_dcir(self):
+        res = self._orch.results()
+        end_test(test_id=self._test_id, capacity_ah=0.0, energy_wh=0.0,
+                 discharge_time_s=round(res.duration_s, 1), max_temp_c=self._max_temp,
+                 soh_percent=0.0, reliability_score=0, grade="—",
+                 recommendation="DCIR test — see internal resistance",
+                 notes=f"DCIR {res.dcir_mohm if res.dcir_mohm is None else round(res.dcir_mohm, 1)} mOhm; "
+                       f"{res.stop_reason}")
+
+    # ── Orchestrator glue ─────────────────────────────────────────────
+
+    def _on_prompt(self, msg: str):
+        self.prompt_lbl.setText(msg)
+        if "DISABLE" in msg or "E-stop" in msg:
+            # Non-modal: samples must keep flowing so load-off can be verified.
+            box = QMessageBox(QMessageBox.Critical, "Operator action required",
+                              msg, QMessageBox.Ok, self)
+            box.setModal(False)
+            box.show()
+            self._alert = box
+
+    def _confirm_clicked(self):
+        if self._orch is not None:
+            self._orch.confirm()
+            self._show_phase()
+
+    def _show_phase(self):
+        if self._orch is None:
+            return
+        ph = self._orch.phase
+        txt = f"Phase: {ph.value}"
+        if self._orch.stop_reason:
+            txt += f"  —  {self._orch.stop_reason}"
+        self.phase_lbl.setText(txt)
+        self.confirm_btn.setEnabled(ph is Phase.READY)
+        self.limit_panel.update_live(self._orch)
+
     def _finalize_test(self):
-        from gui.scoring import ScoringInputs, compute_reliability_score
+        from gui.scoring import ScoringInputs, ScoringResult
         batt = get_battery(self._battery_id) or {}
-        rated_ah = batt.get("capacity_rated_ah") or self._total_ah
-        rated_wh = batt.get("energy_rated_wh")   or self._total_wh
+        res = self._orch.results() if self._orch is not None else None
+        # The orchestrator's trapezoidal Ah/Wh over the loaded phase is authoritative.
+        ah = res.capacity_ah if res else self._total_ah
+        wh = res.energy_wh if res else self._total_wh
+        rated_ah = batt.get("capacity_rated_ah") or ah
+        rated_wh = batt.get("energy_rated_wh")   or wh
         phys = batt.get("physical_score", 8)
+        sag_mv = int(round(res.initial_sag_v * 1000)) if res and res.initial_sag_v else 0
+        cutoff = self._profile.cutoff_voltage_v if self._profile else 0.0
 
         inputs = ScoringInputs(
-            measured_ah    = self._total_ah,
-            rated_ah       = rated_ah,
+            measured_ah    = ah,
+            measured_wh    = wh,
             max_temp_c     = max(self._max_temp, 25.0),
-            voltage_min_mv = self._v_min,
-            voltage_max_mv = self._v_max,
+            initial_voltage_sag_mv = max(0, sag_mv),
+            voltage_cutoff_v = cutoff,
+            rated_ah       = rated_ah,
+            rated_wh       = rated_wh,
             physical_score = phys,
         )
-        result = compute_reliability_score(inputs)
+        result = ScoringResult.from_inputs(inputs)
 
         t0 = self._samples[0][0]
         t1 = self._samples[-1][0]
-        soh = round((self._total_wh / rated_wh) * 100, 1) if rated_wh > 0 else 0.0
+        soh = round((wh / rated_wh) * 100, 1) if rated_wh > 0 else 0.0
 
         end_test(
             test_id           = self._test_id,
-            capacity_ah       = round(self._total_ah, 3),
-            energy_wh         = round(self._total_wh, 3),
-            discharge_time_s  = round(t1 - t0, 1),
+            capacity_ah       = round(ah, 3),
+            energy_wh         = round(wh, 3),
+            discharge_time_s  = round(res.duration_s if res else (t1 - t0), 1),
             max_temp_c        = self._max_temp,
             soh_percent       = soh,
             reliability_score = result.total_score,
             grade             = result.grade,
             recommendation    = result.recommendation,
+            min_voltage_mv    = self._v_min,
         )
 
         # Update gauge + AI
@@ -453,18 +586,18 @@ class DashboardTab(QWidget):
 
         reasons = []
         bd = result.breakdown
-        if bd.get("capacity_retention", 40) < 28:
-            reasons.append(f"Capacity only {self._total_ah:.1f} Ah vs rated {rated_ah:.1f} Ah.")
-        if bd.get("thermal", 20) < 12:
+        if bd.get("Capacity retention (20)", 20) < 14:
+            reasons.append(f"Capacity only {ah:.1f} Ah vs rated {rated_ah:.1f} Ah.")
+        if bd.get("Thermal behavior (15)", 15) < 9:
             reasons.append(f"Temperature peaked at {self._max_temp:.0f}°C under load.")
-        if bd.get("voltage_stability", 10) < 5:
-            reasons.append("Voltage sag exceeded expected range during discharge.")
+        if bd.get("Voltage sag (15)", 15) < 8:
+            reasons.append("Voltage sag exceeded expected range at load start.")
         if not reasons:
             reasons.append("All parameters within expected range.")
 
         self.ai_panel.update_analysis(
             result.total_score, result.grade,
-            self._total_ah, rated_ah, self._max_temp, reasons)
+            ah, rated_ah, self._max_temp, reasons)
 
         self._c_soh.set_value(f"{soh:.0f}")
 
@@ -472,6 +605,7 @@ class DashboardTab(QWidget):
 
     @Slot(object)
     def _on_sample(self, s: OsbamsSample):
+        self._feed_orchestrator(s)
         t_s = s.time_s
         if self._last_tick_s is not None:
             dt = t_s - self._last_tick_s
@@ -515,6 +649,23 @@ class DashboardTab(QWidget):
         self._gi.listDataItems()[0].setData(tl, list(self._i))
         self._gp.listDataItems()[0].setData(tl, list(self._pw))
         self._gt.listDataItems()[0].setData(tl, list(self._tp))
+
+    def _feed_orchestrator(self, s: OsbamsSample):
+        if self._orch is None:
+            return
+        from services.protocol import (FLAG_OVERTEMP, FLAG_OVERCURRENT,
+                                       FLAG_REVERSE_CURR, FLAG_LOAD_FAULT)
+        # Firmware UNDERVOLT is its own protective stop; the orchestrator owns
+        # the profile cutoff, so UNDERVOLT is not treated as a sensor fault.
+        critical = FLAG_OVERTEMP | FLAG_OVERCURRENT | FLAG_REVERSE_CURR | FLAG_LOAD_FAULT
+        fault = bool(s.flags & critical)
+        cal = getattr(self, "_cal", None)
+        v, i = (s.voltage_v, s.current_a) if cal is None else (cal.apply_voltage(s.voltage_v), cal.apply_current(s.current_a))
+        self._orch.on_sample(Sample(s.time_s, v, i, s.temp_c, fault))
+        self._show_phase()
+        if self._orch.done and not self._stop_pending:
+            self._stop_pending = True
+            QTimer.singleShot(0, lambda: self._stop_test(force=True))
 
     @Slot(str)
     def _on_error(self, msg: str):

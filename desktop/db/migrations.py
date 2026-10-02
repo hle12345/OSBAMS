@@ -112,6 +112,40 @@ def migrate():
         )
     """)
 
+    # ── validation / calibration layer (additive; see docs/rev2/VALIDATION_AND_CALIBRATION_PLAN.md) ──
+    for col, defn in [("calibration_id", "TEXT"), ("rated_capacity_ah", "REAL"), ("capacity_retention_pct", "REAL"),
+                      ("measurement_quality", "TEXT"), ("quality_json", "TEXT"), ("firmware_version", "TEXT"),
+                      ("pcb_revision", "TEXT"), ("sample_count", "INTEGER"), ("missing_sample_count", "INTEGER"),
+                      ("dcir_conditions_json", "TEXT"), ("integration_json", "TEXT"),
+                      ("ah_ina", "REAL"), ("ah_mcu", "REAL"), ("ah_pi", "REAL"), ("wh_ina", "REAL"), ("wh_mcu", "REAL"),
+                      ("wh_pi", "REAL"), ("integration_disagreement_ah_pct", "REAL"), ("integration_disagreement_wh_pct", "REAL"),
+                      ("capacity_validation_status", "TEXT")]:
+        if _add_col(c, "tests", col, defn):
+            added.append(f"tests.{col}")
+    for col, defn in [("connector_type", "TEXT"), ("profile_key", "TEXT"), ("passport_notes", "TEXT")]:
+        if _add_col(c, "batteries", col, defn):
+            added.append(f"batteries.{col}")
+    for col, defn in [("voltage_adc_mv", "INTEGER"), ("flags", "INTEGER")]:     # filled once the protocol carries them
+        if _add_col(c, "readings", col, defn):
+            added.append(f"readings.{col}")
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS calibrations (
+            calibration_id        TEXT PRIMARY KEY,
+            created_at            TEXT NOT NULL,
+            voltage_gain          REAL NOT NULL,
+            voltage_offset        REAL NOT NULL,
+            current_gain          REAL NOT NULL,
+            current_offset        REAL NOT NULL,
+            zero_current_offset_a REAL,
+            reference_instrument  TEXT,
+            operator              TEXT,
+            temperature_c         REAL,
+            profile_json          TEXT NOT NULL,   -- full profile incl. fit residuals
+            is_active             INTEGER NOT NULL DEFAULT 0,
+            notes                 TEXT
+        )
+    """)
+
     # ── audit_log table ───────────────────────────────────────────────
     c.execute("""
         CREATE TABLE IF NOT EXISTS audit_log (
@@ -124,6 +158,27 @@ def migrate():
             description TEXT    NOT NULL,
             old_value   TEXT,
             new_value   TEXT
+        )
+    """)
+
+    # ── calibration_records table (Rev.2: reference-instrument comparisons) ──
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS calibration_records (
+            record_id       INTEGER PRIMARY KEY AUTOINCREMENT,
+            recorded_at     TEXT    NOT NULL,
+            quantity        TEXT    NOT NULL,   -- voltage / current / power / resistance / temperature
+            channel         TEXT,
+            reference_model TEXT    NOT NULL,   -- e.g. Keysight EDU34450A
+            reference_asset_id    TEXT,
+            reference_cal_status  TEXT,
+            reference_reading     REAL NOT NULL,
+            osbams_reading        REAL NOT NULL,
+            load_readback         REAL,         -- 6060B readback when available
+            abs_error             REAL NOT NULL,
+            pct_error             REAL,
+            software_commit       TEXT,
+            operator              TEXT,
+            notes                 TEXT
         )
     """)
 
