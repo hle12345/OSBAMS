@@ -64,7 +64,7 @@ RSDW_PINS = {1: (5.08, 48.26), 2: (10.16, 48.26), 3: (20.32, 48.26), 4: (2.54, 2
 RSDW_NETS = {1: "+12V_F", 2: "12V_GND", 3: None, 4: "5V_ISO_RAW", 5: "PI_GND", 6: "TRIM"}
 for n, (u_, v_) in RSDW_PINS.items(): pad(u1, n, 25.4 - v_, 12.7 - u_, 2.4, 2.4, "pth", "circle", RSDW_NETS[n], 1.3)
 for a in ((-25.4, -12.7, 25.4, -12.7), (25.4, -12.7, 25.4, 12.7), (25.4, 12.7, -25.4, 12.7), (-25.4, 12.7, -25.4, -12.7)): seg(u1, SIL, *a)
-seg(u1, SIL, -24.0, -8.5, -24.0, -6.5)
+seg(u1, SIL, *((-24.4, 6.7, -24.4, 8.7) if REVC else (-24.0, -8.5, -24.0, -6.5)))
 u1.SetOrientationDegrees(POS["U1"][2])
 # ---- secondary side
 libfp("F2", meta["F2"][5], *POS["F2"], two("F2", "5V_ISO_RAW", "5V_PI"))
@@ -85,7 +85,8 @@ for ref, (x, y) in PI_HOLES.items():
     k = custom(ref, "MountingHole_2.7mm_M2.5", x, y, "M2.5 to Pi"); pad(k, "", 0, 0, 2.7, 2.7, "npth", "circle", None, 2.7); k.SetBoardOnly(True)
 for ref, (x, y) in MECH_HOLES.items():
     k = custom(ref, "MountingHole_3.2mm_M3_Standoff", x, y, "M3 standoff"); pad(k, "", 0, 0, 3.2, 3.2, "npth", "circle", None, 3.2); k.SetBoardOnly(True)
-for i, (x, y) in enumerate([(4.0, 56.0), (80.0, 24.5), (45.0, 3.0)], 1):
+FIDS = [(63.4, 49.0), (1.8, 49.0), (36.0, 28.8)] if REVC else [(4.0, 56.0), (80.0, 24.5), (45.0, 3.0)]
+for i, (x, y) in enumerate(FIDS, 1):
     f = libfp(f"FID{i}", "Fiducial:Fiducial_1mm_Mask2mm", x, y, 0, {}); f.Reference().SetVisible(False)
 
 # ---- copper
@@ -103,18 +104,22 @@ def zone(nn, layer, pts, prio=0, clr=0.5):
     b.Add(z)
 if os.environ.get("CARRIER_DUMP"):
     for r, f in fps.items(): print(r, [(p.GetNumber(), round(p.GetPosition().x / 1e6, 2), round(p.GetPosition().y / 1e6, 2)) for p in f.Pads()][:6], [round(v / 1e6, 1) for v in (f.GetBoundingBox(False).GetLeft(), f.GetBoundingBox(False).GetTop(), f.GetBoundingBox(False).GetRight(), f.GetBoundingBox(False).GetBottom())])
-exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "carrier_routes.py")).read())
+exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "carrier_routes_c.py" if REVC else "carrier_routes.py")).read())
 
 # ---- outline, text, stackup
-poly = [(0, 0), (BOARD_W, 0), (BOARD_W, MAIN_H), (TAB[2], MAIN_H), (TAB[2], BOARD_H), (TAB[0], BOARD_H), (TAB[0], MAIN_H), (0, MAIN_H)]
+poly = [(0, 0), (BOARD_W, 0), (BOARD_W, BOARD_H), (0, BOARD_H)] if REVC else [(0, 0), (BOARD_W, 0), (BOARD_W, MAIN_H), (TAB[2], MAIN_H), (TAB[2], BOARD_H), (TAB[0], BOARD_H), (TAB[0], MAIN_H), (0, MAIN_H)]
 for a, c in zip(poly, poly[1:] + poly[:1]):
     s = pcbnew.PCB_SHAPE(b); s.SetShape(pcbnew.SHAPE_T_SEGMENT); s.SetStart(P(*a)); s.SetEnd(P(*c)); s.SetLayer(pcbnew.Edge_Cuts); s.SetWidth(mm(0.1)); b.Add(s)
-def text(s, x, y, h=1.0, layer=SIL, just=pcbnew.GR_TEXT_H_ALIGN_LEFT):
-    t = pcbnew.PCB_TEXT(b); t.SetText(s); t.SetPosition(P(x, y)); t.SetLayer(layer); t.SetTextSize(P(h, h)); t.SetTextThickness(mm(0.18)); t.SetHorizJustify(just); b.Add(t)
+def text(s, x, y, h=1.0, layer=SIL, just=pcbnew.GR_TEXT_H_ALIGN_LEFT, back=False):
+    t = pcbnew.PCB_TEXT(b); t.SetText(s); t.SetPosition(P(x, y)); t.SetLayer(pcbnew.B_SilkS if back else layer); t.SetTextSize(P(h, h)); t.SetTextThickness(mm(0.18)); t.SetHorizJustify(just)
+    if back: t.SetMirrored(True)
+    b.Add(t)
 C = pcbnew.GR_TEXT_H_ALIGN_CENTER
-for ln in TEXTS: text(*ln[:4], just=C if len(ln) > 4 else pcbnew.GR_TEXT_H_ALIGN_LEFT)
-for x in range(4, 82, 6):
+for ln in TEXTS: text(*ln[:4], just=C if len(ln) > 4 else pcbnew.GR_TEXT_H_ALIGN_LEFT, back=(len(ln) > 4 and ln[4] == "B"))
+for x in ([] if REVC else range(4, 82, 6)):
     s = pcbnew.PCB_SHAPE(b); s.SetShape(pcbnew.SHAPE_T_SEGMENT); s.SetStart(P(x, 26.25)); s.SetEnd(P(x + 3.0, 26.25)); s.SetLayer(SIL); s.SetWidth(mm(0.2)); b.Add(s)
+for y in []:
+    s = pcbnew.PCB_SHAPE(b); s.SetShape(pcbnew.SHAPE_T_SEGMENT); s.SetStart(P(37.6, y)); s.SetEnd(P(37.6, y + 2.0)); s.SetLayer(SIL); s.SetWidth(mm(0.2)); b.Add(s)
 b.GetDesignSettings().SetBoardThickness(mm(1.6))
 b.Save(out); b = pcbnew.LoadBoard(out); b.BuildConnectivity(); pcbnew.ZONE_FILLER(b).Fill(b.Zones()); b.Save(out)
 txt = open(out).read()

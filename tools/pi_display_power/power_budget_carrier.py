@@ -11,23 +11,25 @@ ACC, LINE, LOAD, TC, DT = V("rsdw_tolerance_pct") / 100, V("rsdw_line_reg_pct") 
 TARGET, PI_MAX, PI_MIN, DISP_MIN, DISP_MAX = 4.85, 5.25, 4.75, 4.75, 5.30
 # ---- copper paths measured on this layout (length / width in mm -> squares)
 sq = lambda l, w: l / w
-pin4_f2 = sq(6.34 + 2.79, 2.5)                                  # U1 pin 4 -> F2 pad 1 (5V_ISO_RAW track)
-zone_pi = sq(4.0, 9.8) + sq(7.0, 4.8)                           # F2 pad 2 -> Pi pins 2,4 (5V_PI pour, both pins in the same zone)
-gnd_pi = sq(14.0, 40.0)                                         # U1 pin 5 -> Pi GND pins 6,9,14,20 (PI_GND B.Cu pour, 40 mm wide)
-band = sq(49.6, 3.1) + sq(6.9, 2.5) + sq(2.0, 4.5)             # display branch: 5V band + track + stripe to J_DISP
-gnd_disp = sq(28.0, 40.0)                                       # J_DISP GND pad -> U1 pin 5 through the PI_GND pour
+GEOM = {"B": dict(pin4_f2=sq(6.34 + 2.79, 2.5), zone_pi=sq(4.0, 9.8) + sq(7.0, 4.8), gnd_pi=sq(14.0, 40.0), band=sq(49.6, 3.1) + sq(6.9, 2.5) + sq(2.0, 4.5), gnd_disp=sq(28.0, 40.0)),
+        # RevC: 5V_ISO_RAW is a ~5.7 mm wide pour (26 mm + 2 mm to the pad), 5V_PI pour F2 -> J_DISP -> header pins 2,4 through a ~3-5 mm neck, PI_GND B.Cu pour about 26 mm wide with a 6 mm bay at module pin 5
+        "C": dict(pin4_f2=sq(28.0, 5.0), zone_pi=sq(7.0, 8.0) + sq(2.5, 3.0) + sq(5.5, 4.8), gnd_pi=sq(30.0, 26.0) + sq(3.0, 6.0), band=sq(8.0, 6.0), gnd_disp=sq(25.0, 20.0))}
+G = GEOM["C" if REVC else "B"]; pin4_f2, zone_pi, gnd_pi, band, gnd_disp = G["pin4_f2"], G["zone_pi"], G["gnd_pi"], G["band"], G["gnd_disp"]
 PINJ = 2 * 0.5                                                  # U1 pins 4 and 5: solder joint + PTH barrel ~0.5 mOhm each (estimate)
 HDR_PIN = 1.0                                                   # Pi-side header pin + solder joint per contact (estimate)
 DLEAD = 2 * 0.2 * 33.0                                          # display lead 20 AWG 200 mm, both wires (33 mOhm/m)
-shared = [("PCB: U1 pin 4 -> F2 (2.5 mm track, %.1f squares)" % pin4_f2, pin4_f2 * RS, pin4_f2 * RS * HOTCU),
-          ("U1 pins 4 + 5 solder joints / PTH barrels (estimate)", PINJ, PINJ * 1.0),
-          ("F2 0451008.MRL (7.7 mOhm cold; 1.3x hot)", F2, F2 * F2H)]
-branch = [("PCB: F2 -> Pi pins 2,4 (5V_PI pour, %.1f squares)" % zone_pi, zone_pi * RS, zone_pi * RS * HOTCU),
-          ("PCB: Pi GND pins 6,9,14,20 -> U1 pin 5 (PI_GND pour, %.2f squares)" % gnd_pi, gnd_pi * RS, gnd_pi * RS * HOTCU),
-          (f"SSW-120-01-L-D socket contacts ({SOCK:g} mOhm/contact max, typ 0.6x; 2 on +5 V, 4 on GND)", SOCK * 0.6 / 2 + SOCK * 0.6 / 4, SOCK / 2 + SOCK / 4),
-          (f"Pi header pins + solder joints ({HDR_PIN:g} mOhm/contact estimate; 2 on +5 V, 4 on GND)", HDR_PIN / 2 + HDR_PIN / 4, HDR_PIN / 2 + HDR_PIN / 4)]
-disp = [("PCB: 5V_PI band + track to J_DISP (%.1f squares)" % band, band * RS, band * RS * HOTCU), ("PCB: J_DISP GND -> U1 pin 5 (%.2f squares)" % gnd_disp, gnd_disp * RS, gnd_disp * RS * HOTCU),
-        ("J_DISP Micro-Fit contacts (1 on +5 V, 1 on GND; 5.24 typ / 10 max per contact)", 2 * JT, 2 * J), ("Display lead 20 AWG, 200 mm, both wires (hot 1.2x)", DLEAD / HOTCU, DLEAD)]
+def paths(g):
+    shared = [("PCB: U1 pin 4 -> F2 (%s, %.1f squares)" % ("5V_ISO_RAW pour" if REVC else "2.5 mm track", g["pin4_f2"]), g["pin4_f2"] * RS, g["pin4_f2"] * RS * HOTCU),
+              ("U1 pins 4 + 5 solder joints / PTH barrels (estimate)", PINJ, PINJ * 1.0),
+              ("F2 0451008.MRL (7.7 mOhm cold; 1.3x hot)", F2, F2 * F2H)]
+    branch = [("PCB: F2 -> Pi pins 2,4 (5V_PI pour, %.1f squares)" % g["zone_pi"], g["zone_pi"] * RS, g["zone_pi"] * RS * HOTCU),
+              ("PCB: Pi GND pins 6,9,14,20 -> U1 pin 5 (PI_GND pour, %.2f squares)" % g["gnd_pi"], g["gnd_pi"] * RS, g["gnd_pi"] * RS * HOTCU),
+              (f"SSW-120-01-L-D socket contacts ({SOCK:g} mOhm/contact max, typ 0.6x; 2 on +5 V, 4 on GND)", SOCK * 0.6 / 2 + SOCK * 0.6 / 4, SOCK / 2 + SOCK / 4),
+              (f"Pi header pins + solder joints ({HDR_PIN:g} mOhm/contact estimate; 2 on +5 V, 4 on GND)", HDR_PIN / 2 + HDR_PIN / 4, HDR_PIN / 2 + HDR_PIN / 4)]
+    disp = [("PCB: 5V_PI %s to J_DISP (%.1f squares)" % ("pour" if REVC else "band + track", g["band"]), g["band"] * RS, g["band"] * RS * HOTCU), ("PCB: J_DISP GND -> U1 pin 5 (%.2f squares)" % g["gnd_disp"], g["gnd_disp"] * RS, g["gnd_disp"] * RS * HOTCU),
+            ("J_DISP Micro-Fit contacts (1 on +5 V, 1 on GND; 5.24 typ / 10 max per contact)", 2 * JT, 2 * J), ("Display lead 20 AWG, 200 mm, both wires (hot 1.2x)", DLEAD / HOTCU, DLEAD)]
+    return shared, branch, disp
+shared, branch, disp = paths(G)
 S = lambda L, i: sum(e[i] for e in L)
 Rs_t, Rs_m, Rb_t, Rb_m, Rd_t, Rd_m = S(shared, 1), S(shared, 2), S(branch, 1), S(branch, 2), S(disp, 1), S(disp, 2)
 tl = lambda i: LINE + LOAD * i / 8; th = LINE
@@ -39,6 +41,12 @@ rt_nom = 71.5; d1 = abs(vo_for(rt_nom * 1.01) - vo_for(rt_nom)) * 1000; step = a
 def vo_sp(sp, dt=DT): return sp
 # ---- RC2 reference (separate Power board + interposer + 18 AWG harness), same constants as power_budget_rc2.py
 rc2_s_t, rc2_s_m, rc2_b_t, rc2_b_m = 9.9, 12.2, 26.6, 42.8
+REFN = "RC2"
+VSNOTE = "(removed: J_OUT and J1 Micro-Fit contacts 4 x 10 mOhm, 4 x 18 AWG wires, interposer copper). The J_IN and the contact-resistance items that remain are the SSW socket and the Pi header pins (the only mating interface to the Pi)."
+if REVC:                                                      # RevC is compared with the frozen RevB layout (same formulas, RevB copper squares)
+    _s, _b, _d = paths(GEOM["B"]); REFN = "RevB"
+    VSNOTE = "(RevC is layout-only: same parts and fuses; the longer 5V_ISO_RAW run to F2 and the wider PI_GND pour are the price of the smaller board.)"
+    rc2_s_t, rc2_s_m, rc2_b_t, rc2_b_m = sum(e[1] for e in _s), sum(e[2] for e in _s), sum(e[1] for e in _b), sum(e[2] for e in _b)
 SP = 5.185
 def v_pi(ip, idp, sp=SP, worst=True, rs=None, rb=None):
     it = ip + idp; rs = rs if rs is not None else (Rs_m if worst else Rs_t); rb = rb if rb is not None else (Rb_m if worst else Rb_t)
@@ -48,7 +56,7 @@ def v_disp(ip, idp, sp=SP, worst=True):
     it = ip + idp; rs = Rs_m if worst else Rs_t; rd = Rd_m if worst else Rd_t
     vm = sp * (1 - tl(it) - TC * DT) if worst else sp * (1 - LOAD * it / 8)
     return vm - it * rs / 1e3 - idp * rd / 1e3
-L = ["# Voltage-drop report — Pi Power Carrier RevB (combined board)", "",
+L = [f"# Voltage-drop report — Pi Power Carrier Rev{'C' if REVC else 'B'} (combined board)", "",
      "Recomputed from scratch for the combined board: no J_OUT, no 4-wire harness, no interposer J1. Path: `RSDW40F-05 pins 4/5 -> F2 -> 5V_PI pour -> SSW-120-01-L-D -> Pi header pins 2,4 (+5 V) and 6,9,14,20 (GND)`; display branch `5V_PI node -> band -> J_DISP -> display lead`. Copper lengths/widths are measured on this layout (2 oz, 0.246 mOhm/square, x1.2 hot). Inputs: `datasheet_inputs.json` (source and status per value; user-relayed Samtec/Waveshare data marked there).", "",
      f"Targets: Pi pins >= {TARGET} V (preferred) with the {PI_MIN} V design floor, no-load <= {PI_MAX} V; Waveshare input {DISP_MIN}-{DISP_MAX} V (4.75 / 5.00 / 5.30, **0.8 A typical, maximum not published**; 1.0 A is a design scenario, not a manufacturer maximum). Calibrated unit: setpoint {SP:.3f} V (25 C, no load); line {LINE*100:.1f} %, load {LOAD*100:.1f} % over 0-8 A, temperature {TC*100:.2f} %/C x {DT:.0f} C = {TC*DT*100:.2f} %.", "",
      "## 1. Element drops", "", "| Element | carries | R typ (mOhm) | R worst (mOhm) | drop @5 A typ / worst (mV) |", "|---|---|---|---|---|"]
@@ -56,7 +64,7 @@ for lst, who, cur in ((shared, "Pi + display", 6), (branch, "Pi only", 5), (disp
     for nme, a, b_ in lst: L.append(f"| {nme} | {who} | {a:.2f} | {b_:.2f} | {cur*a:.0f} / {cur*b_:.0f} (at {cur} A) |")
 L += [f"| **Shared (module pins, track, F2)** | | **{Rs_t:.1f}** | **{Rs_m:.1f}** | |", f"| **Pi branch (pour, socket, header)** | | **{Rb_t:.1f}** | **{Rb_m:.1f}** | |", f"| **Total to the Pi pins** | | **{Rs_t+Rb_t:.1f}** | **{Rs_m+Rb_m:.1f}** | **{5*(Rs_t+Rb_t):.0f} / {5*(Rs_m+Rb_m):.0f}** |",
       f"| **Display branch (after the shared part)** | | **{Rd_t:.1f}** | **{Rd_m:.1f}** | |", "",
-      f"**Versus RC2** (separate power board + interposer + 18 AWG harness): total to the Pi pins {rc2_s_t+rc2_b_t:.1f} / {rc2_s_m+rc2_b_m:.1f} mOhm typ/worst -> carrier {Rs_t+Rb_t:.1f} / {Rs_m+Rb_m:.1f} mOhm: **{(rc2_s_m+rc2_b_m)-(Rs_m+Rb_m):.1f} mOhm less in the worst case ({((rc2_s_m+rc2_b_m)-(Rs_m+Rb_m))*5:.0f} mV at 5 A)** (removed: J_OUT and J1 Micro-Fit contacts 4 x 10 mOhm, 4 x 18 AWG wires, interposer copper). The J_IN and the contact-resistance items that remain are the SSW socket and the Pi header pins (the only mating interface to the Pi).", "",
+      f"**Versus {REFN}** ({'frozen RevB layout' if REVC else 'separate power board + interposer + 18 AWG harness'}): total to the Pi pins {rc2_s_t+rc2_b_t:.1f} / {rc2_s_m+rc2_b_m:.1f} mOhm typ/worst -> carrier {Rs_t+Rb_t:.1f} / {Rs_m+Rb_m:.1f} mOhm: **{abs((rc2_s_m+rc2_b_m)-(Rs_m+Rb_m)):.1f} mOhm {'less' if (rc2_s_m+rc2_b_m) >= (Rs_m+Rb_m) else 'MORE'} in the worst case ({abs((rc2_s_m+rc2_b_m)-(Rs_m+Rb_m))*5:.0f} mV at 5 A)** {VSNOTE}", "",
       "## 2. Cases (calibrated unit)", "", "| Case | Pi load (A) | Display (A) | Total through F2 (A) | Pi pins typ (V) | Pi pins worst (V) | margin to 4.85 V (worst) | margin to 4.75 V (worst) | J_DISP typ / worst (V) |", "|---|---|---|---|---|---|---|---|---|"]
 for nm_, ip, idp in (("no load", 0, 0), ("1 A", 1, 0), ("3 A", 3, 0), ("5 A Pi", 5, 0), ("5 A Pi + 0.8 A display (typical)", 5, 0.8), ("5 A Pi + 1.0 A display (design scenario)", 5, 1.0)):
     w = v_pi(ip, idp); L.append(f"| {nm_} | {ip:g} | {idp:g} | {ip+idp:g} | {v_pi(ip, idp, worst=False):.3f} | {w:.3f} | {w-TARGET:+.3f} | {w-PI_MIN:+.3f} | {v_disp(ip, idp, worst=False):.3f} / {v_disp(ip, idp):.3f} |")
@@ -64,12 +72,13 @@ w = v_pi(5, 1.0); w2 = v_pi(5, 1.0, rs=rc2_s_m, rb=rc2_b_m)
 nl = SP * (1 + th + TC * DT)
 SPMIN = (TARGET + 5 * Rb_m / 1e3 + 6 * Rs_m / 1e3) / (1 - tl(6) - TC * DT); SPMAX = PI_MAX / (1 + th + TC * DT); SPMIN_t = (TARGET + 5 * Rb_t / 1e3 + 6 * Rs_t / 1e3) / (1 - tl(6) - TC * DT)
 SPMIN_f = (PI_MIN + 5 * Rb_m / 1e3 + 6 * Rs_m / 1e3) / (1 - tl(6) - TC * DT)
+REFWIN = 'CLOSED, negative width' if (TARGET + 5*rc2_b_m/1e3 + 6*rc2_s_m/1e3)/(1 - tl(6) - TC*DT) > SPMAX else 'open'
 L += ["", f"**No-load maximum:** {nl:.3f} V (setpoint x (1 + line + temperature)) -> {'below' if nl <= PI_MAX else 'ABOVE'} the {PI_MAX} V Pi maximum and below the Waveshare {DISP_MAX} V limit by {(DISP_MAX-nl)*1000:.0f} mV.",
-      f"**Worst case, 5 A Pi + 1.0 A display:** {w:.3f} V at the Pi pins ({(w-TARGET)*1000:+.0f} mV vs the 4.85 V preferred target, {(w-PI_MIN)*1000:+.0f} mV vs the 4.75 V floor); RC2 with the same load and setpoint: {w2:.3f} V -> **carrier improves the worst case by {(w-w2)*1000:.0f} mV**.", "",
+      f"**Worst case, 5 A Pi + 1.0 A display:** {w:.3f} V at the Pi pins ({(w-TARGET)*1000:+.0f} mV vs the 4.85 V preferred target, {(w-PI_MIN)*1000:+.0f} mV vs the 4.75 V floor); {REFN} with the same load and setpoint: {w2:.3f} V -> **carrier {'changes' if REVC else 'improves'} the worst case by {(w-w2)*1000:.0f} mV**.", "",
       f"## 3. Setpoint (trim) window, calibrated unit, 5 A Pi + 1.0 A display", "",
       f"| Window | lower (V) | upper (V) | width (mV) |", "|---|---|---|---|",
       f"| worst path, 4.85 V preferred target | {SPMIN:.3f} | {SPMAX:.3f} | {(SPMAX-SPMIN)*1000:.0f} |", f"| worst path, 4.75 V design floor | {SPMIN_f:.3f} | {SPMAX:.3f} | {(SPMAX-SPMIN_f)*1000:.0f} |", f"| typical path, 4.85 V target | {SPMIN_t:.3f} | {SPMAX:.3f} | {(SPMAX-SPMIN_t)*1000:.0f} |", "",
-      f"RC2 worst-path window for comparison: {((TARGET + 5*rc2_b_m/1e3 + 6*rc2_s_m/1e3)/(1 - tl(6) - TC*DT)):.3f} V ... {SPMAX:.3f} V (CLOSED, negative width). Carrier: **{'open' if SPMAX > SPMIN else 'closed'}** against the preferred target in the stacked worst case.", "",
+      f"{REFN} worst-path window for comparison: {((TARGET + 5*rc2_b_m/1e3 + 6*rc2_s_m/1e3)/(1 - tl(6) - TC*DT)):.3f} V ... {SPMAX:.3f} V ({REFWIN}). Carrier: **{'open' if SPMAX > SPMIN else 'closed'}** against the preferred target in the stacked worst case.", "",
       f"Trim tolerance: a 1 % resistor on the trim-up pad (71.5 k nominal) moves the output by **{d1:.1f} mV**; one E96 step (71.5 k -> 73.2 k) is **{step:.0f} mV**. The calibration therefore resolves the setpoint to about ±{step/2:.0f} mV plus the {d1:.1f} mV tolerance: usable window for the worst-path target = {((SPMAX-SPMIN)*1000 - step - 2*d1):.0f} mV after quantisation and tolerance ({'workable' if (SPMAX-SPMIN)*1000 - step - 2*d1 > 0 else 'too narrow for the worst-path target; the typical window ({:.0f} mV) is workable and the 4.75 V floor window ({:.0f} mV) has ample room'.format((SPMAX-SPMIN_t)*1000, (SPMAX-SPMIN_f)*1000)}).", "",
       "## 4. Waveshare display input", "", "| Case | Display connector (V) | Range 4.75-5.30 V |", "|---|---|---|"]
 for nm_, ip, idp in (("lowest: worst path, 5 A Pi + 1.0 A display", 5, 1.0), ("5 A Pi + 0.8 A display (typical current)", 5, 0.8)):

@@ -1,11 +1,20 @@
 """Single source of truth for OSBAMS_Pi_Power_Carrier_RevB (combined power board + Pi interposer): BOM, schematic, PCB, mechanical checks.
 Board frame: origin top-left of the carrier, +x right, +y down (mm). Pi frame (Raspberry Pi 5 drawing RP-008347): origin = Pi top-left corner, header axis y = 3.5,
 header centre x = 32.5. board = Pi + (PI_OX, PI_OY): the carrier overhangs the Pi's header edge (outward = Pi y < 0)."""
-NAME = "OSBAMS_Pi_Power_Carrier_RevB"
-PI_OX, PI_OY = 7.5, 60.0
-BOARD_W = 85.0; MAIN_H = 59.5                      # main body x 0..85, y 0..59.5 (Pi y -60 .. -0.5: outside the Pi outline)
-TAB = (7.5, 59.5, 72.5, 67.5)                      # plug tab over the header: Pi x 0..65, y -0.5 .. 7.5 (same footprint as the RC2 interposer)
-BOARD_H = 67.5
+import os
+REVC = os.environ.get("CARRIER_REV", "B") == "C"           # RevC = layout-only size optimisation of RevB (same schematic / parts); RevB files are unchanged
+if REVC:
+    NAME = "OSBAMS_Pi_Power_Carrier_RevC"
+    PI_OX, PI_OY = 0.0, 42.5
+    BOARD_W = 65.0; MAIN_H = PI_OY - 0.5               # plain rectangle: body x 0..65, y 0..42 (Pi y -42.5 .. -0.5: outside the Pi outline), header strip y 42..50
+    TAB = (0.0, MAIN_H, 65.0, MAIN_H + 8.0)
+    BOARD_H = MAIN_H + 8.0
+else:
+    NAME = "OSBAMS_Pi_Power_Carrier_RevB"
+    PI_OX, PI_OY = 7.5, 60.0
+    BOARD_W = 85.0; MAIN_H = 59.5                      # main body x 0..85, y 0..59.5 (Pi y -60 .. -0.5: outside the Pi outline)
+    TAB = (7.5, 59.5, 72.5, 67.5)                      # plug tab over the header: Pi x 0..65, y -0.5 .. 7.5 (same footprint as the RC2 interposer)
+    BOARD_H = 67.5
 def pi2b(x, y): return (x + PI_OX, y + PI_OY)
 X0_HDR = 32.5 - 19 * 2.54 / 2                      # Pi pin-1 column (Pi frame) 8.37
 HDR = pi2b(X0_HDR, 3.5)                            # board coords of the pin-1 column / header axis: (15.87, 63.5)
@@ -13,8 +22,9 @@ def pin_xy(n):                                     # board coords of Pi header p
     col = (n + 1) // 2
     return HDR[0] + (col - 1) * 2.54, HDR[1] + (1.27 if n % 2 else -1.27)
 PIN_NETS = {2: "5V_PI", 4: "5V_PI", 6: "PI_GND", 9: "PI_GND", 14: "PI_GND", 20: "PI_GND"}
-U1_C = (28.0, 26.9)                                # RSDW40F-05 centre, long axis along y, secondary pins (4,5,6) at the bottom end
-MECH_HOLES = {"K1": (4.0, 13.0), "K2": (57.5, 37.0), "S3": (81.0, 4.0), "S4": (81.5, 55.3)}   # M3 NPTH: enclosure standoffs = key / support posts
+U1_C = (26.4, 14.4) if REVC else (28.0, 26.9)                                # RSDW40F-05 centre, long axis along y, secondary pins (4,5,6) at the bottom end
+MECH_HOLES = {"K1": (4.0, 13.0), "K2": (57.5, 37.0), "S3": (81.0, 4.0), "S4": (81.5, 55.3)}
+if REVC: MECH_HOLES = {"K1": (61.5, 20.0)}   # placed after the RevC layout (see check_carrier_mech.py)   # M3 NPTH: enclosure standoffs = key / support posts
 PI_HOLES = {"M1": pi2b(3.5, 3.5), "M2": pi2b(61.5, 3.5)}                                      # M2.5 NPTH to the Pi header-end mounting holes
 
 # ref, value, description, manufacturer, mpn, footprint, mount, note
@@ -42,7 +52,7 @@ PARTS = [
 ]
 # centre positions (board frame, mm) and rotation (deg)
 POS = {
- "U1": (U1_C[0], U1_C[1], 270),
+ "U1": (U1_C[0], U1_C[1], 180 if REVC else 270),
  "J_IN": (75.9, 14.0, 270), "F1": (68.0, 9.0, 180), "TVS1": (61.0, 12.0, 0), "C1": (45.0, 12.0, 0), "C2": (50.0, 16.0, 0),
  "TP1": (72.0, 4.5, 0), "TP2": (62.0, 4.5, 0),
  "F2": (11.5, 55.0, 270), "TP3": (7.0, 47.0, 0),
@@ -51,3 +61,14 @@ POS = {
  "TP4": (66.75, 42.0, 0), "TP5": (66.0, 36.0, 0), "J_DISP": (75.9, 47.0, 270),
 }
 FLAG_NETS = ["+12V_IN", "12V_GND", "+12V_F"]
+
+if REVC:   # RevC placement: module long axis along x (secondary pins left, primary right), J_IN top-right facing the top edge, J_DISP bottom-left facing the left edge
+    POS = {
+     "U1": (U1_C[0], U1_C[1], 180),
+     "J_IN": (58.5, 9.7, 0), "F1": (55.5, 20.0, 270), "TVS1": (55.5, 26.0, 270), "C1": (47.0, 30.0, 90), "C2": (45.5, 36.0, 0),
+     "TP1": (63.0, 16.0, 0), "TP2": (62.5, 29.5, 0),
+     "F2": (8.1, 30.6, 0), "TP3": (9.8, 20.0, 0), "R3": (3.54, 29.0, 270),
+     "C4": (25.5, 36.0, 0), "C5": (23.0, 29.6, 0), "C6": (26.5, 29.6, 0), "R1": (17.0, 33.0, 0), "D1": (20.2, 33.0, 180),
+     "TP4": (13.5, 30.5, 0), "TP5": (13.5, 33.0, 0), "J_DISP": (9.9, 37.6, 90),
+    }
+    MECH_HOLES = {"K1": (61.5, 21.0), "K2": (18.5, 38.3), "S3": (38.0, 36.0), "S4": (61.5, 38.5)}

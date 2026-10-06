@@ -1,0 +1,8 @@
+(version 1)
+# OSBAMS Pi power: single isolation boundary between the 12 V (PRIMARY) and isolated 5 V (ISOLATED) copper; only U1 (1.6 kVDC) bridges it
+(rule "isolation_barrier_a"
+  (condition "A.hasNetclass('PRIMARY') && B.hasNetclass('ISOLATED')")
+  (constraint clearance (min 10.0mm)))
+(rule "isolation_barrier_b"
+  (condition "A.hasNetclass('ISOLATED') && B.hasNetclass('PRIMARY')")
+  (constraint clearance (min 10.0mm)))

@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Carrier RevB checks (run in the KiCad 10 container): schematic<->PCB net parity, polarity / connector pin numbering, Pi header pin map (power only on 2,4 / 6,9,14,20),
+"""Carrier RevB / RevC checks (run in the KiCad 10 container): schematic<->PCB net parity, polarity / connector pin numbering, Pi header pin map (power only on 2,4 / 6,9,14,20),
 module pins vs the Mean Well drawing, isolation bookkeeping, mounting holes. usage: check_carrier.py <project dir>"""
 import os, re, sys, subprocess
 import pcbnew
@@ -43,10 +43,10 @@ pts = [(t.GetStart(), t.GetEnd(), t.GetNetname()) for t in b.GetTracks() if t.Ge
 j2 = [f for f in b.GetFootprints() if f.GetReference() == "J2"][0]
 touch = [p.GetNumber() for p in j2.Pads() if p.GetNetname().lstrip("/").startswith("unconnected") and any(p.HitTest(s) or p.HitTest(e) for s, e, nn in pts)]
 chk(not touch, f"No track ends on the 34 no-connect header pads {touch or ''}")
-# U1 pins vs the Mean Well drawing (long axis along y, secondary pins at the bottom): dx = 25.4 - v, dy = 12.7 - u rotated by 270 deg
+# U1 pins vs the Mean Well drawing (RevB: long axis along y, secondary pins at the bottom; RevC: long axis along x, secondary pins at the left): dx = 25.4 - v, dy = 12.7 - u rotated by 270 deg
 u1 = [f for f in b.GetFootprints() if f.GetReference() == "U1"][0]; cx, cy = U1_C
 for n_, (uu, vv) in {"1": (5.08, 48.26), "2": (10.16, 48.26), "3": (20.32, 48.26), "4": (2.54, 2.54), "5": (12.7, 2.54), "6": (22.86, 2.54)}.items():
-    dx, dy = 25.4 - vv, 12.7 - uu; ex, ey = cx - dy, cy + dx            # clockwise 90 deg on screen (x right, y down): (x, y) -> (-y, x)
+    dx, dy = 25.4 - vv, 12.7 - uu; ex, ey = (cx - dx, cy - dy) if REVC else (cx - dy, cy + dx)   # RevC: 180 deg; RevB: clockwise 90 deg on screen (x right, y down): (x, y) -> (-y, x)
     pp = [p for p in u1.Pads() if p.GetNumber() == n_][0].GetPosition()
     chk(abs(pp.x / 1e6 - ex) < 0.02 and abs(pp.y / 1e6 - ey) < 0.02, f"U1 pin {n_} at ({pp.x/1e6:.2f}, {pp.y/1e6:.2f}) = mirrored Mean Well drawing position rotated to the carrier ({ex:.2f}, {ey:.2f})")
 # mechanics: holes
